@@ -147,14 +147,20 @@ df_xs_Sierra_ipab_IgG <-
 ```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
 # Define a function to filter and manipulate Shigella data
 
-dL_clean <- process_shigella_data(data = df, study_filter = "SOSAR", antigen = n_ipab_MFI)
+dL_clean <- process_shigella_data(
+  data = df, 
+  study_filter = "SOSAR", 
+  antigen = n_ipab_MFI
+)
 
 # prepare data for modeline
 # Create 5 different longdata
 longdata <- prep_data(dL_clean)
 priors <- prep_priors(max_antigens = longdata$n_antigen_isos)
+```
 
-
+```{r}
+#| label: run-jags
 nchains <- 4
 # nr of MC chains to run simultaneously
 nadapt <- 1000
@@ -290,24 +296,7 @@ est_Sierra <- est.incidence(
   antigen_isos = c("IgG"),
 )
 
-# create table of incidence.rate of each region
 
-create_incidence_table <- function(...) {
-  # Capture input objects and their names
-  est_list <- list(...)
-  country_names <- names(est_list)
-  
-  # Extract incidence.rate from the summary() of each estimate object
-  incidence_rates <- sapply(est_list, function(x) summary(x)$incidence.rate)
-  
-  # Create a tidy tibble
-  incidence_table <- tibble(
-    Country = country_names,
-    Incidence_Rate = incidence_rates
-  )
-  
-  return(incidence_table)
-}
 # Example usage with four different country estimates:
 incidence_summary <- create_incidence_table(
   USA = est_USA,

@@ -8,6 +8,13 @@
 \description{
 What the package does (one paragraph).
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://ucd-serg.github.io/shigella/}
+}
+
+}
 \author{
 \strong{Maintainer}: Kwan Ho Lee \email{ksjlee@ucdavis.edu}
 
