@@ -66,40 +66,11 @@ devtools::load_all()
 
 # load shigella data
 df <- read_excel("3.8.2024 Compiled Shigella datav2.xlsx",
-  sheet = "Compiled"
+                 sheet = "Compiled"
 )
+```
 
-
-# create function for generating specific region data
-create_xs_data <- function(df, filter_countries, filter_antigen_iso, value_col) {
-  df %>%
-    # First, create/rename columns
-    mutate(
-      id = sid,
-      Country = site_name,
-      study = study_name,
-      age = age,
-      antigen_iso = factor(isotype_name),
-      value = {{ value_col }
-      } # value_col is specified by the user, e.g. n_ipab_MFI
-    ) %>%
-    # Then filter by the desired catchment(s) and antigen iso(s)
-    filter(
-      Country %in% filter_countries,
-      antigen_iso %in% filter_antigen_iso
-    ) %>%
-    # Create age categories
-    mutate(
-      ageCat = factor(case_when(
-        age < 5 ~ "<5",
-        age >= 5 & age <= 15 ~ "5-15",
-        age > 15 ~ "16+"
-      ))
-    ) %>%
-    # Optionally select only the needed columns
-    select(id, Country, study, age, antigen_iso, value, ageCat)
-}
-
+```{r}
 # Cross-sectional data: MA USA, ipab_IgG
 df_xs_USA_ipab_IgG <- create_xs_data(
   df,
@@ -140,34 +111,35 @@ df_xs_Sierra_ipab_IgG <- create_xs_data(
 
 # Cross-sectional data: Sierra Leone, ipab_IgA
 
-# Create function to clearly define cross-sectional data
-prepare_df_for_serocalculator <- function(df, age_col = "age", value_col = "value") {
-  # Ensure correct column names
-  df <- df %>%
-    rename(age = all_of(age_col))
-
-  # Assign attributes for serocalculator
-  attr(df, "age_var") <- "age"
-  attr(df, "value_var") <- value_col
-
-  # Check if serocalculator recognizes attributes
-  get_value_var <- serocalculator:::get_value_var
-  detected_value_var <- get_value_var(df)
-
-  if (is.null(detected_value_var)) {
-    warning("serocalculator did not detect the 'value' column. Check column naming.")
-  } else {
-    message("serocalculator recognized 'value' column: ", detected_value_var)
-  }
-
-  return(df)
-}
-
 # Application
-df_xs_USA_ipab_IgG <- prepare_df_for_serocalculator(df_xs_USA_ipab_IgG)
-df_xs_Ghana_ipab_IgG <- prepare_df_for_serocalculator(df_xs_Ghana_ipab_IgG)
-df_xs_Niger_ipab_IgG <- prepare_df_for_serocalculator(df_xs_Niger_ipab_IgG)
-df_xs_Sierra_ipab_IgG <- prepare_df_for_serocalculator(df_xs_Sierra_ipab_IgG)
+df_xs_USA_ipab_IgG <- 
+  df_xs_USA_ipab_IgG |> 
+  as_pop_data(
+    value = "value",
+    id = "id",
+    age = "age"
+  )
+df_xs_Ghana_ipab_IgG <- 
+  df_xs_Ghana_ipab_IgG |>  
+  as_pop_data(
+    value = "value",
+    id = "id",
+    age = "age"
+  )
+df_xs_Niger_ipab_IgG <- 
+  df_xs_Niger_ipab_IgG |> 
+  as_pop_data(
+    value = "value",
+    id = "id",
+    age = "age"
+  )
+df_xs_Sierra_ipab_IgG <- 
+  df_xs_Sierra_ipab_IgG |> 
+  as_pop_data(
+    value = "value",
+    id = "id",
+    age = "age"
+  )
 ```
 
 ## Get parameters from longitudinal data
@@ -273,7 +245,7 @@ create_noise_df <- function(country) {
     nu          = c(0.5),
     y.high      = c(200000)
   )
-
+  
   return(noise_df)
 }
 
@@ -324,16 +296,16 @@ create_incidence_table <- function(...) {
   # Capture input objects and their names
   est_list <- list(...)
   country_names <- names(est_list)
-
+  
   # Extract incidence.rate from the summary() of each estimate object
   incidence_rates <- sapply(est_list, function(x) summary(x)$incidence.rate)
-
+  
   # Create a tidy tibble
   incidence_table <- tibble(
     Country = country_names,
     Incidence_Rate = incidence_rates
   )
-
+  
   return(incidence_table)
 }
 # Example usage with four different country estimates:
@@ -379,12 +351,12 @@ simulate_seroincidence <- function(nrep, n_sim, observed, range = NULL, batch_si
   dmcmc <- curve_params_shigella # Curve parameters
   antibodies <- c("IgG") # Antigen-isotypes
   lambda <- observed # Simulated incidence rate per person-year
-
+  
   # Biologic noise distribution
   dlims <- rbind(
     "IgG" = c(min = 0, max = 0.5)
   )
-
+  
   # Noise parameters
   cond <- tibble(
     antigen_iso = c("IgG"),
@@ -393,14 +365,14 @@ simulate_seroincidence <- function(nrep, n_sim, observed, range = NULL, batch_si
     y.low = c(25),
     y.high = c(200000)
   )
-
+  
   # Calculate number of batches
   n_batches <- ceiling(n_sim / batch_size)
-
+  
   # Parallel processing: Use future_map for efficiency
   if (parallel) {
     plan(multisession, workers = max(1, future::availableCores() - 1))
-
+    
     results <- future_map(1:n_batches, function(batch) {
       # Run simulations within each batch
       replicate(batch_size, expr = {
@@ -416,7 +388,7 @@ simulate_seroincidence <- function(nrep, n_sim, observed, range = NULL, batch_si
           noise_limits = dlims,
           format = "long"
         )
-
+        
         # Estimate seroincidence
         est <- est.incidence(
           pop_data = csdata,
@@ -428,11 +400,11 @@ simulate_seroincidence <- function(nrep, n_sim, observed, range = NULL, batch_si
           print_graph = FALSE,
           antigen_isos = antibodies
         )
-
+        
         list(csdata = csdata, est1 = est)
       }, simplify = FALSE) # Keep list structure
     }, .options = furrr_options(seed = TRUE)) # Set seed for reproducibility
-
+    
     # Flatten nested list
     results <- unlist(results, recursive = FALSE)
   } else {
@@ -450,7 +422,7 @@ simulate_seroincidence <- function(nrep, n_sim, observed, range = NULL, batch_si
         noise_limits = dlims,
         format = "long"
       )
-
+      
       est <- est.incidence(
         pop_data = csdata,
         curve_params = dmcmc,
@@ -461,11 +433,11 @@ simulate_seroincidence <- function(nrep, n_sim, observed, range = NULL, batch_si
         print_graph = FALSE,
         antigen_isos = antibodies
       )
-
+      
       list(csdata = csdata, est1 = est)
     })
   }
-
+  
   return(results)
 }
 ```
@@ -533,28 +505,28 @@ plan(sequential)
 generate_final_table <- function(results_list, sample_size) {
   # Initialize an empty list to store the results
   summary_results <- list()
-
+  
   # Loop through each of the 100 results and extract the required columns
   for (i in 1:200) {
     # Extract the summary for each result
     result_summary <- summary(results_list[[i]]$est1)
-
+    
     # Select the required columns
     extracted_columns <- result_summary %>%
       select(incidence.rate, SE, CI.lwr, CI.upr)
-
+    
     # Add a column for the index (optional, for tracking)
     extracted_columns <- extracted_columns %>%
       mutate(index = i)
-
+    
     # Append to the list
     summary_results[[i]] <- extracted_columns
   }
-
+  
   # Combine all results into a single data frame
   final_table <- bind_rows(summary_results) %>%
     mutate(sample_size = sample_size) # Add sample size column for clarity
-
+  
   return(final_table)
 }
 
@@ -580,8 +552,8 @@ Set the preliminary observed lambda as half of the minimum incidence rate from t
 # Function to calculate metrics for each table
 calculate_metrics <- function(data, sample_size) {
   empirical_se <- sd(data$incidence.rate)
-
-
+  
+  
   # Return a data frame with results
   data.frame(
     sample_size = sample_size,
