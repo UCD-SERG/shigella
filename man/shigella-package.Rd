@@ -8,4 +8,13 @@
 \description{
 What the package does (one paragraph).
 }
+\author{
+\strong{Maintainer}: Kwan Ho Lee \email{ksjlee@ucdavis.edu}
+
+Authors:
+\itemize{
+  \item Douglas Ezra Morrison \email{demorrison@ucdavis.edu} (\href{https://orcid.org/0000-0002-7195-830X}{ORCID})
+}
+
+}
 \keyword{internal}
