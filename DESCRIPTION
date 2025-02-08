@@ -1,10 +1,10 @@
 Package: shigella
 Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
-Authors@R: 
-    person("Kwan Ho", "Lee", , "ksjlee@ucdavis.edu", role = c("aut", "cre"))
+Authors@R: c(
+    person("Kwan Ho", "Lee", , "ksjlee@ucdavis.edu", role = c("aut", "cre")),
     person("Douglas Ezra", "Morrison", , "demorrison@ucdavis.edu", role = c("aut"),
-           comment = c(ORCID = "0000-0002-7195-830X"))
+           comment = c(ORCID = "0000-0002-7195-830X")))
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Encoding: UTF-8
