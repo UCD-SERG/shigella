@@ -140,6 +140,22 @@ df_xs_Sierra_ipab_IgG <-
     id = "id",
     age = "age"
   )
+
+```
+
+```{r}
+df_xs_strat <- 
+  df |> 
+  rename(antigen_iso = isotype_name,
+         Country = site_name) |> 
+  filter(Country != "Dhaka") |> 
+  as_pop_data(
+    antigen_isos = "IgG",
+    value = "n_ipab_MFI",
+    age = "age",
+    id = "sid"
+  )
+  
 ```
 
 ## Get parameters from longitudinal data
@@ -151,16 +167,23 @@ dL_clean <- process_shigella_data(
   data = df, 
   study_filter = "SOSAR", 
   antigen = n_ipab_MFI
-)
+) |> 
+  as_case_data(
+    id_var = "index_id",
+    biomarker_var = "antigen_iso",
+    time_in_days = "timeindays",
+    value_var = "result"
+  )
 
 # prepare data for modeline
 # Create 5 different longdata
 longdata <- prep_data(dL_clean)
-priors <- prep_priors(max_antigens = longdata$n_antigen_isos)
+
 ```
 
 ```{r}
 #| label: run-jags
+priors <- prep_priors(max_antigens = longdata$n_antigen_isos)
 nchains <- 4
 # nr of MC chains to run simultaneously
 nadapt <- 1000
@@ -203,6 +226,9 @@ jags.post <- run.jags(
   summarise = FALSE
 )
 
+```
+
+```{r}
 mcmc_list <- as.mcmc.list(jags.post)
 
 mcmc_df <- ggs(mcmc_list)
@@ -259,54 +285,38 @@ noise_df_USA <- create_noise_df("MA USA")
 noise_df_Niger <- create_noise_df("Niger")
 noise_df_Sierra <- create_noise_df("Sierra Leone")
 noise_df_Ghana <- create_noise_df("Ghana")
+noise_df_strat <- 
+  bind_rows(noise_df_USA,
+            noise_df_Niger,
+            noise_df_Sierra,
+            noise_df_Ghana) |> 
+  serocalculator::as_noise_params()
 ```
 
 ## 2. Run simulations using:
 
 ```{r,echo=FALSE, message=FALSE, warning=FALSE}
-# MA USA
-est_USA <- est.incidence(
-  pop_data = df_xs_USA_ipab_IgG,
-  curve_params = curve_params_shigella,
-  noise_params = noise_df_USA,
-  antigen_isos = c("IgG"),
+
+#| label: tbl-ests-strat
+#| tbl-cap: "Stratified estimates of shigella"
+
+ests_strat <- est.incidence.by(
+  df_xs_strat,
+  curve_param = curve_params_shigella,
+  noise_params = noise_df_strat,
+  strata = "Country",
+  noise_strata_varnames = "Country",
+  curve_strata_varnames = NULL,
+  antigen_isos = "IgG",
+  num_cores = 1,
+  verbose = TRUE
 )
 
-# Ghana
-est_Ghana <- est.incidence(
-  pop_data = df_xs_Ghana_ipab_IgG,
-  curve_params = curve_params_shigella,
-  noise_params = noise_df_Ghana,
-  antigen_isos = c("IgG"),
-)
+summary(ests_strat)
 
-# Niger
-est_Niger <- est.incidence(
-  pop_data = df_xs_Niger_ipab_IgG,
-  curve_params = curve_params_shigella,
-  noise_params = noise_df_Niger,
-  antigen_isos = c("IgG"),
-)
+```
 
-# Sierra Leone
-est_Sierra <- est.incidence(
-  pop_data = df_xs_Sierra_ipab_IgG,
-  curve_params = curve_params_shigella,
-  noise_params = noise_df_Sierra,
-  antigen_isos = c("IgG"),
-)
-
-
-# Example usage with four different country estimates:
-incidence_summary <- create_incidence_table(
-  USA = est_USA,
-  Ghana = est_Ghana,
-  Niger = est_Niger,
-  Sierra_Leone = est_Sierra
-)
-
-# Display the summary table
-print(incidence_summary)
+```{r}
 
 # 1) The median of the incidence rate estimates from step 1.
 # Get incidence rate estimates from each region (4 regions) and do median
