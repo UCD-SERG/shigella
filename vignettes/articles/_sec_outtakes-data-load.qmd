@@ -1,0 +1,73 @@
+
+```{r}
+# Cross-sectional data: MA USA, ipab_IgG
+df_xs_USA_ipab_IgG <- create_xs_data(
+  df,
+  filter_countries = c("MA USA"),
+  filter_antigen_iso = c("IgG"),
+  value_col = n_ipab_MFI
+)
+
+# Cross-sectional data: MA USA, ipab_IgA
+
+# Cross-sectional data: Ghana, ipab_IgG
+df_xs_Ghana_ipab_IgG <- create_xs_data(
+  df,
+  filter_countries = c("Ghana"),
+  filter_antigen_iso = c("IgG"),
+  value_col = n_ipab_MFI
+)
+
+# Cross-sectional data: Ghana, ipab_IgA
+
+# Cross-sectional data: Niger, ipab_IgG
+df_xs_Niger_ipab_IgG <- create_xs_data(
+  df,
+  filter_countries = c("Niger"),
+  filter_antigen_iso = c("IgG"),
+  value_col = n_ipab_MFI
+)
+
+# Cross-sectional data: Niger, ipab_IgA
+
+# Cross-sectional data: Sierra Leone, ipab_IgG
+df_xs_Sierra_ipab_IgG <- create_xs_data(
+  df,
+  filter_countries = c("Sierra Leone"),
+  filter_antigen_iso = c("IgG"),
+  value_col = n_ipab_MFI
+)
+
+# Cross-sectional data: Sierra Leone, ipab_IgA
+
+# Application
+df_xs_USA_ipab_IgG <- 
+  df_xs_USA_ipab_IgG |> 
+  as_pop_data(
+    value = "value",
+    id = "id",
+    age = "age"
+  )
+df_xs_Ghana_ipab_IgG <- 
+  df_xs_Ghana_ipab_IgG |>  
+  as_pop_data(
+    value = "value",
+    id = "id",
+    age = "age"
+  )
+df_xs_Niger_ipab_IgG <- 
+  df_xs_Niger_ipab_IgG |> 
+  as_pop_data(
+    value = "value",
+    id = "id",
+    age = "age"
+  )
+df_xs_Sierra_ipab_IgG <- 
+  df_xs_Sierra_ipab_IgG |> 
+  as_pop_data(
+    value = "value",
+    id = "id",
+    age = "age"
+  )
+
+```

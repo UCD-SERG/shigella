@@ -392,3 +392,4 @@ ggplot(summary_metrics_combined, aes(x = sample_size, y = empirical_se, color = 
 summary_metrics_combined %>%
   kable()
 ```
+

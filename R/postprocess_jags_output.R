@@ -1,0 +1,39 @@
+postprocess_jags_output <- function(jags_output) {
+  mcmc_list <- as.mcmc.list(jags_output)
+  
+  mcmc_df <- ggs(mcmc_list)
+  
+  wide_predpar_df <- mcmc_df %>%
+    mutate(
+      parameter = sub("^(\\w+)\\[.*", "\\1", Parameter),
+      index_id = as.numeric(sub("^\\w+\\[(\\d+),.*", "\\1", Parameter)),
+      antigen_iso = as.numeric(sub("^\\w+\\[\\d+,(\\d+).*", "\\1", Parameter))
+    ) %>%
+    mutate(
+      index_id = factor(index_id, labels = c(unique(dL_clean$index_id), "newperson")),
+      antigen_iso = factor(antigen_iso, labels = unique(dL_clean$antigen_iso))
+    ) %>%
+    filter(index_id == "newperson") %>%
+    select(-Parameter) %>%
+    pivot_wider(names_from = "parameter", values_from = "value") %>%
+    rowwise() %>%
+    droplevels() %>%
+    ungroup() %>%
+    rename(r = shape)
+  
+  # Assuming wide_predpar_df is your data frame
+  curve_params <- wide_predpar_df
+  
+  # Set class and attributes for serocalculator
+  class(curve_params) <- c("curve_params", class(curve_params))
+  antigen_isos <- unique(curve_params$antigen_iso)
+  attr(curve_params, "antigen_isos") <- antigen_isos
+  
+  curve_params_shigella <- curve_params %>%
+    mutate(
+      iter = Iteration
+    ) %>%
+    select(antigen_iso, iter, y0, y1, t1, alpha, r)
+  
+  return(curve_params_shigella)
+}
