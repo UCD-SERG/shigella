@@ -5,10 +5,13 @@ format:
     number-sections: true
     number-depth: 2
     number-offset: [0, 0]
+    echo: false
   html:
     number-sections: true
     number-depth: 2
     number-offset: [0, 0]
+    embed-resources: true
+    echo: false
 editor_options: 
   chunk_output_type: console
 ---
