@@ -374,16 +374,8 @@ summary_metrics_2 <- summary_metrics_2 %>%
 summary_metrics_combined <- bind_rows(summary_metrics_1, summary_metrics_2)
 
 # Plot with color to differentiate age groups
-ggplot(summary_metrics_combined, aes(x = sample_size, y = empirical_se, color = Age_Group)) +
-  geom_line() +
-  geom_point() +
-  labs(
-    title = "Empirical Standard Error vs. Sample Size",
-    x = "Sample Size",
-    y = "Empirical Standard Error",
-    color = "Age Group"
-  ) +
-  theme_minimal()
+summary_metrics_combined |> 
+  plot_summary_metrics()
 ```
 
 ## Table
