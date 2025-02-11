@@ -189,8 +189,8 @@ ests_strat <- est.incidence.by(
   noise_strata_varnames = "Country",
   curve_strata_varnames = NULL,
   antigen_isos = "IgG",
-  num_cores = 1,
-  verbose = TRUE
+  num_cores = 2,
+  verbose = FALSE
 )
 
 incidence_summary <- summary(ests_strat)
