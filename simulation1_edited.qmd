@@ -1,11 +1,11 @@
 ---
 title: "Simulation with the Smallest Lambda for IpaB IgG"
 format: 
-  html:
+  pdf:
     number-sections: true
     number-depth: 2
     number-offset: [0, 0]
-  pdf:
+  html:
     number-sections: true
     number-depth: 2
     number-offset: [0, 0]
