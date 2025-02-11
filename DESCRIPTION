@@ -40,6 +40,7 @@ Suggests:
     patchwork,
     plotly,
     purrr,
+    quarto,
     readxl,
     runjags,
     scales,
@@ -47,3 +48,7 @@ Suggests:
     tibble,
     tidyr,
     tidyverse
+Depends: 
+    R (>= 3.5)
+LazyData: true
+Config/Needs/website: quarto
