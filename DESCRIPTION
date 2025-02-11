@@ -12,8 +12,38 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports: 
     dplyr,
+    future,
+    future.apply,
     ggplot2,
+    gridExtra,
     serodynamics (>= 0.0.0.9011)
 URL: https://ucd-serg.github.io/shigella/
 Remotes: 
     UCD-SERG/serodynamics
+Suggests: 
+    arsenal,
+    bayesplot,
+    coda,
+    forcats,
+    furrr,
+    ggeasy,
+    ggmcmc,
+    gtsummary,
+    haven,
+    here,
+    huxtable,
+    kableExtra,
+    knitr,
+    magrittr,
+    mgcv,
+    parameters,
+    patchwork,
+    plotly,
+    purrr,
+    readxl,
+    runjags,
+    scales,
+    table1,
+    tibble,
+    tidyr,
+    tidyverse
