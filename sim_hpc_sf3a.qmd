@@ -1,0 +1,401 @@
+---
+title: "Simulation with the Smallest Lambda for Sf3a IgG"
+format: 
+  pdf:
+    number-sections: true
+    number-depth: 2
+    number-offset: [0, 0]
+    pdf-engine: pdflatex  # <-- Use pdflatex instead of xelatex or lualatex
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE,echo=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE, message=FALSE}
+library(tibble)
+library(dplyr)
+library(serocalculator)
+library(haven)
+library(knitr)
+library(plotly)
+library(kableExtra)
+library(tidyr)
+library(arsenal)
+library(forcats)
+library(huxtable)
+library(magrittr)
+library(parameters)
+library(ggplot2)
+library(ggeasy)
+library(scales)
+library(plotly)
+library(patchwork)
+library(tidyverse)
+library(readxl)
+library(purrr)
+library(here)
+library(table1)
+library(furrr)
+library(future)
+```
+
+
+# Vary simulation lambdas across the range in the real cross-sectional data
+
+## 1. Estimate the shigella incidence rate using the real cross-sectional Shigella data, 
+```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
+## Load data
+load("~/sf3a.RData")
+```
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
+## Set noise 
+create_noise_df <- function(country) {
+  noise_df <- tibble(
+    antigen_iso = c("IgG"),
+    Country     = factor(c(country)),  # Use input argument for Country
+    y.low       = c(25),
+    eps         = c(0.25),
+    nu          = c(0.5),
+    y.high      = c(200000)
+  )
+  
+  return(noise_df)
+}
+
+noise_df_USA <- create_noise_df("MA USA")
+noise_df_Niger <- create_noise_df("Niger")
+noise_df_Sierra <- create_noise_df("Sierra Leone")
+noise_df_Ghana <- create_noise_df("Ghana")
+```
+
+## 2. Run simulations using: 
+```{r,echo=FALSE, message=FALSE, warning=FALSE}
+# MA USA
+est_USA <- est.incidence(
+  pop_data = df_xs_USA_sf3a_IgG,
+  curve_params = curve_params_shigella,
+  noise_params = noise_df_USA,
+  antigen_isos = c("IgG"),
+)
+
+# Ghana
+est_Ghana <- est.incidence(
+  pop_data = df_xs_Ghana_sf3a_IgG,
+  curve_params = curve_params_shigella,
+  noise_params = noise_df_Ghana,
+  antigen_isos = c("IgG"),
+)
+
+# Niger
+est_Niger <- est.incidence(
+  pop_data = df_xs_Niger_sf3a_IgG,
+  curve_params = curve_params_shigella,
+  noise_params = noise_df_Niger,
+  antigen_isos = c("IgG"),
+)
+
+# Sierra Leone
+est_Sierra <- est.incidence(
+  pop_data = df_xs_Sierra_sf3a_IgG,
+  curve_params = curve_params_shigella,
+  noise_params = noise_df_Sierra,
+  antigen_isos = c("IgG"),
+)
+
+# create table of incidence.rate of each region
+
+create_incidence_table <- function(...) {
+  # Capture input objects and their names
+  est_list <- list(...)
+  country_names <- names(est_list)
+  
+  # Extract incidence.rate from the summary() of each estimate object
+  incidence_rates <- sapply(est_list, function(x) summary(x)$incidence.rate)
+  
+  # Create a tidy tibble
+  incidence_table <- tibble(
+    Country = country_names,
+    Incidence_Rate = incidence_rates
+  )
+  
+  return(incidence_table)
+}
+# Example usage with four different country estimates:
+incidence_summary <- create_incidence_table(
+  USA = est_USA,
+  Ghana = est_Ghana,
+  Niger = est_Niger,
+  Sierra_Leone = est_Sierra
+)
+
+# Display the summary table
+print(incidence_summary)
+
+# 1) The median of the incidence rate estimates from step 1.
+# Get incidence rate estimates from each region (4 regions) and do median
+med_sf3a_IgG<-median(incidence_summary$Incidence_Rate)
+
+#0.756
+
+# 2) 2x the maximum incidence rate estimate from step 1
+# Get incidence rate estimates from each region (4 regions) and get the maximum one and 2x
+max2_sf3a_IgG<-2*max(incidence_summary$Incidence_Rate)
+
+# 2.058
+
+# 3) 1/2 the minimum incidence rate from step 1
+# Get incidence rate estimates from each region (4 regions) and get the minimum one and 1/2
+min_half_sf3a_IgG<-0.5*min(incidence_summary$Incidence_Rate)
+
+#0.288
+
+# Create a data frame for the incidence rate summary
+incidence_rate_summary <- data.frame(
+  Metric = c("Median Incidence Rate", 
+             "2x Maximum Incidence Rate", 
+             "1/2 Minimum Incidence Rate"),
+  Value = c(median(incidence_summary$Incidence_Rate),  # Median of incidence rates
+            2 * max(incidence_summary$Incidence_Rate),  # 2x Maximum incidence rate
+            0.5 * min(incidence_summary$Incidence_Rate)) # 1/2 Minimum incidence rate
+)
+
+# Print the table
+print(incidence_rate_summary)
+```
+These three values are preliminary observations of lambda from sf3a_IgG.
+
+We choose a lambda that is half of the minimum lambda from the four regions.
+
+\newpage 
+
+# Simulation (300times) with the smallest lambda
+```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
+
+# Define the simulation function
+simulate_seroincidence <- function(nrep, n_sim, observed, range = NULL) {
+  # Set parallel plan inside function to avoid issues with distributed nodes
+  plan(multicore)  # Use multiple cores for parallel processing (works best on HPC)
+  
+  # Parameters
+  dmcmc <- curve_params_shigella  # Curve parameters
+  antibodies <- c("IgG")  # Antigen-isotypes
+  lambda <- observed  # Simulated incidence rate per person-year
+  
+  # Biologic noise distribution
+  dlims <- rbind("IgG" = c(min = 0, max = 0.5))
+  
+  # Noise parameters
+  cond <- tibble(
+    antigen_iso = c("IgG"),
+    nu = c(0.5),  # Biologic noise (nu)
+    eps = c(0.25),  # Measurement noise (eps)
+    y.low = c(25),  # Low cutoff (llod)
+    y.high = c(200000)  # High cutoff (y.high)
+  )
+  
+  # Perform simulations in parallel
+  results <- future_map(1:n_sim, function(i) {
+    tryCatch({
+      # Generate cross-sectional data
+      csdata <- sim.cs(
+        curve_params = dmcmc,
+        lambda = lambda,
+        n.smpl = nrep,
+        age_range = range,
+        antigen_isos = antibodies,
+        n.mc = 0,
+        renew_params = TRUE,  # Use different parameters for each simulation
+        add.noise = TRUE,
+        noise_limits = dlims,
+        format = "long"
+      )
+      
+      # Estimate seroincidence
+      est <- est.incidence(
+        pop_data = csdata,
+        curve_params = dmcmc,
+        noise_params = cond,
+        lambda_start = 0.1,
+        build_graph = TRUE,
+        verbose = FALSE,
+        print_graph = FALSE,
+        antigen_isos = antibodies
+      )
+      
+      # Return results for this simulation
+      list(csdata = csdata, est1 = est)
+    }, error = function(e) {
+      return(list(error = e$message))  # Capture and store errors instead of stopping execution
+    })
+  }, .options = furrr_options(seed = TRUE))
+  
+  # Ensure sequential processing after function execution
+  plan(sequential)
+  
+  return(results)
+}
+
+# ------------------------ #
+# 🔹 Run Simulations in Parallel
+# ------------------------ #
+
+# Set up parallel processing (Ensure future::plan() is set before execution)
+plan(multicore)  # Works best on HPC
+
+# Define parameter sets
+sim_params <- list(
+  list(nrep = 100, range = c(0, 2)),
+  list(nrep = 100, range = c(2, 5)),
+  list(nrep = 200, range = c(0, 2)),
+  list(nrep = 200, range = c(2, 5)),
+  list(nrep = 300, range = c(0, 2)),
+  list(nrep = 300, range = c(2, 5)),
+  list(nrep = 400, range = c(0, 2)),
+  list(nrep = 400, range = c(2, 5))
+)
+
+# Run simulations in a loop to reduce redundant code
+results_list <- lapply(sim_params, function(params) {
+  cat("Running simulation for nrep =", params$nrep, "range =", params$range, "\n")
+  simulate_seroincidence(nrep = params$nrep, n_sim = 300, observed = min_half_sf3a_IgG, range = params$range)
+})
+
+# Assign results to variables
+results_100_1 <- results_list[[1]]
+results_100_2 <- results_list[[2]]
+results_200_1 <- results_list[[3]]
+results_200_2 <- results_list[[4]]
+results_300_1 <- results_list[[5]]
+results_300_2 <- results_list[[6]]
+results_400_1 <- results_list[[7]]
+results_400_2 <- results_list[[8]]
+
+# Stop parallel processing
+plan(sequential)  # Return to sequential processing after execution
+```
+
+
+## Store each sample size in table
+```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
+# Define a function to generate final tables
+generate_final_table <- function(results_list, sample_size) {
+  # Initialize an empty list to store the results
+  summary_results <- list()
+  
+  # Loop through each of the 100 results and extract the required columns
+  for (i in 1:300) {
+    # Extract the summary for each result
+    result_summary <- summary(results_list[[i]]$est1)
+    
+    # Select the required columns
+    extracted_columns <- result_summary %>%
+      select(incidence.rate, SE, CI.lwr, CI.upr)
+    
+    # Add a column for the index (optional, for tracking)
+    extracted_columns <- extracted_columns %>%
+      mutate(index = i)
+    
+    # Append to the list
+    summary_results[[i]] <- extracted_columns
+  }
+  
+  # Combine all results into a single data frame
+  final_table <- bind_rows(summary_results) %>%
+    mutate(sample_size = sample_size) # Add sample size column for clarity
+  
+  return(final_table)
+}
+
+# Example usage for different sample sizes
+final_table_100_1 <- generate_final_table(results_100_1, 100)
+final_table_100_2 <- generate_final_table(results_100_2, 100)
+
+final_table_200_1 <- generate_final_table(results_200_1, 200)
+final_table_200_2 <- generate_final_table(results_200_2, 200)
+
+final_table_300_1 <- generate_final_table(results_300_1, 300)
+final_table_300_2 <- generate_final_table(results_300_2, 300)
+
+final_table_400_1 <- generate_final_table(results_400_1, 400)
+final_table_400_2 <- generate_final_table(results_400_2, 400)
+```
+
+
+
+## Graphs of where the x axis is the sample size and the y axis is the empirical standard error
+
+Set the preliminary observed lambda as half of the minimum incidence rate from the four regions.
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE}
+# Function to calculate metrics for each table
+calculate_metrics <- function(data, sample_size) {
+  empirical_se <- sd(data$incidence.rate)
+  
+  
+  # Return a data frame with results
+  data.frame(
+    sample_size = sample_size,
+    empirical_se = empirical_se
+    
+  )
+}
+
+# Apply the function to each table
+metrics_100_1 <- calculate_metrics(final_table_100_1, 100)
+metrics_100_2 <- calculate_metrics(final_table_100_2, 100)
+
+metrics_200_1 <- calculate_metrics(final_table_200_1, 200)
+metrics_200_2 <- calculate_metrics(final_table_200_2, 200)
+
+metrics_300_1 <- calculate_metrics(final_table_300_1, 300)
+metrics_300_2 <- calculate_metrics(final_table_300_2, 300)
+
+metrics_400_1 <- calculate_metrics(final_table_400_1, 400)
+metrics_400_2 <- calculate_metrics(final_table_400_2, 400)
+
+
+# Combine the results into a single summary table
+summary_metrics_1 <- bind_rows(metrics_100_1, metrics_200_1, metrics_300_1,
+                               metrics_400_1)
+
+
+summary_metrics_2 <- bind_rows(metrics_100_2, metrics_200_2, metrics_300_2,
+                               metrics_400_2)
+
+# Add a column to distinguish the datasets
+summary_metrics_1 <- summary_metrics_1 %>%
+  mutate(Age_Group = "Age 0-2")
+
+summary_metrics_2 <- summary_metrics_2 %>%
+  mutate(Age_Group = "Age 2-5")
+
+# Combine both datasets into one
+summary_metrics_combined <- bind_rows(summary_metrics_1, summary_metrics_2)
+
+# Plot with color to differentiate age groups
+ggplot(summary_metrics_combined, aes(x = sample_size, y = empirical_se, color = Age_Group)) +
+  geom_line() +
+  geom_point() +
+  labs(
+    title = "Empirical Standard Error vs. Sample Size",
+    x = "Sample Size",
+    y = "Empirical Standard Error",
+    color = "Age Group"
+  ) +
+  theme_minimal()
+```
+
+\newpage
+
+## Table
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE}
+summary_metrics_combined %>%
+  kable()
+```
