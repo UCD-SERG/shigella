@@ -1,0 +1,167 @@
+---
+title: Model Shigella Serokinetics From Longitudinal Data
+---
+
+```{r}
+#| label: setup
+#| message: false
+#| include: false
+#| echo: false
+
+library(knitr)
+library(future.apply)
+library(future)
+library(gridExtra)
+library(mgcv) # For advanced GAM smoothing
+library(haven)
+library(knitr)
+library(plotly)
+library(kableExtra)
+library(tidyr)
+library(arsenal)
+library(dplyr)
+library(forcats)
+library(huxtable)
+library(magrittr)
+library(parameters)
+library(kableExtra)
+library(ggplot2)
+library(ggeasy)
+library(scales)
+library(patchwork)
+library(tidyverse)
+library(gtsummary)
+library(readxl)
+library(purrr)
+library(serocalculator)
+library(serodynamics)
+library(runjags)
+library(coda)
+library(ggmcmc)
+library(here)
+library(bayesplot)
+library(table1)
+library(tibble)
+library(furrr)
+library(dplyr)
+# library(shigella)
+devtools::load_all()
+```
+
+
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
+#| label: "load shigella data"
+df <- 
+  fs::path_package(
+    package = "shigella",
+    "extdata/3.8.2024 Compiled Shigella datav2.xlsx"
+  ) |> 
+  read_excel(sheet = "Compiled")
+```
+
+```{r}
+df_xs_strat <- 
+  df |> 
+  rename(antigen_iso = isotype_name,
+         Country = site_name) |> 
+  filter(Country != "Dhaka") |> 
+  mutate(
+      ageCat = case_when(
+        age < 5             ~ "<5",
+        age >= 5 & age <=15  ~ "5-15",
+        age > 15            ~ "16+"
+      ) |> factor()
+    ) |> 
+  as_pop_data(
+    antigen_isos = "IgG",
+    value = "n_ipab_MFI",
+    age = "age",
+    id = "sid"
+  )
+  
+```
+
+
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
+# Define a function to filter and manipulate Shigella data
+
+dL_clean <- process_shigella_data(
+  data = df, 
+  study_filter = "SOSAR", 
+  antigen = n_ipab_MFI
+) |> 
+  as_case_data(
+    id_var = "index_id",
+    biomarker_var = "antigen_iso",
+    time_in_days = "timeindays",
+    value_var = "result"
+  )
+
+# prepare data for modeline
+jags_prepped_data <- prep_data(dL_clean)
+
+```
+
+```{r}
+#| label: run-jags
+#| 
+priors <- prep_priors(max_antigens = jags_prepped_data$n_antigen_isos)
+nchains <- 4
+# nr of MC chains to run simultaneously
+nadapt <- 1000
+# nr of iterations for adaptation
+nburnin <- 100
+# nr of iterations to use for burn-in
+nmc <- 100
+# nr of samples in posterior chains
+niter <- 200
+# nr of iterations for posterior sample
+nthin <- round(niter / nmc)
+# thinning needed to produce nmc from niter
+
+tomonitor <- c("y0", "y1", "t1", "alpha", "shape")
+# This handles the seed to reproduce the results
+initsfunction <- function(chain) {
+  stopifnot(chain %in% (1:4)) # max 4 chains allowed...
+  .RNG.seed <- (1:4)[chain]
+  .RNG.name <- c(
+    "base::Wichmann-Hill", "base::Marsaglia-Multicarry",
+    "base::Super-Duper", "base::Mersenne-Twister"
+  )[chain]
+  return(list(".RNG.seed" = .RNG.seed, ".RNG.name" = .RNG.name))
+}
+
+file.mod <- here::here("inst", "extdata", "model.jags.r")
+
+set.seed(11325)
+jags.post <- run.jags(
+  model = file.mod,
+  data = c(jags_prepped_data, priors),
+  inits = initsfunction,
+  method = "parallel",
+  adapt = nadapt,
+  burnin = nburnin,
+  thin = nthin,
+  sample = nmc,
+  n.chains = nchains,
+  monitor = tomonitor,
+  summarise = FALSE
+)
+
+curve_params_shigella <- jags.post |> postprocess_jags_output()
+usethis::use_data(curve_params_shigella, overwrite = TRUE)
+```
+
+```{r}
+
+curve_params_shigella |> 
+  serocalculator::graph.curve.params(
+    show_all_curves = TRUE)
+
+curve_params_shigella |> 
+  # slice_head(n = 200, by = antigen_iso) |>
+  autoplot()
+```
+

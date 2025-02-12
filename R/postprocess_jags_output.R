@@ -31,7 +31,8 @@ postprocess_jags_output <- function(jags_output) {
   
   curve_params_shigella <- curve_params %>%
     mutate(
-      iter = Iteration
+      iter = Iteration,
+      chain = Chain,
     ) %>%
     select(antigen_iso, iter, chain, y0, y1, t1, alpha, r)
   

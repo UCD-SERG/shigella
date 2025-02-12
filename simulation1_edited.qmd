@@ -1,27 +1,14 @@
 ---
 title: "Simulation with the Smallest Lambda for IpaB IgG"
-format: 
-  pdf:
-    number-sections: true
-    number-depth: 2
-    number-offset: [0, 0]
-    echo: false
-  html:
-    number-sections: true
-    number-depth: 2
-    number-offset: [0, 0]
-    embed-resources: true
-    echo: false
-editor_options: 
-  chunk_output_type: console
 ---
 
-```{r setup, include=FALSE,echo=FALSE}
-library(knitr)
-knitr::opts_chunk$set(echo = TRUE)
-```
+```{r}
+#| label: setup
+#| message: false
+#| include: false
+#| echo: false
 
-```{r, echo=FALSE, message=FALSE}
+library(knitr)
 library(future.apply)
 library(future)
 library(gridExtra)
@@ -65,12 +52,13 @@ devtools::load_all()
 ## 1. Estimate the shigella incidence rate using the real cross-sectional Shigella data,
 
 ```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
-##    separately for each geographic region in the data.
-
-# load shigella data
-df <- read_excel("3.8.2024 Compiled Shigella datav2.xlsx",
-                 sheet = "Compiled"
-)
+#| label: "load shigella data"
+df <- 
+  fs::path_package(
+    package = "shigella",
+    "extdata/3.8.2024 Compiled Shigella datav2.xlsx"
+  ) |> 
+  read_excel(sheet = "Compiled")
 ```
 
 ```{r}
@@ -88,7 +76,7 @@ df_xs_strat <-
   
 ```
 
-## Estimate parameters from longitudinal data
+## Model Shigella Serokinetics From Longitudinal Data
 
 ```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
 # Define a function to filter and manipulate Shigella data
@@ -106,14 +94,14 @@ dL_clean <- process_shigella_data(
   )
 
 # prepare data for modeline
-# Create 5 different longdata
-longdata <- prep_data(dL_clean)
+jags_prepped_data <- prep_data(dL_clean)
 
 ```
 
 ```{r}
 #| label: run-jags
-priors <- prep_priors(max_antigens = longdata$n_antigen_isos)
+#| 
+priors <- prep_priors(max_antigens = jags_prepped_data$n_antigen_isos)
 nchains <- 4
 # nr of MC chains to run simultaneously
 nadapt <- 1000
@@ -144,7 +132,7 @@ file.mod <- here::here("inst", "extdata", "model.jags.r")
 set.seed(11325)
 jags.post <- run.jags(
   model = file.mod,
-  data = c(longdata, priors),
+  data = c(jags_prepped_data, priors),
   inits = initsfunction,
   method = "parallel",
   adapt = nadapt,
@@ -157,6 +145,7 @@ jags.post <- run.jags(
 )
 
 curve_params_shigella <- postprocess_jags_output(jags.post)
+use_data(curve_params_shigella, overwrite = TRUE)
 ```
 
 ```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
@@ -212,7 +201,8 @@ max2_ipab_IgG
 # 2.788
 
 # 3) 1/2 the minimum incidence rate from step 1
-# Get incidence rate estimates from each region (4 regions) and get the minimum one and 1/2
+# Get incidence rate estimates from each region (4 regions) 
+# and get the minimum one and 1/2
 min_half_ipab_IgG <- 0.5 * min(incidence_summary$incidence.rate)
 min_half_ipab_IgG
 # 0.185
