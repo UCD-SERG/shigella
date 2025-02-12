@@ -29,12 +29,12 @@ postprocess_jags_output <- function(jags_output) {
   antigen_isos <- unique(curve_params$antigen_iso)
   attr(curve_params, "antigen_isos") <- antigen_isos
   
-  curve_params_shigella <- curve_params %>%
+  to_return <- curve_params %>%
     mutate(
       iter = Iteration,
       chain = Chain,
     ) %>%
     select(antigen_iso, iter, chain, y0, y1, t1, alpha, r)
   
-  return(curve_params_shigella)
+  return(to_return)
 }
