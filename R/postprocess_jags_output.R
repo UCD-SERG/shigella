@@ -5,7 +5,6 @@
 #' @returns a [tibble::tbl_df]
 #' @export
 #'
-#' @examples
 postprocess_jags_output <- function(jags_output) {
   mcmc_list <- coda::as.mcmc.list(jags_output)
   
