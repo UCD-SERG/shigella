@@ -1,5 +1,5 @@
 ---
-title: Model Shigella Serokinetics From Longitudinal Data
+title: Model Shigella Seroresponse Kinetics From Longitudinal Data
 ---
 
 ```{r}
@@ -159,9 +159,9 @@ usethis::use_data(curve_params_shigella, overwrite = TRUE)
 curve_params_shigella |> 
   serocalculator::graph.curve.params(
     show_all_curves = TRUE)
+```
 
-curve_params_shigella |> 
-  # slice_head(n = 200, by = antigen_iso) |>
-  autoplot()
+```{r}
+curve_params_shigella |> autoplot()
 ```
 
