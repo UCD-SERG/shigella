@@ -1,0 +1,15 @@
+comment: true
+
+coverage:
+  status:
+    project: # add everything under here, more options at
+     # https://docs.codecov.com/docs/commit-status
+      default:
+        target: auto
+        threshold: 1%
+        informational: false
+    patch:
+      default:
+        target: auto
+        threshold: 1%
+        informational: false
