@@ -44,13 +44,7 @@ jobs:
           upgrade: "TRUE"
           extra-packages: |
             local::.
-            any::gghalves
-            any::ggplot2
-            any::ggridges
-            any::ggbeeswarm
-            any::PairedData
-            any::metaviz
-            any::metaplus
+            any::rmarkdown
 
       - name: Render README
         run: |
