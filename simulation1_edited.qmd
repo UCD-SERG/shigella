@@ -56,10 +56,10 @@ library(furrr)
 library(dplyr)
 ```
 
-
 # Vary simulation lambdas across the range in the real cross-sectional data
 
-## 1. Estimate the shigella incidence rate using the real cross-sectional Shigella data, 
+## 1. Estimate the shigella incidence rate using the real cross-sectional Shigella data,
+
 ```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
 ##    separately for each geographic region in the data. 
 
@@ -98,41 +98,41 @@ create_xs_data <- function(df, filter_countries, filter_antigen_iso, value_col) 
 }
 
 # Cross-sectional data: MA USA, ipab_IgG
-df_xs_USA_ipab_IgG <- create_xs_data(
+df_xs_USA_sonnei_IgG <- create_xs_data(
   df,
   filter_countries = c("MA USA"),
   filter_antigen_iso = c("IgG"),
-  value_col = n_ipab_MFI
+  value_col = n_sonneiospbsa_MFI
 )
 
 # Cross-sectional data: MA USA, ipab_IgA
 
 # Cross-sectional data: Ghana, ipab_IgG
-df_xs_Ghana_ipab_IgG <- create_xs_data(
+df_xs_Ghana_sonnei_IgG <- create_xs_data(
   df,
   filter_countries = c("Ghana"),
   filter_antigen_iso = c("IgG"),
-  value_col = n_ipab_MFI
+  value_col = n_sonneiospbsa_MFI
 )
 
 # Cross-sectional data: Ghana, ipab_IgA
 
 # Cross-sectional data: Niger, ipab_IgG
-df_xs_Niger_ipab_IgG <- create_xs_data(
+df_xs_Niger_sonnei_IgG <- create_xs_data(
   df,
   filter_countries = c("Niger"),
   filter_antigen_iso = c("IgG"),
-  value_col = n_ipab_MFI
+  value_col = n_sonneiospbsa_MFI
 )
 
 # Cross-sectional data: Niger, ipab_IgA
 
 # Cross-sectional data: Sierra Leone, ipab_IgG
-df_xs_Sierra_ipab_IgG <- create_xs_data(
+df_xs_Sierra_sonnei_IgG <- create_xs_data(
   df,
   filter_countries = c("Sierra Leone"),
   filter_antigen_iso = c("IgG"),
-  value_col = n_ipab_MFI
+  value_col = n_sonneiospbsa_MFI
 )
 
 # Cross-sectional data: Sierra Leone, ipab_IgA
@@ -161,15 +161,14 @@ prepare_df_for_serocalculator <- function(df, age_col = "age", value_col = "valu
 }
 
 # Application
-df_xs_USA_ipab_IgG <- prepare_df_for_serocalculator(df_xs_USA_ipab_IgG)
-df_xs_Ghana_ipab_IgG<- prepare_df_for_serocalculator(df_xs_Ghana_ipab_IgG)
-df_xs_Niger_ipab_IgG<- prepare_df_for_serocalculator(df_xs_Niger_ipab_IgG)
-df_xs_Sierra_ipab_IgG<- prepare_df_for_serocalculator(df_xs_Sierra_ipab_IgG)
+df_xs_USA_sonnei_IgG <- prepare_df_for_serocalculator(df_xs_USA_sonnei_IgG)
+df_xs_Ghana_sonnei_IgG<- prepare_df_for_serocalculator(df_xs_Ghana_sonnei_IgG)
+df_xs_Niger_sonnei_IgG<- prepare_df_for_serocalculator(df_xs_Niger_sonnei_IgG)
+df_xs_Sierra_sonnei_IgG<- prepare_df_for_serocalculator(df_xs_Sierra_sonnei_IgG)
 ```
 
-
-
 ## Get parameters from longitudinal data
+
 ```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
 # Define a function to filter and manipulate Shigella data
 process_shigella_data <- function(data, study_filter, antigen) {
@@ -201,7 +200,7 @@ process_shigella_data <- function(data, study_filter, antigen) {
 }
 
 
-dL_clean <- process_shigella_data(data = df, study_filter = "SOSAR", antigen = n_ipab_MFI)
+dL_clean <- process_shigella_data(data = df, study_filter = "SOSAR", antigen = n_sonneiospbsa_MFI)
 
 
 # Construct the path to "prep_data.r" using here
@@ -309,7 +308,8 @@ noise_df_Sierra <- create_noise_df("Sierra Leone")
 noise_df_Ghana <- create_noise_df("Ghana")
 ```
 
-## 2. Run simulations using: 
+## 2. Run simulations using:
+
 ```{r,echo=FALSE, message=FALSE, warning=FALSE}
 # MA USA
 est_USA <- est.incidence(
@@ -391,12 +391,13 @@ min_half_ipab_IgG
 #0.185
 
 ```
+
 These three values are preliminary observations of lambda from ipab_IgG.
 
 We choose a lambda that is half of the minimum lambda from the four regions.
- 
 
 # Simulation (200times) with the smallest lambda
+
 ```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
 
 # Define the simulation function
@@ -538,8 +539,8 @@ results_400_2 <- simulate_seroincidence(nrep = 400, n_sim = 200,
 plan(sequential)
 ```
 
-
 ## Store each sample size in table
+
 ```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
 # Define a function to generate final tables
 generate_final_table <- function(results_list, sample_size) {
@@ -583,8 +584,6 @@ final_table_300_2 <- generate_final_table(results_300_2, 300)
 final_table_400_1 <- generate_final_table(results_400_1, 400)
 final_table_400_2 <- generate_final_table(results_400_2, 400)
 ```
-
-
 
 ## Graphs of where the x axis is the sample size and the y axis is the empirical standard error
 
@@ -648,7 +647,6 @@ ggplot(summary_metrics_combined, aes(x = sample_size, y = empirical_se, color = 
   ) +
   theme_minimal()
 ```
-
 
 ## Table
 
