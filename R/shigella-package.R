@@ -2,7 +2,17 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom dplyr any_of
 #' @importFrom dplyr filter
 #' @importFrom dplyr mutate
+#' @importFrom dplyr pull
+#' @importFrom dplyr rename
+#' @importFrom dplyr summarize
+#' @importFrom ggplot2 aes
+#' @importFrom ggplot2 geom_line
+#' @importFrom ggplot2 geom_point
+#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 labs
+#' @importFrom ggplot2 theme_minimal
 ## usethis namespace: end
 NULL

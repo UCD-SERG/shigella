@@ -8,8 +8,20 @@
 \description{
 What the package does (one paragraph).
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://ucd-serg.github.io/shigella/}
+}
+
+}
 \author{
-\strong{Maintainer}: First Last \email{first.last@example.com}
+\strong{Maintainer}: Kwan Ho Lee \email{ksjlee@ucdavis.edu}
+
+Authors:
+\itemize{
+  \item Douglas Ezra Morrison \email{demorrison@ucdavis.edu} (\href{https://orcid.org/0000-0002-7195-830X}{ORCID})
+}
 
 }
 \keyword{internal}
