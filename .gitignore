@@ -2,4 +2,13 @@
 .Rhistory
 .RData
 .Ruserdata
+*.xlsx
+docs
+simulation1_edited_files
+simulation1_edited.html
+*.rmarkdown
+**/.quarto/
+data/
+/.quarto/
+*.pdf
 README_files
