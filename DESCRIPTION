@@ -1,6 +1,6 @@
 Package: shigella
 Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9001
+Version: 0.0.0.9002
 Authors@R: c(
     person("Kwan Ho", "Lee", , "ksjlee@ucdavis.edu", role = c("aut", "cre")),
     person("Douglas Ezra", "Morrison", , "demorrison@ucdavis.edu", role = c("aut"),
@@ -44,6 +44,7 @@ Suggests:
     readxl,
     runjags,
     scales,
+    spelling,
     table1,
     tibble,
     tidyr,
@@ -52,3 +53,4 @@ Depends:
     R (>= 3.5)
 LazyData: true
 Config/Needs/website: quarto
+Language: en-US
