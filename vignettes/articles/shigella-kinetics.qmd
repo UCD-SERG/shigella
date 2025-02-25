@@ -44,23 +44,27 @@ library(table1)
 library(tibble)
 library(furrr)
 library(dplyr)
-# library(shigella)
+#library(shigella)
 devtools::load_all()
 ```
 
+# Load the dataset, extract cross-sectional data from a specific region, and generate simulated longitudinal data for specific antigen-isotypes.
 
-
+## Load the dataset
 ```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
 #| label: "load shigella data"
 df <- 
   fs::path_package(
     package = "shigella",
-    "extdata/3.8.2024 Compiled Shigella datav2.xlsx"
+    "data/3.8.2024 Compiled Shigella datav2.xlsx"
   ) |> 
   read_excel(sheet = "Compiled")
 ```
 
+
+## Extract cross-sectional data from a specific region
 ```{r}
+#| label: "Need to review and fix"
 df_xs_strat <- 
   df |> 
   rename(antigen_iso = isotype_name,
@@ -74,12 +78,50 @@ df_xs_strat <-
       ) |> factor()
     ) |> 
   as_pop_data(
-    antigen_isos = "IgG",
+    antigen_isos = "IgG", # load all isotypes, IgG and IgA?
     value = "n_ipab_MFI",
     age = "age",
-    id = "sid"
+    id = "sid" # does not load sid here
   )
-  
+
+
+```
+
+```{r}
+# Application
+df_xs_USA_ipab_IgG <- create_xs_data(
+  df,
+  filter_countries = c("MA USA"),
+  filter_antigen_iso = c("IgG"),
+  value_col = n_ipab_MFI
+) %>%
+  prepare_df_for_serocalculator()
+
+df_xs_Ghana_ipab_IgG<- create_xs_data(
+  df,
+  filter_countries = c("Ghana"),
+  filter_antigen_iso = c("IgG"),
+  value_col = n_ipab_MFI
+) %>%
+  prepare_df_for_serocalculator()
+
+df_xs_Niger_ipab_IgG<- create_xs_data(
+  df,
+  filter_countries = c("Niger"),
+  filter_antigen_iso = c("IgG"),
+  value_col = n_ipab_MFI
+) %>%
+  prepare_df_for_serocalculator()
+
+df_xs_Sierra_ipab_IgG<- create_xs_data(
+  df,
+  filter_countries = c("Sierra Leone"),
+  filter_antigen_iso = c("IgG"),
+  value_col = n_ipab_MFI
+) %>%
+  prepare_df_for_serocalculator()
+
+
 ```
 
 
@@ -150,7 +192,15 @@ jags.post <- run.jags(
   summarise = FALSE
 )
 
-curve_params_shigella <- jags.post |> postprocess_jags_output()
+
+#curve_params_shigella <- jags.post |> postprocess_jags_output() #somehow it doesn't work
+
+# Use Sam's package
+curve_params_shigella <- jags.post |> serodynamics::postprocess_jags_output(
+  ids = attr(jags_prepped_data, "ids"),
+  antigen_isos = attr(jags_prepped_data, "antigens")
+)
+
 usethis::use_data(curve_params_shigella, overwrite = TRUE)
 ```
 
