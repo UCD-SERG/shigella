@@ -1,5 +1,5 @@
 ---
-title: Estimating Optimal Sample Size Through 300 Simulations
+title: Estimating Optimal Sample Size Through 300 Simulations: IpaB
 ---
 
 ```{r}
@@ -49,12 +49,12 @@ devtools::load_all()
 ```
 
 ```{r}
-load("/cloud/project/data/curve_params_shigella_ipab.rda")
-load("/cloud/project/data/incidence_stats_ipab.rda")
+load("/cloud/project/data/curve_params_shigella_ipab.rda") # From the first .qmd file
+load("/cloud/project/data/incidence_stats_ipab.rda") # From the second .qmd file
 ```
 
 
-# Simulation (300 times) with the smallest lambda
+# Simulation (300 iterations) with the smallest lambda (Requires HPC)
 ```{r}
 plan(multicore)  # Works best on HPC
 
@@ -70,16 +70,16 @@ sim_params <- list(
   list(nrep = 400, range = c(2, 5))
 )
 
-# Run simulations in a loop to reduce redundant code
 # You probably need to use the HPC to run the code below to speed it up
 results_list <- lapply(sim_params, function(params) {
   cat("Running simulation for nrep =", params$nrep, "range =", params$range, "\n")
-  simulate_seroincidence2(nrep = params$nrep, n_sim = 300, observed = a, range = params$range) # choose observed value
+  simulate_seroincidence2(nrep = params$nrep, n_sim = 300, observed = incidence_stats_ipab$MinHalf, range = params$range) ### Choose the observed value based on the lambda you want to simulate
 })
 
 # Stop parallel processing
 plan(sequential)  # Return to sequential processing after execution
 ```
+The simulation above should be run on the HPC rather than on a local computer.
 
 ## Generate the final dataset for IpaB with the smallest lambda
 ```{r}
@@ -150,4 +150,7 @@ ggplot(summary_metrics_combined, aes(x = sample_size, y = empirical_se, color = 
 summary_metrics_combined %>%
   kable()
 ```
-# Simulation (300 times) with the median lambda
+
+# Simulation (300 iterations) with the median lambda (Requires HPC)
+
+This part follows the exact same procedure as above, except for changing one input variable from the smallest lambda to the median lambda.

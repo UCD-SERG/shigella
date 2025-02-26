@@ -69,7 +69,7 @@ df_xs_strat <-
   filter(Country != "Dhaka") |> 
   as_pop_data(
     antigen_isos = "IgG",
-    value = "n_ipab_MFI", ## choose your antigen
+    value = "n_ipab_MFI", ## Choose an antigen
     age = "age",
     id = "sid"
   )
@@ -79,7 +79,7 @@ df_xs_strat <-
 
 ```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
 #| label: "Load the simulated longitudinal dataset"
-load("/cloud/project/data/curve_params_shigella_ipab.rda")
+load("/cloud/project/data/curve_params_shigella_ipab.rda") # IpaB-simulated dataset
 ```
 
 
@@ -118,7 +118,7 @@ ests_strat <- est.incidence.by(
 
 incidence_summary <- summary(ests_strat)
 
-# Select only Country and incidence.rate columns
+# Select only the Country and incidence.rate columns to generate the table
 incidence_summary %>%
   select(Country, incidence.rate) %>%
   kable(caption = "Seroincidence Rates by Country")
@@ -149,5 +149,5 @@ kable(incidence_rate_summary, caption = "Incidence Rate Summary")
 
 ```{r}
 incidence_stats_ipab<-incidence_stats 
-usethis::use_data(incidence_stats_ipab, overwrite = TRUE)
+usethis::use_data(incidence_stats_ipab, overwrite = TRUE) # Saving this .rda file for use in the last .qmd file
 ```
