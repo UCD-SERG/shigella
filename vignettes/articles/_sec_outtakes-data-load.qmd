@@ -1,73 +1,153 @@
+---
+title: Summary of Incidence Rates Across Cross-Sectional Data Regions
+---
 
 ```{r}
-# Cross-sectional data: MA USA, ipab_IgG
-df_xs_USA_ipab_IgG <- create_xs_data(
-  df,
-  filter_countries = c("MA USA"),
-  filter_antigen_iso = c("IgG"),
-  value_col = n_ipab_MFI
+#| label: setup
+#| message: false
+#| include: false
+#| echo: false
+
+library(knitr)
+library(future.apply)
+library(future)
+library(gridExtra)
+library(mgcv) # For advanced GAM smoothing
+library(haven)
+library(knitr)
+library(plotly)
+library(kableExtra)
+library(tidyr)
+library(arsenal)
+library(dplyr)
+library(forcats)
+library(huxtable)
+library(magrittr)
+library(parameters)
+library(kableExtra)
+library(ggplot2)
+library(ggeasy)
+library(scales)
+library(patchwork)
+library(tidyverse)
+library(gtsummary)
+library(readxl)
+library(purrr)
+library(serocalculator)
+library(serodynamics)
+library(runjags)
+library(coda)
+library(ggmcmc)
+library(here)
+library(bayesplot)
+library(table1)
+library(tibble)
+library(furrr)
+library(dplyr)
+#library(shigella)
+devtools::load_all()
+```
+
+# Load the dataset, extract cross-sectional data from a specific region
+
+## Load the dataset
+```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
+#| label: "load shigella data"
+df <- 
+  fs::path_package(
+    package = "shigella",
+    "data/3.8.2024 Compiled Shigella datav2.xlsx"
+  ) |> 
+  read_excel(sheet = "Compiled")
+```
+
+```{r}
+df_xs_strat <- 
+  df |> 
+  rename(antigen_iso = isotype_name,
+         Country = site_name) |> 
+  filter(Country != "Dhaka") |> 
+  as_pop_data(
+    antigen_isos = "IgG",
+    value = "n_ipab_MFI", ## choose your antigen
+    age = "age",
+    id = "sid"
+  )
+```
+
+## Create table of incidence.rate of each region
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
+#| label: "Load the simulated longitudinal dataset"
+load("/cloud/project/data/curve_params_shigella_ipab.rda")
+```
+
+
+```{r}
+# Generate noise for each region
+noise_df_USA <- create_noise_df("MA USA")
+noise_df_Niger <- create_noise_df("Niger")
+noise_df_Sierra <- create_noise_df("Sierra Leone")
+noise_df_Ghana <- create_noise_df("Ghana")
+
+noise_df_strat <- 
+  bind_rows(noise_df_USA,
+            noise_df_Niger,
+            noise_df_Sierra,
+            noise_df_Ghana) |> 
+  serocalculator::as_noise_params()
+```
+
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE}
+
+#| label: tbl-ests-strat
+#| tbl-cap: "Stratified estimates of shigella: IpaB"
+
+ests_strat <- est.incidence.by(
+  pop_data = df_xs_strat,
+  curve_param = curve_params_shigella_ipab,
+  noise_params = noise_df_strat,
+  strata = "Country",
+  noise_strata_varnames = "Country",
+  curve_strata_varnames = NULL,
+  antigen_isos = "IgG",
+  num_cores = 2,
+  verbose = FALSE
 )
 
-# Cross-sectional data: MA USA, ipab_IgA
+incidence_summary <- summary(ests_strat)
 
-# Cross-sectional data: Ghana, ipab_IgG
-df_xs_Ghana_ipab_IgG <- create_xs_data(
-  df,
-  filter_countries = c("Ghana"),
-  filter_antigen_iso = c("IgG"),
-  value_col = n_ipab_MFI
-)
+# Select only Country and incidence.rate columns
+incidence_summary %>%
+  select(Country, incidence.rate) %>%
+  kable(caption = "Seroincidence Rates by Country")
+```
 
-# Cross-sectional data: Ghana, ipab_IgA
+```{r}
+#| label: tbl-ests-stat
+#| tbl-cap: "Descriptive statistics of shigella: IpaB"
 
-# Cross-sectional data: Niger, ipab_IgG
-df_xs_Niger_ipab_IgG <- create_xs_data(
-  df,
-  filter_countries = c("Niger"),
-  filter_antigen_iso = c("IgG"),
-  value_col = n_ipab_MFI
-)
-
-# Cross-sectional data: Niger, ipab_IgA
-
-# Cross-sectional data: Sierra Leone, ipab_IgG
-df_xs_Sierra_ipab_IgG <- create_xs_data(
-  df,
-  filter_countries = c("Sierra Leone"),
-  filter_antigen_iso = c("IgG"),
-  value_col = n_ipab_MFI
-)
-
-# Cross-sectional data: Sierra Leone, ipab_IgA
-
-# Application
-df_xs_USA_ipab_IgG <- 
-  df_xs_USA_ipab_IgG |> 
-  as_pop_data(
-    value = "value",
-    id = "id",
-    age = "age"
-  )
-df_xs_Ghana_ipab_IgG <- 
-  df_xs_Ghana_ipab_IgG |>  
-  as_pop_data(
-    value = "value",
-    id = "id",
-    age = "age"
-  )
-df_xs_Niger_ipab_IgG <- 
-  df_xs_Niger_ipab_IgG |> 
-  as_pop_data(
-    value = "value",
-    id = "id",
-    age = "age"
-  )
-df_xs_Sierra_ipab_IgG <- 
-  df_xs_Sierra_ipab_IgG |> 
-  as_pop_data(
-    value = "value",
-    id = "id",
-    age = "age"
+# Calculate median, 2x max, and 1/2 min in a single step
+incidence_stats <- incidence_summary %>%
+  summarise(
+    Median = median(incidence.rate),
+    Max2 = 2 * max(incidence.rate),
+    MinHalf = 0.5 * min(incidence.rate)
   )
 
+# Convert to long format for the summary table
+incidence_rate_summary <- incidence_stats %>%
+  pivot_longer(cols = everything(), names_to = "Metric", values_to = "Value") %>%
+  mutate(Metric = recode(Metric,
+                         "Median" = "Median Incidence Rate",
+                         "Max2" = "2x Maximum Incidence Rate",
+                         "MinHalf" = "1/2 Minimum Incidence Rate"))
+
+kable(incidence_rate_summary, caption = "Incidence Rate Summary")
+```
+
+```{r}
+incidence_stats_ipab<-incidence_stats 
+usethis::use_data(incidence_stats_ipab, overwrite = TRUE)
 ```
