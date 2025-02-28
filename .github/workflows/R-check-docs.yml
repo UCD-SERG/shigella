@@ -7,7 +7,7 @@ name: "Documentation check"
 
 jobs:
   docs-check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
       GITHUB_PAT: ${{ github.token }}
     steps:
