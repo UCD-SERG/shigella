@@ -1,6 +1,6 @@
 Package: shigella
 Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9003
+Version: 0.0.0.9004
 Authors@R: c(
     person("Kwan Ho", "Lee", , "ksjlee@ucdavis.edu", role = c("aut", "cre")),
     person("Douglas Ezra", "Morrison", , "demorrison@ucdavis.edu", role = c("aut"),

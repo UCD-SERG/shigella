@@ -8,6 +8,7 @@
 
 ## Internal changes
 
+* added `.lintr` configuration file
 * Moved helper functions into `R/` subdirectory (#1)
 * simplified spell-check Github Action (#3)
 
