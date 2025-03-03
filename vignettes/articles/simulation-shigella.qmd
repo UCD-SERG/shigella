@@ -1,5 +1,5 @@
 ---
-title: Estimating Optimal Sample Size Through 300 Simulations: IpaB
+title: "Estimating Optimal Sample Size Through 300 Simulations: IpaB"
 ---
 
 ```{r}
