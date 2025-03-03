@@ -139,7 +139,6 @@ ggplot(summary_metrics_combined, aes(x = sample_size, y = empirical_se, color = 
   geom_line() +
   geom_point() +
   labs(
-    title = "IpaB-IgG with the Smallest Lambda",
     x = "Sample Size",
     y = "Empirical Standard Error",
     color = "Age Group"
