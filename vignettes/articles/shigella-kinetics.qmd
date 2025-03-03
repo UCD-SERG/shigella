@@ -44,12 +44,13 @@ library(table1)
 library(tibble)
 library(furrr)
 library(dplyr)
-# library(shigella)
+#library(shigella)
 devtools::load_all()
 ```
 
+# Load the dataset, extract cross-sectional data from a specific region, and generate simulated longitudinal data for specific antigen-isotypes.
 
-
+## Load the dataset
 ```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
 #| label: "load shigella data"
 df <- 
@@ -60,7 +61,11 @@ df <-
   read_excel(sheet = "Compiled")
 ```
 
+
+<!--
+## Extract cross-sectional data from a specific region
 ```{r}
+#| label: "Need to review and fix"
 df_xs_strat <- 
   df |> 
   rename(antigen_iso = isotype_name,
@@ -74,23 +79,66 @@ df_xs_strat <-
       ) |> factor()
     ) |> 
   as_pop_data(
-    antigen_isos = "IgG",
+    antigen_isos = "IgG", # load all isotypes, IgG and IgA?
     value = "n_ipab_MFI",
     age = "age",
-    id = "sid"
+    id = "sid" # does not load sid here
   )
-  
+
+
 ```
 
+```{r}
+# Application
+# Cross-sectional data: MA USA, ipab_IgG
+df_xs_USA_ipab_IgG <- create_xs_data(
+  df,
+  filter_countries = c("MA USA"),
+  filter_antigen_iso = c("IgG"),
+  value_col = n_ipab_MFI
+) %>%
+  prepare_df_for_serocalculator()
+
+# Cross-sectional data: Ghana, ipab_IgG
+df_xs_Ghana_ipab_IgG<- create_xs_data(
+  df,
+  filter_countries = c("Ghana"),
+  filter_antigen_iso = c("IgG"),
+  value_col = n_ipab_MFI
+) %>%
+  prepare_df_for_serocalculator()
+
+# Cross-sectional data: Niger, ipab_IgG
+df_xs_Niger_ipab_IgG<- create_xs_data(
+  df,
+  filter_countries = c("Niger"),
+  filter_antigen_iso = c("IgG"),
+  value_col = n_ipab_MFI
+) %>%
+  prepare_df_for_serocalculator()
+
+# Cross-sectional data: Sierra Leone, ipab_IgG
+df_xs_Sierra_ipab_IgG<- create_xs_data(
+  df,
+  filter_countries = c("Sierra Leone"),
+  filter_antigen_iso = c("IgG"),
+  value_col = n_ipab_MFI
+) %>%
+  prepare_df_for_serocalculator()
 
 
+```
+-->
+I think the commented-out section above is not necessary in this .qmd file. I would like to generate simulated data from the longitudinal data for this .qmd file only. The section above will be handled in the _ses_outtakes-data-load.qmd file.
+
+## Generate simulated longitudinal data (choose your antigen)
 ```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
 # Define a function to filter and manipulate Shigella data
 
 dL_clean <- process_shigella_data(
   data = df, 
   study_filter = "SOSAR", 
-  antigen = n_ipab_MFI
+  antigen = n_ipab_MFI ### Modify this input to use different antigens.
 ) |> 
   as_case_data(
     id_var = "index_id",
@@ -150,10 +198,19 @@ jags.post <- run.jags(
   summarise = FALSE
 )
 
-curve_params_shigella <- jags.post |> postprocess_jags_output()
-usethis::use_data(curve_params_shigella, overwrite = TRUE)
+
+#curve_params_shigella <- jags.post |> postprocess_jags_output() #somehow it doesn't work
+
+# Use Sam's package rather than my current R function
+curve_params_shigella_ipab <- jags.post |> serodynamics::postprocess_jags_output(
+  ids = attr(jags_prepped_data, "ids"),
+  antigen_isos = attr(jags_prepped_data, "antigens")
+)
+
+usethis::use_data(curve_params_shigella_ipab, overwrite = TRUE)
 ```
 
+## Exploring the simulated longitudinal data
 ```{r}
 
 curve_params_shigella |> 
@@ -164,4 +221,5 @@ curve_params_shigella |>
 ```{r}
 curve_params_shigella |> autoplot()
 ```
+
 
