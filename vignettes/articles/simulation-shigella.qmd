@@ -133,6 +133,8 @@ kable(summary_metrics_combined,
 
 ## Plot with color to differentiate age groups
 ```{r}
+#| fig-cap: "IpaB-IgG with the Smallest Lambda"
+#| label: fig-se-IpaB-IgG-min-lambda
 ggplot(summary_metrics_combined, aes(x = sample_size, y = empirical_se, color = Age_Group)) +
   geom_line() +
   geom_point() +
