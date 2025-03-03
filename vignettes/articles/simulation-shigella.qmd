@@ -50,7 +50,7 @@ devtools::load_all()
 
 ```{r}
 data("curve_params_shigella_ipab", package = "shigella")
-load("/cloud/project/data/incidence_stats_ipab.rda") # From the second .qmd file
+data("incidence_stats_ipab", package = "shigella")
 ```
 
 
