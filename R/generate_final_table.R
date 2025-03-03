@@ -4,7 +4,7 @@ generate_final_table <- function(results_list, sample_size) {
   summary_results <- list()
   
   # Loop through each of the 100 results and extract the required columns
-  for (i in 1:300) {
+  for (i in 1:length(results_list) {
     # Extract the summary for each result
     result_summary <- summary(results_list[[i]]$est1)
     
