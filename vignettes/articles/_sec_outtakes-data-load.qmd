@@ -79,7 +79,7 @@ df_xs_strat <-
 
 ```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
 #| label: "Load the simulated longitudinal dataset"
-load("/cloud/project/data/curve_params_shigella_ipab.rda") # IpaB-simulated dataset
+data("curve_params_shigella_ipab", package = "shigella")
 ```
 
 
