@@ -6,6 +6,8 @@
 
 ## Bug fixes
 
+None yet
+
 ## Internal changes
 
 * Moved helper functions into `R/` subdirectory (#1)
