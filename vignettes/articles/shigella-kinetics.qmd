@@ -44,7 +44,7 @@ library(table1)
 library(tibble)
 library(furrr)
 library(dplyr)
-#library(shigella)
+library(shigella)
 devtools::load_all()
 ```
 
