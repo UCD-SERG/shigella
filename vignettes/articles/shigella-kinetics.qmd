@@ -56,7 +56,7 @@ devtools::load_all()
 df <- 
   fs::path_package(
     package = "shigella",
-    "data/3.8.2024 Compiled Shigella datav2.xlsx"
+    "extdata/3.8.2024 Compiled Shigella datav2.xlsx"
   ) |> 
   read_excel(sheet = "Compiled")
 ```

@@ -45,3 +45,7 @@ postprocess_jags_output <- function(jags_output) {
   
   return(to_return)
 }
+
+
+
+

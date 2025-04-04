@@ -66,6 +66,10 @@ simulate_seroincidence2 <- function(nrep, n_sim, observed, range = NULL) {
   
   # Ensure sequential processing after function execution
   plan(sequential)
-  
+  results <- results |> 
+     structure(
+         sample_size = nrep,
+         age_range = paste(range, collapse = " - ")
+      )
   return(results)
 }

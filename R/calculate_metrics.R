@@ -14,7 +14,7 @@
 #' calculate_metrics(data, sample_size = 100, age_group = "Age 0-2")
 #' }
 #' @export
-calculate_metrics <- function(data, sample_size, age_group) {
+calculate_metrics <- function(data, sample_size = attr(data, "sample_size, age_group = attr(data, "age_group") {
   data.frame(
     sample_size = sample_size,
     empirical_se = sd(data$incidence.rate, na.rm = TRUE),

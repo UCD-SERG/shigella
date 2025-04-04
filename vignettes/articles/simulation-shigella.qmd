@@ -1,5 +1,5 @@
 ---
-title: Estimating Optimal Sample Size Through 300 Simulations: IpaB
+title: "Estimating Optimal Sample Size Through 300 Simulations: IpaB"
 ---
 
 ```{r}
@@ -49,8 +49,8 @@ devtools::load_all()
 ```
 
 ```{r}
-load("/cloud/project/data/curve_params_shigella_ipab.rda") # From the first .qmd file
-load("/cloud/project/data/incidence_stats_ipab.rda") # From the second .qmd file
+data("curve_params_shigella_ipab", package = "shigella")
+data("incidence_stats_ipab", package = "shigella")
 ```
 
 
@@ -133,11 +133,12 @@ kable(summary_metrics_combined,
 
 ## Plot with color to differentiate age groups
 ```{r}
+#| fig-cap: "IpaB-IgG with the Smallest Lambda"
+#| label: fig-se-IpaB-IgG-min-lambda
 ggplot(summary_metrics_combined, aes(x = sample_size, y = empirical_se, color = Age_Group)) +
   geom_line() +
   geom_point() +
   labs(
-    title = "IpaB-IgG with the Smallest Lambda",
     x = "Sample Size",
     y = "Empirical Standard Error",
     color = "Age Group"
