@@ -1,11 +1,16 @@
 Package: shigella
-Title: What the Package Does (One Line, Title Case)
+Title: Modeling Shigella Antibody Kinetics Using Hierarchical Bayesian Methods
 Version: 0.0.0.9004
 Authors@R: c(
     person("Kwan Ho", "Lee", , "ksjlee@ucdavis.edu", role = c("aut", "cre")),
     person("Douglas Ezra", "Morrison", , "demorrison@ucdavis.edu", role = c("aut"),
            comment = c(ORCID = "0000-0002-7195-830X")))
-Description: What the package does (one paragraph).
+Description: Tools for modeling longitudinal antibody kinetics following Shigella infection, 
+developed to support Chapter 1 of a doctoral dissertation. The package includes 
+functions to run hierarchical Bayesian models using JAGS, extract posterior summaries, 
+and visualize decay curves across multiple antigens and isotypes. 
+It extends and reuses components from the 'serodynamics' and 'serocalculator' packages, 
+tailored specifically to the analysis needs of Shigella seroepidemiology.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -16,10 +21,21 @@ Imports:
     future.apply,
     ggplot2,
     gridExtra,
-    serodynamics (>= 0.0.0.9011)
+    coda,
+    ggmcmc (>= 1.5.1.1),
+    purrr,
+    rlang,
+    runjags,
+    scales,
+    stats,
+    tibble,
+    tidyr,
+    serodynamics (>= 0.0.0.9027),
+    serocalculator
 URL: https://ucd-serg.github.io/shigella/
 Remotes: 
-    UCD-SERG/serodynamics
+    UCD-SERG/serodynamics,
+    UCD-SERG/serocalculator
 Suggests: 
     arsenal,
     bayesplot,
@@ -48,9 +64,11 @@ Suggests:
     table1,
     tibble,
     tidyr,
-    tidyverse
+    tidyverse,
+    testthat (>= 3.0.0)
 Depends: 
-    R (>= 3.5)
+    R (>= 4.1.0)
 LazyData: true
 Config/Needs/website: quarto
 Language: en-US
+VignetteBuilder: knitr
