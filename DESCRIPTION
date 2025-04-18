@@ -6,11 +6,11 @@ Authors@R: c(
     person("Douglas Ezra", "Morrison", , "demorrison@ucdavis.edu", role = c("aut"),
            comment = c(ORCID = "0000-0002-7195-830X")))
 Description: Tools for modeling longitudinal antibody kinetics following Shigella infection, 
-developed to support Chapter 1 of a doctoral dissertation. The package includes 
-functions to run hierarchical Bayesian models using JAGS, extract posterior summaries, 
-and visualize decay curves across multiple antigens and isotypes. 
-It extends and reuses components from the 'serodynamics' and 'serocalculator' packages, 
-tailored specifically to the analysis needs of Shigella seroepidemiology.
+  developed to support Chapter 1 of a doctoral dissertation. The package includes 
+  functions to run hierarchical Bayesian models using JAGS, extract posterior summaries, 
+  and visualize decay curves across multiple antigens and isotypes. 
+  It extends and reuses components from the 'serodynamics' and 'serocalculator' packages, 
+  tailored specifically to the analysis needs of Shigella seroepidemiology.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
