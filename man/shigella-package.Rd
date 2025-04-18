@@ -4,9 +4,9 @@
 \name{shigella-package}
 \alias{shigella}
 \alias{shigella-package}
-\title{shigella: What the Package Does (One Line, Title Case)}
+\title{shigella: Modeling Shigella Antibody Kinetics Using Hierarchical Bayesian Methods}
 \description{
-What the package does (one paragraph).
+Tools for modeling longitudinal antibody kinetics following Shigella infection, developed to support Chapter 1 of a doctoral dissertation. The package includes functions to run hierarchical Bayesian models using JAGS, extract posterior summaries, and visualize decay curves across multiple antigens and isotypes. It extends and reuses components from the 'serodynamics' and 'serocalculator' packages, tailored specifically to the analysis needs of Shigella seroepidemiology.
 }
 \seealso{
 Useful links:

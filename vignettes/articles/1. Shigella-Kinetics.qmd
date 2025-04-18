@@ -1,0 +1,164 @@
+---
+title: "Shigella-Kinetics"
+author: "Kwan Ho Lee"
+date: "`r Sys.Date()`"
+format: pdf
+jupyter: false
+---
+
+
+```{r}
+#| label: setup
+#| message: false
+#| include: false
+#| echo: false
+
+
+library(serocalculator)
+library(serodynamics)
+library(readxl)
+library(rlang)
+library(dplyr)
+library(rjags)
+
+devtools::install()
+devtools::load_all()
+```
+
+# Introduction
+
+This vignette demonstrates modeling longitudinal antibody responses using hierarchical Bayesian models implemented in JAGS.
+
+
+# Load the processed Shigella dataset
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
+#| label: "load shigella data"
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+df <- 
+  fs::path_package(
+    package = "shigella",
+    "extdata/3.8.2024 Compiled Shigella datav2.xlsx"
+  ) |> 
+  read_excel(sheet = "Compiled")
+```
+
+```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
+#| label: "manipulate Shigella data"
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+
+# filter ipab
+dL_clean_ipab <- process_shigella_data(
+  data         = df,
+  study_filter = "SOSAR",
+  antigen      = n_ipab_MFI
+)
+# filter sf2a
+dL_clean_sf2a <- process_shigella_data(
+  data         = df,
+  study_filter = "SOSAR",
+  antigen      = n_sf2aospbsa_MFI
+)
+# filter sf3a
+dL_clean_sf3a <- process_shigella_data(
+  data         = df,
+  study_filter = "SOSAR",
+  antigen      = n_sf3aospbsa_MFI
+)
+# filter sf6
+dL_clean_sf6 <- process_shigella_data(
+  data         = df,
+  study_filter = "SOSAR",
+  antigen      = n_sf6ospbsa_MFI
+)
+# filter sonnei
+dL_clean_sonnei <- process_shigella_data(
+  data         = df,
+  study_filter = "SOSAR",
+  antigen      = n_sonneiospbsa_MFI
+)
+```
+
+```{r}
+#| label: "prep Shigella data"
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+
+prepped_data_ipab <- prep_data(dL_clean_ipab)
+prepped_data_sf2a <- prep_data(dL_clean_sf2a)
+prepped_data_sf3a <- prep_data(dL_clean_sf3a)
+prepped_data_sf6 <- prep_data(dL_clean_sf6)
+prepped_data_sonnei <- prep_data(dL_clean_sonnei)
+
+```
+
+# Run the model using run_mod() from serodynamics package
+```{r,echo=FALSE, message=FALSE, warning=FALSE,results='hide'}
+#| label: "Run the model"
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+
+ipab_model<-run_mod(
+  data=dL_clean_ipab,
+  file_mod=fs::path_package("shigella", "inst/extdata/model.jags.r"),
+  nchain = 4,
+  nadapt = 1000,
+  nburn = 100,
+  nmc = 100,
+  niter = 1000,
+  strat = NA
+)
+```
+
+
+# Extract posterior summaries 
+
+```{r}
+#| label: "Extract posterior summaries"
+#| echo: false
+#| message: false
+#| warning: false
+curve_params_ipab <- ipab_model$jags.post$None|> 
+  serodynamics:::postprocess_jags_output(
+    ids = attr(prepped_data_ipab, "ids"),
+    antigen_isos = attr(prepped_data_ipab, "antigens")
+  )
+
+```
+
+
+# Use graph.curve.params()
+
+## Plot curves
+
+Keep using serocalculator function? or create new one with posterior predictive interval?
+show all curves with median curve only + credible interval
+
+```{r}
+#| label: "Median predicted decay curves"
+#| echo: false
+#| message: false
+#| warning: false
+
+graph.curve.params(curve_params_ipab, show_all_curves = TRUE)
+
+graph.curve.params(curve_params_ipab)
+```
+
+## Include 95% credible intervals for that median curve
+
+
+# Do this for each of the 10 antigen–isotype combinations
+
+
+# Conclusion
