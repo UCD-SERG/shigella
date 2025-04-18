@@ -118,6 +118,17 @@ ipab_model<-run_mod(
   niter = 1000,
   strat = NA
 )
+
+sf2a_model<-run_mod(
+  data=dL_clean_sf2a,
+  file_mod=fs::path_package("shigella", "inst/extdata/model.jags.r"),
+  nchain = 4,
+  nadapt = 1000,
+  nburn = 100,
+  nmc = 100,
+  niter = 1000,
+  strat = NA
+)
 ```
 
 
@@ -134,6 +145,12 @@ curve_params_ipab <- ipab_model$jags.post$None|>
     antigen_isos = attr(prepped_data_ipab, "antigens")
   )
 
+curve_params_sf2a <- sf2a_model$jags.post$None|> 
+  serodynamics:::postprocess_jags_output(
+    ids = attr(prepped_data_sf2a, "ids"),
+    antigen_isos = attr(prepped_data_sf2a, "antigens")
+  )
+
 ```
 
 
@@ -145,17 +162,26 @@ Keep using serocalculator function? or create new one with posterior predictive 
 show all curves with median curve only + credible interval
 
 ```{r}
-#| label: "Median predicted decay curves"
+#| label: "Median predicted decay curves ipab"
 #| echo: false
 #| message: false
 #| warning: false
 
 graph.curve.params(curve_params_ipab, show_all_curves = TRUE)
-
 graph.curve.params(curve_params_ipab)
 ```
+```{r}
+#| label: "Median predicted decay curves sf2a"
+#| echo: false
+#| message: false
+#| warning: false
 
-## Include 95% credible intervals for that median curve
+graph.curve.params(curve_params_sf2a, show_all_curves = TRUE)
+graph.curve.params(curve_params_sf2a)
+
+```
+
+## Include 95% credible intervals for that median curve (just credible interval not PPI)
 
 
 # Do this for each of the 10 antigen–isotype combinations
