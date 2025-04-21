@@ -8,3 +8,6 @@
 ^vignettes/articles/*_files$
 ^vignettes/articles$
 ^codecov\.yml$
+^shigella\.Rcheck$
+^shigella.*\.tar\.gz$
+^shigella.*\.tgz$

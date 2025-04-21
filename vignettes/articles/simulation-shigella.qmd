@@ -1,0 +1,157 @@
+---
+title: "Estimating Optimal Sample Size Through 300 Simulations: IpaB"
+---
+
+```{r}
+#| label: setup
+#| message: false
+#| include: false
+#| echo: false
+
+library(knitr)
+library(future.apply)
+library(future)
+library(gridExtra)
+library(mgcv) # For advanced GAM smoothing
+library(haven)
+library(knitr)
+library(plotly)
+library(kableExtra)
+library(tidyr)
+library(arsenal)
+library(dplyr)
+library(forcats)
+library(huxtable)
+library(magrittr)
+library(parameters)
+library(kableExtra)
+library(ggplot2)
+library(ggeasy)
+library(scales)
+library(patchwork)
+library(tidyverse)
+library(gtsummary)
+library(readxl)
+library(purrr)
+library(serocalculator)
+library(serodynamics)
+library(runjags)
+library(coda)
+library(ggmcmc)
+library(here)
+library(bayesplot)
+library(table1)
+library(tibble)
+library(furrr)
+library(dplyr)
+#library(shigella)
+devtools::load_all()
+```
+
+```{r}
+data("curve_params_shigella_ipab", package = "shigella")
+data("incidence_stats_ipab", package = "shigella")
+```
+
+
+# Simulation (300 iterations) with the smallest lambda (Requires HPC)
+```{r}
+plan(multicore)  # Works best on HPC
+
+# Define parameter sets
+sim_params <- list(
+  list(nrep = 100, range = c(0, 2)),
+  list(nrep = 100, range = c(2, 5)),
+  list(nrep = 200, range = c(0, 2)),
+  list(nrep = 200, range = c(2, 5)),
+  list(nrep = 300, range = c(0, 2)),
+  list(nrep = 300, range = c(2, 5)),
+  list(nrep = 400, range = c(0, 2)),
+  list(nrep = 400, range = c(2, 5))
+)
+
+# You probably need to use the HPC to run the code below to speed it up
+results_list <- lapply(sim_params, function(params) {
+  cat("Running simulation for nrep =", params$nrep, "range =", params$range, "\n")
+  simulate_seroincidence2(nrep = params$nrep, n_sim = 300, observed = incidence_stats_ipab$MinHalf, range = params$range) ### Choose the observed value based on the lambda you want to simulate
+})
+
+# Stop parallel processing
+plan(sequential)  # Return to sequential processing after execution
+```
+The simulation above should be run on the HPC rather than on a local computer.
+
+## Generate the final dataset for IpaB with the smallest lambda
+```{r}
+# Assign results to variables
+results_100_1 <- results_list[[1]]
+results_100_2 <- results_list[[2]]
+results_200_1 <- results_list[[3]]
+results_200_2 <- results_list[[4]]
+results_300_1 <- results_list[[5]]
+results_300_2 <- results_list[[6]]
+results_400_1 <- results_list[[7]]
+results_400_2 <- results_list[[8]]
+
+# For different sample sizes
+final_table_100_1 <- generate_final_table(results_100_1, 100)
+final_table_100_2 <- generate_final_table(results_100_2, 100)
+final_table_200_1 <- generate_final_table(results_200_1, 200)
+final_table_200_2 <- generate_final_table(results_200_2, 200)
+final_table_300_1 <- generate_final_table(results_300_1, 300)
+final_table_300_2 <- generate_final_table(results_300_2, 300)
+final_table_400_1 <- generate_final_table(results_400_1, 400)
+final_table_400_2 <- generate_final_table(results_400_2, 400)
+```
+
+```{r}
+# Prepare Data and Parameters 
+# List of all final tables
+final_tables <- list(final_table_100_1, final_table_100_2,
+                     final_table_200_1, final_table_200_2,
+                     final_table_300_1, final_table_300_2,
+                     final_table_400_1, final_table_400_2)
+
+# Corresponding sample sizes
+sample_sizes <- rep(c(100, 200, 300, 400), each = 2)
+# Corresponding age groups
+age_groups <- rep(c("Age 0-2", "Age 2-5"), times = 4)
+
+# Calculate Metrics in a Single Step 
+summary_metrics_combined <- pmap_dfr(
+  list(final_tables, sample_sizes, age_groups),
+  calculate_metrics
+)
+
+# Display the summary_metrics_combined as a table
+kable(summary_metrics_combined, 
+      caption = "Summary of Empirical Standard Errors by Sample Size and Age Group", 
+      digits = 3,  # Rounds numerical values to 3 decimal places
+      align = "c")  # Center align all columns
+```
+
+
+## Plot with color to differentiate age groups
+```{r}
+#| fig-cap: "IpaB-IgG with the Smallest Lambda"
+#| label: fig-se-IpaB-IgG-min-lambda
+ggplot(summary_metrics_combined, aes(x = sample_size, y = empirical_se, color = Age_Group)) +
+  geom_line() +
+  geom_point() +
+  labs(
+    x = "Sample Size",
+    y = "Empirical Standard Error",
+    color = "Age Group"
+  ) +
+  theme_minimal()
+```
+
+## Table: Smallest Lambda for IpaB-IgG
+```{r}
+summary_metrics_combined %>%
+  kable()
+```
+
+# Simulation (300 iterations) with the median lambda (Requires HPC)
+
+This part follows the exact same procedure as above, except for changing one input variable from the smallest lambda to the median lambda.

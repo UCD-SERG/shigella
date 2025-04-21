@@ -6,6 +6,8 @@
 
 ## Bug fixes
 
+None yet
+
 ## Internal changes
 
 * added `.lintr` configuration file
