@@ -66,6 +66,7 @@ Suggests:
     tidyr,
     tidyverse,
     testthat (>= 3.0.0)
+    pkgdown
 Depends: 
     R (>= 4.1.0)
 LazyData: true
