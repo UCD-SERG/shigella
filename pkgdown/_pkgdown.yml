@@ -15,8 +15,8 @@ reference:
 - title: Pre-processing data
   contents:
   - process_shigella_data
-- title: Example data sets
-  contents:
-  - shigella_jags_output
+#- title: Example data sets
+#  contents:
+#  - shigella_jags_output
   
   
