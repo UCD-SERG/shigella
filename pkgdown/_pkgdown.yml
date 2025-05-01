@@ -1,4 +1,5 @@
 url: https://ucd-serg.github.io/shigella/
+
 template:
   bootstrap: 5
   light-switch: true
@@ -8,7 +9,8 @@ development:
 
 search:
   exclude: ['preview/']
-  
+
+# Reference documentation (function index)  
 reference:
 - title: Pre-processing data
   contents:
@@ -16,3 +18,5 @@ reference:
 - title: Example data sets
   contents:
   - shigella_jags_output
+  
+  
