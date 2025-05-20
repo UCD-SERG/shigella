@@ -116,7 +116,8 @@ ipab_model<-run_mod(
   nburn = 100,
   nmc = 100,
   niter = 1000,
-  strat = NA
+  strat = NA,
+  with_post = T
 )
 
 sf2a_model<-run_mod(
@@ -127,7 +128,8 @@ sf2a_model<-run_mod(
   nburn = 100,
   nmc = 100,
   niter = 1000,
-  strat = NA
+  strat = NA,
+  with_post = T
 )
 ```
 
