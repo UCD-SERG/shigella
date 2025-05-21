@@ -13,6 +13,8 @@ jupyter: false
 #| include: false
 #| echo: false
 
+# Using developing branch which is not yet merge into main
+remotes::install_github("UCD-SERG/serocalculator@update_graph_curve")
 
 library(serocalculator)
 library(serodynamics)
@@ -112,10 +114,10 @@ ipab_model<-run_mod(
   data=dL_clean_ipab,
   file_mod=fs::path_package("shigella", "inst/extdata/model.jags.r"),
   nchain = 4,
-  nadapt = 1000,
+  nadapt = 5000,
   nburn = 100,
   nmc = 100,
-  niter = 1000,
+  niter = 5000,
   strat = NA,
   with_post = T
 )
@@ -124,10 +126,10 @@ sf2a_model<-run_mod(
   data=dL_clean_sf2a,
   file_mod=fs::path_package("shigella", "inst/extdata/model.jags.r"),
   nchain = 4,
-  nadapt = 1000,
+  nadapt = 5000,
   nburn = 100,
   nmc = 100,
-  niter = 1000,
+  niter = 5000,
   strat = NA,
   with_post = T
 )
@@ -169,17 +171,21 @@ show all curves with median curve only + credible interval
 #| message: false
 #| warning: false
 
-graph.curve.params(curve_params_ipab, show_all_curves = TRUE)
-graph.curve.params(curve_params_ipab)
+graph.curve.params(curve_params_ipab, show_all_curves = TRUE,
+                   quantiles = c(0.5))
 ```
+
 ```{r}
 #| label: "Median predicted decay curves sf2a"
 #| echo: false
 #| message: false
 #| warning: false
 
-graph.curve.params(curve_params_sf2a, show_all_curves = TRUE)
-graph.curve.params(curve_params_sf2a)
+# Use developing branch which is not yet merge into main
+remotes::install_github("UCD-SERG/serocalculator@update_graph_curve")
+
+graph.curve.params(curve_params_sf2a, show_all_curves = TRUE,
+                   quantiles = c(0.5))
 
 ```
 
