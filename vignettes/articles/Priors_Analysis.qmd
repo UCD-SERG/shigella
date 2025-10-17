@@ -1,0 +1,1315 @@
+---
+title: "Priors Analysis of Shigella"
+subtitle: "Test 1: Sensitivity Analysis of Prior Precision for Shigella (prec_hyp_param)"
+author: "Kwan Ho Lee"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: true             # enable table of contents
+    toc_depth: 3          # up to three heading levels (#, ##, ###)
+    toc_float: true       # floating TOC on the side
+    highlight: tango      # syntax highlighting style
+  pdf_document:
+    toc: true             # also enable table of contents for PDF
+    toc_depth: 3          # same heading depth for PDF
+    highlight: tango      # consistent highlighting
+---
+
+```{r echo=F, include=F, warning=F, notes = F}
+
+library(dplyr)
+library(runjags)
+library(readr)
+library(serodynamics)
+library(serocalculator)
+library(tidyverse)
+library(runjags)
+library(coda)
+library(ggmcmc)
+library(ggbeeswarm)
+library(ggpubr)
+library(knitr)
+library(table1)
+library(readxl)
+devtools::load_all()
+
+options(scipen = 99, digits = 4)
+
+#model file
+file.mod <- fs::path_package("serodynamics", "extdata/model.jags")
+```
+
+```{r}
+#| label: "load shigella data"
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+df <- 
+  fs::path_package(
+    package = "shigella",
+    "extdata/3.8.2024 Compiled Shigella datav2.xlsx"
+  ) |> 
+  read_excel(sheet = "Compiled")
+```
+
+```{r}
+#| label: "manipulate Shigella data"
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+
+# filter ipab
+dL_clean_Ipab <- process_shigella_data(
+  data         = df,
+  study_filter = "SOSAR",
+  antigen      = n_ipab_MFI
+)
+
+dL_clean_Ipab_IgG<-dL_clean_Ipab %>%
+  filter(antigen_iso == "IgG")
+
+```
+
+# Analaysis overview:
+
+In this analysis, we are examining how **changing hyperpriors** for
+
+-   `prec_hyp_param` (spread/uncertainty) and
+
+-   `mu_hyp_param` (center/average guess)
+
+affects **R̂ values (convergence)** and **parameter estimates** in our Bayesian hierarchical model.
+
+The Shigella dataset is filtered to include only the **IpaB_IgG biomarker**. All JAGS models were run with the following constants:
+
+-   `nchain = 4`, `nadapt = 1000`, `nburn = 500`, `nmc = 2500`, `niter = 5000`.
+
+# Test 1: Sensitivity analysis of prior spread (`prec_hyp_param`)
+
+**Goal**: Check how the model behaves when we change the **prior precision** (spread) for each parameter, one at a time. This tests whether the model is sensitive to overly tight or overly vague priors, and helps identify a safe level of spread that supports good convergence.
+
+**Setup**:
+
+-   Default priors for means:
+
+    `mu.hyp = c(1.0, 7.0, 1.0, -2.0, -3.0)`
+
+-   Precision sweep values:
+
+    `prec.hyp = {10000, 1000, 100, 10, 1, 0.1, 0.01, 0.001, 0.00001}`
+
+-   Other hyperpriors:
+
+    `omega = diag(c(10,10,10,10,10,10)), wishdf = 20, prec.logy.hyp = c(4.0,1)`
+
+**Method**:
+
+-   Vary the precision for one parameter at a time (e.g., $y_0$), while holding the other four precisions fixed.
+
+-   For each run, record how $\hat{R}$ and parameter estimates for all parameters respond.
+
+**Interpretation**:
+
+-   High precision (narrow prior) forces estimates close to the mean guess.
+
+-   Low precision (diffuse prior) gives more freedom but may cause poor convergence.
+
+-   The goal is to identify a stable range of precision values that allow good convergence ($\hat{R} \approx 1$, stable ESS) without over-constraining the model.
+
+------------------------------------------------------------------------
+
+```{r echo=F, warning=F, notes=F, include = F}
+# --- summarize with serodynamics::post_summ() by prior value -----------------
+post_summ_by_prior <- function(data,
+                               iso   = unique(data$Iso_type),
+                               param = unique(data$Parameter),
+                               strat = unique(data$Stratification)) {
+  # runs post_summ() separately for each Priors value and binds results
+  data %>%
+    dplyr::group_by(Priors) %>%
+    dplyr::group_modify(~ serodynamics::post_summ(.x, iso = iso,
+                                                  param = param, strat = strat)) %>%
+    dplyr::ungroup()
+}
+
+mu_vec <- c(y0 = 1.0, y1 = 7.0, t1 = 1.0, alpha = -2.0, shape = -3.0)  # from setup
+```
+
+```{r echo=F, warning=F, notes=F, include = F}
+# ---- main plotting function: type = "estimate" or "rhat" -------------------
+plot_dx <- function(mod_out,
+                    type  = c("estimate","rhat")[1],
+                    param = c("y0","y1","t1","shape","alpha"),
+                    prior = "Precision",
+                    mu_hyp  = NULL,
+                    mu_scale = c("log","log10","identity")[1]) {
+  
+  type <- tolower(type)
+  if (!type %in% c("estimate","rhat")) stop("`type` must be 'estimate' or 'rhat'.")
+  
+  mod_out <- mod_out %>% dplyr::filter(.data$Parameter %in% param)
+  
+  to_raw <- function(x, scale) {
+    switch(scale,
+           "log"      = exp(x),
+           "log10"    = 10^x,
+           "identity" = x)
+  }
+  
+  if (type == "estimate") {
+    post_sum <- post_summ_by_prior(mod_out, param = param) %>%
+      dplyr::transmute(Parameter, Priors,
+                       median  = .data$Median,
+                       two_5   = .data$`2.5%`,
+                       nine_75 = .data$`97.5%`)
+    
+    prior_means_df <- NULL
+    if (!is.null(mu_hyp)) {
+      ok <- intersect(names(mu_hyp), unique(post_sum$Parameter))
+      if (length(ok) > 0) {
+        prior_means_df <- tibble::tibble(
+          Parameter  = ok,
+          prior_mean = to_raw(unname(mu_hyp[ok]), mu_scale)
+        )
+      }
+    }
+    
+    g <- ggplot2::ggplot(post_sum, ggplot2::aes(x = Priors, y = median)) +
+      ggplot2::geom_line() +
+      ggplot2::geom_ribbon(ggplot2::aes(ymin = two_5, ymax = nine_75),
+                           fill = "lightblue", alpha = 0.4) +
+      ggplot2::theme_bw() +
+      ggplot2::labs(y = "Posterior median (with 95% CI)",
+                    x = paste0(prior, " values"),
+                    caption = if (!is.null(prior_means_df))
+                      paste0("Dashed lines = prior means (mu_scale = '", mu_scale, "').")) +
+      ggplot2::scale_x_log10() +
+      ggplot2::scale_y_log10() +
+      ggplot2::facet_wrap(~Parameter, scales = "free_y")
+    
+    if (!is.null(prior_means_df)) {
+      g <- g + ggplot2::geom_hline(data = prior_means_df,
+                                   ggplot2::aes(yintercept = prior_mean),
+                                   linetype = "dashed", color = "black")
+    }
+    return(g)
+  }
+  
+  # -------- rhat branch --------
+  Rhats <- data.frame(Parameter = character(), Rhat = numeric(), Priors = numeric())
+  
+  for (i in sort(unique(mod_out$Priors))) {
+    df_i <- mod_out %>% dplyr::filter(.data$Priors == i)
+    
+    # sanity check: required columns
+    need <- c("Iteration","Chain","Parameter","value")
+    if (!all(need %in% names(df_i))) {
+      stop("mod_out must contain columns: ", paste(need, collapse = ", "))
+    }
+    
+    rhat_i <- ggmcmc::ggs_Rhat(df_i, plot = FALSE) %>%
+      dplyr::mutate(Priors = i)
+    
+    Rhats <- dplyr::bind_rows(Rhats, rhat_i)
+  }
+  
+  ggplot2::ggplot(Rhats,
+                  ggplot2::aes(x = Priors, y = Rhat,
+                               color = Parameter, group = Parameter)) +
+    ggplot2::geom_line() +
+    ggplot2::geom_point(size = 1.2) +
+    ggplot2::geom_hline(yintercept = 1.10, color = "red",       linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = 1.05, color = "darkorange", linetype = "dotted") +
+    ggplot2::theme_bw() +
+    ggplot2::labs(y = expression(hat(R)),
+                  x = paste0(prior, " values"),
+                  caption = "Dashed red = 1.10; dotted orange = 1.05") +
+    ggplot2::scale_x_log10(limits = c(min(Rhats$Priors), max(Rhats$Priors))) +
+    ggplot2::scale_color_brewer(palette = "Paired")
+}
+
+```
+
+```{r echo=F, warning=F, notes=F, include = F}
+# ---------- helper: 95% prior ribbon on the raw plotting scale ----------
+.make_prior_ribbon <- function(df_params_priors, mu_hyp, mu_scale = c("log","log10","identity")[1],
+                               p_min_for_ribbon = NULL) {
+  if (is.null(mu_hyp)) return(NULL)
+  mu_scale <- match.arg(mu_scale)
+
+  # df_params_priors must have: Parameter, Priors (precision grid)
+  keep <- intersect(df_params_priors$Parameter, names(mu_hyp))
+  if (length(keep) == 0) return(NULL)
+
+  df <- dplyr::filter(df_params_priors, .data$Parameter %in% keep)
+
+  # optional clipping of tiny precisions (helps avoid absurd ranges)
+  if (!is.null(p_min_for_ribbon)) {
+    df <- dplyr::filter(df, .data$Priors >= p_min_for_ribbon)
+  }
+
+  # prior SD on working scale
+  df <- dplyr::mutate(df, sigma = sqrt(1 / .data$Priors))
+
+  # transform 95% band to raw scale
+  trans_q <- function(mu, s, scale) {
+    if (scale == "log")        c(lo = exp(mu - 1.96*s), hi = exp(mu + 1.96*s))
+    else if (scale == "log10") c(lo = 10^(mu - 1.96*s), hi = 10^(mu + 1.96*s))
+    else                       c(lo = mu - 1.96*s,      hi = mu + 1.96*s)
+  }
+
+  purrr::pmap_dfr(df, function(Parameter, Priors, sigma, ...) {
+    mu <- unname(mu_hyp[Parameter])
+    q  <- trans_q(mu, sigma, mu_scale)
+    tibble::tibble(Parameter = Parameter, Priors = Priors,
+                   prior_lo = q["lo"], prior_hi = q["hi"])
+  })
+}
+```
+
+```{r echo=F, warning=F, notes=F, include = F}
+# ---------- panel A: posterior only (blue ribbon + dashed prior mean) ----------
+plot_dx_posterior <- function(mod_out,
+                              param    = c("y0","y1","t1","shape","alpha"),
+                              prior    = "Precision",
+                              mu_hyp   = NULL,
+                              mu_scale = c("log","log10","identity")[1]) {
+
+  mu_scale <- match.arg(mu_scale)
+  mod_out  <- dplyr::filter(mod_out, .data$Parameter %in% param)
+
+  post_sum <- post_summ_by_prior(mod_out, param = param) %>%
+    dplyr::transmute(
+      Parameter, Priors,
+      median  = .data$Median,
+      two_5   = .data$`2.5%`,
+      nine_75 = .data$`97.5%`
+    )
+
+  # dashed prior means
+  prior_means_df <- NULL
+  if (!is.null(mu_hyp)) {
+    ok <- intersect(names(mu_hyp), unique(post_sum$Parameter))
+    if (length(ok) > 0) {
+      to_raw <- function(x) switch(mu_scale, log=exp(x), log10=10^x, identity=x)
+      prior_means_df <- tibble::tibble(
+        Parameter  = ok,
+        prior_mean = to_raw(unname(mu_hyp[ok]))
+      )
+    }
+  }
+
+  g <- ggplot2::ggplot(post_sum, ggplot2::aes(x = Priors, y = median)) +
+    ggplot2::geom_ribbon(ggplot2::aes(ymin = two_5, ymax = nine_75),
+                         fill = "lightblue", alpha = 0.4) +
+    ggplot2::geom_line() +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+      y = "Posterior median (with 95% CI)",
+      x = paste0(prior, " values"),
+      caption = "Blue ribbon = 95% posterior; dashed = prior mean"
+    ) +
+    ggplot2::scale_x_log10() +
+    ggplot2::scale_y_log10() +
+    ggplot2::facet_wrap(~Parameter, scales = "free_y")
+
+  if (!is.null(prior_means_df)) {
+    g <- g + ggplot2::geom_hline(data = prior_means_df,
+                                 ggplot2::aes(yintercept = prior_mean),
+                                 linetype = "dashed", color = "black")
+  }
+  g
+}
+```
+
+```{r echo=F, warning=F, notes=F, include = F}
+# ---------- panel B: prior only (grey ribbon + dashed prior mean) ----------
+plot_dx_prior <- function(mod_out,
+                          param    = c("y0","y1","t1","shape","alpha"),
+                          prior    = "Precision",
+                          mu_hyp   = NULL,
+                          mu_scale = c("log","log10","identity")[1],
+                          p_min_for_ribbon = NULL) {
+
+  mu_scale <- match.arg(mu_scale)
+  mod_out  <- dplyr::filter(mod_out, .data$Parameter %in% param)
+
+  # we just need the {Parameter, Priors} grid (use posterior summary to get it cleanly)
+  post_sum <- post_summ_by_prior(mod_out, param = param) %>%
+    dplyr::distinct(Parameter, Priors)
+
+  prior_ribbon_df <- .make_prior_ribbon(post_sum, mu_hyp, mu_scale, p_min_for_ribbon)
+
+  # dashed prior means
+  prior_means_df <- NULL
+  if (!is.null(mu_hyp)) {
+    ok <- intersect(names(mu_hyp), unique(post_sum$Parameter))
+    if (length(ok) > 0) {
+      to_raw <- function(x) switch(mu_scale, log=exp(x), log10=10^x, identity=x)
+      prior_means_df <- tibble::tibble(
+        Parameter  = ok,
+        prior_mean = to_raw(unname(mu_hyp[ok]))
+      )
+    }
+  }
+
+  ggplot2::ggplot(prior_ribbon_df, ggplot2::aes(x = Priors)) +
+    ggplot2::geom_ribbon(ggplot2::aes(ymin = prior_lo, ymax = prior_hi),
+                         fill = "grey70", alpha = 0.35) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+      y = "95% prior range",
+      x = paste0(prior, " values"),
+      caption = paste0(
+        "Grey ribbon = 95% prior; dashed = prior mean",
+        if (!is.null(p_min_for_ribbon)) paste0(" (ribbon drawn for Priors ≥ ", p_min_for_ribbon, ")")
+      )
+    ) +
+    ggplot2::scale_x_log10() +
+    ggplot2::scale_y_log10() +
+    ggplot2::facet_wrap(~Parameter, scales = "free_y") +
+    { if (!is.null(prior_means_df))
+        ggplot2::geom_hline(data = prior_means_df,
+                            ggplot2::aes(yintercept = prior_mean),
+                            linetype = "dashed", color = "black") }
+}
+```
+
+```{r echo=F, warning=F, notes=F, include = F}
+# assumes we already have post_summ_by_prior() defined
+plot_dx_two_row <- function(mod_out,
+                            param    = c("y0","y1","t1","shape","alpha"),
+                            prior    = "Precision",
+                            mu_hyp   = NULL,                    # named vector of prior means
+                            mu_scale = c("log","log10","identity")[1],
+                            p_min_for_ribbon = NULL) {          # e.g., 0.01 to trim huge prior bands
+  mu_scale <- match.arg(mu_scale)
+
+  mod_out  <- dplyr::filter(mod_out, .data$Parameter %in% param)
+
+  # --- posterior summary on raw plotting scale
+  post_sum <- post_summ_by_prior(mod_out, param = param) %>%
+    dplyr::transmute(
+      Parameter, Priors,
+      median  = .data$Median,
+      two_5   = .data$`2.5%`,
+      nine_75 = .data$`97.5%`
+    )
+
+  # --- dashed prior means (on raw scale)
+  to_raw <- function(x) switch(mu_scale, log=exp(x), log10=10^x, identity=x)
+
+  prior_means_df <- NULL
+  if (!is.null(mu_hyp)) {
+    ok <- intersect(names(mu_hyp), unique(post_sum$Parameter))
+    if (length(ok) > 0) {
+      prior_means_df <- tibble::tibble(
+        Parameter  = ok,
+        prior_mean = to_raw(unname(mu_hyp[ok]))
+      ) |>
+        tidyr::expand_grid(panel = c("Posterior","Prior"))   # draw line in both rows
+    }
+  }
+
+  # --- build 95% PRIOR ribbon on raw scale; optional clipping of tiny precisions
+  make_prior_ribbon <- function(df_params_priors, mu_hyp, mu_scale, pmin) {
+    if (is.null(mu_hyp)) return(NULL)
+    keep <- intersect(df_params_priors$Parameter, names(mu_hyp))
+    if (length(keep) == 0) return(NULL)
+
+    df <- dplyr::filter(df_params_priors, .data$Parameter %in% keep)
+    if (!is.null(pmin)) df <- dplyr::filter(df, .data$Priors >= pmin)
+
+    df <- dplyr::mutate(df, sigma = sqrt(1 / .data$Priors))
+    trans_q <- function(mu, s, scale) {
+      if (scale == "log")        c(lo = exp(mu - 1.96*s), hi = exp(mu + 1.96*s))
+      else if (scale == "log10") c(lo = 10^(mu - 1.96*s), hi = 10^(mu + 1.96*s))
+      else                       c(lo = mu - 1.96*s,      hi = mu + 1.96*s)
+    }
+    purrr::pmap_dfr(df, function(Parameter, Priors, sigma, ...) {
+      mu <- unname(mu_hyp[Parameter]); q <- trans_q(mu, sigma, mu_scale)
+      tibble::tibble(Parameter = Parameter, Priors = Priors,
+                     prior_lo = q["lo"], prior_hi = q["hi"])
+    })
+  }
+
+  prior_grid        <- dplyr::distinct(post_sum, Parameter, Priors)
+  prior_ribbon_df   <- make_prior_ribbon(prior_grid, mu_hyp, mu_scale, p_min_for_ribbon)
+
+  # tag data with "panel" for facet_grid(panel ~ Parameter)
+  post_sum$panel      <- "Posterior"
+  if (!is.null(prior_ribbon_df)) prior_ribbon_df$panel <- "Prior"
+
+  g <- ggplot2::ggplot(mapping = ggplot2::aes(x = Priors)) +
+    # PRIOR row (grey ribbon)
+    { if (!is.null(prior_ribbon_df))
+        ggplot2::geom_ribbon(data = prior_ribbon_df,
+                             ggplot2::aes(ymin = prior_lo, ymax = prior_hi),
+                             fill = "grey70", alpha = 0.35) } +
+    # POSTERIOR row (blue ribbon + median line)
+    ggplot2::geom_ribbon(data = post_sum,
+                         ggplot2::aes(ymin = two_5, ymax = nine_75),
+                         fill = "lightblue", alpha = 0.4) +
+    ggplot2::geom_line(data = post_sum, ggplot2::aes(y = median)) +
+    # dashed prior mean (both rows)
+    { if (!is.null(prior_means_df))
+        ggplot2::geom_hline(data = prior_means_df,
+                            ggplot2::aes(yintercept = prior_mean),
+                            linetype = "dashed", color = "black") } +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+  x = "Precision values",
+  caption = "Top row: Posterior (blue 95% CI + median).\nBottom row: Prior (grey 95% range).\nDashed = prior mean."
+) +
+    ggplot2::scale_x_log10() +
+    ggplot2::scale_y_log10() +
+    ggplot2::facet_grid(rows = ggplot2::vars(panel),
+                        cols  = ggplot2::vars(Parameter),
+                        scales = "free_y") +
+    ggplot2::theme(
+      strip.background = ggplot2::element_rect(fill = "grey95"),
+      panel.spacing.y  = grid::unit(0.6, "lines"),
+      panel.spacing.x  = grid::unit(0.8, "lines")
+    )
+
+  g
+}
+
+```
+
+```{r echo=F, warning=F, notes=F, message = F}
+# Trace plots for a parameter across multiple prior precisions
+plot_traces <- function(mod_out,
+                        params,                # e.g., "y1" or c("y1","y0")
+                        prior_vals,            # e.g., c(10, 1, 0.1, 0.01)
+                        subject = NULL,        # e.g., "newperson"
+                        ncol = NULL,           # layout columns
+                        log_y = TRUE,          # log y-axis?
+                        show_prior_overlay = FALSE,
+                        mu_hyp = NULL,         # named vector, e.g., c(y0=1, y1=7, t1=1, shape=-3, alpha=-2)
+                        mu_scale = c("log","log10","identity")[1]) {
+
+  # --- basic checks
+  stopifnot(all(c("Iteration","Chain","Parameter","Priors","value") %in% names(mod_out)))
+  mu_scale <- match.arg(mu_scale)
+
+  df <- mod_out
+  if (!is.null(subject) && "Subject" %in% names(df)) {
+    df <- dplyr::filter(df, .data$Subject == subject)
+  }
+
+  # allow multiple params and multiple prior values
+  df <- df |>
+    dplyr::filter(.data$Parameter %in% params,
+                  .data$Priors %in% prior_vals) |>   # <- CHANGED: %in% to accept vectors
+    dplyr::mutate(
+      Chain = factor(.data$Chain),
+      Priors = factor(.data$Priors, levels = sort(unique(prior_vals)))  # facet order
+    )
+
+  if (nrow(df) == 0L) {
+    stop("No rows found for those params/prior_vals (check names and `Priors` present).")
+  }
+
+  # helper: transform from prior scale to raw plotting scale
+  to_raw <- function(x) {
+    switch(mu_scale,
+           "log"      = exp(x),
+           "log10"    = 10^x,
+           "identity" = x)
+  }
+
+  # (optional) prior overlay (mean + 95% ribbon) per prior precision and parameter
+  prior_df <- NULL
+  if (isTRUE(show_prior_overlay)) {
+    if (is.null(mu_hyp)) {
+      stop("To use `show_prior_overlay = TRUE`, supply `mu_hyp` as a named vector (y0,y1,t1,shape,alpha).")
+    }
+    # build a grid of (Parameter, Priors) with mean & 95% endpoints on the raw scale
+    prior_df <- tidyr::expand_grid(
+      Parameter = intersect(unique(df$Parameter), names(mu_hyp)),
+      Priors    = levels(df$Priors)
+    ) |>
+      dplyr::mutate(
+        tau   = as.numeric(as.character(Priors)),
+        mu    = unname(mu_hyp[Parameter]),
+        sd    = 1/sqrt(tau),
+        lo    = to_raw(mu - 1.96*sd),
+        hi    = to_raw(mu + 1.96*sd),
+        mean_ = to_raw(mu)
+      )
+  }
+
+  g <- ggplot2::ggplot(df,
+                       ggplot2::aes(x = .data$Iteration, y = .data$value,
+                                    color = .data$Chain, group = .data$Chain)) +
+    ggplot2::geom_line(alpha = 0.75, linewidth = 0.3) +
+    ggplot2::facet_grid(Parameter ~ Priors, scales = if (log_y) "free_y" else "free_y") +
+    ggplot2::theme_bw() +
+    ggplot2::labs(x = "Iteration", y = "Sampled value", color = "Chain",
+                  title = "Trace plots across prior precisions")
+
+  if (log_y) g <- g + ggplot2::scale_y_log10()
+
+  if (!is.null(prior_df)) {
+    g <- g +
+      ggplot2::geom_hline(data = prior_df,
+                          ggplot2::aes(yintercept = mean_),
+                          inherit.aes = FALSE, linetype = "dashed", color = "black") +
+      ggplot2::geom_rect(data = prior_df,
+                         ggplot2::aes(xmin = -Inf, xmax = Inf, ymin = lo, ymax = hi),
+                         inherit.aes = FALSE, alpha = 0.10, fill = "grey50")
+  }
+
+  g
+}
+
+
+
+```
+
+```{r echo=F, warning=F, notes=F, message = F}
+# Iterating over different prior values for shigella
+
+load(here::here() %>% fs::path("/data/shigella_y0_3.rda"))
+load(here::here() %>% fs::path("/data/shigella_y1_3.rda"))
+load(here::here() %>% fs::path("/data/shigella_t_3.rda"))
+load(here::here() %>% fs::path("/data/shigella_r_3.rda"))
+load(here::here() %>% fs::path("/data/shigella_alpha_3.rda"))
+
+```
+
+## R-hat Definition and Trace Plots
+
+### Mathematical Definition of R-hat (Gelman–Rubin statistic)
+
+Suppose we have $m$ Markov chains (e.g., $m=4$), each with $n$ post–burn-in samples for a parameter $\theta$.
+
+The Gelman–Rubin statistic ($\hat{R}$) compares **within-chain** and **between-chain** variance across $m$ MCMC chains, each with $n$ samples.
+
+1.  **Chain means**:\
+    $$
+    \bar{\theta}_{\cdot j} = \frac{1}{n}\sum_{i=1}^n \theta_{ij}, 
+    \quad j = 1,\dots,m
+    $$
+
+2.  **Overall mean**:\
+    $$
+    \bar{\theta}_{\cdot \cdot} = \frac{1}{m}\sum_{j=1}^m \bar{\theta}_{\cdot j}
+    $$
+
+3.  **Between-chain variance**:\
+    $$
+    B = \frac{n}{m-1} \sum_{j=1}^m 
+    \left( \bar{\theta}_{\cdot j} - \bar{\theta}_{\cdot \cdot} \right)^2
+    $$
+
+4.  **Within-chain variance**:\
+    $$
+    W = \frac{1}{m}\sum_{j=1}^m 
+    \left[ \frac{1}{n-1} \sum_{i=1}^n 
+    \left(\theta_{ij} - \bar{\theta}_{\cdot j}\right)^2 \right]
+    $$
+
+5.  **Marginal posterior variance estimate**:\
+    $$
+    \hat{\text{Var}}^+(\theta \mid y) = 
+    \frac{n-1}{n}W + \frac{1}{n}B
+    $$
+
+6.  **Potential scale reduction factor (R-hat)**:\
+    $$
+    \hat{R} = \sqrt{\frac{\hat{\text{Var}}^+(\theta \mid y)}{W}}
+    $$
+
+**Interpretation**:\
+- If $\hat{R} \approx 1$: chains mixed well → convergence likely.\
+- If $\hat{R} > 1.1$: convergence questionable.\
+- Larger $\hat{R}$ means the **between-chain variance (**$B$) is much larger than the **within-chain variance (**$W$).
+
+------------------------------------------------------------------------
+
+### Trace Plots
+
+The trace plot is simply the sampled values $\theta_{ij}$ against iteration $i$, for each chain $j$:
+
+$$
+\text{Trace plot: } \{ (i, \theta_{ij}) : i = 1,\dots,n;\; j = 1,\dots,m \}
+$$
+
+-   If chains overlap and mix well: $B \approx W$, so $\hat{R} \to 1$.\
+-   If chains are stuck in different regions or mix slowly: $B \gg W$, so $\hat{R}$ increases.
+
+Thus, trace plots provide the raw evidence explaining why $\hat{R}$ values are high or low.
+
+------------------------------------------------------------------------
+
+### Application to Our Analysis
+
+In our prior sensitivity analysis plot (R-hat values across different prior precisions):
+
+-   Dashed red line indicates a cutoff at $\hat{R} = 1.1$.\
+-   Parameters $y_0$ and *shape* spike above 1.3–1.4 at certain prior settings.\
+-   This suggests possible non-convergence.
+
+As Ezra emphasized:\
+- We cannot interpret these $\hat{R}$ spikes without also looking at the **trace plots** for $y_0$ and *shape*.\
+- The trace plots will reveal whether chains are mixing poorly, stuck in different modes, or simply slow to converge.
+
+------------------------------------------------------------------------
+
+## Shigella Precision Modeling
+
+### Initial antibody level--Rhats (y0)
+
+Shigella IpaB-IgG Rhat values by varying `prec_hyp_param` prior values for y0
+
+#### What this plot is for
+
+-   **Purpose:** To check how well MCMC chains converge when we change the prior precision for parameter $y_0$.
+-   **X-axis (Priors):** The hyper-prior precision values (from wide to tight).
+-   **Y-axis (**$\hat{R}$): The convergence statistic; values near 1 mean chains agree, values $> 1.1$ suggest poor convergence.
+-   **Lines/points:** Each parameter ($y_0, y_1, t_1, r, \alpha$) is tracked, even though only $y_0$’s prior is varied.
+-   **Dashed lines (red/orange):** Common thresholds ($\hat{R} = 1.1, 1.05$) to mark convergence problems.
+
+#### Intention behind making it
+
+-   **See sensitivity:** Does tweaking the prior for $y_0$ cause chain convergence to worsen or improve for $y_0$ and other parameters?
+-   **Spot patterns:** If $\hat{R}$ drifts upward as precision changes, it means the sampler struggles. If $\hat{R}$ falls only because priors are too tight, that is *false convergence* (chains look good because the prior forced them).
+-   **Guide next steps:** If convergence problems show up, that is a signal to tune the **sampler settings** (step size, acceptance rate, etc.), not just tighten priors.
+
+```{r echo=F, warning=F, notes=F, message = F}
+#| label: fig-rhat-y0
+plot_dx(shigella_y0_3, type = "Rhat")
+```
+
+### Traceplots (y0)
+
+#### What these plots are for
+
+-   **Purpose:** Visualize how MCMC chains behave across different **prior precisions** for each parameter.
+-   **X-axis:** Iterations of the sampler.
+-   **Y-axis:** Sampled parameter values (log scale).
+-   **Facets:** Each column = a different prior precision (0.01, 0.1, 1, 100).
+-   **Colored lines:** Different chains (1–4).
+-   **Dashed line + gray band:** Prior mean and 95% prior interval (if overlay shown).
+
+#### Intention behind making them
+
+-   **Check mixing:** Do chains overlap and “wander” freely, or do they stick in different regions?
+-   **Spot prior influence:** If chains collapse tightly around the prior mean (flat lines inside the band), the prior is dominating (too informative).
+-   **Compare sensitivity:** Side-by-side precisions reveal how behavior changes as priors go from loose (wide) to tight (narrow).
+-   **Complement** $\hat{R}$: These traces are the raw evidence behind $\hat{R}$—use them to see if a specific chain drifts or if apparent convergence is prior-induced.
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6,fig.cap="Trace plots for y0 across different prior precisions (y0 prior varied)"}
+#| label: fig-traceplots-y0-y0
+plot_traces(
+  mod_out   = shigella_y0_3,
+  params    = "y0",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6, fig.cap="Trace plots for y1 across different prior precisions while varying the y0 prior"}
+#| label: fig-traceplots-y0-y1
+plot_traces(
+  mod_out   = shigella_y0_3,
+  params    = "y1",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6, fig.cap="Trace plots for t1 across different prior precisions while varying the y0 prior"}
+#| label: fig-traceplots-y0-t1
+plot_traces(
+  mod_out   = shigella_y0_3,
+  params    = "t1",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6, fig.cap="Trace plots for shape parameter across different prior precisions while varying the y0 prior"}
+#| label: fig-traceplots-y0-shape
+plot_traces(
+  mod_out   = shigella_y0_3,
+  params    = "shape",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6, fig.cap="Trace plots for alpha parameter across different prior precisions while varying the y0 prior"}
+#| label: fig-traceplots-y0-alpha
+plot_traces(
+  mod_out   = shigella_y0_3,
+  params    = "alpha",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+**Convergence Diagnostics: R-hat vs Trace Plots**
+
+The R-hat values across different parameters generally stayed close to 1, suggesting that between-chain and within-chain variances were similar and therefore the MCMC chains were not grossly divergent:
+
+$$ \hat{R} = \sqrt{\frac{\tfrac{n-1}{n}W + \tfrac{1}{n}B}{W}} \approx 1 $$
+
+However, the trace plots provide a more nuanced picture. While some parameters (e.g., $\alpha$) show stable mixing across chains, others (especially $y_0$ and $y_1$) display poor mixing and large excursions, indicating non-convergence despite $\hat{R}$ values being near 1.
+
+Parameters such as $t_1$ highlight the limitation of relying solely on $\hat{R}$: even when $\hat{R} \approx 1$, the trace plots reveal high autocorrelation and noisy trajectories, showing that the chains have not fully explored the posterior efficiently.
+
+**Interpretation:**\
+- Both $\hat{R}$ and trace plots are essential: $\hat{R}$ alone can mask poor mixing if all chains share similar variance but are highly autocorrelated.
+
+### Posterior estimates across prior precision values
+
+#### What this plot is for
+
+-   **Purpose:** Examine how the **posterior estimates** (median + 95% CI) for each parameter respond as we vary the **hyper-prior precision for** $y_0$.
+-   **X-axis (Priors):** Precision values applied to $y_0$’s hyper-prior (very wide → very tight).
+-   **Y-axis:** Posterior median with 95% credible interval (log scale).
+-   **Facets:** One panel per parameter ($y_0$, $y_1$, $t_1$, shape, $\alpha$).
+-   **Shading/lines:** Blue ribbon = 95% posterior CI; black dashed line = prior mean for that parameter.
+
+#### Intention behind making it
+
+-   **Check robustness:** Do posterior medians stay stable as prior precision changes, or do they shift a lot?
+-   **Detect prior dominance:** If posteriors collapse onto the dashed prior mean, the prior is too informative.
+-   **Compare parameters:** Identify which parameters are sensitive to $y_0$’s prior precision (e.g., $y_0$) and which are relatively stable (e.g., $y_1$, $t_1$).
+-   **Guide prior choice:** Find a **safe precision range** where posteriors are data-driven (not prior-driven) yet estimates remain well-behaved.
+
+```{r echo=F, warning=F, notes=F}
+#| label: fig-posterior-y0
+plot_dx_posterior(shigella_y0_3, param = c("y0","y1","t1","shape","alpha"),
+                  mu_hyp = mu_vec, mu_scale = "log")
+```
+
+### Prior distributions across precision values
+
+#### What this plot is for
+
+-   **Purpose:** Display the **prior distributions** alone (no data), across different **hyper-prior precision** values.
+-   **X-axis (Priors):** Precision values (wide → tight).
+-   **Y-axis:** Parameter scale implied by the prior (log scale).
+-   **Facets:** One panel per parameter ($y_0$, $y_1$, $t_1$, shape, $\alpha$).
+-   **Shading/lines:** Gray ribbon = 95% prior interval; black dashed line = prior mean.
+
+#### Intention behind making it
+
+-   **Visualize assumptions:** Make explicit how wide/narrow each prior is for each precision setting.
+-   **Check scaling:** Confirm prior ranges are sensible for the assay scale (e.g., ELISA vs. multiplex units).
+-   **Diagnose informativeness:** Very narrow ribbons (high precision) imply a **strong/controlling** prior; very wide ribbons imply a **weak** prior that lets data dominate.
+-   **Link to posterior:** When compared with posterior plots, reveals whether results are **prior-driven** or **data-driven**.
+
+```{r echo=F, warning=F, notes=F}
+#| label: fig-prior-y0
+plot_dx_prior(shigella_y0_3, param = c("y0","y1","t1","shape","alpha"),
+              mu_hyp = mu_vec, mu_scale = "log", p_min_for_ribbon = 0.01)
+```
+
+### Posterior versus prior comparison
+
+```{r echo=F, warning=F, notes=F, fig.width=12,fig.height=6}
+#| label: fig-comparison-y0
+plot_dx_two_row(
+  shigella_y0_3,
+  param = c("y0","y1","t1","shape","alpha"),
+  mu_hyp = mu_vec,
+  mu_scale = "log",
+  p_min_for_ribbon = 0.01   # optional: clip ultra-vague precisions
+)
+```
+
+------------------------------------------------------------------------
+
+### Peak antibody concentration (y1)
+
+Shigella Ipab-IgG Rhat values by varying `prec_hyp_param` prior values for y1
+
+```{r echo=F, warning=F, notes=F, message = F}
+#| label: fig-rhat-y1
+plot_dx(shigella_y1_3, type = "Rhat")
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-y1-y0
+plot_traces(
+  mod_out   = shigella_y1_3,
+  params    = "y0",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-y1-y1
+plot_traces(
+  mod_out   = shigella_y1_3,
+  params    = "y1",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-y1-t1
+plot_traces(
+  mod_out   = shigella_y1_3,
+  params    = "t1",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-y1-shape
+plot_traces(
+  mod_out   = shigella_y1_3,
+  params    = "shape",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-y1-alpha
+plot_traces(
+  mod_out   = shigella_y1_3,
+  params    = "alpha",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+#### Posterior estimates across prior precision values
+
+```{r echo=F, warning=F, notes=F}
+#| label: fig-posterior-y1
+plot_dx_posterior(shigella_y1_3, param = c("y0","y1","t1","shape","alpha"),
+                  mu_hyp = mu_vec, mu_scale = "log")
+```
+
+#### Prior distributions across precision values
+
+```{r echo=F, warning=F, notes=F}
+#| label: fig-prior-y1
+plot_dx_prior(shigella_y1_3, param = c("y0","y1","t1","shape","alpha"),
+              mu_hyp = mu_vec, mu_scale = "log", p_min_for_ribbon = 0.01)
+```
+
+#### Posterior versus prior comparison
+
+```{r echo=F, warning=F, notes=F, fig.width=12,fig.height=6}
+#| label: fig-comparison-y1
+plot_dx_two_row(
+  shigella_y1_3,
+  param = c("y0","y1","t1","shape","alpha"),
+  mu_hyp = mu_vec,
+  mu_scale = "log",
+  p_min_for_ribbon = 0.01   # optional: clip ultra-vague precisions
+)
+```
+
+------------------------------------------------------------------------
+
+### Time to peak (t1)
+
+Shigella Ipab-IgG Rhat values by varying `prec_hyp_param` prior values for t1
+
+```{r echo=F, warning=F, notes=F, message = F}
+#| label: fig-rhat-t1
+plot_dx(shigella_t_3, type = "Rhat")
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-t1-y0
+plot_traces(
+  mod_out   = shigella_t_3,
+  params    = "y0",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-t1-y1
+plot_traces(
+  mod_out   = shigella_t_3,
+  params    = "y1",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-t1-t1
+plot_traces(
+  mod_out   = shigella_t_3,
+  params    = "t1",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-t1-shape
+plot_traces(
+  mod_out   = shigella_t_3,
+  params    = "shape",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-t1-alpha
+plot_traces(
+  mod_out   = shigella_t_3,
+  params    = "alpha",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+#### Posterior estimates across prior precision values
+
+```{r echo=F, warning=F, notes=F}
+#| label: fig-posterior-t1
+plot_dx_posterior(shigella_t_3, param = c("y0","y1","t1","shape","alpha"),
+                  mu_hyp = mu_vec, mu_scale = "log")
+```
+
+#### Prior distributions across precision values
+
+```{r echo=F, warning=F, notes=F}
+#| label: fig-prior-t1
+plot_dx_prior(shigella_t_3, param = c("y0","y1","t1","shape","alpha"),
+              mu_hyp = mu_vec, mu_scale = "log", p_min_for_ribbon = 0.01)
+```
+
+#### Posterior versus prior comparison
+
+```{r echo=F, warning=F, notes=F, fig.width=12,fig.height=6}
+#| label: fig-comparison-t1
+plot_dx_two_row(
+  shigella_t_3,
+  param = c("y0","y1","t1","shape","alpha"),
+  mu_hyp = mu_vec,
+  mu_scale = "log",
+  p_min_for_ribbon = 0.01   # optional: clip ultra-vague precisions
+)
+```
+
+------------------------------------------------------------------------
+
+### Shape of decay (r)
+
+Shigella Ipab-IgG Rhat values by varying `prec_hyp_param` prior values for r
+
+```{r echo=F, warning=F, notes=F, message = F}
+#| label: fig-rhat-r
+plot_dx(shigella_r_3, type = "Rhat")
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-r-y0
+plot_traces(
+  mod_out   = shigella_r_3,
+  params    = "y0",                      # or "y1"
+  prior_vals= c(1000, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-r-y1
+plot_traces(
+  mod_out   = shigella_r_3,
+  params    = "y1",                      # or "y1"
+  prior_vals= c(1000, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-r-t1
+plot_traces(
+  mod_out   = shigella_r_3,
+  params    = "t1",                      # or "y1"
+  prior_vals= c(1000, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-r-shape
+plot_traces(
+  mod_out   = shigella_r_3,
+  params    = "shape",                      # or "y1"
+  prior_vals= c(1000,10, 1,0.1),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-r-alpha
+plot_traces(
+  mod_out   = shigella_r_3,
+  params    = "alpha",                      # or "y1"
+  prior_vals= c(1000, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+#### Posterior estimates across prior precision values
+
+```{r echo=F, warning=F, notes=F}
+#| label: fig-posterior-r
+plot_dx_posterior(shigella_r_3, param = c("y0","y1","t1","shape","alpha"),
+                  mu_hyp = mu_vec, mu_scale = "log")
+```
+
+#### Prior distributions across precision values
+
+```{r echo=F, warning=F, notes=F}
+#| label: fig-prior-r
+plot_dx_prior(shigella_r_3, param = c("y0","y1","t1","shape","alpha"),
+              mu_hyp = mu_vec, mu_scale = "log", p_min_for_ribbon = 0.01)
+```
+
+#### Posterior versus prior comparison
+
+```{r echo=F, warning=F, notes=F, fig.width=12,fig.height=6}
+#| label: fig-comparison-r
+plot_dx_two_row(
+  shigella_r_3,
+  param = c("y0","y1","t1","shape","alpha"),
+  mu_hyp = mu_vec,
+  mu_scale = "log",
+  p_min_for_ribbon = 0.01   # optional: clip ultra-vague precisions
+)
+```
+
+------------------------------------------------------------------------
+
+### Decay rate (alpha)
+
+Shigella Ipab-IgG Rhat values by varying `prec_hyp_param` prior values for alpha
+
+```{r echo=F, warning=F, notes=F, message = F}
+#| label: fig-rhat-alpha
+plot_dx(shigella_alpha_3, type = "Rhat")
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-alpha-y0
+plot_traces(
+  mod_out   = shigella_alpha_3,
+  params    = "y0",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-alpha-y1
+plot_traces(
+  mod_out   = shigella_alpha_3,
+  params    = "y1",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-alpha-t1
+plot_traces(
+  mod_out   = shigella_alpha_3,
+  params    = "t1",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-alpha-shape
+plot_traces(
+  mod_out   = shigella_alpha_3,
+  params    = "shape",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+```{r echo=F, warning=F, notes=F, message = F, fig.width=12,fig.height=6}
+#| label: fig-traceplots-alpha-alpha
+plot_traces(
+  mod_out   = shigella_alpha_3,
+  params    = "alpha",                      # or "y1"
+  prior_vals= c(100, 1,0.1, 0.01),       # vector OK now
+  subject   = "newperson",
+  ncol      = 4,
+  log_y     = TRUE,
+  show_prior_overlay = TRUE,
+  mu_hyp    = c(y0=1, y1=7, t1=1, shape=-3, alpha=-2),
+  mu_scale  = "log"
+)
+```
+
+#### Posterior estimates across prior precision values
+
+```{r echo=F, warning=F, notes=F}
+#| label: fig-posterior-alpha
+plot_dx_posterior(shigella_alpha_3, param = c("y0","y1","t1","shape","alpha"),
+                  mu_hyp = mu_vec, mu_scale = "log")
+```
+
+#### Prior distributions across precision values
+
+```{r echo=F, warning=F, notes=F}
+#| label: fig-prior-alpha
+plot_dx_prior(shigella_alpha_3, param = c("y0","y1","t1","shape","alpha"),
+              mu_hyp = mu_vec, mu_scale = "log", p_min_for_ribbon = 0.01)
+```
+
+#### Posterior versus prior comparison
+
+```{r echo=F, warning=F, notes=F, fig.width=12,fig.height=6}
+#| label: fig-comparison-alpha
+plot_dx_two_row(
+  shigella_alpha_3,
+  param = c("y0","y1","t1","shape","alpha"),
+  mu_hyp = mu_vec,
+  mu_scale = "log",
+  p_min_for_ribbon = 0.01   # optional: clip ultra-vague precisions
+)
+```
+
+------------------------------------------------------------------------
+
+# Conclusion

@@ -1,0 +1,881 @@
+---
+title: "Priors Analysis in Stan with Hamiltonian Monte Carlo"
+subtitle: "Test 1: Sensitivity Analysis of Prior Precision for Shigella (prec_hyp_param)"
+author: "Kwan Ho Lee"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: true             # enable table of contents
+    toc_depth: 3          # up to three heading levels (#, ##, ###)
+    toc_float: true       # floating TOC on the side
+    highlight: tango      # syntax highlighting style
+  pdf_document:
+    toc: true             # also enable table of contents for PDF
+    toc_depth: 3          # same heading depth for PDF
+    highlight: tango      # consistent highlighting
+bibliography: references.bib
+---
+
+```{r echo=F, include=F, warning=F, notes = F}
+
+library(dplyr)
+library(runjags)
+library(readr)
+library(serodynamics)
+library(serocalculator)
+library(tidyverse)
+library(runjags)
+library(coda)
+library(ggmcmc)
+library(ggbeeswarm)
+library(ggpubr)
+library(knitr)
+library(table1)
+library(readxl)
+devtools::load_all()
+
+options(scipen = 99, digits = 4)
+
+#model file
+file.mod <- fs::path_package("serodynamics", "extdata/model.jags")
+```
+
+```{r}
+#| label: "load shigella data"
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+df <- 
+  fs::path_package(
+    package = "shigella",
+    "extdata/3.8.2024 Compiled Shigella datav2.xlsx"
+  ) |> 
+  read_excel(sheet = "Compiled")
+```
+
+```{r}
+#| label: "manipulate Shigella data"
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+
+# filter ipab
+dL_clean_Ipab <- process_shigella_data(
+  data         = df,
+  study_filter = "SOSAR",
+  antigen      = n_ipab_MFI
+)
+
+dL_clean_Ipab_IgG<-dL_clean_Ipab %>%
+  filter(antigen_iso == "IgG")
+
+```
+
+# Analaysis overview:
+
+In this analysis, we are examining how **changing hyperpriors** for
+
+-   `prec_hyp_param` (spread/uncertainty) and
+
+-   `mu_hyp_param` (center/average guess)
+
+affects **R̂ values (convergence)** and **parameter estimates** in our Bayesian hierarchical model.
+
+The Shigella dataset is filtered to include only the **IpaB_IgG biomarker**. All JAGS models were run with the following constants:
+
+-   `nchain = 4`, `nadapt = 1000`, `nburn = 500`, `nmc = 2500`, `niter = 5000`.
+
+# Test 1: Sensitivity analysis of prior spread (`prec_hyp_param`)
+
+**Goal**: Check how the model behaves when we change the **prior precision** (spread) for each parameter, one at a time. This tests whether the model is sensitive to overly tight or overly vague priors, and helps identify a safe level of spread that supports good convergence.
+
+**Setup**:
+
+-   Default priors for means:
+
+    `mu.hyp = c(1.0, 7.0, 1.0, -2.0, -3.0)`
+
+-   Precision sweep values:
+
+    `prec.hyp = {10000, 1000, 100, 10, 1, 0.1, 0.01, 0.001, 0.00001}`
+
+-   Other hyperpriors:
+
+    `omega = diag(c(10,10,10,10,10,10)), wishdf = 20, prec.logy.hyp = c(4.0,1)`
+
+**Method**:
+
+-   Vary the precision for one parameter at a time (e.g., $y_0$), while holding the other four precisions fixed.
+
+-   For each run, record how $\hat{R}$ and parameter estimates for all parameters respond.
+
+**Interpretation**:
+
+-   High precision (narrow prior) forces estimates close to the mean guess.
+
+-   Low precision (diffuse prior) gives more freedom but may cause poor convergence.
+
+-   The goal is to identify a stable range of precision values that allow good convergence ($\hat{R} \approx 1$, stable ESS) without over-constraining the model.
+
+------------------------------------------------------------------------
+
+```{r echo=F, warning=F, notes=F, include = F}
+# --- summarize with serodynamics::post_summ() by prior value -----------------
+post_summ_by_prior <- function(data,
+                               iso   = unique(data$Iso_type),
+                               param = unique(data$Parameter),
+                               strat = unique(data$Stratification)) {
+  # runs post_summ() separately for each Priors value and binds results
+  data %>%
+    dplyr::group_by(Priors) %>%
+    dplyr::group_modify(~ serodynamics::post_summ(.x, iso = iso,
+                                                  param = param, strat = strat)) %>%
+    dplyr::ungroup()
+}
+
+mu_vec <- c(y0 = 1.0, y1 = 7.0, t1 = 1.0, alpha = -2.0, shape = -3.0)  # from setup
+```
+
+```{r echo=F, warning=F, notes=F, include = F}
+# ---- main plotting function: type = "estimate" or "rhat" -------------------
+plot_dx <- function(mod_out,
+                    type  = c("estimate","rhat")[1],
+                    param = c("y0","y1","t1","shape","alpha"),
+                    prior = "Precision",
+                    mu_hyp  = NULL,
+                    mu_scale = c("log","log10","identity")[1]) {
+  
+  type <- tolower(type)
+  if (!type %in% c("estimate","rhat")) stop("`type` must be 'estimate' or 'rhat'.")
+  
+  mod_out <- mod_out %>% dplyr::filter(.data$Parameter %in% param)
+  
+  to_raw <- function(x, scale) {
+    switch(scale,
+           "log"      = exp(x),
+           "log10"    = 10^x,
+           "identity" = x)
+  }
+  
+  if (type == "estimate") {
+    post_sum <- post_summ_by_prior(mod_out, param = param) %>%
+      dplyr::transmute(Parameter, Priors,
+                       median  = .data$Median,
+                       two_5   = .data$`2.5%`,
+                       nine_75 = .data$`97.5%`)
+    
+    prior_means_df <- NULL
+    if (!is.null(mu_hyp)) {
+      ok <- intersect(names(mu_hyp), unique(post_sum$Parameter))
+      if (length(ok) > 0) {
+        prior_means_df <- tibble::tibble(
+          Parameter  = ok,
+          prior_mean = to_raw(unname(mu_hyp[ok]), mu_scale)
+        )
+      }
+    }
+    
+    g <- ggplot2::ggplot(post_sum, ggplot2::aes(x = Priors, y = median)) +
+      ggplot2::geom_line() +
+      ggplot2::geom_ribbon(ggplot2::aes(ymin = two_5, ymax = nine_75),
+                           fill = "lightblue", alpha = 0.4) +
+      ggplot2::theme_bw() +
+      ggplot2::labs(y = "Posterior median (with 95% CI)",
+                    x = paste0(prior, " values"),
+                    caption = if (!is.null(prior_means_df))
+                      paste0("Dashed lines = prior means (mu_scale = '", mu_scale, "').")) +
+      ggplot2::scale_x_log10() +
+      ggplot2::scale_y_log10() +
+      ggplot2::facet_wrap(~Parameter, scales = "free_y")
+    
+    if (!is.null(prior_means_df)) {
+      g <- g + ggplot2::geom_hline(data = prior_means_df,
+                                   ggplot2::aes(yintercept = prior_mean),
+                                   linetype = "dashed", color = "black")
+    }
+    return(g)
+  }
+  
+  # -------- rhat branch --------
+  Rhats <- data.frame(Parameter = character(), Rhat = numeric(), Priors = numeric())
+  
+  for (i in sort(unique(mod_out$Priors))) {
+    df_i <- mod_out %>% dplyr::filter(.data$Priors == i)
+    
+    # sanity check: required columns
+    need <- c("Iteration","Chain","Parameter","value")
+    if (!all(need %in% names(df_i))) {
+      stop("mod_out must contain columns: ", paste(need, collapse = ", "))
+    }
+    
+    rhat_i <- ggmcmc::ggs_Rhat(df_i, plot = FALSE) %>%
+      dplyr::mutate(Priors = i)
+    
+    Rhats <- dplyr::bind_rows(Rhats, rhat_i)
+  }
+  
+  ggplot2::ggplot(Rhats,
+                  ggplot2::aes(x = Priors, y = Rhat,
+                               color = Parameter, group = Parameter)) +
+    ggplot2::geom_line() +
+    ggplot2::geom_point(size = 1.2) +
+    ggplot2::geom_hline(yintercept = 1.10, color = "red",       linetype = "dashed") +
+    ggplot2::geom_hline(yintercept = 1.05, color = "darkorange", linetype = "dotted") +
+    ggplot2::theme_bw() +
+    ggplot2::labs(y = expression(hat(R)),
+                  x = paste0(prior, " values"),
+                  caption = "Dashed red = 1.10; dotted orange = 1.05") +
+    ggplot2::scale_x_log10(limits = c(min(Rhats$Priors), max(Rhats$Priors))) +
+    ggplot2::scale_color_brewer(palette = "Paired")
+}
+
+```
+
+```{r echo=F, warning=F, notes=F, include = F}
+# ---------- helper: 95% prior ribbon on the raw plotting scale ----------
+.make_prior_ribbon <- function(df_params_priors, mu_hyp, mu_scale = c("log","log10","identity")[1],
+                               p_min_for_ribbon = NULL) {
+  if (is.null(mu_hyp)) return(NULL)
+  mu_scale <- match.arg(mu_scale)
+
+  # df_params_priors must have: Parameter, Priors (precision grid)
+  keep <- intersect(df_params_priors$Parameter, names(mu_hyp))
+  if (length(keep) == 0) return(NULL)
+
+  df <- dplyr::filter(df_params_priors, .data$Parameter %in% keep)
+
+  # optional clipping of tiny precisions (helps avoid absurd ranges)
+  if (!is.null(p_min_for_ribbon)) {
+    df <- dplyr::filter(df, .data$Priors >= p_min_for_ribbon)
+  }
+
+  # prior SD on working scale
+  df <- dplyr::mutate(df, sigma = sqrt(1 / .data$Priors))
+
+  # transform 95% band to raw scale
+  trans_q <- function(mu, s, scale) {
+    if (scale == "log")        c(lo = exp(mu - 1.96*s), hi = exp(mu + 1.96*s))
+    else if (scale == "log10") c(lo = 10^(mu - 1.96*s), hi = 10^(mu + 1.96*s))
+    else                       c(lo = mu - 1.96*s,      hi = mu + 1.96*s)
+  }
+
+  purrr::pmap_dfr(df, function(Parameter, Priors, sigma, ...) {
+    mu <- unname(mu_hyp[Parameter])
+    q  <- trans_q(mu, sigma, mu_scale)
+    tibble::tibble(Parameter = Parameter, Priors = Priors,
+                   prior_lo = q["lo"], prior_hi = q["hi"])
+  })
+}
+```
+
+```{r echo=F, warning=F, notes=F, include = F}
+# ---------- panel A: posterior only (blue ribbon + dashed prior mean) ----------
+plot_dx_posterior <- function(mod_out,
+                              param    = c("y0","y1","t1","shape","alpha"),
+                              prior    = "Precision",
+                              mu_hyp   = NULL,
+                              mu_scale = c("log","log10","identity")[1]) {
+
+  mu_scale <- match.arg(mu_scale)
+  mod_out  <- dplyr::filter(mod_out, .data$Parameter %in% param)
+
+  post_sum <- post_summ_by_prior(mod_out, param = param) %>%
+    dplyr::transmute(
+      Parameter, Priors,
+      median  = .data$Median,
+      two_5   = .data$`2.5%`,
+      nine_75 = .data$`97.5%`
+    )
+
+  # dashed prior means
+  prior_means_df <- NULL
+  if (!is.null(mu_hyp)) {
+    ok <- intersect(names(mu_hyp), unique(post_sum$Parameter))
+    if (length(ok) > 0) {
+      to_raw <- function(x) switch(mu_scale, log=exp(x), log10=10^x, identity=x)
+      prior_means_df <- tibble::tibble(
+        Parameter  = ok,
+        prior_mean = to_raw(unname(mu_hyp[ok]))
+      )
+    }
+  }
+
+  g <- ggplot2::ggplot(post_sum, ggplot2::aes(x = Priors, y = median)) +
+    ggplot2::geom_ribbon(ggplot2::aes(ymin = two_5, ymax = nine_75),
+                         fill = "lightblue", alpha = 0.4) +
+    ggplot2::geom_line() +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+      y = "Posterior median (with 95% CI)",
+      x = paste0(prior, " values"),
+      caption = "Blue ribbon = 95% posterior; dashed = prior mean"
+    ) +
+    ggplot2::scale_x_log10() +
+    ggplot2::scale_y_log10() +
+    ggplot2::facet_wrap(~Parameter, scales = "free_y")
+
+  if (!is.null(prior_means_df)) {
+    g <- g + ggplot2::geom_hline(data = prior_means_df,
+                                 ggplot2::aes(yintercept = prior_mean),
+                                 linetype = "dashed", color = "black")
+  }
+  g
+}
+```
+
+```{r echo=F, warning=F, notes=F, include = F}
+# ---------- panel B: prior only (grey ribbon + dashed prior mean) ----------
+plot_dx_prior <- function(mod_out,
+                          param    = c("y0","y1","t1","shape","alpha"),
+                          prior    = "Precision",
+                          mu_hyp   = NULL,
+                          mu_scale = c("log","log10","identity")[1],
+                          p_min_for_ribbon = NULL) {
+
+  mu_scale <- match.arg(mu_scale)
+  mod_out  <- dplyr::filter(mod_out, .data$Parameter %in% param)
+
+  # we just need the {Parameter, Priors} grid (use posterior summary to get it cleanly)
+  post_sum <- post_summ_by_prior(mod_out, param = param) %>%
+    dplyr::distinct(Parameter, Priors)
+
+  prior_ribbon_df <- .make_prior_ribbon(post_sum, mu_hyp, mu_scale, p_min_for_ribbon)
+
+  # dashed prior means
+  prior_means_df <- NULL
+  if (!is.null(mu_hyp)) {
+    ok <- intersect(names(mu_hyp), unique(post_sum$Parameter))
+    if (length(ok) > 0) {
+      to_raw <- function(x) switch(mu_scale, log=exp(x), log10=10^x, identity=x)
+      prior_means_df <- tibble::tibble(
+        Parameter  = ok,
+        prior_mean = to_raw(unname(mu_hyp[ok]))
+      )
+    }
+  }
+
+  ggplot2::ggplot(prior_ribbon_df, ggplot2::aes(x = Priors)) +
+    ggplot2::geom_ribbon(ggplot2::aes(ymin = prior_lo, ymax = prior_hi),
+                         fill = "grey70", alpha = 0.35) +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+      y = "95% prior range",
+      x = paste0(prior, " values"),
+      caption = paste0(
+        "Grey ribbon = 95% prior; dashed = prior mean",
+        if (!is.null(p_min_for_ribbon)) paste0(" (ribbon drawn for Priors ≥ ", p_min_for_ribbon, ")")
+      )
+    ) +
+    ggplot2::scale_x_log10() +
+    ggplot2::scale_y_log10() +
+    ggplot2::facet_wrap(~Parameter, scales = "free_y") +
+    { if (!is.null(prior_means_df))
+        ggplot2::geom_hline(data = prior_means_df,
+                            ggplot2::aes(yintercept = prior_mean),
+                            linetype = "dashed", color = "black") }
+}
+```
+
+```{r echo=F, warning=F, notes=F, include = F}
+# assumes we already have post_summ_by_prior() defined
+plot_dx_two_row <- function(mod_out,
+                            param    = c("y0","y1","t1","shape","alpha"),
+                            prior    = "Precision",
+                            mu_hyp   = NULL,                    # named vector of prior means
+                            mu_scale = c("log","log10","identity")[1],
+                            p_min_for_ribbon = NULL) {          # e.g., 0.01 to trim huge prior bands
+  mu_scale <- match.arg(mu_scale)
+
+  mod_out  <- dplyr::filter(mod_out, .data$Parameter %in% param)
+
+  # --- posterior summary on raw plotting scale
+  post_sum <- post_summ_by_prior(mod_out, param = param) %>%
+    dplyr::transmute(
+      Parameter, Priors,
+      median  = .data$Median,
+      two_5   = .data$`2.5%`,
+      nine_75 = .data$`97.5%`
+    )
+
+  # --- dashed prior means (on raw scale)
+  to_raw <- function(x) switch(mu_scale, log=exp(x), log10=10^x, identity=x)
+
+  prior_means_df <- NULL
+  if (!is.null(mu_hyp)) {
+    ok <- intersect(names(mu_hyp), unique(post_sum$Parameter))
+    if (length(ok) > 0) {
+      prior_means_df <- tibble::tibble(
+        Parameter  = ok,
+        prior_mean = to_raw(unname(mu_hyp[ok]))
+      ) |>
+        tidyr::expand_grid(panel = c("Posterior","Prior"))   # draw line in both rows
+    }
+  }
+
+  # --- build 95% PRIOR ribbon on raw scale; optional clipping of tiny precisions
+  make_prior_ribbon <- function(df_params_priors, mu_hyp, mu_scale, pmin) {
+    if (is.null(mu_hyp)) return(NULL)
+    keep <- intersect(df_params_priors$Parameter, names(mu_hyp))
+    if (length(keep) == 0) return(NULL)
+
+    df <- dplyr::filter(df_params_priors, .data$Parameter %in% keep)
+    if (!is.null(pmin)) df <- dplyr::filter(df, .data$Priors >= pmin)
+
+    df <- dplyr::mutate(df, sigma = sqrt(1 / .data$Priors))
+    trans_q <- function(mu, s, scale) {
+      if (scale == "log")        c(lo = exp(mu - 1.96*s), hi = exp(mu + 1.96*s))
+      else if (scale == "log10") c(lo = 10^(mu - 1.96*s), hi = 10^(mu + 1.96*s))
+      else                       c(lo = mu - 1.96*s,      hi = mu + 1.96*s)
+    }
+    purrr::pmap_dfr(df, function(Parameter, Priors, sigma, ...) {
+      mu <- unname(mu_hyp[Parameter]); q <- trans_q(mu, sigma, mu_scale)
+      tibble::tibble(Parameter = Parameter, Priors = Priors,
+                     prior_lo = q["lo"], prior_hi = q["hi"])
+    })
+  }
+
+  prior_grid        <- dplyr::distinct(post_sum, Parameter, Priors)
+  prior_ribbon_df   <- make_prior_ribbon(prior_grid, mu_hyp, mu_scale, p_min_for_ribbon)
+
+  # tag data with "panel" for facet_grid(panel ~ Parameter)
+  post_sum$panel      <- "Posterior"
+  if (!is.null(prior_ribbon_df)) prior_ribbon_df$panel <- "Prior"
+
+  g <- ggplot2::ggplot(mapping = ggplot2::aes(x = Priors)) +
+    # PRIOR row (grey ribbon)
+    { if (!is.null(prior_ribbon_df))
+        ggplot2::geom_ribbon(data = prior_ribbon_df,
+                             ggplot2::aes(ymin = prior_lo, ymax = prior_hi),
+                             fill = "grey70", alpha = 0.35) } +
+    # POSTERIOR row (blue ribbon + median line)
+    ggplot2::geom_ribbon(data = post_sum,
+                         ggplot2::aes(ymin = two_5, ymax = nine_75),
+                         fill = "lightblue", alpha = 0.4) +
+    ggplot2::geom_line(data = post_sum, ggplot2::aes(y = median)) +
+    # dashed prior mean (both rows)
+    { if (!is.null(prior_means_df))
+        ggplot2::geom_hline(data = prior_means_df,
+                            ggplot2::aes(yintercept = prior_mean),
+                            linetype = "dashed", color = "black") } +
+    ggplot2::theme_bw() +
+    ggplot2::labs(
+  x = "Precision values",
+  caption = "Top row: Posterior (blue 95% CI + median).\nBottom row: Prior (grey 95% range).\nDashed = prior mean."
+) +
+    ggplot2::scale_x_log10() +
+    ggplot2::scale_y_log10() +
+    ggplot2::facet_grid(rows = ggplot2::vars(panel),
+                        cols  = ggplot2::vars(Parameter),
+                        scales = "free_y") +
+    ggplot2::theme(
+      strip.background = ggplot2::element_rect(fill = "grey95"),
+      panel.spacing.y  = grid::unit(0.6, "lines"),
+      panel.spacing.x  = grid::unit(0.8, "lines")
+    )
+
+  g
+}
+
+```
+
+```{r echo=F, warning=F, notes=F, message = F}
+# Trace plots for a parameter across multiple prior precisions
+plot_traces <- function(mod_out,
+                        params,                # e.g., "y1" or c("y1","y0")
+                        prior_vals,            # e.g., c(10, 1, 0.1, 0.01)
+                        subject = NULL,        # e.g., "newperson"
+                        ncol = NULL,           # layout columns
+                        log_y = TRUE,          # log y-axis?
+                        show_prior_overlay = FALSE,
+                        mu_hyp = NULL,         # named vector, e.g., c(y0=1, y1=7, t1=1, shape=-3, alpha=-2)
+                        mu_scale = c("log","log10","identity")[1]) {
+
+  # --- basic checks
+  stopifnot(all(c("Iteration","Chain","Parameter","Priors","value") %in% names(mod_out)))
+  mu_scale <- match.arg(mu_scale)
+
+  df <- mod_out
+  if (!is.null(subject) && "Subject" %in% names(df)) {
+    df <- dplyr::filter(df, .data$Subject == subject)
+  }
+
+  # allow multiple params and multiple prior values
+  df <- df |>
+    dplyr::filter(.data$Parameter %in% params,
+                  .data$Priors %in% prior_vals) |>   # <- CHANGED: %in% to accept vectors
+    dplyr::mutate(
+      Chain = factor(.data$Chain),
+      Priors = factor(.data$Priors, levels = sort(unique(prior_vals)))  # facet order
+    )
+
+  if (nrow(df) == 0L) {
+    stop("No rows found for those params/prior_vals (check names and `Priors` present).")
+  }
+
+  # helper: transform from prior scale to raw plotting scale
+  to_raw <- function(x) {
+    switch(mu_scale,
+           "log"      = exp(x),
+           "log10"    = 10^x,
+           "identity" = x)
+  }
+
+  # (optional) prior overlay (mean + 95% ribbon) per prior precision and parameter
+  prior_df <- NULL
+  if (isTRUE(show_prior_overlay)) {
+    if (is.null(mu_hyp)) {
+      stop("To use `show_prior_overlay = TRUE`, supply `mu_hyp` as a named vector (y0,y1,t1,shape,alpha).")
+    }
+    # build a grid of (Parameter, Priors) with mean & 95% endpoints on the raw scale
+    prior_df <- tidyr::expand_grid(
+      Parameter = intersect(unique(df$Parameter), names(mu_hyp)),
+      Priors    = levels(df$Priors)
+    ) |>
+      dplyr::mutate(
+        tau   = as.numeric(as.character(Priors)),
+        mu    = unname(mu_hyp[Parameter]),
+        sd    = 1/sqrt(tau),
+        lo    = to_raw(mu - 1.96*sd),
+        hi    = to_raw(mu + 1.96*sd),
+        mean_ = to_raw(mu)
+      )
+  }
+
+  g <- ggplot2::ggplot(df,
+                       ggplot2::aes(x = .data$Iteration, y = .data$value,
+                                    color = .data$Chain, group = .data$Chain)) +
+    ggplot2::geom_line(alpha = 0.75, linewidth = 0.3) +
+    ggplot2::facet_grid(Parameter ~ Priors, scales = if (log_y) "free_y" else "free_y") +
+    ggplot2::theme_bw() +
+    ggplot2::labs(x = "Iteration", y = "Sampled value", color = "Chain",
+                  title = "Trace plots across prior precisions")
+
+  if (log_y) g <- g + ggplot2::scale_y_log10()
+
+  if (!is.null(prior_df)) {
+    g <- g +
+      ggplot2::geom_hline(data = prior_df,
+                          ggplot2::aes(yintercept = mean_),
+                          inherit.aes = FALSE, linetype = "dashed", color = "black") +
+      ggplot2::geom_rect(data = prior_df,
+                         ggplot2::aes(xmin = -Inf, xmax = Inf, ymin = lo, ymax = hi),
+                         inherit.aes = FALSE, alpha = 0.10, fill = "grey50")
+  }
+
+  g
+}
+
+
+
+```
+
+------------------------------------------------------------------------
+
+## What is Stan and HMC?
+
+### Hamiltonian Monte Carlo (HMC)
+
+Hamiltonian Monte Carlo (HMC) is the main algorithm used by **Stan**.\
+Its key idea is to introduce a **helper variable** that lets the sampler move smoothly through the posterior, instead of wandering randomly.
+
+------------------------------------------------------------------------
+
+#### Step 1. Target distribution
+
+We want samples from the posterior:
+
+$$ \pi(\theta) \propto p(y \mid \theta)\, p(\theta), $$
+
+where\
+- $\theta$ are the model parameters (e.g., $y_0, y_1, t_1, r, \alpha$),\
+- $p(y \mid \theta)$ is the likelihood,\
+- $p(\theta)$ is the prior,\
+- $\pi(\theta)$ is the posterior.
+
+------------------------------------------------------------------------
+
+#### Step 2. Introduce momentum
+
+HMC augments each parameter $\theta$ with an **auxiliary momentum variable**:
+
+$$ r \sim \mathcal{N}(0, M), $$
+
+where\
+- $r \in \mathbb{R}^d$ has the same dimension as $\theta$,\
+- $M$ is a positive-definite **mass matrix** (like a covariance matrix, used for scaling).
+
+Important: this $r$ is **not** the same as the prior $p(\theta)$.\
+It is an artificial variable added only to help explore the posterior.
+
+*My note:*\
+Here they add a “fake” variable called momentum $r$. It’s not part of the model or the prior — it’s just an extra helper that makes the sampler move more smoothly. Think of it like giving the parameters a push, so they don’t just wander randomly.
+
+------------------------------------------------------------------------
+
+#### Step 3. Define Hamiltonian “energy”
+
+We combine $\theta$ and $r$ into a single **Hamiltonian function**:
+
+$$ H(\theta, r) = U(\theta) + K(r), $$
+
+where\
+- $U(\theta) = - \log \pi(\theta)$ is the **potential energy** (the shape of the posterior),\
+- $K(r) = \tfrac{1}{2}\, r^\top M^{-1} r$ is the **kinetic energy** (depends only on $r$).
+
+*My note:*\
+Now we combine the real parameters $\theta$ and the fake momentum $r$ into one “energy” function. This energy has two parts:\
+- Potential energy (how steep the posterior is).\
+- Kinetic energy (random push from momentum).\
+Together, these describe how the sampler moves across the posterior like a particle sliding around a landscape.
+
+------------------------------------------------------------------------
+
+#### Step 4. Joint density
+
+The combined system has a joint distribution:
+
+$$ \tilde{\pi}(\theta, r) \propto \exp\{-H(\theta, r)\} = \pi(\theta)\, \exp\{-K(r)\}. $$
+
+This means:\
+- $\pi(\theta)$ controls the **posterior landscape** (potential energy).\
+- $\exp\{-K(r)\}$ controls the **random momentum kicks** (kinetic energy).
+
+If we integrate out $r$, we recover the original posterior $\pi(\theta)$.
+
+*My note:*\
+This shows how the two energies form a joint probability. One part is about the posterior shape, and the other is about random momentum. If you ignore the momentum $r$, you’re back to the normal posterior. So momentum is only a tool to help sampling, not something we actually care about.
+
+------------------------------------------------------------------------
+
+#### Step 5. Why this helps
+
+By simulating the “physics” of $(\theta, r)$ moving across this landscape:
+
+-   The sampler **follows the slope** of the posterior instead of guessing randomly.\
+-   Long, smooth trajectories reduce the **random-walk problem** of Gibbs or Metropolis–Hastings.\
+-   The final accept/reject step ensures we still sample from the exact posterior.
+
+In short: the momentum variable $r$ is a temporary engine that helps the sampler explore $\pi(\theta)$ efficiently, and then disappears when we marginalize it out.
+
+*My note:*\
+The momentum lets the sampler *follow the slope* of the posterior instead of taking tiny random steps. This avoids the random-walk problem of JAGS/Metropolis and gives us longer, smarter moves. The accept/reject step at the end makes sure the samples are still correct.
+
+------------------------------------------------------------------------
+
+### Leapfrog Integration
+
+HMC simulates **Hamilton’s equations**:
+
+$$ \frac{d\theta}{dt} = M^{-1} r, \quad \frac{dr}{dt} = - \nabla_\theta U(\theta). $$
+
+Because we cannot solve these exactly, HMC uses the **leapfrog method** with step size $\varepsilon$:
+
+1.  **Half-step momentum update**:\
+    $$ r_{t+\tfrac{\varepsilon}{2}} = r_t - \tfrac{\varepsilon}{2}\, \nabla_\theta U(\theta_t). $$
+
+2.  **Full-step position update**:\
+    $$ \theta_{t+\varepsilon} = \theta_t + \varepsilon\, M^{-1} r_{t+\tfrac{\varepsilon}{2}}. $$
+
+3.  **Another half-step momentum update**:\
+    $$ r_{t+\varepsilon} = r_{t+\tfrac{\varepsilon}{2}} - \tfrac{\varepsilon}{2}\, \nabla_\theta U(\theta_{t+\varepsilon}). $$
+
+After repeating $L$ such steps, we propose a new state $(\theta^\ast, r^\ast)$.
+
+To correct for numerical error, we apply a **Metropolis acceptance step**:
+
+$$ \alpha = \min \Bigl\{ 1,\; \exp\bigl[ -H(\theta^\ast, r^\ast) + H(\theta, r) \bigr] \Bigr\}. $$
+
+If accepted, we move to $\theta^\ast$; otherwise we stay at $\theta$.
+
+*My note:*\
+Because we can’t solve the movement equations exactly, we use an **approximate method** called “leapfrog.” It updates momentum and position step by step. It’s like moving in small hops, correcting direction as you go. This is efficient, stable, and doesn’t lose accuracy over long runs.
+
+------------------------------------------------------------------------
+
+#### How is this different from JAGS’s MH?
+
+-   In **JAGS**, MH is the *main driver*: every new sample is a random local proposal + accept/reject. → Inefficient random walk.\
+-   In **HMC (Stan)**, MH is just a *safeguard*: the heavy lifting is done by **leapfrog trajectories guided by gradients**.\
+    The MH step only corrects for small integration errors. → Efficient, long-distance proposals.
+
+------------------------------------------------------------------------
+
+### Why This Works
+
+-   **Volume-preserving and reversible:**\
+    Leapfrog integration preserves volume in $(\theta, r)$ space and is reversible, so it leaves $\tilde{\pi}(\theta, r)$ invariant up to small numerical error.
+
+-   **Correction by Metropolis step:**\
+    The acceptance step ensures exact invariance of $\tilde{\pi}$.
+
+-   **Marginalization recovers posterior:**\
+    Since $r$ is artificial, integrating it out leaves the desired posterior $\pi(\theta)$.
+
+Thus, HMC produces valid posterior samples [@neal2011; @betancourt2017; @mcelreath2020].
+
+*My note:*\
+Leapfrog is special because it doesn’t distort the space (volume-preserving) and you can always run it backward (reversible). That means it keeps the probabilities right. The Metropolis step fixes any small errors. And since momentum is fake, removing it still leaves the correct posterior.
+
+------------------------------------------------------------------------
+
+### NUTS: Stan’s Default Sampler
+
+Stan does not use plain HMC by default. Instead, it implements the **No-U-Turn Sampler (NUTS)** [@hoffman2014], an adaptive variant of HMC that:
+
+-   Chooses the trajectory length automatically (stopping when the simulated path “turns back” on itself),\
+-   Adapts the step size $\varepsilon$ using **dual averaging** during warm-up,\
+-   Estimates the mass matrix $M$ (diagonal or dense) during warm-up to match the posterior’s covariance structure.
+
+This removes much of the manual tuning required in standard HMC and makes inference more robust in practice.
+
+*My note:*\
+Stan doesn’t make you set the path length or step size by hand. NUTS (No-U-Turn Sampler) figures these out automatically. It also adapts the scaling of parameters during warm-up. This means less tuning for the user and more reliable results.
+
+------------------------------------------------------------------------
+
+#### Comparison of Sampling Algorithms
+
+| Algorithm | Core Idea | Strengths | Weaknesses | Used in |
+|---------------|---------------|---------------|---------------|---------------|
+| **Gibbs Sampling** | Sample each parameter from its conditional distribution (if available) | Simple, exact when conditionals are known; efficient in conjugate models | Not always possible (needs closed-form conditionals); slow if high correlations | JAGS (where conditionals are conjugate) |
+| **Metropolis–Hastings (MH)** | Propose a random move, accept/reject based on ratio | General-purpose; works even when Gibbs is not possible | Random-walk behavior, high autocorrelation, requires careful tuning | JAGS (fallback when Gibbs not available) |
+| **Hamiltonian Monte Carlo (HMC)** | Use gradients of log-posterior; simulate physics-like trajectories with momentum | Long, informed moves reduce random walk; efficient in high-dimensions | Requires tuning (step size, trajectory length) | Stan (as base engine) |
+| **No-U-Turn Sampler (NUTS)** | Adaptive HMC: stops trajectory when it turns back; tunes step size & mass matrix automatically | No manual tuning of path length; robust, efficient, higher ESS per iteration | More complex implementation; higher per-iteration cost | Stan (default sampler) |
+
+*My note:* 
+
+-   Gibbs and MH are the classic engines inside JAGS.\
+-   HMC is a big step forward, using calculus (gradients) to explore efficiently.\
+-   NUTS is a smart version of HMC, removing the need for hand-tuning and making Stan much easier and more reliable to use in practice.
+
+------------------------------------------------------------------------
+
+### JAGS vs Stan: Key Differences
+
+| Feature | **JAGS** | **Stan** |
+|------------------|---------------------------|---------------------------|
+| Core sampler | Gibbs where possible; otherwise MH | HMC / NUTS (gradient-based) |
+| Movement through posterior | Random-walk like, often sticky | Long, guided trajectories using gradients |
+| Tuning knobs | Proposal variances, adaptation, thinning | Step size and trajectory length (learned automatically) |
+| Sensitivity to priors | Often **high** when MH struggles | Typically **lower**, weakly informative priors usually sufficient |
+| Gradients | Not used | Automatic differentiation of $\nabla_\theta \log \pi(\theta)$ |
+| Convergence diagnostics | R-hat, trace plots (external tools) | R-hat, ESS, plus divergences, treedepth, E-BFMI reported |
+| Typical runtime | May require very long chains + thinning | Fewer iterations, higher ESS per second |
+
+------------------------------------------------------------------------
+
+### What to Expect if We Switch from JAGS → Stan
+
+1.  **Mixing & Efficiency**
+    -   Much higher **effective sample size (ESS)** per iteration.\
+    -   Lower autocorrelation and faster exploration of the posterior.
+2.  **Convergence**
+    -   R-hat closer to 1.0 across all five antibody kinetics parameters.\
+    -   Less need to “tighten” priors artificially to achieve mixing.
+3.  **Priors**
+    -   Weakly informative priors (reflecting assay scale, e.g., Luminex vs ELISA) are usually sufficient.\
+    -   Reduced risk that the prior dominates the likelihood.
+4.  **Diagnostics**
+    -   Stan provides richer diagnostics: divergences, max treedepth warnings, low E-BFMI — pointing directly to remedies like reparameterization.
+5.  **Computation Time**
+    -   Per-iteration cost is higher, but fewer iterations are required.\
+    -   Often minutes rather than multi-day JAGS runs with heavy thinning.
+6.  **Robustness**
+    -   More reliable across messy datasets (e.g., cholera, Shigella) without needing extreme HPC runs.
+
+*My note:*\
+Switching to Stan usually means:\
+- You need fewer samples to get good results.\
+- Chains converge more reliably without forcing priors.\
+- Stan gives richer warnings and diagnostics if things go wrong.\
+- Computation is often faster overall, especially for complex models.\
+- It works better on messy datasets like cholera or Shigella.
+
+------------------------------------------------------------------------
+
+## R-hat Definition and Trace Plots
+
+### Mathematical Definition of R-hat (Gelman–Rubin statistic)
+
+Suppose we have $m$ Markov chains (e.g., $m=4$), each with $n$ post–burn-in samples for a parameter $\theta$.
+
+The Gelman–Rubin statistic ($\hat{R}$) [@gelman1992; @brooks1998; @vehtari2021] compares **within-chain** and **between-chain** variance across $m$ MCMC chains, each with $n$ samples.
+
+1.  **Chain means**:\
+    $$
+    \bar{\theta}_{\cdot j} = \frac{1}{n}\sum_{i=1}^n \theta_{ij}, 
+    \quad j = 1,\dots,m
+    $$
+
+2.  **Overall mean**:\
+    $$
+    \bar{\theta}_{\cdot \cdot} = \frac{1}{m}\sum_{j=1}^m \bar{\theta}_{\cdot j}
+    $$
+
+3.  **Between-chain variance**:\
+    $$
+    B = \frac{n}{m-1} \sum_{j=1}^m 
+    \left( \bar{\theta}_{\cdot j} - \bar{\theta}_{\cdot \cdot} \right)^2
+    $$
+
+4.  **Within-chain variance**:\
+    $$
+    W = \frac{1}{m}\sum_{j=1}^m 
+    \left[ \frac{1}{n-1} \sum_{i=1}^n 
+    \left(\theta_{ij} - \bar{\theta}_{\cdot j}\right)^2 \right]
+    $$
+
+5.  **Marginal posterior variance estimate**:\
+    $$
+    \hat{\text{Var}}^+(\theta \mid y) = 
+    \frac{n-1}{n}W + \frac{1}{n}B
+    $$
+
+6.  **Potential scale reduction factor (R-hat)**:\
+    $$
+    \hat{R} = \sqrt{\frac{\hat{\text{Var}}^+(\theta \mid y)}{W}}
+    $$
+
+**Interpretation**:\
+- If $\hat{R} \approx 1$: chains mixed well → convergence likely.\
+- If $\hat{R} > 1.1$: convergence questionable [@gelman1992].\
+- Larger $\hat{R}$ means the **between-chain variance (**$B$) is much larger than the **within-chain variance (**$W$).
+
+------------------------------------------------------------------------
+
+### Trace Plots
+
+The trace plot is simply the sampled values $\theta_{ij}$ against iteration $i$, for each chain $j$:
+
+$$
+\text{Trace plot: } \{ (i, \theta_{ij}) : i = 1,\dots,n;\; j = 1,\dots,m \}
+$$
+
+-   If chains overlap and mix well: $B \approx W$, so $\hat{R} \to 1$.\
+-   If chains are stuck in different regions or mix slowly: $B \gg W$, so $\hat{R}$ increases.
+
+Thus, trace plots provide the raw evidence explaining why $\hat{R}$ values are high or low.
+
+------------------------------------------------------------------------
+
+### Application to Our Analysis
+
+In our prior sensitivity analysis plot (R-hat values across different prior precisions):
+
+-   Dashed red line indicates a cutoff at $\hat{R} = 1.1$.\
+-   Parameters $y_0$ and *shape* spike above 1.3–1.4 at certain prior settings.\
+-   This suggests possible non-convergence.
+
+As Ezra emphasized:\
+- We cannot interpret these $\hat{R}$ spikes without also looking at the **trace plots** for $y_0$ and *shape*.\
+- The trace plots will reveal whether chains are mixing poorly, stuck in different modes, or simply slow to converge.
+
+------------------------------------------------------------------------
+
+## Shigella Precision Modeling
+
+------------------------------------------------------------------------
+
+# Conclusion

@@ -133,6 +133,55 @@ sf2a_model<-run_mod(
   strat = NA,
   with_post = T
 )
+
+sf3a_model<-run_mod(
+  data=dL_clean_sf3a,
+  file_mod=fs::path_package("shigella", "inst/extdata/model.jags.r"),
+  nchain = 4,
+  nadapt = 5000,
+  nburn = 100,
+  nmc = 100,
+  niter = 5000,
+  strat = NA,
+  with_post = T
+)
+
+sf6_model<-run_mod(
+  data=dL_clean_sf6,
+  file_mod=fs::path_package("shigella", "inst/extdata/model.jags.r"),
+  nchain = 4,
+  nadapt = 5000,
+  nburn = 100,
+  nmc = 100,
+  niter = 5000,
+  strat = NA,
+  with_post = T
+)
+
+sonnei_model<-run_mod(
+  data=dL_clean_sonnei,
+  file_mod=fs::path_package("shigella", "inst/extdata/model.jags.r"),
+  nchain = 4,
+  nadapt = 5000,
+  nburn = 100,
+  nmc = 100,
+  niter = 5000,
+  strat = NA,
+  with_post = T
+)
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+
+ipab_model$curve_params <- attach_antigen_label(ipab_model$curve_params, "ipab")
+sf2a_model$curve_params <- attach_antigen_label(sf2a_model$curve_params, "sf2a")
+sf3a_model$curve_params <- attach_antigen_label(sf3a_model$curve_params, "sf3a")
+sf6_model$curve_params <- attach_antigen_label(sf6_model$curve_params, "sf6")
+sonnei_model$curve_params <- attach_antigen_label(sonnei_model$curve_params, "sonnei")
 ```
 
 

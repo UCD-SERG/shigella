@@ -1,0 +1,629 @@
+---
+title: "Priors Analysis of Shigella"
+subtitle: "Test 1: Sensitivity Analysis of Prior Precision for Shigella (prec_hyp_param)"
+author: "Kwan Ho Lee"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: true             # enable table of contents
+    toc_depth: 3          # up to three heading levels (#, ##, ###)
+    toc_float: true       # floating TOC on the side
+    highlight: tango      # syntax highlighting style
+  pdf_document:
+    toc: true             # also enable table of contents for PDF
+    toc_depth: 3          # same heading depth for PDF
+    highlight: tango      # consistent highlighting
+---
+
+```{r echo=F, include=F, warning=F, notes = F}
+
+library(dplyr)
+library(runjags)
+library(readr)
+library(serodynamics)
+library(serocalculator)
+library(tidyverse)
+library(runjags)
+library(coda)
+library(ggmcmc)
+library(ggbeeswarm)
+library(ggpubr)
+library(knitr)
+library(table1)
+library(readxl)
+devtools::load_all()
+
+options(scipen = 99, digits = 4)
+
+#model file
+file.mod <- fs::path_package("serodynamics", "extdata/model.jags")
+```
+
+```{r}
+#| label: "load shigella data"
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+df <- 
+  fs::path_package(
+    package = "shigella",
+    "extdata/3.8.2024 Compiled Shigella datav2.xlsx"
+  ) |> 
+  read_excel(sheet = "Compiled")
+```
+
+```{r}
+#| label: "manipulate Shigella data"
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+
+# filter ipab
+dL_clean_Ipab <- process_shigella_data(
+  data         = df,
+  study_filter = "SOSAR",
+  antigen      = n_ipab_MFI
+)
+
+dL_clean_Ipab_IgG<-dL_clean_Ipab %>%
+  filter(antigen_iso == "IgG")
+
+```
+
+# Analaysis overview:
+
+In this analysis, we are examining how **changing hyperpriors** for
+
+-   `prec_hyp_param` (spread/uncertainty) and
+
+-   `mu_hyp_param` (center/average guess)
+
+affects **R̂ values (convergence)** and **parameter estimates** in our Bayesian hierarchical model.
+
+The Shigella dataset is filtered to include only the **IpaB_IgG biomarker**. All JAGS models were run with the following constants:
+
+-   `nchain = 4`, `nadapt = 1000`, `nburn = 500`, `nmc = 2500`, `niter = 5000`.
+
+# Test 1: Sensitivity analysis of prior spread (`prec_hyp_param`)
+
+**Goal**: Check how the model behaves when we change the **prior precision** (spread) for each parameter, one at a time. This tests whether the model is sensitive to overly tight or overly vague priors, and helps identify a safe level of spread that supports good convergence.
+
+**Setup**:
+
+-   Default priors for means:
+
+    `mu.hyp = c(1.0, 7.0, 1.0, -2.0, -3.0)`
+
+-   Precision sweep values:
+
+    `prec.hyp = {10, 5, 2, 1, 0.1, 0.01, 0.0001, 0.000001}`
+
+-   Other hyperpriors:
+
+    `omega = diag(c(10,10,10,10,10,10)), wishdf = 20, prec.logy.hyp = c(4.0,1)`
+
+**Method**:
+
+-   Vary the precision for one parameter at a time (e.g., $y_0$), while holding the other four precisions fixed.
+
+-   For each run, record how $\hat{R}$ and parameter estimates for all parameters respond.
+
+**Interpretation**:
+
+-   High precision (narrow prior) forces estimates close to the mean guess.
+
+-   Low precision (diffuse prior) gives more freedom but may cause poor convergence.
+
+-   The goal is to identify a stable range of precision values that allow good convergence ($\hat{R} \approx 1$, stable ESS) without over-constraining the model.
+
+------------------------------------------------------------------------
+
+```{r echo=F, warning=F, notes=F, include = F}
+
+# Function for iterationg over different prior inputs
+run_mod_testfun <- function(data, 
+                            seq_in,
+                            param,
+                            y0 = 0.01,
+                            y1 = 0.01,
+                            t = 0.01,
+                            r = 0.01,
+                            alpha = 0.01,
+                            ...) {
+
+  #Creating data shell
+  mod_out_total <- data.frame(Iteration = integer(), Chain = integer(),
+                            Parameter = character(), Prior = integer(),
+                            Iso_type = character(),
+                            Stratification = character(), Subject = character(),
+                            value = numeric())
+
+  if (any(param %in% "y0")) {
+    for (i in seq_in) {
+      prec_priors <-  c(i, y1, t, alpha, r)
+      mod_out <- run_mod(data,
+                         prec_hyp_param = prec_priors, ...)
+      mod_out <- mod_out |>
+        filter(Subject == "newperson") |>
+        mutate(Priors = i)
+      mod_out_total <- rbind(mod_out_total, mod_out)
+      } 
+    }
+    if (any(param %in% "y1")) {
+      for (i in seq_in) {
+      prec_priors <-  c(y0, i, t, alpha, r)
+      mod_out <- run_mod(data,
+                         prec_hyp_param = prec_priors, ...)
+      mod_out <- mod_out |>
+        filter(Subject == "newperson") |>
+        mutate(Priors = i)
+      mod_out_total <- rbind(mod_out_total, mod_out)
+      } 
+    }
+    if (any(param %in% "t")) {
+      for (i in seq_in) {
+      prec_priors <-  c(y0, y1, i, alpha, r)
+      mod_out <- run_mod(data,
+                         prec_hyp_param = prec_priors, ...)
+      mod_out <- mod_out |>
+        filter(Subject == "newperson") |>
+        mutate(Priors = i)
+      mod_out_total <- rbind(mod_out_total, mod_out)
+      } 
+    }
+    if (any(param %in% "r")) {
+      for (i in seq_in) {
+      prec_priors <-  c(y0, y1, t, alpha, i)
+      mod_out <- run_mod(data,
+                         prec_hyp_param = prec_priors, ...)
+      mod_out <- mod_out |>
+        filter(Subject == "newperson") |>
+        mutate(Priors = i)
+      mod_out_total <- rbind(mod_out_total, mod_out)
+      } 
+    }
+    if (any(param %in% "alpha")) {
+      for (i in seq_in) {
+      prec_priors <-  c(y0, y1, t, i, r)
+      mod_out <- run_mod(data,
+                         prec_hyp_param = prec_priors, ...)
+      mod_out <- mod_out |>
+        filter(Subject == "newperson") |>
+        mutate(Priors = i)
+      mod_out_total <- rbind(mod_out_total, mod_out)
+      } 
+    }
+  mod_out_total
+  }
+
+```
+
+```{r echo=F, warning=F, notes=F, message = F}
+# Iterating over different prior values for cholera
+prec_vals <- c(10000, 1000, 100, 10, 1.0, 0.1, 0.01, 0.001, 0.00001)
+shigella_y0_3 <- run_mod_testfun(dL_clean_Ipab_IgG, seq_in = prec_vals, param = "y0",
+                            nchain = 4, nadapt = 1000, nburn = 500, nmc = 2500, niter = 5000)
+shigella_y1_3 <- run_mod_testfun(dL_clean_Ipab_IgG, seq_in = prec_vals, param = "y1",
+                           nchain = 4, nadapt = 1000, nburn = 500, nmc = 2500, niter = 5000)
+shigella_t_3 <- run_mod_testfun(dL_clean_Ipab_IgG, seq_in = prec_vals, param = "t",
+                           nchain = 4, nadapt = 1000, nburn = 500, nmc = 2500, niter = 5000)
+shigella_r_3 <- run_mod_testfun(dL_clean_Ipab_IgG, seq_in = prec_vals, param = "r",
+                           nchain = 4, nadapt = 1000, nburn = 500, nmc = 2500, niter = 5000)
+shigella_alpha_3 <- run_mod_testfun(dL_clean_Ipab_IgG, seq_in = prec_vals, param = "alpha",
+                           nchain = 4, nadapt = 1000, nburn = 500, nmc = 2500, niter = 5000)
+usethis::use_data(shigella_y0_3, overwrite = TRUE)
+usethis::use_data(shigella_y1_3, overwrite = TRUE)
+usethis::use_data(shigella_t_3, overwrite = TRUE)
+usethis::use_data(shigella_r_3, overwrite = TRUE)
+usethis::use_data(shigella_alpha_3, overwrite = TRUE)
+load(here::here() %>% fs::path("/Data/cholera_y0.rda"))
+load(here::here() %>% fs::path("/Data/cholera_y1.rda"))
+load(here::here() %>% fs::path("/Data/cholera_t.rda"))
+load(here::here() %>% fs::path("/Data/cholera_r.rda"))
+load(here::here() %>% fs::path("/Data/cholera_alpha.rda"))
+
+```
+
+
+```{r echo=F, warning=F, notes=F, include = F}
+
+# Edited function for graphing results
+plot_dx <- function(mod_out, type = "estimate", 
+                    param = c("y0", "y1", "t1", "shape", "alpha"),
+                    prior = "Precision") {
+  
+  mod_out <- mod_out |> 
+    filter(Parameter %in% param) 
+    
+  if (type == "estimate") {
+    mod_out <- mod_out |> 
+      dplyr::group_by(Parameter, Priors) |>
+      dplyr::summarize(
+        median = median(value),
+        two_5 = quantile(value, 0.025),
+        nine_75 = quantile(value, 0.975),
+        .groups = "drop"
+      )
+    
+    ggplot(data = mod_out, aes(x = Priors, y = median)) +
+      geom_line() +
+      geom_ribbon(aes(ymin = two_5, ymax = nine_75), 
+                  fill = "lightblue", alpha = 0.4) +
+      theme_bw() +
+      labs(y = "Posterior median (with 95% CI)", 
+           x = paste0(prior, " values")) +
+      scale_x_log10() +
+      scale_y_log10() +
+      facet_wrap(~Parameter, scales = "free_y")
+    
+  } else {
+    # Initialize empty df instead of list-->make it dataframe instead of list
+    Rhats <- data.frame(Parameter = character(), 
+                        Rhat = numeric(), 
+                        Priors = numeric())
+    
+    for (i in unique(mod_out$Priors)) {
+      Rhatvals <- mod_out |>
+        filter(Priors == i) |>
+        ggmcmc::ggs_Rhat(plot = FALSE) |>
+        dplyr::mutate(Priors = i)
+      Rhats <- rbind(Rhats, Rhatvals)
+    }
+    
+    ggplot(data = Rhats, aes(x = Priors, y = Rhat, group = Parameter)) +
+      geom_line(aes(color = Parameter)) +
+      # Two cutoff lines: strict (1.1) and lenient (1.5)
+      geom_hline(yintercept = 1.1, color = "red", linetype = "dashed") +
+      geom_hline(yintercept = 1.5, color = "darkorange", linetype = "dotted") +
+      theme_bw() +
+      labs(y = expression(hat(R)), 
+           x = paste0(prior, " values"),
+           caption = "Dashed red = strict cutoff (1.05); dotted orange = lenient cutoff (1.1)") +
+      scale_x_log10(limits = c(min(Rhats$Priors), max(Rhats$Priors))) +
+      scale_color_brewer(palette = "Paired")
+  }
+}
+
+
+```
+
+```{r echo=F, warning=F, notes=F, include = F}
+check_rhat_diagnostics <- function(mod_out) {
+  library(dplyr)
+  library(ggmcmc)
+  
+  # 1. Check if any parameter has zero within-chain variance
+  zero_var <- mod_out %>%
+    group_by(Parameter, Priors, Chain) %>%
+    summarise(wvar = var(value), .groups = "drop") %>%
+    filter(is.na(wvar) | wvar == 0)
+  
+  # 2. Build the Rhat table across all Priors
+  rhat_tbl <- lapply(split(mod_out, mod_out$Priors), function(df) {
+    out <- ggmcmc::ggs_Rhat(df, plot = FALSE)
+    out$Priors <- unique(df$Priors)
+    out
+  }) %>% bind_rows()
+  
+  # 3. Summarise Rhat ranges per parameter
+  rhat_summary <- rhat_tbl %>%
+    group_by(Parameter) %>%
+    summarise(min_Rhat = min(Rhat, na.rm = TRUE),
+              max_Rhat = max(Rhat, na.rm = TRUE),
+              n_NA    = sum(is.na(Rhat)),
+              .groups = "drop")
+  
+  # Return both results as a list
+  list(
+    zero_var = zero_var,
+    rhat_summary = rhat_summary
+  )
+}
+
+```
+
+```{r echo=F, warning=F, notes=F, message = F}
+# Trace plots for selected parameters at a given prior value
+plot_traces <- function(mod_out, params, prior_val,
+                        subject = NULL,            # e.g., "population" or "newperson"
+                        facet_free_y = TRUE,       # TRUE -> scales = "free_y"
+                        ncol = NULL,               # facet columns
+                        title_prefix = "Trace plots at prior precision = ") {
+
+  stopifnot(all(c("Iteration","Chain","Parameter","Priors","value") %in% names(mod_out)))
+
+  df <- mod_out
+  if (!is.null(subject) && "Subject" %in% names(df)) {
+    df <- dplyr::filter(df, .data$Subject == subject)
+  }
+
+  df <- df |>
+    dplyr::filter(.data$Parameter %in% params,
+                  .data$Priors == prior_val) |>
+    dplyr::mutate(Chain = factor(.data$Chain))
+
+  if (nrow(df) == 0L) {
+    stop("No rows found for those params/prior_val (check names and Priors present).")
+  }
+
+  ggplot(df, aes(x = .data$Iteration, y = .data$value,
+                 color = .data$Chain, group = .data$Chain)) +
+    geom_line(alpha = 0.8) +
+    facet_wrap(~Parameter,
+               scales = if (facet_free_y) "free_y" else "fixed",
+               ncol = ncol) +
+    theme_bw() +
+    labs(x = "Iteration",
+         y = "Sampled value",
+         color = "Chain",
+         title = paste0(title_prefix, prior_val))
+}
+```
+
+```{r echo=F, warning=F, notes=F, message = F}
+# Iterating over different prior values for shigella
+
+load(here::here() %>% fs::path("/data/shigella_y0.rda"))
+load(here::here() %>% fs::path("/data/shigella_y1.rda"))
+load(here::here() %>% fs::path("/data/shigella_t.rda"))
+load(here::here() %>% fs::path("/data/shigella_r.rda"))
+load(here::here() %>% fs::path("/data/shigella_alpha.rda"))
+
+```
+
+## R-hat Definition and Trace Plots
+
+### Mathematical Definition of R-hat (Gelman–Rubin statistic)
+
+Suppose we have $m$ Markov chains (e.g., $m=4$), each with $n$ post–burn-in samples for a parameter $\theta$.
+
+The Gelman–Rubin statistic ($\hat{R}$) compares **within-chain** and **between-chain** variance across $m$ MCMC chains, each with $n$ samples.
+
+1.  **Chain means**:\
+    $$
+    \bar{\theta}_{\cdot j} = \frac{1}{n}\sum_{i=1}^n \theta_{ij}, 
+    \quad j = 1,\dots,m
+    $$
+
+2.  **Overall mean**:\
+    $$
+    \bar{\theta}_{\cdot \cdot} = \frac{1}{m}\sum_{j=1}^m \bar{\theta}_{\cdot j}
+    $$
+
+3.  **Between-chain variance**:\
+    $$
+    B = \frac{n}{m-1} \sum_{j=1}^m 
+    \left( \bar{\theta}_{\cdot j} - \bar{\theta}_{\cdot \cdot} \right)^2
+    $$
+
+4.  **Within-chain variance**:\
+    $$
+    W = \frac{1}{m}\sum_{j=1}^m 
+    \left[ \frac{1}{n-1} \sum_{i=1}^n 
+    \left(\theta_{ij} - \bar{\theta}_{\cdot j}\right)^2 \right]
+    $$
+
+5.  **Marginal posterior variance estimate**:\
+    $$
+    \hat{\text{Var}}^+(\theta \mid y) = 
+    \frac{n-1}{n}W + \frac{1}{n}B
+    $$
+
+6.  **Potential scale reduction factor (R-hat)**:\
+    $$
+    \hat{R} = \sqrt{\frac{\hat{\text{Var}}^+(\theta \mid y)}{W}}
+    $$
+
+**Interpretation**:\
+- If $\hat{R} \approx 1$: chains mixed well → convergence likely.\
+- If $\hat{R} > 1.1$: convergence questionable.\
+- Larger $\hat{R}$ means the **between-chain variance (**$B$) is much larger than the **within-chain variance (**$W$).
+
+------------------------------------------------------------------------
+
+### Trace Plots
+
+The trace plot is simply the sampled values $\theta_{ij}$ against iteration $i$, for each chain $j$:
+
+$$
+\text{Trace plot: } \{ (i, \theta_{ij}) : i = 1,\dots,n;\; j = 1,\dots,m \}
+$$
+
+-   If chains overlap and mix well: $B \approx W$, so $\hat{R} \to 1$.\
+-   If chains are stuck in different regions or mix slowly: $B \gg W$, so $\hat{R}$ increases.
+
+Thus, trace plots provide the raw evidence explaining why $\hat{R}$ values are high or low.
+
+------------------------------------------------------------------------
+
+### Application to Our Analysis
+
+In our prior sensitivity analysis plot (R-hat values across different prior precisions):
+
+-   Dashed red line indicates a cutoff at $\hat{R} = 1.1$.\
+-   Parameters $y_0$ and *shape* spike above 1.3–1.4 at certain prior settings.\
+-   This suggests possible non-convergence.
+
+As Ezra emphasized:\
+- We cannot interpret these $\hat{R}$ spikes without also looking at the **trace plots** for $y_0$ and *shape*.\
+- The trace plots will reveal whether chains are mixing poorly, stuck in different modes, or simply slow to converge.
+
+------------------------------------------------------------------------
+
+## Shigella Precision Modeling
+
+### Initial antibody level (y0)
+
+Shigella IpaB-IgG Rhat values by varying `prec_hyp_param` prior values for y0
+
+```{r echo=F, warning=F, notes=F, message = F}
+plot_dx(shigella_y0, type = "Rhat")
+```
+
+This figure shows how well the model converged (measured by $\hat{R}$) when we changed the prior precision for $y_0$. $\hat{R}$ values close to 1 mean good convergence. Higher values mean the model did not converge well. Most parameters ($\alpha$, $t_1$, and $y_1$) stayed very close to 1.0, so they converged reliably. $y_0$ sometimes reached $\hat{R}$ values around 1.5. Shape was the most unstable, going as high as 1.75. This means most parameters are not sensitive to changes in $y_0$’s prior. But $y_0$ and shape can have trouble converging. Only four lines appear in the plot because $t_1$ and $y_1$ overlap at 1.0, so they look like a single line.
+
+```{r echo=F, warning=F, notes=F, message = F}
+
+plot_traces(shigella_y0, params = c("y0","shape","t1","y1","alpha"), prior_val = 0.1,
+            subject = "newperson")
+
+```
+
+
+```{r echo=F, warning=F, notes=F, message = F}
+plot_dx(shigella_y0)
+```
+
+This figure shows how the estimated values of each parameter changed as we varied $y_0$’s prior precision. The black lines are the median estimates and the blue shaded areas show uncertainty (95% credible intervals). For $y_0$, the estimates shifted depending on the prior, and the uncertainty was wide, meaning $y_0$ is quite sensitive to the prior choice. Shape also showed some fluctuations and instability. In contrast, $\alpha$, $t_1$, and $y_1$ stayed very stable across all prior values, with only small changes and narrow uncertainty ranges. This means that only $y_0$ (and partly shape) are strongly influenced by the prior, while the other parameters are robust.
+
+```{r echo=F, warning=F, notes=F, message = F}
+results_y0<- check_rhat_diagnostics(shigella_y0)
+
+# Display Rhat summary nicely as a kable table
+kable(results_y0$rhat_summary, 
+      caption = "Rhat diagnostics for Shigella y0 parameter sweep",
+      digits = 4, 
+      format = "markdown")
+```
+
+The table summarizes the minimum and maximum $\hat{R}$ values for each parameter. $\alpha$, $t_1$, and $y_1$ all had $\hat{R}$ values essentially equal to 1, showing excellent convergence under all prior choices. $y_0$ had $\hat{R}$ values ranging from 1.10 to 1.51, indicating moderate convergence problems depending on the prior. Shape was the most problematic, with $\hat{R}$ values ranging from 1.14 up to 1.75, showing serious convergence issues in some runs. This confirms what the figures showed: most parameters converge well, but $y_0$ and especially shape are sensitive to prior precision and can fail to converge properly.
+
+**Overall**, when we varied the prior precision for $y_0$ (while keeping the priors for all other parameters fixed at their defaults), most parameters ($\alpha$, $t_1$, and $y_1$) showed stable estimates and excellent convergence. In contrast, $y_0$ itself became more sensitive to prior choice, with wider uncertainty and $\hat{R}$ values sometimes rising above 1.1. Shape was the most unstable, with $\hat{R}$ values as high as 1.7 and fluctuating estimates. These results show that changing $y_0$’s prior mainly affects $y_0$ and shape, while the other parameters remain robust.
+
+------------------------------------------------------------------------
+
+### Peak antibody concentration (y1)
+
+Shigella Ipab-IgG Rhat values by varying `prec_hyp_param` prior values for y1
+
+```{r echo=F, warning=F, notes=F, message = F}
+plot_dx(shigella_y1, type = "Rhat")
+```
+
+This figure shows how well the model converged (measured by $\hat{R}$) when we changed the prior precision for $y_1$. $\alpha$ and $y_1$ stayed very close to 1.0, showing excellent convergence across all prior values. In contrast, $y_0$ and shape showed higher $\hat{R}$ values, with shape reaching around 1.4, indicating less stable convergence. $t_1$ also stayed flat at 1.0, showing no issues. Overall, convergence is good for most parameters, but $y_0$ and shape are somewhat sensitive to changes in $y_1$’s prior.
+
+```{r echo=F, warning=F, notes=F, message = F}
+plot_dx(shigella_y1)
+```
+
+This figure shows how parameter estimates changed as we varied $y_1$’s prior precision. The black line shows the median estimate, and the shaded blue area is the 95% credible interval. $\alpha$, $t_1$, and $y_1$ remained very stable with almost no change across prior values, meaning their estimates were robust to different $y_1$ priors. $y_0$ estimates shifted slightly with wider uncertainty, showing some sensitivity. Shape also fluctuated somewhat, though still within a modest range. Overall, most parameters are stable, with only minor sensitivity in $y_0$ and shape when changing $y_1$’s prior precision.
+
+```{r echo=F, warning=F, notes=F, message = F}
+results_y1<- check_rhat_diagnostics(shigella_y1)
+
+# Display Rhat summary nicely as a kable table
+kable(results_y1$rhat_summary, 
+      caption = "Rhat diagnostics for Shigella y1 parameter sweep",
+      digits = 4, 
+      format = "markdown")
+```
+
+The table summarizes the minimum and maximum $\hat{R}$ values for each parameter across all tested $y_1$ priors. $\alpha$ (1.00–1.01), $t_1$ (1.00), and $y_1$ (1.00) all showed near-perfect convergence. $y_0$ (1.12–1.41) and shape (1.10–1.43) showed higher $\hat{R}$ values, which means their convergence is less stable when $y_1$ priors change. Importantly, no NA values were found, so all parameters were sampled successfully.
+
+**Overall**, when varying the prior precision for $y_1$ (with other priors fixed), most parameters ($\alpha$, $t_1$, $y_1$) remained stable and converged well. $y_0$ and shape were the most affected, showing less stable convergence and slightly fluctuating estimates. This means that adjusting $y_1$’s prior precision has little effect on the main parameters, except that it introduces some sensitivity in $y_0$ and shape.
+
+------------------------------------------------------------------------
+
+### Time to peak (t1)
+
+Shigella Ipab-IgG Rhat values by varying `prec_hyp_param` prior values for t1
+
+```{r echo=F, warning=F, notes=F, message = F}
+plot_dx(shigella_t, type = "Rhat")
+```
+
+This figure shows how model convergence (measured by $\hat{R}$) changes when the prior precision for $t_1$ is varied. $\alpha$ and $y_1$ stayed very close to 1.0, showing excellent convergence under all prior values. In contrast, $y_0$ and shape had higher $\hat{R}$ values, with $y_0$ reaching about 1.5 and shape climbing as high as 1.8, which indicates convergence problems. $t_1$ itself remained stable and close to 1.0 across all priors, meaning it converged well. Overall, convergence issues appear mainly in shape and $y_0$, not in $t_1$ or the other parameters.
+
+```{r echo=F, warning=F, notes=F, message = F}
+plot_dx(shigella_t)
+```
+
+This figure shows how parameter estimates changed as we varied $t_1$’s prior precision. $t_1$ estimates remained flat and stable, showing little effect of prior changes. $\alpha$ and $y_1$ also stayed very stable with narrow intervals, meaning they are not sensitive to $t_1$ priors. $y_0$ showed more variability, with shifting medians and wide uncertainty bands. Shape also fluctuated slightly, though less than $y_0$. This means changing the prior for $t_1$ does not strongly affect most parameters, except for some moderate sensitivity in $y_0$ and shape.
+
+```{r echo=F, warning=F, notes=F, message = F}
+results_t1<- check_rhat_diagnostics(shigella_t)
+
+# Display Rhat summary nicely as a kable table
+kable(results_t1$rhat_summary, 
+      caption = "Rhat diagnostics for Shigella t1 parameter sweep",
+      digits = 4, 
+      format = "markdown")
+```
+
+The table summarizes the minimum and maximum $\hat{R}$ values across all tested priors for $t_1$. $\alpha$ (1.000–1.008), $t_1$ (1.000–1.001), and $y_1$ (0.9998–1.000) all show near-perfect convergence. $y_0$ (1.03–1.49) shows some convergence issues, and shape (1.10–1.79) has the highest $\hat{R}$ values, indicating more serious problems. Importantly, no NA values appeared, so all chains were successfully sampled.
+
+**Overall**, when varying the prior precision for $t_1$ (with other priors fixed), $t_1$ itself was stable and converged very well across all settings. $\alpha$ and $y_1$ were also unaffected. However, $y_0$ and shape showed higher $\hat{R}$ values and more variability, with shape being the most problematic. This suggests that changing $t_1$’s prior does not harm convergence for $t_1$ itself but can indirectly affect the stability of $y_0$ and shape.
+
+------------------------------------------------------------------------
+
+### Shape of decay (r)
+
+Shigella Ipab-IgG Rhat values by varying `prec_hyp_param` prior values for r
+
+```{r echo=F, warning=F, notes=F, message = F}
+plot_dx(shigella_r, type = "Rhat")
+```
+
+This figure shows how convergence (measured by $\hat{R}$) changed when the prior precision for $r$ was varied. $\alpha$, $t_1$, and $y_1$ stayed close to 1.0, meaning they converged very well under all prior values. In contrast, $y_0$ and shape showed higher $\hat{R}$ values. Shape was the most unstable, with $\hat{R}$ going above 1.8, indicating serious convergence issues. $y_0$ also had moderately high $\hat{R}$ values (around 1.3–1.4), suggesting weaker convergence. Overall, convergence was strong for $\alpha$, $t_1$, and $y_1$, but sensitive for $y_0$ and shape.
+
+```{r echo=F, warning=F, notes=F, message = F}
+plot_dx(shigella_r)
+```
+
+This figure shows how parameter estimates shifted when the prior for $r$ was changed. $\alpha$, $t_1$, and $y_1$ stayed flat and stable across all prior values, showing robustness to $r$ priors. $y_0$ moved slightly depending on the prior, with wider uncertainty, and shape also showed some variability. This means changing $r$’s prior precision mostly influenced $y_0$ and shape, while the other parameters were unaffected.
+
+```{r echo=F, warning=F, notes=F, message = F}
+results_r<- check_rhat_diagnostics(shigella_r)
+
+# Display Rhat summary nicely as a kable table
+kable(results_r$rhat_summary, 
+      caption = "Rhat diagnostics for Shigella r parameter sweep",
+      digits = 4, 
+      format = "markdown")
+```
+
+The table summarizes the range of $\hat{R}$ values for each parameter under different $r$ prior precisions. $\alpha$ (1.00–1.03), $t_1$ (1.00), and $y_1$ (1.00) all had near-perfect convergence. $y_0$ ranged from 1.04 to 1.40, showing moderate convergence problems, while shape ranged from 1.04 to 1.85, confirming it was the most problematic parameter. No NA values appeared, so all chains were successfully sampled.
+
+**Overall**, when varying the prior precision for $r$, the parameters $\alpha$, $t_1$, and $y_1$ remained stable and converged well. However, $y_0$ and especially shape showed higher $\hat{R}$ values and more unstable estimates. This indicates that $r$ priors do not strongly affect most parameters, but they can lead to convergence problems in $y_0$ and shape.
+
+------------------------------------------------------------------------
+
+### Decay rate (alpha)
+
+Shigella Ipab-IgG Rhat values by varying `prec_hyp_param` prior values for alpha
+
+```{r echo=F, warning=F, notes=F, message = F}
+plot_dx(shigella_alpha, type = "Rhat")
+```
+
+This figure shows how convergence (measured by $\hat{R}$) changed when the prior precision for $\alpha$ was varied. $\alpha$, $t_1$, and $y_1$ stayed very close to 1.0, showing excellent convergence across all prior values. $y_0$ showed moderately high $\hat{R}$ values, reaching up to about 1.6, while shape was the most unstable, with $\hat{R}$ values climbing as high as 1.7. This means that while $\alpha$ itself and some other parameters converge well, $y_0$ and shape are more sensitive and struggle to converge when $\alpha$’s prior changes.
+
+```{r echo=F, warning=F, notes=F, message = F}
+plot_dx(shigella_alpha)
+```
+
+This figure shows how parameter estimates shifted when $\alpha$’s prior precision was changed. $\alpha$, $t_1$, and $y_1$ estimates stayed stable across all prior values, with narrow ranges, showing that they are robust to changes in $\alpha$’s prior. $y_0$ estimates varied more, with wider uncertainty bands, and shape showed some fluctuations as well. This means that changing $\alpha$’s prior mainly affects $y_0$ and shape, while leaving $\alpha$, $t_1$, and $y_1$ stable.
+
+```{r echo=F, warning=F, notes=F, message = F}
+results_alpha<- check_rhat_diagnostics(shigella_alpha)
+
+# Display Rhat summary nicely as a kable table
+kable(results_alpha$rhat_summary, 
+      caption = "Rhat diagnostics for Shigella alpha parameter sweep",
+      digits = 4, 
+      format = "markdown")
+```
+
+The table summarizes $\hat{R}$ values for each parameter across all $\alpha$ prior precisions. $\alpha$ (1.001–1.027), $t_1$ (1.000–1.001), and $y_1$ (0.9999–1.000) had near-perfect convergence. $y_0$ (1.09–1.62) had moderately high $\hat{R}$ values, and shape (1.04–1.73) showed the highest $\hat{R}$ values, confirming instability. No NA values appeared, so all chains were sampled successfully.
+
+**Overall**, when varying the prior precision for $\alpha$, the parameters $\alpha$, $t_1$, and $y_1$ remained stable and converged well across all settings. In contrast, $y_0$ and especially shape showed higher $\hat{R}$ values and more unstable estimates. This means that $\alpha$ priors do not strongly affect $\alpha$ itself, but they can indirectly introduce convergence issues in $y_0$ and shape.
+
+------------------------------------------------------------------------
+
+# Conclusion
+
+In Test 1 (sensitivity analysis of prior spread), we changed the prior precision (prec_hyp_param) for each parameter one at a time to see how the model responds. Across all five parameters ($y_0$, $y_1$, $t_1$, $r$, $\alpha$), we found that most parameters ($\alpha$, $t_1$, $y_1$) gave stable estimates and converged well ($\hat{R} \approx 1$) no matter which prior was used. In contrast, $y_0$ and especially the shape parameter ($r$) were much more sensitive. For $y_0$, posterior estimates shifted and $\hat{R}$ sometimes rose to 1.5. For shape ($r$), $\hat{R}$ often went above 1.7, showing poor convergence. This pattern was the same no matter which parameter’s prior we varied: the main effects were always on $y_0$ and shape, while $\alpha$, $t_1$, and $y_1$ stayed stable.
+
+Overall, these results highlight the need to choose a stable range of prior precision values. The priors should not be too tight, because that can force $y_0$ and shape ($r$) into unrealistic values, and not too loose, because that can cause poor convergence. Instead, the priors should be chosen in the middle range—narrow enough to help stabilize the sensitive parameters, but wide enough to still let the model remain flexible and converge well.

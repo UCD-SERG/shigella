@@ -1,0 +1,383 @@
+---
+title: "Shigella-Kinetics"
+author: "Kwan Ho Lee"
+date: "`r Sys.Date()`"
+format:
+  html:
+    toc: true
+    theme: cosmo
+jupyter: false
+---
+
+
+```{r}
+#| label: setup
+#| message: false
+#| include: false
+#| echo: false
+
+library(serocalculator)
+library(serodynamics)
+library(readxl)
+library(rlang)
+library(dplyr)
+library(rjags)
+library(knitr)
+library(tidyr)
+library(ggplot2)
+library(cowplot)
+library(purrr)
+
+devtools::load_all()
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+## create function that put antigen in front of isotype in Shigella for curve_param data
+# Function to prefix Iso_type with a given antigen name
+attach_antigen_label <- function(df, antigen_prefix) {
+  df %>%
+    mutate(Iso_type = paste0(antigen_prefix, "_", Iso_type))
+}
+```
+
+
+# Load the processed Shigella dataset
+
+```{r}
+#| label: "load shigella data"
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+df <- 
+  fs::path_package(
+    package = "shigella",
+    "extdata/3.8.2024 Compiled Shigella datav2.xlsx"
+  ) |> 
+  read_excel(sheet = "Compiled")
+```
+
+```{r}
+#| label: "manipulate Shigella data"
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+
+# filter ipab
+dL_clean_ipab <- process_shigella_data(
+  data         = df,
+  study_filter = "SOSAR",
+  antigen      = n_ipab_MFI
+)
+# filter sf2a
+dL_clean_sf2a <- process_shigella_data(
+  data         = df,
+  study_filter = "SOSAR",
+  antigen      = n_sf2aospbsa_MFI
+)
+# filter sf3a
+dL_clean_sf3a <- process_shigella_data(
+  data         = df,
+  study_filter = "SOSAR",
+  antigen      = n_sf3aospbsa_MFI
+)
+# filter sf6
+dL_clean_sf6 <- process_shigella_data(
+  data         = df,
+  study_filter = "SOSAR",
+  antigen      = n_sf6ospbsa_MFI
+)
+# filter sonnei
+dL_clean_sonnei <- process_shigella_data(
+  data         = df,
+  study_filter = "SOSAR",
+  antigen      = n_sonneiospbsa_MFI
+)
+```
+
+```{r}
+#| label: "prep Shigella data"
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+
+prepped_data_ipab <- prep_data(dL_clean_ipab)
+prepped_data_sf2a <- prep_data(dL_clean_sf2a)
+prepped_data_sf3a <- prep_data(dL_clean_sf3a)
+prepped_data_sf6 <- prep_data(dL_clean_sf6)
+prepped_data_sonnei <- prep_data(dL_clean_sonnei)
+
+```
+
+
+
+```{r}
+#| label: "Run the model"
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+
+ipab_model<-run_mod(
+  data=dL_clean_ipab,
+  file_mod=fs::path_package("shigella", "inst/extdata/model.jags.r"),
+  nchain = 4,
+  nadapt = 5000,
+  nburn = 100,
+  nmc = 100,
+  niter = 5000,
+  strat = NA,
+  with_post = T
+)
+
+sf2a_model<-run_mod(
+  data=dL_clean_sf2a,
+  file_mod=fs::path_package("shigella", "inst/extdata/model.jags.r"),
+  nchain = 4,
+  nadapt = 5000,
+  nburn = 100,
+  nmc = 100,
+  niter = 5000,
+  strat = NA,
+  with_post = T
+)
+
+sf3a_model<-run_mod(
+  data=dL_clean_sf3a,
+  file_mod=fs::path_package("shigella", "inst/extdata/model.jags.r"),
+  nchain = 4,
+  nadapt = 5000,
+  nburn = 100,
+  nmc = 100,
+  niter = 5000,
+  strat = NA,
+  with_post = T
+)
+
+sf6_model<-run_mod(
+  data=dL_clean_sf6,
+  file_mod=fs::path_package("shigella", "inst/extdata/model.jags.r"),
+  nchain = 4,
+  nadapt = 5000,
+  nburn = 100,
+  nmc = 100,
+  niter = 5000,
+  strat = NA,
+  with_post = T
+)
+
+sonnei_model<-run_mod(
+  data=dL_clean_sonnei,
+  file_mod=fs::path_package("shigella", "inst/extdata/model.jags.r"),
+  nchain = 4,
+  nadapt = 5000,
+  nburn = 100,
+  nmc = 100,
+  niter = 5000,
+  strat = NA,
+  with_post = T
+)
+```
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+
+ipab_model$curve_params <- attach_antigen_label(ipab_model$curve_params, "ipab")
+sf2a_model$curve_params <- attach_antigen_label(sf2a_model$curve_params, "sf2a")
+sf3a_model$curve_params <- attach_antigen_label(sf3a_model$curve_params, "sf3a")
+sf6_model$curve_params <- attach_antigen_label(sf6_model$curve_params, "sf6")
+sonnei_model$curve_params <- attach_antigen_label(sonnei_model$curve_params, "sonnei")
+```
+
+
+
+
+# Model estimates
+
+## Summary table of parameter medians grouped by Antigen_Iso
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+sum_ipab<-post_summ(ipab_model)
+
+sum_sf2a<-post_summ(sf2a_model)
+
+sum_sf3a<-post_summ(sf3a_model)
+
+sum_sf6<-post_summ(sf6_model)
+
+sum_sonnei<-post_summ(sonnei_model)
+
+summary_shigella <- rbind(sum_ipab,sum_sf2a,
+                          sum_sf3a,sum_sf6,
+                          sum_sonnei)
+
+summary_table <- summary_shigella %>%
+  select(Iso_type, Parameter_sub, Median) %>%
+  pivot_wider(names_from = Parameter_sub, values_from = Median) %>%
+  select(Iso_type, y0, y1, t1, alpha, shape)
+
+kable(summary_table)
+```
+
+
+# Diagnostics
+
+## Rhat diagnostics for estimated parameters
+
+```{r,fig.height=16}
+#| echo: false
+#| message: false
+#| warning: false
+
+# Named list of models
+model_list <- list(
+  ipab = ipab_model,
+  sf2a = sf2a_model,
+  sf3a = sf3a_model,
+  sf6  = sf6_model,
+  sonnei = sonnei_model
+)
+
+# Define your iso list
+iso_list <- c("ipab_IgG", "ipab_IgA", 
+              "sf2a_IgG", "sf2a_IgA", 
+              "sf3a_IgG", "sf3a_IgA", 
+              "sf6_IgG", "sf6_IgA", 
+              "sonnei_IgG", "sonnei_IgA") 
+
+# Create plot list using appropriate model for each iso
+plot_list <- map(iso_list, ~{
+  model_name <- strsplit(.x, "_")[[1]][1]
+  model_obj <- model_list[[model_name]]
+  
+  plot_jags_Rhat(model_obj, iso = .x) +
+    xlim(1, 3) +
+    theme(plot.title = element_text(size = 9))
+})
+
+# Combine into a 5-row, 2-column grid
+cowplot::plot_grid(plotlist = plot_list, ncol = 2)
+```
+
+To assess convergence of the Bayesian hierarchical model, we evaluated the Rhat diagnostics across all estimated parameters. The Rhat plots reveal substantial convergence issues, with a notable number of parameters showing Rhat values significantly above the commonly accepted threshold of 1.1, and some approaching or exceeding 2.0. This indicates that the MCMC simulations did not consistently achieve adequate mixing across chains, raising concerns about the reliability and interpretability of the posterior estimates. Additionally, some parameters are missing from the Rhat summary plots, which likely reflects underlying computational instability or identifiability problems — for example, when a parameter's chains are too divergent, poorly mixed, or contain extreme values, leading to failure in Rhat computation or exclusion during summarization. These issues underscore the need for further model refinement and diagnostic checks. In particular, model reparameterization strategies, including revision of prior distributions, should be considered — a direction emphasized in today’s discussion with Peter. Weakly informative or misaligned priors may be contributing to poor mixing, lack of posterior concentration, or excessive variability. Resolving these concerns is essential to ensure robust inference and reproducibility of model-based conclusions.
+
+## Traceplots for estimated parameters
+### Traceplots for ipab
+```{r,fig.height=10}
+#| echo: false
+#| message: false
+#| warning: false
+
+# Antigen names
+antigen_list <- c("ipab", "sf2a", "sf3a", "sf6", "sonnei")
+
+# Create paired plots for each antigen
+paired_plots <- map(antigen_list, function(antigen) {
+  model <- model_list[[antigen]]
+  
+  p_igg <- plot_jags_trace(model, iso = paste0(antigen, "_IgG")) +
+    theme(plot.title = element_text(size = 9))
+  
+  p_iga <- plot_jags_trace(model, iso = paste0(antigen, "_IgA")) +
+    theme(plot.title = element_text(size = 9))
+  
+  cowplot::plot_grid(p_igg, p_iga, ncol = 2)
+})
+
+# Show first row only: ipab_IgG and ipab_IgA
+cowplot::plot_grid(plotlist = list(paired_plots[[1]]), nrow = 1)
+
+```
+
+### Traceplots for sf2a
+```{r,fig.height=10}
+#| echo: false
+#| message: false
+#| warning: false
+# Show second row only: sf2a_IgG and sf2a_IgA
+cowplot::plot_grid(plotlist = list(paired_plots[[2]]), nrow = 1)
+```
+
+### Traceplots for sf3a
+```{r,fig.height=10}
+#| echo: false
+#| message: false
+#| warning: false
+# Show third row only: sf3a_IgG and sf3a_IgA
+cowplot::plot_grid(plotlist = list(paired_plots[[3]]), nrow = 1)
+```
+
+### Traceplots for sf6
+```{r,fig.height=10}
+#| echo: false
+#| message: false
+#| warning: false
+# Show fourth row only: sf6_IgG and sf6_IgA
+cowplot::plot_grid(plotlist = list(paired_plots[[4]]), nrow = 1)
+```
+
+### Traceplots for sonnei
+```{r,fig.height=10}
+#| echo: false
+#| message: false
+#| warning: false
+# Show fifth row only: sonnei_IgG and sonne_IgA
+cowplot::plot_grid(plotlist = list(paired_plots[[5]]), nrow = 1)
+```
+
+
+## Densityplots for estimated parameters
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+# Create paired density plots for each antigen
+paired_dens_plots <- map(antigen_list, function(antigen) {
+  model <- model_list[[antigen]]
+
+  # Extract IgG plot
+  dens_igg <- plot_jags_dens(model, iso = paste0(antigen, "_IgG"))
+  p_igg <- dens_igg$None[[paste0(antigen, "_IgG")]] +
+    theme(plot.title = element_text(size = 9))
+
+  # Extract IgA plot
+  dens_iga <- plot_jags_dens(model, iso = paste0(antigen, "_IgA"))
+  p_iga <- dens_iga$None[[paste0(antigen, "_IgA")]] +
+    theme(plot.title = element_text(size = 9))
+
+  # Combine them into one row
+  cowplot::plot_grid(p_igg, p_iga, ncol = 2)
+})
+
+# Show first row only: ipab_IgG and ipab_IgA
+cowplot::plot_grid(plotlist = list(paired_dens_plots[[1]]), nrow = 1)
+
+# Show second row only: sf2a_IgG and sf2a_IgA
+cowplot::plot_grid(plotlist = list(paired_dens_plots[[2]]), nrow = 1)
+
+# Show third row only: sf3a_IgG and sf3a_IgA
+cowplot::plot_grid(plotlist = list(paired_dens_plots[[3]]), nrow = 1)
+
+# Show fourth row only: sf6_IgG and sf6_IgA
+cowplot::plot_grid(plotlist = list(paired_dens_plots[[4]]), nrow = 1)
+
+# Show fifth row only: sonnei_IgG and sonnei_IgA
+cowplot::plot_grid(plotlist = list(paired_dens_plots[[5]]), nrow = 1)
+```
+
+We evaluated MCMC convergence across all antigen-isotype combinations by inspecting kernel density plots of posterior samples for each parameter ($\alpha,\text{shape}, t_1, y_0, y_1$) across four chains. The density plots reveal notable convergence issues in multiple combinations. For both ipaB IgG and IgA, some key parameters show substantial differences in chain-specific densities, indicating lack of mixing and potential multimodality. Similar issues are evident for sf2a and sf3a IgG/IgA, particularly in $\alpha$ and $\text{shape}$ parameters, where chains diverge markedly and often exhibit distinct peaks. This suggests that posterior exploration is insufficient and likely hindered by poor identifiability or overly vague priors. The sf6 and sonnei panels show modest improvement, with parameters like $y_1$ displaying relatively good overlap between chains, but $\text{shape}$ and $\alpha$ still suffer from chain-specific discrepancies in several cases. Collectively, these plots indicate that convergence has not been reliably achieved across all parameters and submodels. Remedial steps such as reparameterizing the model, strengthening prior information, or extending the number of warmup and sampling iterations are warranted to improve chain mixing and posterior exploration.

@@ -1,0 +1,76 @@
+
+model {
+
+  # ----------------------------
+  # Hyperpriors for population means (same as model.jags)
+  # ----------------------------
+  for (b in 1:B) {
+    mu.par[b, 1:n_params] ~ dmnorm(mu.hyp[b, ], prec.hyp[b, , ])
+  }
+
+  # ----------------------------
+  # Wishart priors for Kronecker precision (new)
+  # ----------------------------
+  TauP[1:5,1:5] ~ dwish(OmegaP[1:5,1:5], nuP)             # within-biomarker
+  TauB[1:B,1:B] ~ dwish(OmegaB[1:B,1:B], nuB)             # across biomarkers
+
+  # Build Tau = TauB ⊗ TauP  (dimension: (5*B) x (5*B))
+  for (b1 in 1:B) {
+    for (b2 in 1:B) {
+      for (p1 in 1:5) {
+        for (p2 in 1:5) {
+          Tau[(b1-1)*5 + p1, (b2-1)*5 + p2] <- TauB[b1,b2] * TauP[p1,p2]
+        }
+      }
+    }
+  }
+
+  # Vectorized mean (stack mu.par across biomarkers)
+  for (b in 1:B) {
+    for (p in 1:5) {
+      mu_vec[(b-1)*5 + p] <- mu.par[b,p]
+    }
+  }
+
+  # ----------------------------
+  # Subject-level prior: one big MVN per subject
+  # ----------------------------
+  for (subj in 1:nsubj) {
+    par_vec[subj, 1:(5*B)] ~ dmnorm(mu_vec[1:(5*B)], Tau[ , ])
+
+    # Unstack back to par[subj, biomarker, param]
+    for (b in 1:B) {
+      for (p in 1:5) {
+        par[subj, b, p] <- par_vec[subj, (b-1)*5 + p]
+      }
+    }
+
+    # Transforms to natural scale
+    for (b in 1:B) {
+      y0[subj,b]    <- exp(par[subj,b,1])
+      y1[subj,b]    <- y0[subj,b] + exp(par[subj,b,2])    # log(y1-y0)
+      t1[subj,b]    <- exp(par[subj,b,3])
+      alpha[subj,b] <- exp(par[subj,b,4])
+      shape[subj,b] <- exp(par[subj,b,5]) + 1
+    }
+
+    # Likelihood
+    for (obs in 1:nsmpl[subj]) {
+      for (b in 1:B) {
+        beta_tmp[subj,b] <- log(y1[subj,b] / y0[subj,b]) / t1[subj,b]
+        mu.logy[subj,obs,b] <- ifelse(
+          step(t1[subj,b] - smpl.t[subj,obs]),
+          log(y0[subj,b]) + beta_tmp[subj,b] * smpl.t[subj,obs],
+          (1/(1-shape[subj,b])) * log( y1[subj,b]^(1-shape[subj,b]) -
+               (1-shape[subj,b]) * alpha[subj,b] * (smpl.t[subj,obs] - t1[subj,b]) )
+        )
+        logy[subj,obs,b] ~ dnorm(mu.logy[subj,obs,b], prec.logy[b])
+      }
+    }
+  }
+
+  # Measurement precisions
+  for (b in 1:B) {
+    prec.logy[b] ~ dgamma(prec.logy.hyp[b,1], prec.logy.hyp[b,2])
+  }
+}

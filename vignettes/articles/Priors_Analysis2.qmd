@@ -1,0 +1,111 @@
+---
+title: "Priors Analysis of Shigella"
+author: "Kwan Ho Lee"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document:
+    toc: true # table of content true
+    toc_depth: 3  # upto three depths of headings (specified by #, ## and ###)
+    toc_float: true
+    #number_sections: true  ## if you want number sections at each table header
+    #theme: united  # many options for theme, this one is my favorite.
+    highlight: tango  # specifies the syntax highlighting style
+---
+
+```{r echo=F, include=F, warning=F, notes = F}
+
+library(dplyr)
+library(runjags)
+library(readr)
+library(serodynamics)
+library(serocalculator)
+library(tidyverse)
+library(runjags)
+library(coda)
+library(ggmcmc)
+library(ggbeeswarm)
+library(ggpubr)
+library(knitr)
+library(table1)
+library(readxl)
+devtools::load_all()
+
+options(scipen = 99, digits = 4)
+
+#model file
+file.mod <- fs::path_package("serodynamics", "extdata/model.jags")
+```
+
+# Load the processed Shigella dataset
+
+```{r}
+#| label: "load shigella data"
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+df <- 
+  fs::path_package(
+    package = "shigella",
+    "extdata/3.8.2024 Compiled Shigella datav2.xlsx"
+  ) |> 
+  read_excel(sheet = "Compiled")
+```
+
+## Focus on Ipab_IgG
+
+```{r}
+#| label: "manipulate Shigella data"
+#| echo: false
+#| message: false
+#| warning: false
+#| results: 'hide'
+
+# filter ipab
+dL_clean_Ipab <- process_shigella_data(
+  data         = df,
+  study_filter = "SOSAR",
+  antigen      = n_ipab_MFI
+)
+
+dL_clean_Ipab_IgG<-dL_clean_Ipab %>%
+  filter(antigen_iso == "IgG")
+
+```
+
+# Analaysis overview:
+
+In this analysis, we are examining how **changing hyperpriors** for
+
+-   `prec_hyp_param` (spread/uncertainty) and
+
+-   `mu_hyp_param` (center/average guess)
+
+affects **R̂ values (convergence)** and **parameter estimates** in our Bayesian hierarchical model.
+
+The Shigella dataset is filtered to include only the **IpaB_IgG biomarker**. All JAGS models were run with the following constants:
+
+-   `nchain = 4`, `nadapt = 1000`, `nburn = 500`, `nmc = 2500`, `niter = 5000`.
+
+# Test 2: Sensitivity analysis of prior mean (`mu_hyp_param`)
+
+**Goal**: After choosing reasonable spreads from Test 1, check how shifting the **center** of the priors affects convergence and estimates. This tests robustness of the model to different plausible prior centers.
+
+**Setup**:
+
+-   Use the optimized precision settings from Test 1.
+
+-   Sweep each `mu_hyp_param` individually over a plausible grid (e.g., $y_0 = \{2.5, 3.0, 3.5, 4.0, 4.5\}$).
+
+**Method**:
+
+-   Vary the mean prior for one parameter at a time, holding the others fixed.
+
+-   For each run, check $\hat{R}$ and parameter estimates.
+
+**Interpretation**:
+
+-   If results remain stable as the mean is shifted, the data dominate (robust to prior).
+
+-   If results change dramatically, the prior center matters and should be chosen carefully.
+
