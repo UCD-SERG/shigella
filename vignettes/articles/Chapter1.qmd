@@ -19,7 +19,6 @@ format:
     number-sections: true
     toc: false
   docx:
-    reference-doc: ref.docx                
     number-sections: true
   html:
     toc: true
