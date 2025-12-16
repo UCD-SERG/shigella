@@ -43,7 +43,8 @@ execution:
 
 ## Overview and Significance
 
-*Shigella* remains a major cause of diarrheal morbidity and mortality worldwide, responsible for an estimated 165 million infections and roughly 600 000 deaths each year, predominantly among young children in low- and middle-income countries [@GBD2018_DiarrhoeaBurden]. 
+*Shigella* remains a major cause of diarrheal morbidity and mortality worldwide, 
+responsible for an estimated 165 million infections and roughly 600 000 deaths each year, predominantly among young children in low- and middle-income countries [@GBD2018_DiarrhoeaBurden]. 
 Accurate measurement of exposure and infection risk is hindered by the short duration of shedding and the limited availability of culture- or PCR-based surveillance. 
 Serological assays therefore provide a valuable window into cumulative exposure and immunity. Interpreting such antibody data, however, requires an understanding of how antibody levels rise and decline following infection.
 
