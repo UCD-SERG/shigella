@@ -266,3 +266,6 @@ Prior distributions were evaluated using prior predictive simulations to ensure 
 \newpage
 
 # References
+
+::: {#refs}
+:::
