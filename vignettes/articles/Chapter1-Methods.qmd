@@ -261,3 +261,8 @@ where $\boldsymbol{\Omega}_j$ is a scale matrix and $\nu_j$ denotes the degrees 
 ### Prior Predictive Assessment
 
 Prior distributions were evaluated using prior predictive simulations to ensure that implied antibody trajectories were biologically plausible prior to conditioning on observed data.
+
+
+\newpage
+
+# References
