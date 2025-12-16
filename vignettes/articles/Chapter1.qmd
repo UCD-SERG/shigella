@@ -9,34 +9,6 @@ abstract: |
   Shigellosis is an acute diarrheal disease caused by infection with Shigella bacteria, primarily affecting children under five in low-resource settings. Despite ongoing development of candidate vaccines, reliable tools to characterize the natural immune response to Shigella infection remain limited. A deeper understanding of the magnitude, timing, and persistence of antibody responses is essential for designing effective serosurveillance systems, developing thresholds for recent exposure, and refining population-level seroincidence estimation. In this study, we modeled antibody kinetics to multiple Shigella antigens following natural infection. We analyzed longitudinal blood samples from 48 individuals with culture- or PCR-confirmed Shigella infection in Dhaka, Bangladesh, representing one of the few well-characterized prospective Shigella cohorts available globally. Samples were tested for IgA and IgG responses using a multiplex bead-based immunoassay targeting five Shigella antigens: the conserved virulence factor IpaB and O-specific polysaccharides (OSP) from S. flexneri 2a, 3a, 6, and S. sonnei. These serotypes account for the majority of global Shigella burden. Antibody kinetics were estimated using within-host two-phase Bayesian hierarchical models implemented with the serodynamics package in R. The model captured key kinetic parameters including the estimated baseline level ($y_0$), decay rate ($\alpha$), and decay shape ($r$), as well as the derived time to peak ($t_1$) and peak antibody level ($y_1$). We observed substantial heterogeneity across individuals, antigens, and isotypes. IgA responses generally peaked early and declined rapidly, while IgG responses were more sustained. For example, S. flexneri 2a and 3a IgA responses declined steeply, while IgG responses to S. sonnei and IpaB remained elevated above baseline ($y_0$) for over 200 days post-infection. These findings highlight the dynamic, antigen-specific nature of Shigella seroresponse and demonstrate the utility of Bayesian hierarchical modeling for quantifying individual-level kinetics and supporting future seroincidence estimation efforts.
 keywords: ["Shigella", "serology", "Bayesian"]
 date: today
-
-# Output formats — pick any/all
-format:
-  pdf:
-    documentclass: article
-    geometry: margin=1in
-    include-in-header: header.tex         
-    number-sections: true
-    toc: false
-  docx:
-    number-sections: true
-  html:
-    toc: true
-    number-sections: true
-
-# Bibliography & style
-bibliography: references_chapter1.bib               
-csl: styles/epidemics.csl                              
-link-citations: true
-
-# Cross-ref & floats
-fig-cap-location: top
-tbl-cap-location: top
-#tbl-colwidths: [auto]                      
-execution:
-  echo: false                              
-  warning: false
-  message: false
 ---
 
 # Background & Significance
