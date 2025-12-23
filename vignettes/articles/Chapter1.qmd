@@ -139,6 +139,261 @@ This approach explicitly models between-individual variation in antibody decay p
 
 Collectively, these developments establish a foundation for the modeling work presented here. By combining immunological mechanisms with Bayesian hierarchical inference, this study quantifies how *Shigella* antibody responses vary across individuals and biomarkers. The resulting framework enables inference of infection timing and seroincidence from serological data, advancing the broader goal of quantitative seroepidemiology.
 
+
+# Methods
+
+## Study Design
+
+We conducted a longitudinal observational study to characterize within-host antibody kinetics following confirmed *Shigella* infection. Repeated serological measurements were collected from laboratory-confirmed cases and analyzed using a two-phase within-host antibody model within a Bayesian hierarchical framework. 
+The objective was to estimate antigen- and isotype-specific rise, peak, and decay parameters while quantifying inter-individual variability in antibody responses.
+
+## Study Setting and Data Sources
+
+Longitudinal case data were obtained from pediatric and adult patients presenting with acute diarrhea in Dhaka, Bangladesh. Enrollment and sample collection occurred between March 2021 and 2022 through hospital- and field-based surveillance conducted by icddr,b.
+
+In addition to the longitudinal case data, cross-sectional serological datasets from Ghana, Niger, Sierra Leone, and other sites were available from population-based studies conducted between 2016 and 2020. 
+These cross-sectional datasets were not analyzed in the present study but informed assay interpretation and will be used in subsequent seroincidence analyses.
+
+## Participants
+
+### Longitudinal Shigella Cases
+
+Inclusion criteria were individuals presenting with acute diarrhea (duration \<72 hours), frequent bowel movements (\>3 in 24 hours), and laboratory confirmation of *Shigella* infection by culture and/or molecular diagnostic assays (PCR or rapid PCR). Exclusion criteria were inability to provide a blood sample.
+
+A total of 48 individuals with confirmed *Shigella* infection were included. Serum or plasma samples were collected at baseline (acute presentation) and approximately 7, 30, 90, and 180 days following infection.
+
+The distribution of infecting serotypes was not uniform. Most cases were infected with *Shigella flexneri* 2a, with smaller numbers of *S. flexneri* 3a, *S. flexneri* 6, *S. sonnei*, and other serotypes. 
+This imbalance is relevant for interpretation of O-antigen–specific responses due to known cross-reactivity between *S. flexneri* 2a and 3a, and minimal cross-reactivity between *S. sonnei* and *S. flexneri* 6.
+
+## Laboratory Measurements
+
+IgG and IgA antibody responses were measured using a multiplex bead-based immunoassay. Antigens included:
+
+-   Invasion plasmid antigen B (IpaB), a conserved virulence protein shared across *Shigella* species and other *Salmonella*.
+-   O-specific polysaccharides (OSP) from the most prevalent *Shigella* serotypes globally: *S. sonnei*, *S. flexneri* 2a, *S. flexneri* 3a, and *S. flexneri* 6.
+
+Assay output was reported as median fluorescence intensity (MFI), providing semi-quantitative measures of antigen-specific antibody concentrations. 
+Serum or plasma samples were derived from venous blood; dried blood spot samples were derived from capillary blood collected on filter paper.
+
+## Variables
+
+The primary outcome was the longitudinal antibody concentration, measured as median fluorescence intensity (MFI), for each antigen–isotype combination (IgG and IgA). 
+Time since infection was measured in days relative to the baseline sample collected at acute presentation.
+
+Key model-derived parameters included baseline antibody level, time to peak response, peak antibody concentration, decay rate, and decay shape.
+
+Participant age at infection was recorded and used for stratified visualization of antibody trajectories. 
+Age strata were defined as \<5 years, 5–15 years, and \>15 years, reflecting known differences in antibody kinetics between young children and older individuals.
+Infecting serotype was also recorded and used for stratified visualization. 
+Age and serotype were not included as covariates in the primary kinetic model.
+
+## Data Preparation
+
+Antibody measurements were log-transformed prior to modeling to stabilize variance and improve numerical stability. 
+Time was expressed in days since baseline sampling.
+
+Analyses were restricted to homologous antigen–serotype pairs when modeling OSP responses (e.g., *S. flexneri* 2a OSP responses were modeled using only individuals infected with *S. flexneri* 2a or closely related serotypes) to reduce bias from cross-reactivity.
+
+All data preprocessing, model fitting, and post-processing were conducted in R. Bayesian inference was implemented using JAGS, with reproducible workflows developed within the **serodynamics** package. 
+Prior predictive checks and posterior predictive diagnostics were performed to assess model plausibility and convergence.
+
+## Within-Host Antibody Kinetics Model
+
+Longitudinal antibody responses following infection were described using a two-phase within-host model consisting of a rapid rise phase followed by a slower decay phase [@deGraaf2014_TwoPhaseModel; @Teunis2016_LinkingHeterogeneity]. 
+This formulation is consistent with previously described models of serological responses to infection and captures the characteristic rise–peak–decay pattern observed in antibody measurements.
+
+Let $y(t)$ denote the antibody concentration at time $t$ since infection. 
+The model is defined as:
+
+$$
+y(t) =
+\begin{cases}
+y_0 \exp(\mu_y t), & t \le t_1 \\
+y_1 \left( 1 + (\rho - 1)\alpha y_1^{\,\rho-1}(t - t_1) \right)^{-\frac{1}{(\rho-1)}}, & t > t_1
+\end{cases}
+$$
+
+where $y_0$ is the baseline antibody concentration, $\mu_y$ is the rate of antibody increase during the rise phase, $t_1$ is the time to peak response, $y_1$ is the peak antibody concentration, $\alpha$ is the decay rate, and $\rho$ is a shape parameter controlling the form of antibody waning. 
+The decay phase reduces to exponential decay when $\rho = 1$, and allows for non-exponential waning when $\rho \neq 1$.
+
+This closed-form representation corresponds to the solution of a two-phase within-host model in which antibody concentrations increase rapidly following infection and subsequently wane according to a power-law decay [@Teunis2016_LinkingHeterogeneity].
+
+## Hierarchical Model Structure
+
+To account for heterogeneity in antibody responses across individuals, model parameters were estimated within a hierarchical Bayesian framework. Individual-level kinetic parameters were assumed to arise from population-level distributions specific to each antigen–isotype combination.
+
+For each individual $i$ and parameter $\theta \in \{ y_0, y_1, t_1, \alpha, \rho \}$, we assumed:
+
+$$
+\log(\theta_i) \sim \mathcal{N}(\mu_\theta, \sigma_\theta^2)
+$$
+
+where $\mu_\theta$ and $\sigma_\theta$ represent population-level means and variances.
+This partial pooling approach stabilizes inference for individuals with sparse measurements while preserving meaningful inter-individual variability.
+
+Separate models were fit for each antigen–isotype combination.
+
+### Observation Model
+
+Observed antibody measurements were modeled on the log scale as noisy realizations of the latent two-phase antibody trajectory. For individual $i$ and antigen–isotype (biomarker) $j$ measured at time $t_{ij}$:
+
+$$
+\log\!\left(y^{\text{obs}}_{ij}\right) \sim 
+\mathcal{N}\!\left(\mu_{\log y,ij},\ \tau_j^{-1}\right),
+$$
+
+where $\mu_{\log y,ij}$ denotes the expected log antibody level implied by the two-phase within-host model evaluated at time $t_{ij}$ using individual-level kinetic parameters, and $\tau_j$ is the measurement precision (inverse variance) specific to biomarker $j$.
+
+## Prior Specification
+
+Weakly informative priors were assigned to all population-level parameters to reflect plausible biological ranges while allowing the data to dominate inference. 
+Prior distributions were scaled to the observed assay ranges for each antigen–isotype combination.
+
+Priors on population-level means were specified on the log scale. 
+Standard deviation parameters were assigned weakly informative priors constrained to be positive. 
+These choices were informed by prior predictive simulations and existing applications of similar models to enteric pathogens.
+
+## Model Fitting and Computation
+
+Models were fit using Bayesian Markov chain Monte Carlo (MCMC) methods implemented in JAGS and executed through R. 
+Multiple chains were run with dispersed initial values. 
+Convergence was assessed using visual inspection of trace plots and the potential scale reduction factor (R-hat) across all monitored parameters.
+
+Posterior samples were retained after discarding burn-in iterations and thinning to reduce autocorrelation. 
+All analyses were conducted using reproducible workflows implemented in the **serodynamics** R package.
+
+## Model Diagnostics and Validation
+
+Prior predictive checks were used to assess whether the specified priors generated biologically plausible antibody trajectories before conditioning on the observed data [@gelman2013bayesian; @gelman2020bayesian].
+
+Model adequacy was evaluated using posterior predictive checks. 
+Simulated antibody trajectories were compared to observed longitudinal data to assess whether the fitted model reproduced key features of the data, including peak timing, peak magnitude, and long-term decay patterns [@gelman2013bayesian].
+
+Convergence diagnostics were examined for all model parameters. 
+Individual-level posterior trajectories were visually inspected to confirm appropriate fit across participants with varying numbers of observations [@vehtari2021rank].
+
+## Sensitivity Analyses
+
+Sensitivity analyses were performed to assess robustness of inference to prior specification. 
+Alternative weakly informative priors were considered for key population-level parameters, and resulting posterior estimates were compared for consistency.
+
+Additional sensitivity analyses examined the influence of sparse individual trajectories by refitting models after excluding individuals with minimal follow-up.
+Results were qualitatively unchanged, indicating that inferences were not driven by a small number of highly sampled individuals.
+
+# Appendix
+
+## Appendix A. Two-Phase Within-Host Model: Differential Equation Formulation
+
+The closed-form antibody trajectories used in the main analysis arise from a two-phase within-host model describing antibody production and decay following infection.
+Following @deGraaf2014_TwoPhaseModel and @Teunis2016_LinkingHeterogeneity, antibody concentration $y(t)$ is governed by:
+
+$$
+\frac{dy(t)}{dt} =
+\begin{cases}
+\mu_y\, y(t), & t \le t_1, \\
+-\alpha\, y(t)^{\,\rho}, & t > t_1,
+\end{cases}
+$$
+
+where $\mu$ denotes the antibody production rate during the rise phase, $\alpha$ is the decay rate, and $\rho$ controls the shape of antibody waning.
+
+Initial conditions are given by $y(0) = y_0$. 
+The transition time $t_1$ corresponds to the peak antibody response.
+
+## Appendix B. Closed-Form Solutions
+
+Solving the system above yields the closed-form antibody trajectory used in model fitting:
+
+-   **Rise phase (**$t \le t_1$):
+
+$$
+y(t) = y_0 \exp(\mu_y t)
+$$
+
+-   **Decay phase (**$t > t_1$):
+
+$$
+y(t) = y_1 \left[ 1 + (\rho - 1)\alpha y_1^{\,\rho-1}(t - t_1) \right]^{-\frac{1}{(\rho-1)}},
+$$
+
+where $y_1 = y(t_1)$ is the peak antibody concentration.
+
+When $\rho = 1$, the decay phase reduces to exponential waning.
+
+## Appendix C. Hierarchical Parameterization
+
+For each individual $i$ and biomarker $j$, latent kinetic parameters were defined as:
+
+$$
+\boldsymbol{\theta}_{ij} =
+\begin{pmatrix}
+\log(y_{0,ij}) \\
+\log(y_{1,ij}) \\
+\log(t_{1,ij}) \\
+\log(\alpha_{ij}) \\
+\log(\rho_{ij} - 1)
+\end{pmatrix}.
+$$
+
+Individual-level parameters were assumed to arise from biomarker-specific population distributions:
+
+$$
+\boldsymbol{\theta}_{ij} \sim \mathcal{N}(\boldsymbol{\mu}_j, \boldsymbol{\Sigma}_j).
+$$
+
+This formulation ensures positivity constraints and enables partial pooling across individuals.
+
+## Appendix D. Observation Model and Likelihood
+
+For completeness, we restate the observation model underlying the main analysis.
+
+Observed antibody measurements were modeled on the log scale as noisy realizations of the latent two-phase antibody trajectory:
+
+$$
+\log(y^{\text{obs}}_{ij}) \sim \mathcal{N}(\mu_{\log y,ij}, \tau_j^{-1}),
+$$
+
+where $\mu_{\log y,ij} = \log(y_{ij}(t_{ij}))$ is the expected log antibody level implied by the two-phase within-host model evaluated at time $t_{ij}$ using individual-level kinetic parameters, and $\tau_j$ denotes biomarker-specific measurement precision.
+
+Conditional on the latent antibody trajectories, observations were assumed independent across time points within individuals and across individuals.
+
+## Appendix E. Prior and Hyperprior Distributions
+
+### Measurement Error Precision
+
+The precision of measurement error for each antigen–isotype (biomarker) $j$ was assigned a Gamma prior:
+
+$$
+\tau_j \sim \text{Gamma}(a_j, b_j),
+$$
+
+where $\tau_j$ denotes the precision (inverse variance) of log-scale measurement error, and $(a_j, b_j)$ are shape and rate hyperparameters chosen to induce biologically plausible variability.
+
+### Population-Level Mean Parameters
+
+For each biomarker $j$, the population-level mean vector of log-transformed kinetic parameters was assigned a multivariate normal hyperprior:
+
+$$
+\boldsymbol{\mu}_j \sim \mathcal{N}(\boldsymbol{\mu}_{\mathrm{hyp},j}, \boldsymbol{\Omega}_{\mathrm{hyp},j}),
+$$
+
+where $\boldsymbol{\mu}_{\mathrm{hyp},j}$ represents the prior mean and $\boldsymbol{\Omega}_{\mathrm{hyp},j}$ is a diagonal covariance matrix encoding weak prior information about plausible parameter ranges.
+
+### Between-Individual Variability
+
+Between-individual variability in kinetic parameters was captured by a biomarker-specific covariance matrix $\boldsymbol{\Sigma}_j$. 
+A Wishart prior was placed on the corresponding precision matrix:
+
+$$
+\boldsymbol{\Sigma}_j^{-1} \sim \mathcal{W}(\boldsymbol{\Omega}_j, \nu_j),
+$$
+
+where $\boldsymbol{\Omega}_j$ is a scale matrix and $\nu_j$ denotes the degrees of freedom.
+
+### Prior Predictive Assessment
+
+Prior distributions were evaluated using prior predictive simulations to ensure that implied antibody trajectories were biologically plausible prior to conditioning on observed data.
+
 \newpage
 
 # References
