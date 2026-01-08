@@ -1,7 +1,7 @@
 ---
 title: "Modeling Antibody Kinetics Following Shigella Infection Using a Two-Phase Bayesian Hierarchical Framework"
 author:
-  - name: "Kwan Ho Lee"
+  - name: "Kwan Ho Lee, Douglas Ezra Morrison, Kristen Aiemjoy, Richelle Charles"
     affiliation: "Department of Public Health Sciences, University of California Davis School of Medicine"
     corresponding: true
     email: ksjlee@ucdavis.edu
@@ -9,200 +9,215 @@ abstract: |
   Shigellosis is an acute diarrheal disease caused by infection with Shigella bacteria, primarily affecting children under five in low-resource settings. Despite ongoing development of candidate vaccines, reliable tools to characterize the natural immune response to Shigella infection remain limited. A deeper understanding of the magnitude, timing, and persistence of antibody responses is essential for designing effective serosurveillance systems, developing thresholds for recent exposure, and refining population-level seroincidence estimation. In this study, we modeled antibody kinetics to multiple Shigella antigens following natural infection. We analyzed longitudinal blood samples from 48 individuals with culture- or PCR-confirmed Shigella infection in Dhaka, Bangladesh, representing one of the few well-characterized prospective Shigella cohorts available globally. Samples were tested for IgA and IgG responses using a multiplex bead-based immunoassay targeting five Shigella antigens: the conserved virulence factor IpaB and O-specific polysaccharides (OSP) from S. flexneri 2a, 3a, 6, and S. sonnei. These serotypes account for the majority of global Shigella burden. Antibody kinetics were estimated using within-host two-phase Bayesian hierarchical models implemented with the serodynamics package in R. The model captured key kinetic parameters including the estimated baseline level ($y_0$), decay rate ($\alpha$), and decay shape ($r$), as well as the derived time to peak ($t_1$) and peak antibody level ($y_1$). We observed substantial heterogeneity across individuals, antigens, and isotypes. IgA responses generally peaked early and declined rapidly, while IgG responses were more sustained. For example, S. flexneri 2a and 3a IgA responses declined steeply, while IgG responses to S. sonnei and IpaB remained elevated above baseline ($y_0$) for over 200 days post-infection. These findings highlight the dynamic, antigen-specific nature of Shigella seroresponse and demonstrate the utility of Bayesian hierarchical modeling for quantifying individual-level kinetics and supporting future seroincidence estimation efforts.
 keywords: ["Shigella", "serology", "Bayesian"]
 date: today
+bibliography: vignettes/articles/references_chapter1.bib
+csl: vignettes/articles/styles/epidemics.csl
 ---
 
 # Background & Significance
 
 ## Overview and Significance
 
-*Shigella* remains a major cause of diarrheal morbidity and mortality worldwide, 
-responsible for an estimated 165 million infections and roughly 600 000 deaths each year, predominantly among young children in low- and middle-income countries [@GBD2018_DiarrhoeaBurden]. 
-Accurate measurement of exposure and infection risk is hindered by the short duration of shedding and the limited availability of culture- or PCR-based surveillance. 
-Serological assays therefore provide a valuable window into cumulative exposure and immunity. Interpreting such antibody data, however, requires an understanding of how antibody levels rise and decline following infection.
+*Shigella* remains a major cause of diarrheal morbidity and mortality worldwide, responsible for an estimated 165 million infections and roughly 600 000 deaths each year, predominantly among young children in low- and middle-income countries [@GBD2018_DiarrhoeaBurden].
+Accurate measurement of exposure and infection risk is hindered by the short duration of shedding and the limited availability of culture- or PCR-based surveillance.
+Serological assays therefore provide a valuable window into cumulative exposure and immunity.
+Interpreting such antibody data, however, requires an understanding of how antibody levels rise and decline following infection.
 
-The statistical foundation for modeling antibody dynamics was first established by Simonsen et al. (2009) and Teunis et al. (2012) [@Simonsen2009_IncidenceFromAntibodies; @Teunis2012_BiomarkerDynamics], who developed Bayesian formulations to infer infection rates from serological data. These models treated antibody rise and decay as statistical processes linking infection history to measurable antibody levels. 
-The subsequent *two-phase within-host model* proposed by de Graaf et al. (2014) [@deGraaf2014_TwoPhaseModel] extended this framework mechanistically, describing antibody responses as a biologically grounded rise–peak–decay process driven by antigenic stimulation followed by (approximately) exponential waning. Later, Teunis et al. (2016) [@Teunis2016_LinkingHeterogeneity] integrated these statistical and mechanistic perspectives by introducing heterogeneity in antibody production through a power-law decay function, providing the theoretical bridge between within-host immune kinetics and population-level serodynamics.
+The statistical foundation for modeling antibody dynamics was first established by Simonsen et al. (2009) and Teunis et al. (2012) [@Simonsen2009_IncidenceFromAntibodies; @Teunis2012_BiomarkerDynamics], who developed Bayesian formulations to infer infection rates from serological data.
+These models treated antibody rise and decay as statistical processes linking infection history to measurable antibody levels.
+The subsequent *two-phase within-host model* proposed by de Graaf et al. (2014) [@deGraaf2014_TwoPhaseModel] extended this framework mechanistically, describing antibody responses as a biologically grounded rise–peak–decay process driven by antigenic stimulation followed by (approximately) exponential waning.
+Later, Teunis et al. (2016) [@Teunis2016_LinkingHeterogeneity] integrated these statistical and mechanistic perspectives by introducing heterogeneity in antibody production through a power-law decay function, providing the theoretical bridge between within-host immune kinetics and population-level serodynamics.
 
-These advances culminated in what is now referred to as the *serodynamics* framework—a term later formalized by Hay et al. (2024) [@Hay2024_SerodynamicsPrimer] to describe quantitative methods linking within-host antibody kinetics to population-level infection and immunity estimates. 
+These advances culminated in what is now referred to as the *serodynamics* framework—a term later formalized by Hay et al. (2024) [@Hay2024_SerodynamicsPrimer] to describe quantitative methods linking within-host antibody kinetics to population-level infection and immunity estimates.
 Building on this conceptual foundation, Teunis et al. (2020; 2023) [@Teunis2020_SeroconversionAgeNoise; @Teunis2023_ABC_RepeatedInfections] contributed key statistical components of this paradigm, including approaches to estimate seroconversion rates from noisy, cross-sectional data and to account for repeated infections using Approximate Bayesian Computation.
 
-This study follows that lineage, applying hierarchical Bayesian models of antibody kinetics to characterize *Shigella* infection dynamics and inform sero-incidence estimation. 
+This study follows that lineage, applying hierarchical Bayesian models of antibody kinetics to characterize *Shigella* infection dynamics and inform sero-incidence estimation.
 By extending this framework to a mucosal enteric pathogen, this work provides the first quantitative analysis of isotype-specific *Shigella* antibody decay using hierarchical Bayesian modeling.
 
 ## Immunological Foundations of Antibody Persistence
 
-Understanding the persistence of humoral immunity is central to modeling antibody kinetics after infection. 
-Immunological memory ensures protection against reinfection long after pathogen clearance, yet the cellular mechanisms that sustain antibody production over years remain a subject of debate. 
+Understanding the persistence of humoral immunity is central to modeling antibody kinetics after infection.
+Immunological memory ensures protection against reinfection long after pathogen clearance, yet the cellular mechanisms that sustain antibody production over years remain a subject of debate.
 Foundational studies in immunology defined the distinction between effector and memory lymphocytes and examined how long-lived antibody responses are maintained independently of ongoing antigenic stimulation.
 
-Early experimental and theoretical work by Ahmed and Gray (1996) [@Ahmed1996_ImmunologicalMemory] established the conceptual framework for long-term immunological memory, showing that both T- and B-cell memory can persist in the absence of continued antigen exposure. 
-Their review proposed that protection against systemic infections is maintained primarily through long-lived plasma cells and memory B cells, whereas mucosal immunity tends to be short-lived. 
+Early experimental and theoretical work by Ahmed and Gray (1996) [@Ahmed1996_ImmunologicalMemory] established the conceptual framework for long-term immunological memory, showing that both T- and B-cell memory can persist in the absence of continued antigen exposure.
+Their review proposed that protection against systemic infections is maintained primarily through long-lived plasma cells and memory B cells, whereas mucosal immunity tends to be short-lived.
 These insights remain fundamental for interpreting the duration and variability of antibody responses observed in population serosurveys.
 
-Subsequent mechanistic studies identified the bone marrow as the major site of persistent antibody secretion. 
-Radbruch and colleagues (2006) demonstrated that long-lived plasma cells localize in specialized survival niches within the bone marrow and continuously secrete antibodies for years, even without antigen re-exposure [@Radbruch2006_LongLivedPlasmaCells; @Slifka1998_BoneMarrowAntibodyProduction]. 
+Subsequent mechanistic studies identified the bone marrow as the major site of persistent antibody secretion.
+Radbruch and colleagues (2006) demonstrated that long-lived plasma cells localize in specialized survival niches within the bone marrow and continuously secrete antibodies for years, even without antigen re-exposure [@Radbruch2006_LongLivedPlasmaCells; @Slifka1998_BoneMarrowAntibodyProduction].
 These survival niches provide cytokines and stromal signals essential for plasma-cell longevity, explaining why serum antibody titers to many viral antigens remain stable over decades.
 
-Complementing this view, Amanna and Slifka (2010) [@Amanna2010_PlasmaCellLifespan] proposed the “Imprinted Lifespan Model,” in which the lifespan of a plasma cell is predetermined during its induction phase, depending on the strength of B-cell receptor signaling and T-cell help. 
-This model accounts for the observed diversity in antibody half-lives—ranging from months for T-cell-independent antigens to decades or a lifetime for highly repetitive viral epitopes. 
+Complementing this view, Amanna and Slifka (2010) [@Amanna2010_PlasmaCellLifespan] proposed the “Imprinted Lifespan Model,” in which the lifespan of a plasma cell is predetermined during its induction phase, depending on the strength of B-cell receptor signaling and T-cell help.
+This model accounts for the observed diversity in antibody half-lives—ranging from months for T-cell-independent antigens to decades or a lifetime for highly repetitive viral epitopes.
 It emphasizes that antibody persistence can result from intrinsic programming of plasma-cell lifespan rather than continuous antigenic stimulation.
 
-Together, these immunological models provided the biological foundation for the mathematical representation of antibody kinetics introduced by Teunis et al. (2016) [@Teunis2016_LinkingHeterogeneity]. 
-Their framework incorporated within-host heterogeneity in antibody production by modeling decay as a power-law function, consistent with the coexistence of short-lived and long-lived plasma-cell compartments. 
+Together, these immunological models provided the biological foundation for the mathematical representation of antibody kinetics introduced by Teunis et al. (2016) [@Teunis2016_LinkingHeterogeneity].
+Their framework incorporated within-host heterogeneity in antibody production by modeling decay as a power-law function, consistent with the coexistence of short-lived and long-lived plasma-cell compartments.
 This connection between cell-level mechanisms and population-level kinetics established the theoretical bridge that modern *serodynamics* models exploit to link individual immune memory with seroincidence estimation.
 
-In the context of *Shigella* infection, these immunological principles highlight why antibody trajectories differ between isotypes (IgA versus IgG) and antigens (e.g., OSP versus IpaB). 
-The interplay between transient mucosal responses and sustained bone-marrow-derived IgG production mirrors the two-phase and heterogeneous decay structures formalized in Bayesian serodynamic models. 
+In the context of *Shigella* infection, these immunological principles highlight why antibody trajectories differ between isotypes (IgA versus IgG) and antigens (e.g., OSP versus IpaB).
+The interplay between transient mucosal responses and sustained bone-marrow-derived IgG production mirrors the two-phase and heterogeneous decay structures formalized in Bayesian serodynamic models.
 By integrating cellular immunology with statistical kinetics, this study situates *Shigella* antibody modeling within a broader understanding of how long-lived humoral immunity emerges from plasma-cell dynamics.
 
-Together, these cellular and molecular insights motivate the need for quantitative models that can link immunological processes—such as plasma-cell longevity and antibody decay—to measurable population-level dynamics. 
+Together, these cellular and molecular insights motivate the need for quantitative models that can link immunological processes—such as plasma-cell longevity and antibody decay—to measurable population-level dynamics.
 This intersection between immunology and quantitative modeling defines the foundation of modern serodynamics.
 
 ## Modeling Frameworks and Advances in Quantitative Serodynamics
 
-Mathematical descriptions of infection and immunity originate from the classical SIR model developed by @Kermack1927_SIRTheory. 
-This compartmental framework formalized the flow of individuals between susceptible, infectious, and recovered states, providing a foundation for quantitative studies of epidemic spread. 
-Later, @AndersonMay1992_InfectiousDiseases extended these principles to account for heterogeneity, immunity, and vaccination, integrating epidemiological and immunological timescales. 
+Mathematical descriptions of infection and immunity originate from the classical SIR model developed by @Kermack1927_SIRTheory.
+This compartmental framework formalized the flow of individuals between susceptible, infectious, and recovered states, providing a foundation for quantitative studies of epidemic spread.
+Later, @AndersonMay1992_InfectiousDiseases extended these principles to account for heterogeneity, immunity, and vaccination, integrating epidemiological and immunological timescales.
 Their work emphasized that waning immunity and reinfection can sustain endemic transmission even in the absence of continuous pathogen introduction.
 
 Building on this foundation, @Antia1994_VirulenceEvolution introduced models linking within-host population dynamics of pathogens to the evolution of virulence, showing that immune-mediated control drives trade-offs between pathogen growth and host survival.
-The recognition that immune responses evolve over multiple biological scales inspired subsequent modeling of waning immunity. 
+The recognition that immune responses evolve over multiple biological scales inspired subsequent modeling of waning immunity.
 @Gomes2004_SuboptimalImmunity later formalized the impact of reinfection and suboptimal immune protection, emphasizing that immunity rarely confers lifelong sterilizing protection and that reinfection cycles are critical determinants of disease persistence.
 
-The statistical foundation for modeling antibody dynamics was first established by @Simonsen2009_IncidenceFromAntibodies and @Teunis2012_BiomarkerDynamics, who developed Bayesian formulations to infer infection rates from serological data. 
+The statistical foundation for modeling antibody dynamics was first established by @Simonsen2009_IncidenceFromAntibodies and @Teunis2012_BiomarkerDynamics, who developed Bayesian formulations to infer infection rates from serological data.
 These models treated antibody rise and decay as statistical processes linking infection history to measurable antibody levels.
 
-Building on this statistical foundation, @deGraaf2014_TwoPhaseModel introduced a *two-phase within-host model* that formalized antibody responses as a mechanistic rise–peak–decay process. 
+Building on this statistical foundation, @deGraaf2014_TwoPhaseModel introduced a *two-phase within-host model* that formalized antibody responses as a mechanistic rise–peak–decay process.
 This model connected the biological mechanisms of antigenic stimulation, plasma-cell decay, and pathogen clearance to the measurable serological trajectories used in statistical inference—thereby bridging immunological memory and population-level estimation.
 
-Later, @Teunis2016_LinkingHeterogeneity integrated these statistical and mechanistic perspectives by introducing heterogeneity in antibody production through a power-law decay function. 
-This formulation replaced simple exponential waning with a continuous distribution of plasma-cell lifespans, consistent with immunological evidence of short- and long-lived antibody-producing cells (as discussed in Section 2). 
+Later, @Teunis2016_LinkingHeterogeneity integrated these statistical and mechanistic perspectives by introducing heterogeneity in antibody production through a power-law decay function.
+This formulation replaced simple exponential waning with a continuous distribution of plasma-cell lifespans, consistent with immunological evidence of short- and long-lived antibody-producing cells (as discussed in Section 2).
 The resulting Bayesian hierarchical framework enabled simultaneous estimation of rise, peak, and decay parameters across individuals, forming the mathematical backbone of the modern *serodynamics* approach.
 
-Complementary advances were made in both theoretical formulation and empirical validation of antibody waning. @Teunis2020_SeroconversionAgeNoise refined the statistical estimation of seroconversion rates by incorporating age structure and measurement noise, extending the serodynamics framework to cross-sectional surveillance contexts. 
-A recent preprint by @Saha2025_WaningImmunity provides empirical support for the power-law decay paradigm, showing that antibody waning across diverse antigens and vaccines is better described by a power-law than by exponential or biphasic models. 
+Complementary advances were made in both theoretical formulation and empirical validation of antibody waning.
+@Teunis2020_SeroconversionAgeNoise refined the statistical estimation of seroconversion rates by incorporating age structure and measurement noise, extending the serodynamics framework to cross-sectional surveillance contexts.
+A recent preprint by @Saha2025_WaningImmunity provides empirical support for the power-law decay paradigm, showing that antibody waning across diverse antigens and vaccines is better described by a power-law than by exponential or biphasic models.
 Although this work has not yet undergone peer review, it offers compelling evidence that power-law kinetics may more accurately capture long-term antibody persistence and can be estimated from shorter follow-up periods—a key insight for modeling emerging infections such as *Shigella*.
 
-Modern serodynamics has thus evolved into a quantitative discipline that unites within-host kinetics and population-level inference. @Borremans2016_TimeSinceInfection developed a Bayesian semi-parametric model that integrates antibody levels, pathogen presence, and individual characteristics to infer time since infection and reconstruct incidence patterns. 
-This work demonstrated that well-characterized antibody trajectories can be inverted to estimate infection timing from cross-sectional data, providing a crucial bridge between longitudinal kinetics and population-level force-of-infection estimation. Building on this idea in a human surveillance context, @Aiemjoy2024_ScrubTyphusSeroincidence applied longitudinally derived antibody-decay parameters to estimate the seroincidence of scrub typhus, illustrating how decay-informed models can reconstruct exposure histories without relying on binary serostatus thresholds.
+Modern serodynamics has thus evolved into a quantitative discipline that unites within-host kinetics and population-level inference.
+@Borremans2016_TimeSinceInfection developed a Bayesian semi-parametric model that integrates antibody levels, pathogen presence, and individual characteristics to infer time since infection and reconstruct incidence patterns.
+This work demonstrated that well-characterized antibody trajectories can be inverted to estimate infection timing from cross-sectional data, providing a crucial bridge between longitudinal kinetics and population-level force-of-infection estimation.
+Building on this idea in a human surveillance context, @Aiemjoy2024_ScrubTyphusSeroincidence applied longitudinally derived antibody-decay parameters to estimate the seroincidence of scrub typhus, illustrating how decay-informed models can reconstruct exposure histories without relying on binary serostatus thresholds.
 Together, these approaches established that the shape of the antibody-decay curve encodes information about infection timing at the individual level, which can be aggregated to estimate transmission intensity at the population scale.
 
 Empirical validation of serodynamic principles has come from a series of applied studies.
-@Aiemjoy2024_ScrubTyphusSeroincidence extended this principle to an endemic bacterial pathogen, while @Pelleau2021_SerologicalReconstruction applied it to SARS-CoV-2, demonstrating that longitudinal antibody kinetics can be used to reconstruct epidemic trajectories from cross-sectional serological data. In bacterial systems, @Teunis2023_ABC_RepeatedInfections and @Hay2024_SerodynamicsPrimer emphasized the use of Approximate Bayesian Computation (ABC) and hierarchical priors to jointly infer infection frequency and heterogeneity in antibody kinetics.
+@Aiemjoy2024_ScrubTyphusSeroincidence extended this principle to an endemic bacterial pathogen, while @Pelleau2021_SerologicalReconstruction applied it to SARS-CoV-2, demonstrating that longitudinal antibody kinetics can be used to reconstruct epidemic trajectories from cross-sectional serological data.
+In bacterial systems, @Teunis2023_ABC_RepeatedInfections and @Hay2024_SerodynamicsPrimer emphasized the use of Approximate Bayesian Computation (ABC) and hierarchical priors to jointly infer infection frequency and heterogeneity in antibody kinetics.
 
-These theoretical and empirical advances converged into practical software tools that now underpin modern seroepidemiology. @Hay2020_Serosolver developed serosolver, an open-source R package for Bayesian inference of infection histories from serological data, integrating the power-law kinetics and hierarchical prior frameworks pioneered by *Teunis et al.* 
-More recently, @Lai2025_Serocalculator introduced serocalculator, an R package developed by our group to estimate seroincidence from cross-sectional antibody data using parameters derived from longitudinal kinetic models. 
+These theoretical and empirical advances converged into practical software tools that now underpin modern seroepidemiology.
+@Hay2020_Serosolver developed serosolver, an open-source R package for Bayesian inference of infection histories from serological data, integrating the power-law kinetics and hierarchical prior frameworks pioneered by *Teunis et al.* More recently, @Lai2025_Serocalculator introduced serocalculator, an R package developed by our group to estimate seroincidence from cross-sectional antibody data using parameters derived from longitudinal kinetic models.
 Together, these tools make the serodynamics workflow reproducible, transparent, and computationally efficient.
 
-A key conceptual contribution of modern serodynamics is the recognition that cross-sectional antibody data and longitudinal kinetic models are statistically equivalent under certain assumptions—i.e., cross-sectional titers are the convolution of infection-time distributions with within-host antibody kinetics [@Hay2024_SerodynamicsPrimer]. @Hay2024_SerodynamicsPrimer synthesized these approaches in *Serodynamics: A Primer and Synthetic Review of Methods for Epidemiological Inference Using Serological Data*, published in *Epidemics*. 
+A key conceptual contribution of modern serodynamics is the recognition that cross-sectional antibody data and longitudinal kinetic models are statistically equivalent under certain assumptions—i.e., cross-sectional titers are the convolution of infection-time distributions with within-host antibody kinetics [@Hay2024_SerodynamicsPrimer].
+@Hay2024_SerodynamicsPrimer synthesized these approaches in *Serodynamics: A Primer and Synthetic Review of Methods for Epidemiological Inference Using Serological Data*, published in *Epidemics*.
 This comprehensive review unified diverse sero-inference methods—from classical serocatalytic models to ABC-based hierarchical Bayesian inference—within a single survival-analysis framework, emphasizing that quantitative antibody levels capture richer information about infection timing, immune boosting, and heterogeneity across hosts.
 
-Building on this foundation, the present study applies the unified serodynamics framework to *Shigella*, using hierarchical Bayesian inference to model antibody kinetics and seroincidence. 
+Building on this foundation, the present study applies the unified serodynamics framework to *Shigella*, using hierarchical Bayesian inference to model antibody kinetics and seroincidence.
 Together with tools such as *serocalculator* [@Lai2025_Serocalculator], this approach demonstrates how theoretical advances in serodynamics can be directly translated into practical applications for enteric pathogen surveillance.
 
-This unified framework directly informs the present study’s approach to modeling *Shigella* antibody kinetics. By coupling two-phase within-host models with Bayesian hierarchical estimation and leveraging computational tools like *serocalculator*, this work applies the serodynamics paradigm to a new pathogen system. 
+This unified framework directly informs the present study’s approach to modeling *Shigella* antibody kinetics.
+By coupling two-phase within-host models with Bayesian hierarchical estimation and leveraging computational tools like *serocalculator*, this work applies the serodynamics paradigm to a new pathogen system.
 The integration of mechanistic understanding with statistical inference enables estimation of both individual-level immune parameters and population-level seroincidence from serological data—bridging immunology, epidemiology, and public-health surveillance.
 
 ## Gaps and Rationale for This Study
 
-Despite significant advances in modeling antibody kinetics, key methodological and biological gaps remain. 
+Despite significant advances in modeling antibody kinetics, key methodological and biological gaps remain.
 These gaps motivate the present study’s extension and application of an established hierarchical Bayesian serodynamics framework to model *Shigella* antibody dynamics.
 
 ### Statistical Needs: Capturing Heterogeneity in Antibody Dynamics
 
-As discussed in earlier sections, statistical serodynamic models developed by (@Teunis2012_BiomarkerDynamics, @Teunis2016_LinkingHeterogeneity, @Teunis2020_SeroconversionAgeNoise, @Teunis2023_ABC_RepeatedInfections) established a hierarchical Bayesian framework for modeling antibody rise, peak, and decay across individuals. 
+As discussed in earlier sections, statistical serodynamic models developed by Teunis et al. [@Teunis2012_BiomarkerDynamics; @Teunis2016_LinkingHeterogeneity; @Teunis2020_SeroconversionAgeNoise; @Teunis2023_ABC_RepeatedInfections] established a hierarchical Bayesian framework for modeling antibody rise, peak, and decay across individuals.
 These models quantify both within-host and between-host variation by treating kinetic parameters as random effects drawn from population-level distributions, enabling robust inference of infection timing and antibody waning.
 
-The present study builds directly upon this modeling lineage but extends its application to *Shigella*—a mucosal enteric pathogen characterized by short-lived, isotype-specific responses and high inter-individual variability. 
-Most prior Bayesian serodynamic applications have focused on systemic infections such as pertussis, cholera, or typhoid, where antibody kinetics are slower and more homogeneous. In contrast, *Shigella* presents unique challenges for model fitting and interpretation due to its rapid antibody decay and antigen-specific response profiles.
+The present study builds directly upon this modeling lineage but extends its application to *Shigella*—a mucosal enteric pathogen characterized by short-lived, isotype-specific responses and high inter-individual variability.
+Most prior Bayesian serodynamic applications have focused on systemic infections such as pertussis, cholera, or typhoid, where antibody kinetics are slower and more homogeneous.
+In contrast, *Shigella* presents unique challenges for model fitting and interpretation due to its rapid antibody decay and antigen-specific response profiles.
 
-Accordingly, this work adapts the hierarchical Bayesian serodynamics framework to jointly estimate antibody kinetics and variation across multiple antigens and isotypes, while accounting for measurement uncertainty and individual-level heterogeneity. 
+Accordingly, this work adapts the hierarchical Bayesian serodynamics framework to jointly estimate antibody kinetics and variation across multiple antigens and isotypes, while accounting for measurement uncertainty and individual-level heterogeneity.
 This adaptation preserves the mechanistic and statistical integration established by Teunis et al., while expanding its utility for modeling immune responses in enteric infections.
 
 ### Biological Challenges: Persistence and Waning of Immune Memory
 
 Parallel findings from recent viral immunology studies illustrate the complexity of antibody persistence and highlight the need for models that incorporate heterogeneity in immune kinetics.
 
-@Antia2018_HeterogeneityLongevity demonstrated that antibody half-lives differ widely among individuals and antigens, challenging the use of a single decay constant for all hosts. 
-Longitudinal SARS-CoV-2 studies further revealed that antibody and T-cell responses wane at different rates. @denHartog2021_SARS2Persistence found that IgG persisted for more than six months in most individuals, while @Kaaijk2022_COVIDTcellMemory showed that memory T-cell responses remain detectable up to ten months after mild infection.
+@Antia2018_HeterogeneityLongevity demonstrated that antibody half-lives differ widely among individuals and antigens, challenging the use of a single decay constant for all hosts.
+Longitudinal SARS-CoV-2 studies further revealed that antibody and T-cell responses wane at different rates.
+@denHartog2021_SARS2Persistence found that IgG persisted for more than six months in most individuals, while @Kaaijk2022_COVIDTcellMemory showed that memory T-cell responses remain detectable up to ten months after mild infection.
 
-Meanwhile, @Novelli2025_SARS2Waning and @Kadelka2023_WaningCorrection quantified population-level waning and developed correction methods for seroreversion bias in serosurveys. 
+Meanwhile, @Novelli2025_SARS2Waning and @Kadelka2023_WaningCorrection quantified population-level waning and developed correction methods for seroreversion bias in serosurveys.
 These works underscore that both immunological and statistical modeling are necessary to interpret declining antibody titers in terms of underlying exposure and protection.
 
 ### Integrating Immunological Persistence and Statistical Heterogeneity
 
-Together, these two lines of research—the immunological studies of antibody persistence and memory and the statistical serodynamics framework for modeling heterogeneity in antibody kinetics—define the central rationale for this study. 
+Together, these two lines of research—the immunological studies of antibody persistence and memory and the statistical serodynamics framework for modeling heterogeneity in antibody kinetics—define the central rationale for this study.
 Antibody responses vary widely in both magnitude and duration across individuals, antigens, and isotypes; neglecting this variability can lead to biased inference of infection rates and immune durability.
 
-The present work extends the hierarchical Bayesian serodynamics framework to analyze longitudinal *Shigella* data. 
-This approach explicitly models between-individual variation in antibody decay parameters, accommodates multiple antigen–isotype combinations, and quantifies uncertainty in both within-host and population-level estimates. In doing so, it bridges mechanistic immunology and statistical modeling—linking short-lived mucosal antibody responses with robust inference of recent exposure and reinfection processes in enteric infections.
+The present work extends the hierarchical Bayesian serodynamics framework to analyze longitudinal *Shigella* data.
+This approach explicitly models between-individual variation in antibody decay parameters, accommodates multiple antigen–isotype combinations, and quantifies uncertainty in both within-host and population-level estimates.
+In doing so, it bridges mechanistic immunology and statistical modeling—linking short-lived mucosal antibody responses with robust inference of recent exposure and reinfection processes in enteric infections.
 
-Collectively, these developments establish a foundation for the modeling work presented here. By combining immunological mechanisms with Bayesian hierarchical inference, this study quantifies how *Shigella* antibody responses vary across individuals and biomarkers. The resulting framework enables inference of infection timing and seroincidence from serological data, advancing the broader goal of quantitative seroepidemiology.
-
+Collectively, these developments establish a foundation for the modeling work presented here.
+By combining immunological mechanisms with Bayesian hierarchical inference, this study quantifies how *Shigella* antibody responses vary across individuals and biomarkers.
+The resulting framework enables inference of infection timing and seroincidence from serological data, advancing the broader goal of quantitative seroepidemiology.
 
 # Methods
 
 ## Study Design
 
-We conducted a longitudinal observational study to characterize within-host antibody kinetics following confirmed *Shigella* infection. Repeated serological measurements were collected from laboratory-confirmed cases and analyzed using a two-phase within-host antibody model within a Bayesian hierarchical framework. 
-The objective was to estimate antigen- and isotype-specific rise, peak, and decay parameters while quantifying inter-individual variability in antibody responses.
+We conducted a longitudinal observational study to characterize within-host antibody kinetics following confirmed *Shigella* infection.
+Repeated serological measurements were collected from laboratory-confirmed cases. 
+Longitudinal case data were obtained from pediatric and adult patients presenting with acute diarrhea in Dhaka, Bangladesh.
+Enrollment and sample collection occurred between March 2021 and 2022 through hospital- and field-based surveillance conducted by icddr,b.
 
-## Study Setting and Data Sources
+### Participants: Longitudinal Shigella Cases
 
-Longitudinal case data were obtained from pediatric and adult patients presenting with acute diarrhea in Dhaka, Bangladesh. Enrollment and sample collection occurred between March 2021 and 2022 through hospital- and field-based surveillance conducted by icddr,b.
+Inclusion criteria were individuals presenting with acute diarrhea (duration \<72 hours), frequent bowel movements (\>3 in 24 hours), and laboratory confirmation of *Shigella* infection by culture and/or molecular diagnostic assays (PCR or rapid PCR).
+Exclusion criteria were inability to provide a blood sample.
 
-In addition to the longitudinal case data, cross-sectional serological datasets from Ghana, Niger, Sierra Leone, and other sites were available from population-based studies conducted between 2016 and 2020. 
-These cross-sectional datasets were not analyzed in the present study but informed assay interpretation and will be used in subsequent seroincidence analyses.
+A total of 48 individuals with confirmed *Shigella* infection were included.
+Serum or plasma samples were collected at baseline (acute presentation) and approximately 7, 30, 90, and 180 days following infection.
 
-## Participants
+The distribution of infecting serotypes was not uniform.
+Most cases were infected with *Shigella flexneri* 2a, with smaller numbers of *S. flexneri* 3a, *S. flexneri* 6, *S. sonnei*, and other serotypes.
+This imbalance is relevant for interpretation of OSP–specific responses due to known cross-reactivity between *S. flexneri* 2a and 3a, and minimal cross-reactivity between *S. sonnei* and *S. flexneri* 6.
 
-### Longitudinal Shigella Cases
+### Laboratory Measurements
 
-Inclusion criteria were individuals presenting with acute diarrhea (duration \<72 hours), frequent bowel movements (\>3 in 24 hours), and laboratory confirmation of *Shigella* infection by culture and/or molecular diagnostic assays (PCR or rapid PCR). Exclusion criteria were inability to provide a blood sample.
-
-A total of 48 individuals with confirmed *Shigella* infection were included. Serum or plasma samples were collected at baseline (acute presentation) and approximately 7, 30, 90, and 180 days following infection.
-
-The distribution of infecting serotypes was not uniform. Most cases were infected with *Shigella flexneri* 2a, with smaller numbers of *S. flexneri* 3a, *S. flexneri* 6, *S. sonnei*, and other serotypes. 
-This imbalance is relevant for interpretation of O-antigen–specific responses due to known cross-reactivity between *S. flexneri* 2a and 3a, and minimal cross-reactivity between *S. sonnei* and *S. flexneri* 6.
-
-## Laboratory Measurements
-
-IgG and IgA antibody responses were measured using a multiplex bead-based immunoassay. Antigens included:
+IgG and IgA antibody responses were measured using a multiplex bead-based immunoassay.
+Antigens included:
 
 -   Invasion plasmid antigen B (IpaB), a conserved virulence protein shared across *Shigella* species and other *Salmonella*.
 -   O-specific polysaccharides (OSP) from the most prevalent *Shigella* serotypes globally: *S. sonnei*, *S. flexneri* 2a, *S. flexneri* 3a, and *S. flexneri* 6.
 
-Assay output was reported as median fluorescence intensity (MFI), providing semi-quantitative measures of antigen-specific antibody concentrations. 
+Assay output was reported as median fluorescence intensity (MFI), providing semi-quantitative measures of antigen-specific antibody concentrations.
 Serum or plasma samples were derived from venous blood; dried blood spot samples were derived from capillary blood collected on filter paper.
 
-## Variables
+## Statistical Analysis
 
-The primary outcome was the longitudinal antibody concentration, measured as median fluorescence intensity (MFI), for each antigen–isotype combination (IgG and IgA). 
+We analyzed the data using a two-phase antibody response model. The model has a hierarchical structure: parameters vary between individuals around population-level means. We used a Bayesian inferential framework to estimate the population-level and person-specific parameters.
+
+### Variables
+
+The primary outcome was the longitudinal antibody concentration, measured as median fluorescence intensity (MFI), for each antigen–isotype combination (IgG and IgA).
 Time since infection was measured in days relative to the baseline sample collected at acute presentation.
 
 Key model-derived parameters included baseline antibody level, time to peak response, peak antibody concentration, decay rate, and decay shape.
 
-Participant age at infection was recorded and used for stratified visualization of antibody trajectories. 
-Age strata were defined as \<5 years, 5–15 years, and \>15 years, reflecting known differences in antibody kinetics between young children and older individuals.
-Infecting serotype was also recorded and used for stratified visualization. 
+Participant age at infection was recorded and used for stratified visualization of antibody trajectories.
+Age strata were defined as \<5 years, 5–15 years, and \>15 years; these categorization cutpoints, reflect known differences in antibody kinetics between young children and older individuals.
+Infecting serotype was also recorded and used for stratified visualizations.
 Age and serotype were not included as covariates in the primary kinetic model.
 
-## Data Preparation
+### Data Preparation
 
-Antibody measurements were log-transformed prior to modeling to stabilize variance and improve numerical stability. 
-Time was expressed in days since baseline sampling.
+Antibody measurements were modeled on a logarithmic scale to stabilize variance and produce approximately Gaussian residual noise.
+Time was scaled in days since baseline sampling.
 
-Analyses were restricted to homologous antigen–serotype pairs when modeling OSP responses (e.g., *S. flexneri* 2a OSP responses were modeled using only individuals infected with *S. flexneri* 2a or closely related serotypes) to reduce bias from cross-reactivity.
+Analyses were restricted to homologous antigen–serotype pairs when modeling OSP responses to reduce bias from cross-reactivity; that is *S. flexneri* 2a OSP responses were modeled using only individuals infected with *S. flexneri* 2a or closely related serotypes.
 
-All data preprocessing, model fitting, and post-processing were conducted in R. Bayesian inference was implemented using JAGS, with reproducible workflows developed within the **serodynamics** package. 
 Prior predictive checks and posterior predictive diagnostics were performed to assess model plausibility and convergence.
 
-## Within-Host Antibody Kinetics Model
+All data preprocessing, model fitting, and post-processing were conducted in the R statistical computing environment, version ###, interfaced with the JAGS program, version ###, via reproducible workflows developed within the **serodynamics** package.
 
-Longitudinal antibody responses following infection were described using a two-phase within-host model consisting of a rapid rise phase followed by a slower decay phase [@deGraaf2014_TwoPhaseModel; @Teunis2016_LinkingHeterogeneity]. 
-This formulation is consistent with previously described models of serological responses to infection and captures the characteristic rise–peak–decay pattern observed in antibody measurements.
+### Within-Host Antibody Kinetics Model
 
-Let $y(t)$ denote the antibody concentration at time $t$ since infection. 
+Longitudinal antibody responses following infection were modeled using a two-phase within-host framework consisting of a rapid rise phase followed by a slower decay phase [@deGraaf2014_TwoPhaseModel; @Teunis2016_LinkingHeterogeneity].
+
+Let $y(t)$ denote the antibody concentration at time $t$ since infection.
 The model is defined as:
 
 $$
@@ -213,16 +228,17 @@ y_1 \left( 1 + (\rho - 1)\alpha y_1^{\,\rho-1}(t - t_1) \right)^{-\frac{1}{(\rho
 \end{cases}
 $$
 
-where $y_0$ is the baseline antibody concentration, $\mu_y$ is the rate of antibody increase during the rise phase, $t_1$ is the time to peak response, $y_1$ is the peak antibody concentration, $\alpha$ is the decay rate, and $\rho$ is a shape parameter controlling the form of antibody waning. 
+where $y_0$ is the baseline antibody concentration, $\mu_y$ is the rate of antibody increase during the rise phase, $t_1$ is the time to peak response, $y_1$ is the peak antibody concentration, $\alpha$ is the decay rate, and $\rho$ is a shape parameter controlling the form of antibody waning.
 The decay phase reduces to exponential decay when $\rho = 1$, and allows for non-exponential waning when $\rho \neq 1$.
 
 This closed-form representation corresponds to the solution of a two-phase within-host model in which antibody concentrations increase rapidly following infection and subsequently wane according to a power-law decay [@Teunis2016_LinkingHeterogeneity].
 
-## Hierarchical Model Structure
+### Hierarchical Model Structure
 
-To account for heterogeneity in antibody responses across individuals, model parameters were estimated within a hierarchical Bayesian framework. Individual-level kinetic parameters were assumed to arise from population-level distributions specific to each antigen–isotype combination.
+To account for heterogeneity in antibody responses across individuals, the model parameters are arranged in a hierarchical structure.
+The individual-level parameters are modeled as samples from population-level distributions specific to each antigen–isotype combination.
 
-For each individual $i$ and parameter $\theta \in \{ y_0, y_1, t_1, \alpha, \rho \}$, we assumed:
+In particular, for each individual $i$ and parameter $\theta \in \{ y_0, y_1, t_1, \alpha, \rho \}$, we assumed:
 
 $$
 \log(\theta_i) \sim \mathcal{N}(\mu_\theta, \sigma_\theta^2)
@@ -233,48 +249,51 @@ This partial pooling approach stabilizes inference for individuals with sparse m
 
 Separate models were fit for each antigen–isotype combination.
 
-### Observation Model
+#### Observation Model
 
-Observed antibody measurements were modeled on the log scale as noisy realizations of the latent two-phase antibody trajectory. For individual $i$ and antigen–isotype (biomarker) $j$ measured at time $t_{ij}$:
+Observed antibody measurements were modeled on the log scale as noisy realizations of the latent two-phase antibody trajectory.
+For individual $i$ and antigen–isotype (biomarker) $j$ measured at time $t_{ij}$:
 
 $$
 \log\!\left(y^{\text{obs}}_{ij}\right) \sim 
 \mathcal{N}\!\left(\mu_{\log y,ij},\ \tau_j^{-1}\right),
 $$
 
-where $\mu_{\log y,ij}$ denotes the expected log antibody level implied by the two-phase within-host model evaluated at time $t_{ij}$ using individual-level kinetic parameters, and $\tau_j$ is the measurement precision (inverse variance) specific to biomarker $j$.
+where $\mu_{\log y,ij}$ denotes the expected log antibody level implied by the two-phase within-host model evaluated at time $t_{ij}$ using individual-level kinetic parameters, and $\tau_j$ is the measurement precision (that is, the inverse of variance) specific to biomarker $j$.
 
-## Prior Specification
+### Prior Specification
 
-Weakly informative priors were assigned to all population-level parameters to reflect plausible biological ranges while allowing the data to dominate inference. 
+Weakly informative priors were assigned to all population-level parameters to reflect plausible biological ranges while allowing the data to dominate inference.
 Prior distributions were scaled to the observed assay ranges for each antigen–isotype combination.
 
-Priors on population-level means were specified on the log scale. 
-Standard deviation parameters were assigned weakly informative priors constrained to be positive. 
+Priors on population-level parameter means were specified on logarithmic scales.
+Standard deviation parameters were assigned weakly informative priors constrained to be positive.
 These choices were informed by prior predictive simulations and existing applications of similar models to enteric pathogens.
 
-## Model Fitting and Computation
+See Appendix section ### for more details.
 
-Models were fit using Bayesian Markov chain Monte Carlo (MCMC) methods implemented in JAGS and executed through R. 
-Multiple chains were run with dispersed initial values. 
+### Model Fitting and Computation
+
+Models were fit using Bayesian Markov chain Monte Carlo (MCMC) methods implemented in JAGS and interfaced with R.
+Multiple chains were run with dispersed initial values.
 Convergence was assessed using visual inspection of trace plots and the potential scale reduction factor (R-hat) across all monitored parameters.
 
-Posterior samples were retained after discarding burn-in iterations and thinning to reduce autocorrelation. 
+Posterior samples were retained after discarding burn-in iterations and thinning to reduce autocorrelation.
 All analyses were conducted using reproducible workflows implemented in the **serodynamics** R package.
 
-## Model Diagnostics and Validation
+### Model Diagnostics and Validation
 
 Prior predictive checks were used to assess whether the specified priors generated biologically plausible antibody trajectories before conditioning on the observed data [@gelman2013bayesian; @gelman2020bayesian].
 
-Model adequacy was evaluated using posterior predictive checks. 
+Model adequacy was evaluated using posterior predictive checks.
 Simulated antibody trajectories were compared to observed longitudinal data to assess whether the fitted model reproduced key features of the data, including peak timing, peak magnitude, and long-term decay patterns [@gelman2013bayesian].
 
-Convergence diagnostics were examined for all model parameters. 
+Convergence diagnostics were examined for all model parameters.
 Individual-level posterior trajectories were visually inspected to confirm appropriate fit across participants with varying numbers of observations [@vehtari2021rank].
 
-## Sensitivity Analyses
+### Sensitivity Analyses
 
-Sensitivity analyses were performed to assess robustness of inference to prior specification. 
+Sensitivity analyses were performed to assess robustness of inference to prior specification.
 Alternative weakly informative priors were considered for key population-level parameters, and resulting posterior estimates were compared for consistency.
 
 Additional sensitivity analyses examined the influence of sparse individual trajectories by refitting models after excluding individuals with minimal follow-up.
@@ -297,14 +316,14 @@ $$
 
 where $\mu$ denotes the antibody production rate during the rise phase, $\alpha$ is the decay rate, and $\rho$ controls the shape of antibody waning.
 
-Initial conditions are given by $y(0) = y_0$. 
+Initial conditions are given by $y(0) = y_0$.
 The transition time $t_1$ corresponds to the peak antibody response.
 
 ## Appendix B. Closed-Form Solutions
 
 Solving the system above yields the closed-form antibody trajectory used in model fitting:
 
--   **Rise phase (**$t \le t_1$):
+-   **Rising phase (**$t \le t_1$):
 
 $$
 y(t) = y_0 \exp(\mu_y t)
@@ -381,7 +400,7 @@ where $\boldsymbol{\mu}_{\mathrm{hyp},j}$ represents the prior mean and $\boldsy
 
 ### Between-Individual Variability
 
-Between-individual variability in kinetic parameters was captured by a biomarker-specific covariance matrix $\boldsymbol{\Sigma}_j$. 
+Between-individual variability in kinetic parameters was captured by a biomarker-specific covariance matrix $\boldsymbol{\Sigma}_j$.
 A Wishart prior was placed on the corresponding precision matrix:
 
 $$
