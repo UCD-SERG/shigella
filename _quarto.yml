@@ -1,19 +1,37 @@
 execute:
   echo: false
   warning: false
+  message: false
+
 number-sections: true
 number-depth: 2
 number-offset: [0, 0]
-format: 
-  pdf: default
+
+bibliography: references_chapter1.bib
+csl: styles/epidemics.csl
+link-citations: true
+
+fig-cap-location: top
+tbl-cap-location: top
+
+format:
+  pdf:
+    documentclass: article
+    geometry: margin=1in
+    include-in-header: header.tex
+    number-sections: true
+    toc: false
+  docx:
+    number-sections: true
   html:
     embed-resources: true
     toc: true
+    number-sections: true
 
-editor_options: 
+editor_options:
   chunk_output_type: console
-  
+
 knitr:
   opts_chunk:
     collapse: true
-    comment: '#>'
+    comment: "#>"
