@@ -8,3 +8,9 @@
 ^vignettes/articles/*_files$
 ^vignettes/articles$
 ^codecov\.yml$
+^cran-comments\.md$
+^CODE_OF_CONDUCT\.md$
+^LICENSE\.md$
+^_quarto\.yml$
+^revdep$
+^data-raw$
