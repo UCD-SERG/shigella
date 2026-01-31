@@ -14,7 +14,7 @@
 #'   \item{SE}{Standard error of the estimate}
 #'   \item{CI.lwr}{Lower bound of the 95\% confidence interval}
 #'   \item{CI.upr}{Upper bound of the 95\% confidence interval}
-#'   \item{index}{Simulation replicate number (1 to 200)}
+#'   \item{index}{Simulation replicate number}
 #'   \item{sample_size}{Sample size used in the simulation}
 #'
 #' @examples
