@@ -1,3 +1,72 @@
+#' Simulate Seroincidence with Biological and Measurement Noise
+#'
+#' Performs Monte Carlo simulations to estimate seroincidence rates using
+#' serodynamics models. Supports parallel processing for efficient computation
+#' of multiple simulation replicates.
+#'
+#' @param dmcmc A data frame or tibble containing antibody decay curve parameters,
+#'   typically obtained from MCMC fitting of longitudinal seroresponse data.
+#' @param nrep Integer. Number of individuals to simulate in each cross-sectional
+#'   sample.
+#' @param n_sim Integer. Total number of simulation replicates to perform.
+#' @param observed Numeric. The observed incidence rate (per person-year) to use
+#'   as the true lambda parameter in simulations.
+#' @param range Numeric vector of length 2 specifying the age range for simulated
+#'   individuals (e.g., `c(0.5, 60)`). If `NULL`, uses default age distribution.
+#' @param batch_size Integer. Number of simulations to run in each parallel batch.
+#'   Default is 40.
+#' @param parallel Logical. If `TRUE` (default), uses parallel processing via
+#'   `future` and `furrr`. If `FALSE`, runs sequentially.
+#' @param antibodies Character vector of antigen-isotype combinations to simulate
+#'   (e.g., `c("IgG", "IgA")`). Default is `c("IgG")`.
+#' @param dlims A named matrix or data frame specifying biological noise limits
+#'   for each antigen-isotype. Should have columns `min` and `max`, with row names
+#'   matching `antibodies`. Default is `rbind("IgG" = c(min = 0, max = 0.5))`.
+#' @param cond A tibble containing noise parameters for each antigen-isotype with
+#'   columns: `antigen_iso`, `nu` (decay rate), `eps` (error rate), `y.low`
+#'   (lower measurement bound), and `y.high` (upper measurement bound).
+#'
+#' @return A list of length `n_sim`, where each element contains:
+#'   \item{csdata}{Simulated cross-sectional antibody data}
+#'   \item{est1}{Estimated seroincidence from the simulated data}
+#'
+#' @examples
+#' \dontrun{
+#' # Create mock curve parameters (placeholder)
+#' mock_dmcmc <- tibble::tibble(
+#'   antigen_iso = rep("IgG", 100),
+#'   alpha = rnorm(100, 3, 0.5),
+#'   beta = rnorm(100, 0.1, 0.02),
+#'   r = rnorm(100, 0.01, 0.002)
+#' )
+#'
+#' # Define noise parameters
+#' noise_params <- tibble::tibble(
+#'   antigen_iso = "IgG",
+#'   nu = 0.5,
+#'   eps = 0.25,
+#'   y.low = 25,
+#'   y.high = 200000
+#' )
+#'
+#' # Run simulations
+#' results <- simulate_seroincidence(
+#'   dmcmc = mock_dmcmc,
+#'   nrep = 200,
+#'   n_sim = 100,
+#'   observed = 0.1,
+#'   range = c(0.5, 60),
+#'   batch_size = 20,
+#'   parallel = TRUE,
+#'   antibodies = c("IgG"),
+#'   cond = noise_params
+#' )
+#' }
+#'
+#' @importFrom future plan multisession availableCores
+#' @importFrom furrr future_map furrr_options
+#' @importFrom serodynamics sim_pop_data est.incidence
+#' @export
 # Define the simulation function
 simulate_seroincidence <- function(
     dmcmc, # Curve parameters

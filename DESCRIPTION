@@ -14,9 +14,14 @@ Imports:
     dplyr,
     future,
     future.apply,
+    furrr,
     ggplot2,
     gridExtra,
-    serodynamics (>= 0.0.0.9011)
+    rlang,
+    serocalculator,
+    serodynamics (>= 0.0.0.9011),
+    tibble,
+    tidyr
 URL: https://ucd-serg.github.io/shigella/
 Remotes: 
     UCD-SERG/serodynamics
@@ -25,7 +30,6 @@ Suggests:
     bayesplot,
     coda,
     forcats,
-    furrr,
     ggeasy,
     ggmcmc,
     gtsummary,
@@ -46,11 +50,11 @@ Suggests:
     scales,
     spelling,
     table1,
-    tibble,
-    tidyr,
+    testthat (>= 3.0.0),
     tidyverse
 Depends: 
     R (>= 3.5)
 LazyData: true
 Config/Needs/website: quarto
+Config/testthat/edition: 3
 Language: en-US
