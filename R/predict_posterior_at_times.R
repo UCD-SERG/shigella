@@ -26,8 +26,8 @@
 #' @details
 #' This function pivots posterior draws to wide format (parameters as columns),
 #' expands them over \code{times}, and evaluates the antibody curve via
-#' \code{serodynamics:::ab()} using parameters \code{y0}, \code{y1}, \code{t1},
-#' \code{alpha}, and \code{shape}.
+#' an internal implementation of the antibody kinetics model using parameters
+#' \code{y0}, \code{y1}, \code{t1}, \code{alpha}, and \code{shape}.
 #'
 #' @seealso \code{\link{compute_residual_metrics}}
 #'
