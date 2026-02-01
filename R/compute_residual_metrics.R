@@ -76,7 +76,7 @@ compute_residual_metrics <- function(model,
     dplyr::filter(.data$id %in% ids, .data$antigen_iso == antigen_iso)
 
   if (nrow(observed_data) == 0) {
-    rlang::abort("No observed data found for the specified IDs and antigen_iso.")
+    stop("No observed data found for the specified IDs and antigen_iso.")
   }
 
   obs_times <- sort(unique(observed_data$t))
