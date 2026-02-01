@@ -73,11 +73,12 @@ fig2_overall_newperson <- function(
       )
   }
 
-  sum_all <- purrr::map_dfr(osps, function(osp) {
-    purrr::map_dfr(isotypes, function(iso) {
+  sum_all <- lapply(osps, function(osp) {
+    dplyr::bind_rows(lapply(isotypes, function(iso) {
       get_sum_overall(overall_models[[osp]], osp, iso)
-    })
+    }))
   }) |>
+    dplyr::bind_rows() |>
     dplyr::mutate(antigen = factor(.data$antigen, levels = osps))
 
   p <- ggplot2::ggplot(sum_all, ggplot2::aes(x = .data$t)) +
