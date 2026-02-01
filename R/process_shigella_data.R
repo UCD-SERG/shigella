@@ -26,6 +26,7 @@
 #' )
 #' }
 #'
+#' @importFrom rlang ensym
 #' @export
 process_shigella_data <- function(data, study_filter, antigen) {
   antigen_col <- rlang::ensym(antigen)
