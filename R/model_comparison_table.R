@@ -57,8 +57,16 @@ make_model_comparison_table <- function(model_serospecific, data_serospecific,
     dplyr::mutate(
       delta_MAE  = .data$MAE_overall  - .data$MAE_serospecific,
       delta_RMSE = .data$RMSE_overall - .data$RMSE_serospecific,
-      pct_improve_MAE  = 100 * .data$delta_MAE  / .data$MAE_overall,
-      pct_improve_RMSE = 100 * .data$delta_RMSE / .data$RMSE_overall,
+      pct_improve_MAE = dplyr::case_when(
+        is.na(.data$MAE_overall) ~ NA_real_,
+        abs(.data$MAE_overall) <= .Machine$double.eps ~ NA_real_,
+        TRUE ~ 100 * .data$delta_MAE / .data$MAE_overall
+      ),
+      pct_improve_RMSE = dplyr::case_when(
+        is.na(.data$RMSE_overall) ~ NA_real_,
+        abs(.data$RMSE_overall) <= .Machine$double.eps ~ NA_real_,
+        TRUE ~ 100 * .data$delta_RMSE / .data$RMSE_overall
+      ),
       best_MAE = dplyr::case_when(
         is.na(.data$MAE_overall) | is.na(.data$MAE_serospecific) ~ NA_character_,
         abs(.data$delta_MAE) <= tie_tol ~ "tie",
