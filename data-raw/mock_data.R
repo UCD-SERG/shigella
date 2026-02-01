@@ -67,7 +67,7 @@ mock_case_data_raw$value <- apply(mock_case_data_raw, 1, function(row) {
   }
   
   # Add measurement noise (20% CV)
-  pred * rlang::rnorm(1, 1, 0.2)
+  pred * rnorm(1, 1, 0.2)
 })
 
 # Convert to serodynamics case_data format
