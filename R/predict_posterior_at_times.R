@@ -72,7 +72,7 @@ predict_posterior_at_times <- function(model, ids, antigen_iso, times) {
     tidyr::pivot_longer(cols = dplyr::starts_with("time"), values_to = "t") |>
     dplyr::select(-"name") |>
     dplyr::mutate(
-      res = serodynamics:::ab(.data$t, .data$y0, .data$y1, .data$t1, .data$alpha, .data$shape)
+      res = ab(.data$t, .data$y0, .data$y1, .data$t1, .data$alpha, .data$shape)
     )
 
   predictions

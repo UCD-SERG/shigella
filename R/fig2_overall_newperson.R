@@ -55,7 +55,7 @@ fig2_overall_newperson <- function(
       ) |>
       tidyr::crossing(t = t_grid) |>
       dplyr::mutate(
-        res = serodynamics:::ab(
+        res = ab(
           t = .data$t,
           y0 = .data$y0,
           y1 = .data$y1,

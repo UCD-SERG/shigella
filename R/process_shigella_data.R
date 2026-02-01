@@ -34,7 +34,7 @@ process_shigella_data <- function(data, study_filter, antigen) {
   data |>
     dplyr::filter(.data$study_name == study_filter) |>
     dplyr::select(.data$isotype_name, .data$sid, .data$timepoint, .data$`Actual day`,
-                  .data$cohort_name, !!antigen_col) |>
+                  !!antigen_col) |>
     dplyr::mutate(
       index_id   = .data$sid,
       antigen_iso = .data$isotype_name,

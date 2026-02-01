@@ -66,7 +66,7 @@ compute_residual_metrics <- function(model,
   scale <- match.arg(scale)
   summary_level <- match.arg(summary_level)
 
-  time_var  <- serodynamics:::get_timeindays_var(dataset)
+  time_var  <- get_timeindays_var(dataset)
   value_var <- serocalculator::get_values_var(dataset)
 
   observed_data <- dataset |>
