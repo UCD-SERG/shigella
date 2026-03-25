@@ -1,7 +1,4 @@
 test_that("model_comparison_table computes differences correctly", {
-  skip_if_not_installed("serodynamics")
-  skip_if_not_installed("serocalculator")
-  
   # Create mock metrics for two models
   metrics_overall <- data.frame(
     MAE = 150,
@@ -39,9 +36,6 @@ test_that("model_comparison_table computes differences correctly", {
 })
 
 test_that("model_comparison_table computes percent improvement", {
-  skip_if_not_installed("serodynamics")
-  skip_if_not_installed("serocalculator")
-  
   metrics_overall <- data.frame(
     MAE = 100,
     RMSE = 200,

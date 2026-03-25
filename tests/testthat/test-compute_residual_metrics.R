@@ -1,7 +1,4 @@
 test_that("compute_residual_metrics returns expected structure", {
-  skip_if_not_installed("serodynamics")
-  skip_if_not_installed("serocalculator")
-  
   # Note: This test uses mock data structure
   # Once mock_posterior_draws and mock_case_data are generated,
   # these tests should work
@@ -68,9 +65,6 @@ test_that("compute_residual_metrics returns expected structure", {
 })
 
 test_that("compute_residual_metrics handles log scale", {
-  skip_if_not_installed("serodynamics")
-  skip_if_not_installed("serocalculator")
-  
   # Minimal mock data
   mock_model <- data.frame(
     Subject = rep("test_id", 15),
