@@ -15,7 +15,8 @@ make_model_comparison_table(
 )
 }
 \arguments{
-\item{model_serospecific}{Posterior draws (long format) for the serotype-specific model.}
+\item{model_serospecific}{Posterior draws (long format)
+for the serotype-specific model.}
 
 \item{data_serospecific}{Case dataset used for the serotype-specific model.}
 
@@ -30,7 +31,8 @@ make_model_comparison_table(
 \item{tie_tol}{Numeric tolerance to declare a tie.}
 }
 \value{
-A tibble with per-ID MAE/RMSE for each model and deltas/winner labels.
+A tibble with per-ID MAE/RMSE for each model and
+deltas/winner labels.
 }
 \description{
 Computes per-ID residual metrics for two models on the intersection of IDs

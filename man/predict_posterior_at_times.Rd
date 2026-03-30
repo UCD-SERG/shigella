@@ -2,24 +2,29 @@
 % Please edit documentation in R/predict_posterior_at_times.R
 \name{predict_posterior_at_times}
 \alias{predict_posterior_at_times}
-\title{Posterior predictions at specified times for given subjects and antigen/isotype}
+\title{Posterior predictions at specified times for given subjects
+and antigen/isotype}
 \usage{
 predict_posterior_at_times(model, ids, antigen_iso, times)
 }
 \arguments{
 \item{model}{A data frame of posterior draws in long format with columns:
-\code{Subject}, \code{Iso_type}, \code{Chain}, \code{Iteration}, \code{Parameter}, \code{value}.}
+\code{Subject}, \code{Iso_type}, \code{Chain}, \code{Iteration},
+\code{Parameter}, \code{value}.}
 
-\item{ids}{Character vector of subject IDs to include (matched against \code{Subject}).}
+\item{ids}{Character vector of subject IDs to include
+(matched against \code{Subject}).}
 
 \item{antigen_iso}{Character scalar specifying the antigen/isotype to include
 (matched against \code{Iso_type}).}
 
-\item{times}{Numeric vector of time points (days) at which to evaluate predictions.}
+\item{times}{Numeric vector of time points (days) at which to evaluate
+predictions.}
 }
 \value{
-A tibble with one row per (posterior draw \eqn{\times} time \eqn{\times} subject),
-including the evaluated prediction \code{res}. Output includes at least:
+A tibble with one row per
+(posterior draw \eqn{\times} time \eqn{\times} subject), including the
+evaluated prediction \code{res}. Output includes at least:
 \describe{
 \item{id}{Subject ID (character).}
 \item{t}{Time (days) at which prediction was evaluated.}
@@ -31,9 +36,10 @@ including the evaluated prediction \code{res}. Output includes at least:
 }
 }
 \description{
-Generates draw-level posterior predictions of the antibody trajectory at user-specified
-time points, for one or more subjects and a selected antigen/isotype. This is a low-level
-helper used by residual-based posterior predictive diagnostics.
+Generates draw-level posterior predictions of the antibody trajectory at
+user-specified time points, for one or more subjects and a selected
+antigen/isotype. This is a low-level helper used by
+residual-based posterior predictive diagnostics.
 }
 \details{
 This function pivots posterior draws to wide format (parameters as columns),

@@ -40,7 +40,8 @@
 #' \code{serodynamics::as_case_data()}, for testing functions like
 #' \code{\link{compute_residual_metrics}}.
 #'
-#' @format A data frame with class \code{c("case_data", "data.frame")} and columns:
+#' @format A data frame with class \code{c("case_data", "data.frame")}
+#'   and columns:
 #' \describe{
 #'   \item{id}{Character. Subject ID}
 #'   \item{antigen_iso}{Character. Isotype (e.g., "IgG", "IgA")}

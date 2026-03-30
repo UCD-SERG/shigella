@@ -9,9 +9,11 @@ process_shigella_data(data, study_filter, antigen)
 \arguments{
 \item{data}{A data frame containing longitudinal measurements.}
 
-\item{study_filter}{Character scalar. Value of \code{study_name} to keep (e.g. "SOSAR").}
+\item{study_filter}{Character scalar. Value of \code{study_name} to keep
+(e.g. "SOSAR").}
 
-\item{antigen}{Unquoted column name for the antigen measurement (e.g. n_ipab_MFI).}
+\item{antigen}{Unquoted column name for the antigen measurement
+(e.g. n_ipab_MFI).}
 }
 \value{
 A tibble with standardized columns:

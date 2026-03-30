@@ -5,7 +5,8 @@
 \alias{mock_case_data}
 \title{Mock case data for testing}
 \format{
-A data frame with class \code{c("case_data", "data.frame")} and columns:
+A data frame with class \code{c("case_data", "data.frame")}
+and columns:
 \describe{
 \item{id}{Character. Subject ID}
 \item{antigen_iso}{Character. Isotype (e.g., "IgG", "IgA")}

@@ -2,7 +2,8 @@
 % Please edit documentation in R/fig2_overall_newperson.R
 \name{fig2_overall_newperson}
 \alias{fig2_overall_newperson}
-\title{Summarize population-level ("newperson") antibody trajectories from overall models}
+\title{Summarize population-level ("newperson") antibody trajectories
+from overall models}
 \usage{
 fig2_overall_newperson(
   overall_models,
@@ -21,14 +22,18 @@ fig2_overall_newperson(
 )
 }
 \arguments{
-\item{overall_models}{Named list of posterior draws in long format (one per antigen),
-with columns at least: Subject, Iso_type, Chain, Iteration, Parameter, value.}
+\item{overall_models}{Named list of posterior draws in long format
+(one per antigen),
+with columns at least: Subject, Iso_type, Chain, Iteration,
+Parameter, value.}
 
-\item{osps}{Character vector of antigen names (must match names in \code{overall_models}).}
+\item{osps}{Character vector of antigen names
+(must match names in \code{overall_models}).}
 
 \item{ids}{Character vector of Subject IDs to include (default: "newperson").}
 
-\item{isotypes}{Character vector of isotypes (default: c("IgG","IgA")).}
+\item{isotypes}{Character vector of isotypes
+(default: c("IgG", "IgA")).}
 
 \item{t_grid}{Numeric vector of time points (days) to evaluate.}
 
@@ -36,7 +41,8 @@ with columns at least: Subject, Iso_type, Chain, Iteration, Parameter, value.}
 
 \item{log_y}{Logical; if TRUE, applies log10 scale to y when returning plot.}
 
-\item{xlim}{Optional numeric length-2 vector for x-axis limits when returning plot.}
+\item{xlim}{Optional numeric length-2 vector for x-axis limits when
+returning plot.}
 
 \item{ylab}{Y-axis label for plot.}
 
@@ -49,11 +55,13 @@ with columns at least: Subject, Iso_type, Chain, Iteration, Parameter, value.}
 \item{return_data}{If TRUE, returns a list with \code{plot} and \code{data}.}
 }
 \value{
-By default, a ggplot. If \code{return_data = TRUE}, returns list(plot = p, data = df).
+By default, a ggplot. If \code{return_data = TRUE}, returns
+list(plot = p, data = df).
 }
 \description{
 Computes median and credible interval bands of the antibody trajectory for a
-hypothetical new individual drawn from the population distribution ("newperson").
+hypothetical new individual drawn from the population distribution
+("newperson").
 }
 \details{
 Requires that each model draw can be pivoted to wide parameters including:

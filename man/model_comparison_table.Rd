@@ -13,10 +13,12 @@ model_comparison_table(
 }
 \arguments{
 \item{metrics_overall}{Data frame with one row containing at least
-\code{MAE}, \code{RMSE}, \code{SSE}, and \code{n_obs} for the overall model.}
+\code{MAE}, \code{RMSE}, \code{SSE}, and \code{n_obs}
+for the overall model.}
 
 \item{metrics_pointwise}{Data frame with one row containing at least
-\code{MAE}, \code{RMSE}, \code{SSE}, and \code{n_obs} for the pointwise model.}
+\code{MAE}, \code{RMSE}, \code{SSE}, and \code{n_obs}
+for the pointwise model.}
 
 \item{model_overall_label}{Label used for the overall model row.}
 

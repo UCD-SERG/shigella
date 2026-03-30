@@ -14,5 +14,6 @@
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 labs
 #' @importFrom ggplot2 theme_minimal
+#' @importFrom rlang .data
 ## usethis namespace: end
 NULL

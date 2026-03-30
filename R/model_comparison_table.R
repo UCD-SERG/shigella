@@ -4,9 +4,11 @@
 #' overall model and a pointwise model.
 #'
 #' @param metrics_overall Data frame with one row containing at least
-#'   \code{MAE}, \code{RMSE}, \code{SSE}, and \code{n_obs} for the overall model.
+#'   \code{MAE}, \code{RMSE}, \code{SSE}, and \code{n_obs}
+#'   for the overall model.
 #' @param metrics_pointwise Data frame with one row containing at least
-#'   \code{MAE}, \code{RMSE}, \code{SSE}, and \code{n_obs} for the pointwise model.
+#'   \code{MAE}, \code{RMSE}, \code{SSE}, and \code{n_obs}
+#'   for the pointwise model.
 #' @param model_overall_label Label used for the overall model row.
 #' @param model_pointwise_label Label used for the pointwise model row.
 #'
@@ -30,11 +32,11 @@ model_comparison_table <- function(metrics_overall,
     )
   ) |>
     dplyr::select(
-      .data$Model,
-      .data$MAE,
-      .data$RMSE,
-      .data$SSE,
-      .data$n_obs
+      "Model",
+      "MAE",
+      "RMSE",
+      "SSE",
+      "n_obs"
     )
 
   base_mae <- metrics_overall$MAE[[1]]
@@ -62,7 +64,8 @@ model_comparison_table <- function(metrics_overall,
 #' Computes per-ID residual metrics for two models on the intersection of IDs
 #' present in both datasets, then reports absolute and percent differences.
 #'
-#' @param model_serospecific Posterior draws (long format) for the serotype-specific model.
+#' @param model_serospecific Posterior draws (long format)
+#'   for the serotype-specific model.
 #' @param data_serospecific Case dataset used for the serotype-specific model.
 #' @param model_overall Posterior draws (long format) for the overall model.
 #' @param data_overall Case dataset used for the overall model.
@@ -70,7 +73,8 @@ model_comparison_table <- function(metrics_overall,
 #' @param scale "original" or "log".
 #' @param tie_tol Numeric tolerance to declare a tie.
 #'
-#' @return A tibble with per-ID MAE/RMSE for each model and deltas/winner labels.
+#' @return A tibble with per-ID MAE/RMSE for each model and
+#'   deltas/winner labels.
 #'
 #' @export
 make_model_comparison_table <- function(model_serospecific, data_serospecific,
@@ -90,7 +94,13 @@ make_model_comparison_table <- function(model_serospecific, data_serospecific,
     scale = scale,
     summary_level = "id_antigen"
   ) |>
-    dplyr::select(.data$id, .data$antigen_iso, .data$MAE, .data$RMSE, .data$n_obs) |>
+    dplyr::select(
+      .data$id,
+      .data$antigen_iso,
+      .data$MAE,
+      .data$RMSE,
+      .data$n_obs
+    ) |>
     dplyr::rename(
       MAE_serospecific  = .data$MAE,
       RMSE_serospecific = .data$RMSE,
@@ -105,7 +115,13 @@ make_model_comparison_table <- function(model_serospecific, data_serospecific,
     scale = scale,
     summary_level = "id_antigen"
   ) |>
-    dplyr::select(.data$id, .data$antigen_iso, .data$MAE, .data$RMSE, .data$n_obs) |>
+    dplyr::select(
+      .data$id,
+      .data$antigen_iso,
+      .data$MAE,
+      .data$RMSE,
+      .data$n_obs
+    ) |>
     dplyr::rename(
       MAE_overall  = .data$MAE,
       RMSE_overall = .data$RMSE,
@@ -127,21 +143,26 @@ make_model_comparison_table <- function(model_serospecific, data_serospecific,
         TRUE ~ 100 * .data$delta_RMSE / .data$RMSE_overall
       ),
       best_MAE = dplyr::case_when(
-        is.na(.data$MAE_overall) | is.na(.data$MAE_serospecific) ~ NA_character_,
+        is.na(.data$MAE_overall) | is.na(.data$MAE_serospecific) ~
+          NA_character_,
         abs(.data$delta_MAE) <= tie_tol ~ "tie",
         .data$delta_MAE > 0 ~ "serospecific",
         TRUE ~ "overall"
       ),
       best_RMSE = dplyr::case_when(
-        is.na(.data$RMSE_overall) | is.na(.data$RMSE_serospecific) ~ NA_character_,
+        is.na(.data$RMSE_overall) | is.na(.data$RMSE_serospecific) ~
+          NA_character_,
         abs(.data$delta_RMSE) <= tie_tol ~ "tie",
         .data$delta_RMSE > 0 ~ "serospecific",
         TRUE ~ "overall"
       ),
       best_overall = dplyr::case_when(
-        .data$best_MAE == "serospecific" & .data$best_RMSE == "serospecific" ~ "serospecific",
-        .data$best_MAE == "overall"      & .data$best_RMSE == "overall"      ~ "overall",
-        .data$best_MAE == "tie"          & .data$best_RMSE == "tie"          ~ "tie",
+        .data$best_MAE == "serospecific" &
+          .data$best_RMSE == "serospecific" ~ "serospecific",
+        .data$best_MAE == "overall" &
+          .data$best_RMSE == "overall" ~ "overall",
+        .data$best_MAE == "tie" &
+          .data$best_RMSE == "tie" ~ "tie",
         TRUE ~ "mixed"
       )
     ) |>

@@ -5,8 +5,10 @@
 #' `serodynamics::as_case_data()`.
 #'
 #' @param data A data frame containing longitudinal measurements.
-#' @param study_filter Character scalar. Value of `study_name` to keep (e.g. "SOSAR").
-#' @param antigen Unquoted column name for the antigen measurement (e.g. n_ipab_MFI).
+#' @param study_filter Character scalar. Value of `study_name` to keep
+#'   (e.g. "SOSAR").
+#' @param antigen Unquoted column name for the antigen measurement
+#'   (e.g. n_ipab_MFI).
 #'
 #' @return A tibble with standardized columns:
 #' \describe{
@@ -33,8 +35,13 @@ process_shigella_data <- function(data, study_filter, antigen) {
 
   data |>
     dplyr::filter(.data$study_name == study_filter) |>
-    dplyr::select(.data$isotype_name, .data$sid, .data$timepoint, .data$`Actual day`,
-                  !!antigen_col) |>
+    dplyr::select(
+      .data$isotype_name,
+      .data$sid,
+      .data$timepoint,
+      .data$`Actual day`,
+      !!antigen_col
+    ) |>
     dplyr::mutate(
       index_id   = .data$sid,
       antigen_iso = .data$isotype_name,
