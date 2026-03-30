@@ -134,18 +134,18 @@ compute_residual_metrics <- function(model,
 
   if (summary_level == "pointwise") {
     return(residual_data |>
-             dplyr::select(
-               "id",
-               "antigen_iso",
-               "t",
-               "obs",
-               "pred_med",
-               "pred_lower",
-               "pred_upper",
-               "residual",
-               "abs_residual",
-               "sq_residual"
-             ))
+      dplyr::select(
+        "id",
+        "antigen_iso",
+        "t",
+        "obs",
+        "pred_med",
+        "pred_lower",
+        "pred_upper",
+        "residual",
+        "abs_residual",
+        "sq_residual"
+      ))
   }
 
   if (summary_level == "id_antigen") {
