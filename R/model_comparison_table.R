@@ -1,3 +1,62 @@
+#' Compare summary residual metrics between two model outputs
+#'
+#' Builds a compact comparison table from pre-computed summary metrics for an
+#' overall model and a pointwise model.
+#'
+#' @param metrics_overall Data frame with one row containing at least
+#'   \code{MAE}, \code{RMSE}, \code{SSE}, and \code{n_obs} for the overall model.
+#' @param metrics_pointwise Data frame with one row containing at least
+#'   \code{MAE}, \code{RMSE}, \code{SSE}, and \code{n_obs} for the pointwise model.
+#' @param model_overall_label Label used for the overall model row.
+#' @param model_pointwise_label Label used for the pointwise model row.
+#'
+#' @return A tibble with one row per model and comparison columns:
+#'   \code{delta_MAE}, \code{delta_RMSE}, \code{pct_improve_MAE},
+#'   \code{pct_improve_RMSE}.
+#'
+#' @export
+model_comparison_table <- function(metrics_overall,
+                                   metrics_pointwise,
+                                   model_overall_label = "Overall Model",
+                                   model_pointwise_label = "Pointwise Model") {
+  out <- dplyr::bind_rows(
+    dplyr::mutate(
+      metrics_overall,
+      Model = model_overall_label
+    ),
+    dplyr::mutate(
+      metrics_pointwise,
+      Model = model_pointwise_label
+    )
+  ) |>
+    dplyr::select(
+      .data$Model,
+      .data$MAE,
+      .data$RMSE,
+      .data$SSE,
+      .data$n_obs
+    )
+
+  base_mae <- metrics_overall$MAE[[1]]
+  base_rmse <- metrics_overall$RMSE[[1]]
+
+  out |>
+    dplyr::mutate(
+      delta_MAE = .data$MAE - base_mae,
+      delta_RMSE = .data$RMSE - base_rmse,
+      pct_improve_MAE = dplyr::case_when(
+        is.na(base_mae) ~ NA_real_,
+        abs(base_mae) <= .Machine$double.eps ~ NA_real_,
+        TRUE ~ 100 * .data$delta_MAE / base_mae
+      ),
+      pct_improve_RMSE = dplyr::case_when(
+        is.na(base_rmse) ~ NA_real_,
+        abs(base_rmse) <= .Machine$double.eps ~ NA_real_,
+        TRUE ~ 100 * .data$delta_RMSE / base_rmse
+      )
+    )
+}
+
 #' Compare serotype-specific vs overall models using residual metrics
 #'
 #' Computes per-ID residual metrics for two models on the intersection of IDs

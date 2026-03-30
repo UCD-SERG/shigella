@@ -3,6 +3,7 @@
 export(compute_residual_metrics)
 export(fig2_overall_newperson)
 export(fmt_mci)
+export(model_comparison_table)
 export(make_model_comparison_table)
 export(prep_newperson_params)
 export(process_shigella_data)
