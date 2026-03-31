@@ -18,7 +18,7 @@ fmt_mci(med, lo, hi, digits = 2, sci = FALSE)
 \item{sci}{Logical; if TRUE uses scientific notation.}
 }
 \value{
-A string like "1.23 (0.50–2.00)".
+A string like "1.23 (0.50--2.00)".
 }
 \description{
 Format median and credible interval as a single string
