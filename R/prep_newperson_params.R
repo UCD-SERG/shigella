@@ -14,8 +14,12 @@ prep_newperson_params <- function(draws_long, antigen_label) {
     dplyr::mutate(antigen = antigen_label) |>
     dplyr::select(.data$Iteration, .data$Chain, .data$antigen,
                   .data$Iso_type, .data$Parameter, .data$value) |>
-    tidyr::pivot_wider(names_from = .data$Parameter, values_from = .data$value) |>
-    # The model output uses "shape" for the decay-shape parameter, which is renamed to "rho" for consistency
+    tidyr::pivot_wider(
+      names_from = .data$Parameter,
+      values_from = .data$value
+    ) |>
+    # The model output uses "shape" for the decay-shape parameter,
+    # which is renamed to "rho" for consistency
     dplyr::rename(rho = .data$shape) |>
     dplyr::select(.data$Iteration, .data$Chain, .data$antigen, .data$Iso_type,
                   .data$y0, .data$y1, .data$t1, .data$alpha, .data$rho)

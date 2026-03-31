@@ -1,6 +1,6 @@
 Package: shigella
 Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9004
+Version: 0.0.0.9005
 Authors@R: c(
     person("Kwan Ho", "Lee", , "ksjlee@ucdavis.edu", role = c("aut", "cre")),
     person("Douglas Ezra", "Morrison", , "demorrison@ucdavis.edu", role = c("aut"),
@@ -13,13 +13,9 @@ RoxygenNote: 7.3.3
 Imports: 
     cli,
     dplyr,
-    future,
-    future.apply,
     ggplot2,
-    gridExtra,
     rlang,
     serocalculator,
-    serodynamics (>= 0.0.0.9011),
     tibble,
     tidyr
 URL: https://ucd-serg.github.io/shigella/
@@ -31,8 +27,11 @@ Suggests:
     coda,
     forcats,
     furrr,
+    future,
+    future.apply,
     ggeasy,
     ggmcmc,
+    gridExtra,
     gtsummary,
     haven,
     here,
@@ -47,12 +46,15 @@ Suggests:
     purrr,
     quarto,
     readxl,
+    rmarkdown,
     runjags,
     scales,
+    serodynamics (>= 0.0.0.9011),
     spelling,
     table1,
     testthat (>= 3.0.0),
     tidyverse
+VignetteBuilder: knitr
 Depends: 
     R (>= 3.5)
 LazyData: true
