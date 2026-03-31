@@ -85,6 +85,7 @@ make_model_comparison_table <- function(model_serospecific, data_serospecific,
   scale <- match.arg(scale)
 
   ids_common <- intersect(unique(data_serospecific$id), unique(data_overall$id))
+  # TODO: add early error for empty ids_common
 
   m_sero <- compute_residual_metrics(
     model = model_serospecific,

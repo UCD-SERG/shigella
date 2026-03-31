@@ -17,7 +17,7 @@ test_that("predict_posterior_at_times returns expected structure", {
   
   times <- c(0, 30, 90)
   
-  result <- predict_posterior_at_times(
+  result <- shigella:::predict_posterior_at_times(
     model = mock_model,
     ids = "test_id",
     antigen_iso = "IgG",
@@ -55,7 +55,7 @@ test_that("predict_posterior_at_times handles multiple subjects", {
     )
   )
   
-  result <- predict_posterior_at_times(
+  result <- shigella:::predict_posterior_at_times(
     model = mock_model,
     ids = c("id1", "id2"),
     antigen_iso = "IgG",

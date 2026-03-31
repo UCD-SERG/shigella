@@ -83,7 +83,10 @@ compute_residual_metrics <- function(model,
   value_var <- serocalculator::get_values_var(dataset)
 
   observed_data <- dataset |>
-    dplyr::rename(t = {{ time_var }}, obs = {{ value_var }}) |>
+    dplyr::rename(
+      t   = !!rlang::sym(time_var),
+      obs = !!rlang::sym(value_var)
+    ) |>
     dplyr::select(dplyr::all_of(c("id", "t", "obs", "antigen_iso"))) |>
     dplyr::mutate(id = as.character(.data$id)) |>
     dplyr::filter(.data$id %in% ids, .data$antigen_iso == antigen_iso)
