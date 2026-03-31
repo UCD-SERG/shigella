@@ -1,2 +1,4 @@
 *.rda
 *.rds
+!mock_posterior_draws.rda
+!mock_case_data.rda

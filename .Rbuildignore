@@ -8,3 +8,12 @@
 ^vignettes/articles/*_files$
 ^vignettes/articles$
 ^codecov\.yml$
+^data-raw$
+^README\.Rmd$
+^\.lintr\.R$
+^_quarto\.yml$
+^.*\.qmd$
+^.*\.png$
+^Vary.*\.r$
+^sim_.*\.r$
+^simulation.*\.qmd$

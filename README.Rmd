@@ -12,11 +12,66 @@ knitr::opts_chunk$set(
 ```
 
 # shigella
-This repo is for the Shigella analyses
+
+Analysis tools for longitudinal antibody kinetics data from Shigella infection studies.
 
 <!-- badges: start -->
 [![Codecov test coverage](https://codecov.io/gh/UCD-SERG/shigella/graph/badge.svg)](https://app.codecov.io/gh/UCD-SERG/shigella)
 [![R-CMD-check](https://github.com/UCD-SERG/shigella/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/UCD-SERG/shigella/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of shigella is to ...
+## Overview
+
+The `shigella` package provides tools for analyzing longitudinal antibody kinetics following Shigella infection. Key features include:
+
+- Data processing and reshaping for `serodynamics` workflows
+- Residual-based model evaluation and comparison
+- Visualization of population-level antibody trajectories
+- Mock data for testing and development
+
+## Installation
+
+You can install the development version from GitHub:
+
+```r
+# install.packages("remotes")
+remotes::install_github("UCD-SERG/shigella")
+```
+
+## Usage
+
+```r
+library(shigella)
+
+# Process raw data
+dat_long <- process_shigella_data(
+  data = raw_data,
+  study_filter = "SOSAR",
+  antigen = n_ipab_MFI
+)
+
+# Compute residual metrics
+metrics <- compute_residual_metrics(
+  model = posterior_draws,
+  dataset = case_data,
+  ids = unique(case_data$id),
+  antigen_iso = "IgG",
+  scale = "original",
+  summary_level = "id_antigen"
+)
+
+# Compare models
+comparison <- model_comparison_table(
+  metrics_overall = metrics_model1,
+  metrics_pointwise = metrics_model2
+)
+```
+
+## Documentation
+
+- [Package website](https://ucd-serg.github.io/shigella/)
+- [Getting started vignette](https://ucd-serg.github.io/shigella/articles/getting-started.html)
+
+## Note on Data
+
+This package currently uses mock datasets for testing and examples. Real Shigella antibody data will be added in a future release.
