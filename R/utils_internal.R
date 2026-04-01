@@ -36,22 +36,12 @@ get_timeindays_var <- function(dataset) {
 #' @keywords internal
 #' @noRd
 bt <- function(y0, y1, t1) {
-  if (t1 == 0) return(0)
-  log(y1 / y0) / t1
+  to_return <- log(y1 / y0) / t1
+  return(to_return)
 }
 
 # Mirrors serodynamics:::ab() -- see ucdavis/serodynamics/R/ab.R
 ab <- function(t, y0, y1, t1, alpha, shape) {
-  # NOTE: this preserves serodynamics behavior; when shape == 1 the decay branch
-  # uses 1 / (1 - shape), matching upstream implementation.
-  if (t1 == 0) {
-    # Instant peak: for t <= 0 return y1, then decay from t1 = 0
-    return(ifelse(
-      t <= 0,
-      y1,
-      (y1^(1 - shape) - (1 - shape) * alpha * t)^(1 / (1 - shape))
-    ))
-  }
   beta <- bt(y0, y1, t1)
   yt <- ifelse(
     t <= t1,
