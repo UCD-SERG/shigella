@@ -77,8 +77,11 @@ attr(mock_case_data, "value_var") <- "value"
 class(mock_case_data) <- c("case_data", "data.frame")
 
 # Save datasets -----------------------------------------------------------------
-usethis::use_data(mock_posterior_draws, overwrite = TRUE)
-usethis::use_data(mock_case_data, overwrite = TRUE)
+if (!dir.exists("data")) {
+  dir.create("data", recursive = TRUE)
+}
+save(mock_posterior_draws, file = file.path("data", "mock_posterior_draws.rda"))
+save(mock_case_data, file = file.path("data", "mock_case_data.rda"))
 
 message("Mock datasets created successfully!")
 message("- mock_posterior_draws: ", nrow(mock_posterior_draws), " rows")
