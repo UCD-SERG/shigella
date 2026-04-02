@@ -22,9 +22,26 @@ get_timeindays_var <- function(dataset) {
   return(var)
 }
 
-#' Antibody kinetics model function
+#' Compute log-linear rise rate for antibody kinetics
+#'
+#' Helper that computes the exponential rise rate beta = log(y1/y0) / t1,
+#' used internally by `ab()`.
+#'
+#' @param y0 Baseline antibody level
+#' @param y1 Peak antibody level
+#' @param t1 Time to peak (days)
+#' @return Numeric scalar: the log-linear rise rate
+#' @keywords internal
+#' @noRd
+bt <- function(y0, y1, t1) {
+  to_return <- log(y1 / y0) / t1
+  return(to_return)
+}
+
+#' Antibody kinetics trajectory function
 #'
 #' Evaluates the antibody trajectory model at specified time points.
+#' Mirrors `serodynamics:::ab()` -- see ucdavis/serodynamics/R/ab.R.
 #'
 #' @param t Numeric vector of time points (days)
 #' @param y0 Baseline antibody level
@@ -35,12 +52,6 @@ get_timeindays_var <- function(dataset) {
 #' @return Numeric vector of predicted antibody levels
 #' @keywords internal
 #' @noRd
-bt <- function(y0, y1, t1) {
-  to_return <- log(y1 / y0) / t1
-  return(to_return)
-}
-
-# Mirrors serodynamics:::ab() -- see ucdavis/serodynamics/R/ab.R
 ab <- function(t, y0, y1, t1, alpha, shape) {
   beta <- bt(y0, y1, t1)
   yt <- ifelse(
