@@ -10,7 +10,7 @@
 
 * added `.lintr` configuration file
 * Moved helper functions into `R/` subdirectory (#1)
-* simplified spell-check Github Action (#3)
+* simplified spell-check GitHub Action (#3)
 
 # shigella 0.0.0
 
