@@ -1,0 +1,4 @@
+# License
+
+    YEAR: 2024
+    COPYRIGHT HOLDER: Kwan Ho Lee, Douglas Ezra Morrison
