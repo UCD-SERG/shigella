@@ -8,7 +8,10 @@ simulation1_edited_files
 simulation1_edited.html
 *.rmarkdown
 **/.quarto/
-data/
+data/*
+!data/.gitignore
+!data/mock_posterior_draws.rda
+!data/mock_case_data.rda
 /.quarto/
 *.pdf
 README_files
