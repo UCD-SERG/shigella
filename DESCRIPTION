@@ -1,27 +1,38 @@
 Package: shigella
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9005
+Title: Antibody Kinetics and Serodynamics Tools for Shigella Research
+Version: 0.0.0.9006
 Authors@R: c(
     person("Kwan Ho", "Lee", , "ksjlee@ucdavis.edu", role = c("aut", "cre")),
     person("Douglas Ezra", "Morrison", , "demorrison@ucdavis.edu", role = c("aut"),
            comment = c(ORCID = "0000-0002-7195-830X")))
-Description: What the package does (one paragraph).
+Description: Provides reproducible workflows for characterizing longitudinal
+    Shigella antibody kinetics using Bayesian hierarchical two-phase models.
+    Includes functions for data processing, posterior prediction, model
+    comparison (overall vs serotype-specific vs combined S. flexneri),
+    and publication-ready figures and tables. Developed as the analysis
+    companion to Lee et al. (2025) "Antibody Kinetics Following Confirmed
+    Shigella Infection" (Chapter 1 of the UCD-SERG Shigella dissertation).
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-Imports: 
+Imports:
     cli,
     dplyr,
+    flextable,
     ggplot2,
+    gt,
+    patchwork,
+    purrr,
     rlang,
+    scales,
     serocalculator,
+    serodynamics,
+    stringr,
     tibble,
     tidyr
 URL: https://ucd-serg.github.io/shigella/
-Remotes: 
-    UCD-SERG/serodynamics
-Suggests: 
+Suggests:
     arsenal,
     bayesplot,
     coda,
@@ -41,19 +52,20 @@ Suggests:
     magrittr,
     mgcv,
     parameters,
-    patchwork,
     plotly,
-    purrr,
     quarto,
     readxl,
     rmarkdown,
     runjags,
-    scales,
     serodynamics (>= 0.0.0.9011),
     spelling,
     table1,
     testthat (>= 3.0.0),
-    tidyverse
+    tidyverse,
+    usethis
+Remotes:
+    ucdavis/serodynamics,
+    UCD-SERG/serocalculator    
 VignetteBuilder: knitr
 Depends: 
     R (>= 3.5)
