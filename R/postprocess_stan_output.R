@@ -10,7 +10,14 @@
 #' @param model "model_1", "model_2"
 #' @param stratification label for this stratum
 #' @return list with sr_tibble and cov_summaries
-#' @example inst/examples/postprocess_stan_output-examples.R
+#' @examples
+#' \dontrun{
+#' source(system.file(
+#'   "examples",
+#'   "postprocess_stan_output-examples.R",
+#'   package = "shigella"
+#' ))
+#' }
 #' @export
 postprocess_stan_output <- function(stan_fit,
                                      ids,
@@ -139,8 +146,8 @@ postprocess_stan_output <- function(stan_fit,
   ))
 }
 
-#' Helper: summarize a draws_array of a matrix variable to a single matrix
-#' (median across all draws)
+# Helper: summarize a draws_array of a matrix variable to a single matrix
+# by taking the median across all draws.
 summarize_matrix_draws <- function(draws_arr, var_name, nrow, ncol) {
   result <- matrix(NA_real_, nrow = nrow, ncol = ncol)
   var_dim <- dimnames(draws_arr)$variable

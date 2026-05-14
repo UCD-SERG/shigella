@@ -1,17 +1,20 @@
 test_that("run_mod_stan is callable with expected arguments", {
   expect_true(is.function(run_mod_stan))
-
+  
   fn_args <- names(formals(run_mod_stan))
   expect_true(any(c("data", "case_data") %in% fn_args))
   expect_true(any(c("model", "file_mod") %in% fn_args))
 })
 
 test_that("run_mod_stan completes a minimal fit (slow)", {
-  skip_on_ci()
+  skip_if(
+    Sys.getenv("RUN_STAN_TESTS") != "true",
+    "Stan tests are skipped unless RUN_STAN_TESTS=true."
+  )
   skip_if_not_installed("cmdstanr")
-
+  
   sim <- sim_correlated_case_data(n = 3, seed = 2026)
-
+  
   fit <- run_mod_stan(
     data          = sim,
     model         = "model_2",
@@ -21,6 +24,6 @@ test_that("run_mod_stan completes a minimal fit (slow)", {
     refresh       = 0,
     show_messages = FALSE
   )
-
+  
   expect_s3_class(fit, "sr_model")
 })

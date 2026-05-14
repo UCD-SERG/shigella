@@ -3,11 +3,14 @@ test_that("postprocess_stan_output is callable", {
 })
 
 test_that("postprocess_stan_output produces sr_model output (slow)", {
-  skip_on_ci()
+  skip_if(
+    Sys.getenv("RUN_STAN_TESTS") != "true",
+    "Stan tests are skipped unless RUN_STAN_TESTS=true."
+  )
   skip_if_not_installed("cmdstanr")
-
+  
   sim <- sim_correlated_case_data(n = 3, seed = 2026)
-
+  
   ## run_mod_stan() internally calls postprocess_stan_output(),
   ## so verifying its output is verifying the post-processing step.
   fit <- run_mod_stan(
@@ -19,7 +22,7 @@ test_that("postprocess_stan_output produces sr_model output (slow)", {
     refresh       = 0,
     show_messages = FALSE
   )
-
+  
   expect_s3_class(fit, "sr_model")
   expect_true("priors" %in% names(attributes(fit)))
   expect_true("fitted_residuals" %in% names(attributes(fit)))

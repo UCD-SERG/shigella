@@ -20,17 +20,34 @@
 #'        standard cmdstanr arguments
 #' @param strat optional stratification variable (default NA)
 #' @param with_post return raw CmdStanMCMC object as attribute (default FALSE)
-#' @param stan_dir directory containing model_*.stan files
-#'                 (default "inst/stan" — relative to working directory)
+#' @param stan_dir Optional directory containing `model_*.stan` files. If `NULL`,
+#'   the function first looks for Stan files installed with the package using
+#'   `system.file("stan", ..., package = "shigella")`, then falls back to
+#'   `inst/stan` for interactive development.
 #' @param compile_dir directory where cmdstanr writes compiled binaries.
 #'                    Default uses STAN_COMPILE_DIR env var, or /tmp/<user>/cmdstan_bin
 #'                    if /home is noexec.
 #' @param init initial value strategy. Numeric value scales down random init
 #'             (default 0.1 to avoid -inf in multi_normal_cholesky_lpdf)
 #' @param ... additional priors passed to prep_priors_stan()
+#' @param iter_sampling Number of post-warmup iterations per chain.
+#' @param iter_warmup Number of warmup iterations per chain.
+#' @param adapt_delta Target average acceptance probability for Stan sampling.
+#' @param max_treedepth Maximum tree depth for Stan NUTS sampling.
+#' @param seed Random seed passed to Stan.
+#' @param parallel_chains Number of chains to run in parallel.
+#' @param refresh Stan progress refresh interval.
+#' @param show_messages Logical; whether to show CmdStan messages.
 #'
 #' @returns sr_model tibble
-#' @example inst/examples/run_mod_stan-examples.R
+#' @examples
+#' \dontrun{
+#' source(system.file(
+#'   "examples",
+#'   "run_mod_stan-examples.R",
+#'   package = "shigella"
+#' ))
+#' }
 #' @export
 run_mod_stan <- function(data,
                          model           = c("model_2", "model_1"),
@@ -43,7 +60,7 @@ run_mod_stan <- function(data,
                          strat           = NA,
                          parallel_chains = chains,
                          with_post       = FALSE,
-                         stan_dir        = "inst/stan",
+                         stan_dir        = NULL,
                          compile_dir     = NULL,
                          init            = 0.1,
                          refresh         = 200,
@@ -61,11 +78,33 @@ run_mod_stan <- function(data,
   model <- match.arg(model)
 
   # ---- Locate Stan source file ----
-  stan_file <- file.path(stan_dir, paste0(model, ".stan"))
-  if (!file.exists(stan_file)) {
-    stop("Cannot locate Stan file: ", stan_file,
-         "\nWorking directory is: ", getwd())
+  stan_basename <- paste0(model, ".stan")
+  
+  if (is.null(stan_dir)) {
+    stan_file <- system.file(
+      "stan",
+      stan_basename,
+      package = "shigella",
+      mustWork = FALSE
+    )
+    
+    # Fallback for interactive development before the package is installed.
+    if (identical(stan_file, "") || !file.exists(stan_file)) {
+      stan_file <- file.path("inst", "stan", stan_basename)
+    }
+  } else {
+    stan_file <- file.path(stan_dir, stan_basename)
   }
+  
+  if (!file.exists(stan_file)) {
+    cli::cli_abort(c(
+      "Cannot locate Stan file: {.file {stan_file}}",
+      "i" = "Working directory is: {.path {getwd()}}",
+      "i" = "If running interactively, check that {.file inst/stan/{stan_basename}} exists.",
+      "i" = "If running from an installed package, use system.file('stan', '{stan_basename}', package = 'shigella')."
+    ))
+  }
+  
   cli::cli_inform(c("i" = "Using Stan file: {.file {stan_file}}"))
 
   # ---- Determine compile output directory ----
@@ -167,7 +206,7 @@ run_mod_stan <- function(data,
   # Calculate fitted/residuals
   if (exists("calc_fit_mod", mode = "function")) {
     fit_res <- tryCatch(
-      calc_fit_mod(modeled_dat = sr_out, original_data = dl_sub),
+      serodynamics:::calc_fit_mod(modeled_dat = sr_out, original_data = dl_sub),
       error = function(e) {
         cli::cli_warn("calc_fit_mod failed: {e$message}")
         NULL

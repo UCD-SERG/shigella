@@ -16,7 +16,7 @@ run_mod_stan(
   strat = NA,
   parallel_chains = chains,
   with_post = FALSE,
-  stan_dir = "inst/stan",
+  stan_dir = NULL,
   compile_dir = NULL,
   init = 0.1,
   refresh = 200,
@@ -32,12 +32,26 @@ run_mod_stan(
 \item{chains, }{iter_sampling, iter_warmup, adapt_delta, max_treedepth, seed, parallel_chains
 standard cmdstanr arguments}
 
+\item{iter_sampling}{Number of post-warmup iterations per chain.}
+
+\item{iter_warmup}{Number of warmup iterations per chain.}
+
+\item{adapt_delta}{Target average acceptance probability for Stan sampling.}
+
+\item{max_treedepth}{Maximum tree depth for Stan NUTS sampling.}
+
+\item{seed}{Random seed passed to Stan.}
+
 \item{strat}{optional stratification variable (default NA)}
+
+\item{parallel_chains}{Number of chains to run in parallel.}
 
 \item{with_post}{return raw CmdStanMCMC object as attribute (default FALSE)}
 
-\item{stan_dir}{directory containing model_*.stan files
-(default "inst/stan" — relative to working directory)}
+\item{stan_dir}{Optional directory containing \code{model_*.stan} files. If \code{NULL},
+the function first looks for Stan files installed with the package using
+\code{system.file("stan", ..., package = "shigella")}, then falls back to
+\code{inst/stan} for interactive development.}
 
 \item{compile_dir}{directory where cmdstanr writes compiled binaries.
 Default uses STAN_COMPILE_DIR env var, or /tmp/\if{html}{\out{<user>}}/cmdstan_bin
@@ -45,6 +59,10 @@ if /home is noexec.}
 
 \item{init}{initial value strategy. Numeric value scales down random init
 (default 0.1 to avoid -inf in multi_normal_cholesky_lpdf)}
+
+\item{refresh}{Stan progress refresh interval.}
+
+\item{show_messages}{Logical; whether to show CmdStan messages.}
 
 \item{...}{additional priors passed to prep_priors_stan()}
 }
@@ -71,35 +89,11 @@ attributes are also attached:
 }
 }
 \examples{
-## Example: run_mod_stan()
-##
-## Fit the Chapter 2 Kronecker Stan model on a small synthetic
-## dataset. Uses minimal MCMC settings so the example completes
-## quickly. For realistic settings, see the Phase 2 simulation
-## scripts (run on Shiva HPC).
-
-if (requireNamespace("cmdstanr", quietly = TRUE)) {
-
-  set.seed(2026)
-
-  sim_data <- sim_correlated_case_data(
-    n                 = 5,
-    Omega_B           = matrix(c(1, 0.6, 0.6, 1), nrow = 2),
-    antigen_isos      = c("IgG", "IgA"),
-    n_obs_per_subject = 5L
-  )
-
-  fit <- run_mod_stan(
-    data          = sim_data,
-    model         = "model_2",
-    chains        = 1,
-    iter_warmup   = 200,
-    iter_sampling = 200,
-    refresh       = 0,
-    show_messages = FALSE
-  )
-
-  class(fit)
-  head(fit)
+\dontrun{
+source(system.file(
+  "examples",
+  "run_mod_stan-examples.R",
+  package = "shigella"
+))
 }
 }
