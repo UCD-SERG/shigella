@@ -2,59 +2,63 @@
 % Please edit documentation in R/prep_data_stan.R
 \name{prep_data_stan}
 \alias{prep_data_stan}
-\title{Prepare data for Stan backend}
+\title{Prepare data for the Stan backend}
 \usage{
-prep_data_stan(prepped_jags_data, drop_newperson = TRUE)
+prep_data_stan(data, drop_newperson = TRUE)
 }
 \arguments{
-\item{prepped_jags_data}{output from
-\code{\link[serodynamics:prep_data]{serodynamics::prep_data()}} — a list with elements \code{smpl.t},
-\code{logy}, \code{nsmpl}, \code{nsubj}, \code{n_antigen_isos}.}
+\item{data}{either a \code{case_data} object (output of
+\code{\link[=sim_correlated_case_data]{sim_correlated_case_data()}} or \code{\link[serodynamics:as_case_data]{serodynamics::as_case_data()}})
+or a \code{prepped_jags_data} object (output of
+\code{\link[serodynamics:prep_data]{serodynamics::prep_data()}}).}
 
 \item{drop_newperson}{\link{logical} whether to drop the JAGS dummy
-"newperson" row before passing to Stan. Default \code{TRUE} because Stan
-handles posterior prediction through the \verb{generated quantities}
-block rather than through a missing-data dummy subject.}
+"newperson" row if it is present in a \code{prepped_jags_data}
+input. Default \code{TRUE}. Has no effect when \code{data} is a
+\code{case_data} object because the internal \code{prep_data()} call uses
+\code{add_newperson = FALSE}.}
 }
 \value{
-a named \link{list} ready to pass to a compiled Stan model via
+a named \link{list} with attributes \code{ids} and \code{antigens},
+ready to pass to a compiled Stan model via
 \code{cmdstanr::cmdstan_model()$sample()}.
 }
 \description{
-Converts the output of \code{\link[serodynamics:prep_data]{serodynamics::prep_data()}} (a
-\code{prepped_jags_data} list) into the list format required by the Stan
-models \code{model_1.stan} and \code{model_2.stan}. Handles NA-padding of the
-ragged observation array.
+Converts case data into the structured list that the Stan models
+(\code{model_1.stan}, \code{model_2.stan}) expect. Accepts either a raw
+\code{case_data} object (the typical entry point) or a
+\code{prepped_jags_data} object already produced by
+\code{\link[serodynamics:prep_data]{serodynamics::prep_data()}} (the JAGS-side prep step).
+
+When given a \code{case_data} object, this function internally calls
+\code{\link[serodynamics:prep_data]{serodynamics::prep_data()}} with \code{add_newperson = FALSE} (Stan
+handles posterior prediction in the \verb{generated quantities} block
+rather than via a dummy missing-data subject).
 
 The Stan models expect:
 \itemize{
 \item \code{N}: number of subjects
 \item \code{K}: number of antigen-isotype biomarkers
-\item \code{P}: number of kinetic parameters
+\item \code{P}: number of kinetic parameters (always 5)
 \item \code{max_obs}: max number of observations per subject
 \item \code{n_obs[N]}: actual number of observations per subject
-(ragged handling)
 \item \code{time_obs[N, max_obs]}: observation times (NA -> 0, ignored by
-likelihood)
+the likelihood via the \code{n_obs[i]} guard)
 \item \code{log_y[N, max_obs, K]}: log-transformed antibody observations
 }
 }
 \examples{
 ## Example: prep_data_stan()
 ##
-## Convert the output of serodynamics::prep_data() into the list
-## Stan model expects.
+## Convert a case_data object directly into the list format that
+## Stan models expect. Internally calls serodynamics::prep_data()
+## with add_newperson = FALSE.
 
-set.seed(2026)
+library(shigella)
 
-sim_data <- sim_correlated_case_data(
-  n                 = 5,
-  Omega_B           = diag(2),
-  antigen_isos      = c("IgG", "IgA"),
-  n_obs_per_subject = 5L
-)
+sim <- sim_correlated_case_data(n = 5, seed = 2026)
 
-stan_data <- prep_data_stan(sim_data)
+stan_data <- prep_data_stan(sim)
 
 str(stan_data)
 }

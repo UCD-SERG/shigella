@@ -155,7 +155,7 @@ sim_correlated_case_data <- function(
 
   # Convert to case_data
   case <- sim_df |>
-    as_case_data(
+    serodynamics::as_case_data(
       id_var        = "id",
       biomarker_var = "antigen_iso",
       time_in_days  = "timeindays",
