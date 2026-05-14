@@ -23,6 +23,7 @@
 #' @param model character: "model_1", "model_2"
 #'
 #' @returns named list with priors for the Stan data block
+#' @example inst/examples/prep_priors_stan-examples.R
 #' @export
 prep_priors_stan <- function(
     mu_hyp_mean   = c(1.0, 7.0, 1.0, -4.0, -1.0),

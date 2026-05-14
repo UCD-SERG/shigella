@@ -1,35 +1,33 @@
 #' @title Prepare data for Stan backend
 #' @description
-#' Converts the output of [prep_data()] (a `prepped_jags_data` list) into
-#' the list format required by the Stan models `model_1.stan` and
-#' `model_2.stan`. Handles NA-padding of the ragged observation array.
+#' Converts the output of [serodynamics::prep_data()] (a
+#' `prepped_jags_data` list) into the list format required by the Stan
+#' models `model_1.stan` and `model_2.stan`. Handles NA-padding of the
+#' ragged observation array.
 #'
 #' The Stan models expect:
 #' - `N`: number of subjects
 #' - `K`: number of antigen-isotype biomarkers
-#' - `P`: number of kinetic parameters 
+#' - `P`: number of kinetic parameters
 #' - `max_obs`: max number of observations per subject
-#' - `n_obs[N]`: actual number of observations per subject (ragged handling)
-#' - `time_obs[N, max_obs]`: observation times (NA -> 0, ignored by likelihood)
+#' - `n_obs[N]`: actual number of observations per subject
+#'   (ragged handling)
+#' - `time_obs[N, max_obs]`: observation times (NA -> 0, ignored by
+#'   likelihood)
 #' - `log_y[N, max_obs, K]`: log-transformed antibody observations
 #'
-#' @param prepped_jags_data output from [prep_data()] — a list with elements
-#'   `smpl.t`, `logy`, `nsmpl`, `nsubj`, `n_antigen_isos`.
-#' @param drop_newperson [logical] whether to drop the JAGS dummy "newperson"
-#'   row before passing to Stan. Default TRUE because Stan handles
-#'   posterior prediction through the `generated quantities` block rather
-#'   than through a missing-data dummy subject.
+#' @param prepped_jags_data output from
+#'   [serodynamics::prep_data()] — a list with elements `smpl.t`,
+#'   `logy`, `nsmpl`, `nsubj`, `n_antigen_isos`.
+#' @param drop_newperson [logical] whether to drop the JAGS dummy
+#'   "newperson" row before passing to Stan. Default `TRUE` because Stan
+#'   handles posterior prediction through the `generated quantities`
+#'   block rather than through a missing-data dummy subject.
 #'
-#' @returns a named [list] ready to pass to [rstan::sampling()] or
-#'   [rstan::stan()].
+#' @returns a named [list] ready to pass to a compiled Stan model via
+#'   `cmdstanr::cmdstan_model()$sample()`.
 #' @export
-#' @examples
-#' \dontrun{
-#' raw_data <- serocalculator::typhoid_curves_nostrat_100 |>
-#'   sim_case_data(n = 10)
-#' prepped <- prep_data(raw_data)
-#' stan_data <- prep_data_stan(prepped)
-#' }
+#' @example inst/examples/prep_data_stan-examples.R
 prep_data_stan <- function(prepped_jags_data,
                            drop_newperson = TRUE) {
 

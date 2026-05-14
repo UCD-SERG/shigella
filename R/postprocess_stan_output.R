@@ -10,6 +10,7 @@
 #' @param model "model_1", "model_2"
 #' @param stratification label for this stratum
 #' @return list with sr_tibble and cov_summaries
+#' @example inst/examples/postprocess_stan_output-examples.R
 #' @export
 postprocess_stan_output <- function(stan_fit,
                                      ids,

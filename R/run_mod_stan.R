@@ -30,6 +30,7 @@
 #' @param ... additional priors passed to prep_priors_stan()
 #'
 #' @returns sr_model tibble
+#' @example inst/examples/run_mod_stan-examples.R
 #' @export
 run_mod_stan <- function(data,
                          model           = c("model_2", "model_1"),

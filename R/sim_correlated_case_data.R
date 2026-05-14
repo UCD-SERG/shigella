@@ -1,29 +1,32 @@
-#' @title Simulate correlated longitudinal case data (Chapter 2 simulation study)
+#' @title Simulate correlated longitudinal case data (Chapter 2)
 #' @description
-#' Extends [sim_case_data()] to inject Known correlation structure at two
-#' levels:
+#' Extends [serodynamics::sim_case_data()] to inject known correlation
+#' structure at two levels:
 #'
-#' 1. **Parameter-level correlation** (Ω_B): "high IgG responder tends to be
-#'    high IgA responder" — implemented via the Kronecker structure
-#'    vec(Θ_i) ~ N(vec(M), Σ_B ⊗ Σ_P).
-#' 2. **Residual-level correlation** (Ω_ε): "IgG and IgA measurement errors
-#'    co-vary within a time point" — implemented via multivariate log-normal
-#'    observation noise with covariance Σ_ε.
+#' 1. **Parameter-level correlation** (Omega_B): "high IgG responder
+#'    tends to be high IgA responder" — implemented via the Kronecker
+#'    structure vec(Theta_i) ~ N(vec(M), Sigma_B kron Sigma_P).
+#' 2. **Residual-level correlation** (Omega_eps): "IgG and IgA
+#'    measurement errors co-vary within a time point" — implemented via
+#'    multivariate log-normal observation noise with covariance
+#'    Sigma_eps.
 #'
-#' This is the Data-generating process for the Chapter 2 simulation study.
+#' This is the data-generating process for the Chapter 2 simulation
+#' study.
 #'
 #' @param n [integer] number of individuals to simulate
 #' @param mu [numeric] length-P vector of population means on log scale
 #'   (defaults match JAGS prep_priors)
-#' @param tau_P [numeric] length-P vector of SDs across kinetic parameters
+#' @param tau_P [numeric] length-P vector of SDs across kinetic
+#'   parameters
 #' @param tau_B [numeric] length-K vector of SDs across biomarkers
 #' @param tau_eps [numeric] length-K vector of residual SDs
-#' @param Omega_P [matrix] P×P parameter correlation matrix
-#'   (default: identity → no within-biomarker parameter correlation)
-#' @param Omega_B [matrix] K×K biomarker correlation matrix
-#'   (default: identity → Scenario 2, residual correlation only)
-#' @param Omega_eps [matrix] K×K residual correlation matrix
-#'   (default: identity → no residual correlation)
+#' @param Omega_P [matrix] P x P parameter correlation matrix
+#'   (default: identity — no within-biomarker parameter correlation)
+#' @param Omega_B [matrix] K x K biomarker correlation matrix
+#'   (default: identity — Scenario 2, residual correlation only)
+#' @param Omega_eps [matrix] K x K residual correlation matrix
+#'   (default: identity — no residual correlation)
 #' @param antigen_isos [character] names for the K biomarkers
 #' @param n_obs_per_subject [integer] number of observations per subject
 #'   (default 5, matching the Shigella SOSAR cohort)
@@ -31,22 +34,12 @@
 #'   (default c(2, 7, 30, 90, 180) mimicking Chapter 1)
 #' @param seed [integer] RNG seed
 #'
-#' @returns a `case_data` object (compatible with [prep_data()]) plus
-#'   attributes recording the truth:
-#'   - `"truth"` — list with mu, tau_P, tau_B, tau_eps, Omega_P, Omega_B, Omega_eps
-#'   - `"theta_true"` — N × K × P array of true subject parameters
+#' @returns a `case_data` object plus attributes recording the truth:
+#'   - `"truth"` — list with mu, tau_P, tau_B, tau_eps, Omega_P,
+#'     Omega_B, Omega_eps
+#'   - `"theta_true"` — N x K x P array of true subject parameters
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' # Scenario 4 from blueprint: residual rho = 0.5, parameter rho = 0.6
-#' K <- 2
-#' Omega_B <- matrix(c(1, 0.6, 0.6, 1), K, K)
-#' Omega_eps <- matrix(c(1, 0.5, 0.5, 1), K, K)
-#' sim <- sim_correlated_case_data(
-#'   n = 48, Omega_B = Omega_B, Omega_eps = Omega_eps)
-#' fit <- run_mod_stan(sim, model = "model_c")
-#' }
+#' @example inst/examples/sim_correlated_case_data-examples.R
 sim_correlated_case_data <- function(
     n               = 48,
     mu              = c(1.0, 7.0, 1.0, -4.0, -1.0),

@@ -1,6 +1,6 @@
 ## Example: prep_data_stan()
 ##
-## Convert long-format case data into the structured list that the
+## Convert the output of serodynamics::prep_data() into the list
 ## Stan model expects.
 
 set.seed(2026)
