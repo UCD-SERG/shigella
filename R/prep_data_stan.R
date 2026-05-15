@@ -55,8 +55,8 @@ prep_data_stan <- function(data,
     prepped_jags_data <- data
   } else {
     cli::cli_abort(c(
-      "{.arg data} must be a {.cls case_data} or {.cls prepped_jags_data} object",
-      "i" = "Got an object of class {.cls {class(data)}}."
+      "{.arg data} must be a {.cls case_data} or {.cls prepped_jags_data} 
+      object", "i" = "Got an object of class {.cls {class(data)}}."
     ))
   }
   

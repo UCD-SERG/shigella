@@ -12,7 +12,7 @@ if (requireNamespace("cmdstanr", quietly = TRUE)) {
 
   sim_data <- sim_correlated_case_data(
     n                 = 5,
-    Omega_B           = diag(2),
+    omega_B           = diag(2),
     antigen_isos      = c("IgG", "IgA"),
     n_obs_per_subject = 5L
   )

@@ -14,19 +14,21 @@
 #'   - `Omega_P`, `Sigma_P`:     parameter covariance
 #'   - `stan_fit`:               raw CmdStanMCMC object (when with_post = TRUE)
 #'
-#' @param data case_data object (from sim_correlated_case_data() or as_case_data())
+#' @param data case_data object (from sim_correlated_case_data() or 
+#' as_case_data())
 #' @param model character: "model_1", "model_2"
-#' @param chains, iter_sampling, iter_warmup, adapt_delta, max_treedepth, seed, parallel_chains
+#' @param chains, iter_sampling, iter_warmup, adapt_delta, max_treedepth, seed, 
+#' parallel_chains
 #'        standard cmdstanr arguments
 #' @param strat optional stratification variable (default NA)
 #' @param with_post return raw CmdStanMCMC object as attribute (default FALSE)
-#' @param stan_dir Optional directory containing `model_*.stan` files. If `NULL`,
-#'   the function first looks for Stan files installed with the package using
-#'   `system.file("stan", ..., package = "shigella")`, then falls back to
-#'   `inst/stan` for interactive development.
+#' @param stan_dir Optional directory containing `model_*.stan` files. 
+#' If `NULL`, the function first looks for Stan files installed with the 
+#' package using `system.file("stan", ..., package = "shigella")`, then falls 
+#' back to `inst/stan` for interactive development.
 #' @param compile_dir directory where cmdstanr writes compiled binaries.
-#'                    Default uses STAN_COMPILE_DIR env var, or /tmp/<user>/cmdstan_bin
-#'                    if /home is noexec.
+#'                    Default uses STAN_COMPILE_DIR env var, or 
+#'                    /tmp/<user>/cmdstan_bin if /home is noexec.
 #' @param init initial value strategy. Numeric value scales down random init
 #'             (default 0.1 to avoid -inf in multi_normal_cholesky_lpdf)
 #' @param ... additional priors passed to prep_priors_stan()
@@ -61,11 +63,14 @@ run_mod_stan <- function(data,
                          ...) {
 
   if (!requireNamespace("cmdstanr", quietly = TRUE)) {
-    stop("Package 'cmdstanr' required. Install with: ",
-         "install.packages('cmdstanr', repos = 'https://mc-stan.org/r-packages/')")
+    cli::cli_abort(c(
+      "Package {.pkg cmdstanr} is required.",
+      "i" = "Install it with: install.packages('cmdstanr', 
+      repos = 'https://mc-stan.org/r-packages/')"
+    ))
   }
   if (!requireNamespace("serodynamics", quietly = TRUE)) {
-    stop("Package 'serodynamics' required for prep_data().")
+    cli::cli_abort("Package {.pkg serodynamics} is required for prep_data().")
   }
 
   model <- match.arg(model)
@@ -93,8 +98,10 @@ run_mod_stan <- function(data,
     cli::cli_abort(c(
       "Cannot locate Stan file: {.file {stan_file}}",
       "i" = "Working directory is: {.path {getwd()}}",
-      "i" = "If running interactively, check that {.file inst/stan/{stan_basename}} exists.",
-      "i" = "If running from an installed package, use system.file('stan', '{stan_basename}', package = 'shigella')."
+      "i" = "If running interactively, check that 
+      {.file inst/stan/{stan_basename}} exists.",
+      "i" = "If running from an installed package, use system.file('stan', 
+      '{stan_basename}', package = 'shigella')."
     ))
   }
   
@@ -129,13 +136,13 @@ run_mod_stan <- function(data,
     if (is.na(strat)) {
       dl_sub <- data
     } else {
-      dl_sub <- data |> dplyr::filter(.data[[strat]] == i)
+      dl_sub <- data[data[[strat]] == i, , drop = FALSE]
     }
 
     # ---- Prep data + priors ----
     prepped   <- serodynamics::prep_data(dl_sub)
-    stan_data <- prep_data_stan(prepped)
-    priors    <- prep_priors_stan(model = model, ...)
+    stan_data <- shigella::prep_data_stan(prepped)
+    priors <- shigella::prep_priors_stan(model = model, ...)
     full_data <- c(stan_data, priors)
 
     # ---- Compile model ----
@@ -147,7 +154,8 @@ run_mod_stan <- function(data,
     )
 
     # ---- Sample ----
-    cli::cli_inform(c("i" = "Sampling {.strong {model}} with {chains} chains..."))
+    cli::cli_inform(c("i" = "Sampling {.strong {model}} with {chains} 
+                      chains..."))
     fit <- mod$sample(
       data            = full_data,
       chains          = chains,
@@ -163,7 +171,7 @@ run_mod_stan <- function(data,
     )
 
     # ---- Postprocess ----
-    processed <- postprocess_stan_output(
+    processed <- shigella::postprocess_stan_output(
       stan_fit       = fit,
       ids            = attr(stan_data, "ids"),
       antigens       = attr(stan_data, "antigens"),

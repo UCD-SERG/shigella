@@ -15,7 +15,7 @@ if (requireNamespace("cmdstanr", quietly = TRUE)) {
 
   sim_data <- sim_correlated_case_data(
     n                 = 5,
-    Omega_B           = matrix(c(1, 0.6, 0.6, 1), nrow = 2),
+    omega_B           = matrix(c(1, 0.6, 0.6, 1), nrow = 2),
     antigen_isos      = c("IgG", "IgA"),
     n_obs_per_subject = 5L
   )

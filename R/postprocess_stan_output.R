@@ -13,16 +13,17 @@
 #' @example inst/examples/postprocess_stan_output-examples.R
 #' @export
 postprocess_stan_output <- function(stan_fit,
-                                     ids,
-                                     antigens,
-                                     model = c("model_2", "model_1"),
-                                     stratification = "None") {
+                                    ids,
+                                    antigens,
+                                    model = c("model_2", "model_1"),
+                                    stratification = "None") {
 
   model <- match.arg(model)
   has_kron <- model %in% c("model_2", "model_1")
 
   if (!requireNamespace("posterior", quietly = TRUE)) {
-    stop("Package 'posterior' required for cmdstanr postprocessing.")
+    cli::cli_abort("Package {.pkg posterior} required for cmdstanr 
+                   postprocessing.")
   }
 
   param_names <- c("y0", "y1", "t1", "alpha", "shape")
@@ -34,7 +35,7 @@ postprocess_stan_output <- function(stan_fit,
   draws_df <- posterior::as_draws_df(
     stan_fit$draws(variables = param_names)
   )
-  n_iter  <- max(draws_df$.iteration)
+  
   n_chain <- max(draws_df$.chain)
 
   out_list <- list()
@@ -43,10 +44,12 @@ postprocess_stan_output <- function(stan_fit,
   for (p in seq_along(param_names)) {
     pname <- param_names[p]
     # Find columns matching pname[i,k]
-    matching_cols <- grep(paste0("^", pname, "\\["), colnames(draws_df), value = TRUE)
+    matching_cols <- grep(paste0("^", pname, "\\["), colnames(draws_df), 
+                          value = TRUE)
     if (length(matching_cols) != N * K) {
-      stop(sprintf("Expected %d %s draws; got %d", N * K, pname,
-                   length(matching_cols)))
+      cli::cli_abort(
+        "Expected {N * K} {.var {pname}} draws; got {length(matching_cols)}."
+      )
     }
 
     for (col_name in matching_cols) {
@@ -111,10 +114,14 @@ postprocess_stan_output <- function(stan_fit,
       sigma_P_arr <- posterior::as_draws_array(
         stan_fit$draws(variables = "Sigma_P")
       )
-      cov_summaries$Omega_B <- summarize_matrix_draws(omega_B_arr, "Omega_B", K, K)
-      cov_summaries$Sigma_B <- summarize_matrix_draws(sigma_B_arr, "Sigma_B", K, K)
-      cov_summaries$Omega_P <- summarize_matrix_draws(omega_P_arr, "Omega_P", 5L, 5L)
-      cov_summaries$Sigma_P <- summarize_matrix_draws(sigma_P_arr, "Sigma_P", 5L, 5L)
+      cov_summaries$Omega_B <- summarize_matrix_draws(omega_B_arr, 
+                                                      "Omega_B", K, K)
+      cov_summaries$Sigma_B <- summarize_matrix_draws(sigma_B_arr, 
+                                                      "Sigma_B", K, K)
+      cov_summaries$Omega_P <- summarize_matrix_draws(omega_P_arr, 
+                                                      "Omega_P", 5L, 5L)
+      cov_summaries$Sigma_P <- summarize_matrix_draws(sigma_P_arr, 
+                                                      "Sigma_P", 5L, 5L)
       dimnames(cov_summaries$Omega_B) <- list(antigens, antigens)
       dimnames(cov_summaries$Sigma_B) <- list(antigens, antigens)
       dimnames(cov_summaries$Omega_P) <- list(param_names, param_names)

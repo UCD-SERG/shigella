@@ -43,10 +43,10 @@ prep_priors_stan <- function(
   has_kron <- model %in% c("model_2", "model_1")
 
   if (length(mu_hyp_mean) != 5) {
-    stop("mu_hyp_mean must be length 5")
+    cli::cli_abort("{.arg mu_hyp_mean} must be length 5.")
   }
   if (length(mu_hyp_sd) != 5) {
-    stop("mu_hyp_sd must be length 5")
+    cli::cli_abort("{.arg mu_hyp_sd} must be length 5.")
   }
 
   priors <- list(

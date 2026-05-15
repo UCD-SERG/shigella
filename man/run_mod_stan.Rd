@@ -25,11 +25,13 @@ run_mod_stan(
 )
 }
 \arguments{
-\item{data}{case_data object (from sim_correlated_case_data() or as_case_data())}
+\item{data}{case_data object (from sim_correlated_case_data() or
+as_case_data())}
 
 \item{model}{character: "model_1", "model_2"}
 
-\item{chains, }{iter_sampling, iter_warmup, adapt_delta, max_treedepth, seed, parallel_chains
+\item{chains, }{iter_sampling, iter_warmup, adapt_delta, max_treedepth, seed,
+parallel_chains
 standard cmdstanr arguments}
 
 \item{iter_sampling}{Number of post-warmup iterations per chain.}
@@ -48,14 +50,14 @@ standard cmdstanr arguments}
 
 \item{with_post}{return raw CmdStanMCMC object as attribute (default FALSE)}
 
-\item{stan_dir}{Optional directory containing \code{model_*.stan} files. If \code{NULL},
-the function first looks for Stan files installed with the package using
-\code{system.file("stan", ..., package = "shigella")}, then falls back to
-\code{inst/stan} for interactive development.}
+\item{stan_dir}{Optional directory containing \code{model_*.stan} files.
+If \code{NULL}, the function first looks for Stan files installed with the
+package using \code{system.file("stan", ..., package = "shigella")}, then falls
+back to \code{inst/stan} for interactive development.}
 
 \item{compile_dir}{directory where cmdstanr writes compiled binaries.
-Default uses STAN_COMPILE_DIR env var, or /tmp/\if{html}{\out{<user>}}/cmdstan_bin
-if /home is noexec.}
+Default uses STAN_COMPILE_DIR env var, or
+/tmp/\if{html}{\out{<user>}}/cmdstan_bin if /home is noexec.}
 
 \item{init}{initial value strategy. Numeric value scales down random init
 (default 0.1 to avoid -inf in multi_normal_cholesky_lpdf)}
@@ -106,7 +108,7 @@ if (requireNamespace("cmdstanr", quietly = TRUE)) {
 
   sim_data <- sim_correlated_case_data(
     n                 = 5,
-    Omega_B           = matrix(c(1, 0.6, 0.6, 1), nrow = 2),
+    omega_B           = matrix(c(1, 0.6, 0.6, 1), nrow = 2),
     antigen_isos      = c("IgG", "IgA"),
     n_obs_per_subject = 5L
   )

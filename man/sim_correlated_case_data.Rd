@@ -10,9 +10,9 @@ sim_correlated_case_data(
   tau_P = c(0.5, 0.7, 0.3, 1, 0.4),
   tau_B = c(0.8, 0.8),
   tau_eps = c(0.3, 0.3),
-  Omega_P = diag(5),
-  Omega_B = diag(2),
-  Omega_eps = diag(2),
+  omega_P = diag(5),
+  omega_B = diag(2),
+  omega_eps = diag(2),
   antigen_isos = c("biomarker_1", "biomarker_2"),
   n_obs_per_subject = 5L,
   time_grid = c(2, 7, 30, 90, 180),
@@ -32,13 +32,13 @@ parameters}
 
 \item{tau_eps}{\link{numeric} length-K vector of residual SDs}
 
-\item{Omega_P}{\link{matrix} P x P parameter correlation matrix
+\item{omega_P}{\link{matrix} P x P parameter correlation matrix
 (default: identity — no within-biomarker parameter correlation)}
 
-\item{Omega_B}{\link{matrix} K x K biomarker correlation matrix
+\item{omega_B}{\link{matrix} K x K biomarker correlation matrix
 (default: identity — Scenario 2, residual correlation only)}
 
-\item{Omega_eps}{\link{matrix} K x K residual correlation matrix
+\item{omega_eps}{\link{matrix} K x K residual correlation matrix
 (default: identity — no residual correlation)}
 
 \item{antigen_isos}{\link{character} names for the K biomarkers}
@@ -76,19 +76,19 @@ This is the data-generating process for the Chapter 2 simulation
 study.
 }
 \examples{
-## Example: sim_correlated_case_data()
+## Example
 ##
 ## Generate synthetic Shigella antibody-kinetics data with a known
 ## IgG-IgA correlation rho_B.
 
 set.seed(2026)
 
-Omega_B <- matrix(c(1.0, 0.6,
+omega_B <- matrix(c(1.0, 0.6,
                     0.6, 1.0), nrow = 2)
 
 sim_data <- sim_correlated_case_data(
   n                 = 5,
-  Omega_B           = Omega_B,
+  omega_B           = omega_B,
   antigen_isos      = c("IgG", "IgA"),
   n_obs_per_subject = 5L
 )
