@@ -132,6 +132,14 @@ run_mod_stan <- function(data,
   stanfit_list <- list()
   cov_list     <- list()
 
+  # ---- Compile model once (cmdstanr caches, but avoids repeated filesystem hits) ----
+  cli::cli_inform(c("i" = "Compiling {.strong {model}} (or using cache)..."))
+  mod <- cmdstanr::cmdstan_model(
+    stan_file = stan_file,
+    dir       = compile_dir,
+    compile   = TRUE
+  )
+
   for (i in strat_list) {
     if (is.na(strat)) {
       dl_sub <- data
@@ -144,14 +152,6 @@ run_mod_stan <- function(data,
     stan_data <- shigella::prep_data_stan(prepped)
     priors <- shigella::prep_priors_stan(model = model, ...)
     full_data <- c(stan_data, priors)
-
-    # ---- Compile model ----
-    cli::cli_inform(c("i" = "Compiling {.strong {model}} (or using cache)..."))
-    mod <- cmdstanr::cmdstan_model(
-      stan_file = stan_file,
-      dir       = compile_dir,    
-      compile   = TRUE
-    )
 
     # ---- Sample ----
     cli::cli_inform(c("i" = "Sampling {.strong {model}} with {chains} 
@@ -205,17 +205,15 @@ run_mod_stan <- function(data,
   }
 
   # Calculate fitted/residuals
-  if (requireNamespace("serodynamics", quietly = TRUE)) {
-    fit_res <- tryCatch(
-      serodynamics:::calc_fit_mod(modeled_dat = sr_out, original_data = data),
-      error = function(e) {
-        cli::cli_warn("calc_fit_mod failed: {e$message}")
-        NULL
-      }
-    )
-    if (!is.null(fit_res)) {
-      attr(sr_out, "fitted_residuals") <- fit_res
+  fit_res <- tryCatch(
+    serodynamics:::calc_fit_mod(modeled_dat = sr_out, original_data = data),
+    error = function(e) {
+      cli::cli_warn("calc_fit_mod failed: {e$message}")
+      NULL
     }
+  )
+  if (!is.null(fit_res)) {
+    attr(sr_out, "fitted_residuals") <- fit_res
   }
 
   if (with_post) {

@@ -80,24 +80,26 @@ postprocess_stan_output <- function(stan_fit,
 
   cov_summaries <- list()
 
-  # ---- Residual covariance (all models) ----
-  tryCatch({
-    omega_eps_arr <- posterior::as_draws_array(
-      stan_fit$draws(variables = "Omega_eps")
-    )
-    sigma_eps_arr <- posterior::as_draws_array(
-      stan_fit$draws(variables = "Sigma_eps")
-    )
-    # Compute median across iterations and chains for each cell
-    omega_eps_mat <- summarize_matrix_draws(omega_eps_arr, "Omega_eps", K, K)
-    sigma_eps_mat <- summarize_matrix_draws(sigma_eps_arr, "Sigma_eps", K, K)
-    cov_summaries$Omega_eps <- omega_eps_mat
-    cov_summaries$Sigma_eps <- sigma_eps_mat
-    dimnames(cov_summaries$Omega_eps) <- list(antigens, antigens)
-    dimnames(cov_summaries$Sigma_eps) <- list(antigens, antigens)
-  }, error = function(e) {
-    cli::cli_warn("Omega_eps/Sigma_eps not extracted: {e$message}")
-  })
+  # ---- Residual covariance (model_2 only — model_1 uses independent residuals) ----
+  if (has_kron) {
+    tryCatch({
+      omega_eps_arr <- posterior::as_draws_array(
+        stan_fit$draws(variables = "Omega_eps")
+      )
+      sigma_eps_arr <- posterior::as_draws_array(
+        stan_fit$draws(variables = "Sigma_eps")
+      )
+      # Compute median across iterations and chains for each cell
+      omega_eps_mat <- summarize_matrix_draws(omega_eps_arr, "Omega_eps", K, K)
+      sigma_eps_mat <- summarize_matrix_draws(sigma_eps_arr, "Sigma_eps", K, K)
+      cov_summaries$Omega_eps <- omega_eps_mat
+      cov_summaries$Sigma_eps <- sigma_eps_mat
+      dimnames(cov_summaries$Omega_eps) <- list(antigens, antigens)
+      dimnames(cov_summaries$Sigma_eps) <- list(antigens, antigens)
+    }, error = function(e) {
+      cli::cli_warn("Omega_eps/Sigma_eps not extracted: {e$message}")
+    })
+  }
 
   # ---- Kronecker matrices (Model 2 only) ----
   if (has_kron) {
