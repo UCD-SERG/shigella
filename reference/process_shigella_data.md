@@ -3,7 +3,7 @@
 Filters a dataset to a given study and antigen column, standardizes
 column names, and returns a visit-ordered long dataset suitable for
 conversion to
-[`serodynamics::as_case_data()`](https://rdrr.io/pkg/serodynamics/man/as_case_data.html).
+[`serodynamics::as_case_data()`](https://ucd-serg.github.io/serodynamics/reference/as_case_data.html).
 
 ## Usage
 

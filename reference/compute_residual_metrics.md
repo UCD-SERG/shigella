@@ -28,7 +28,7 @@ compute_residual_metrics(
 - dataset:
 
   A `serodynamics` case dataset produced by
-  [`serodynamics::as_case_data()`](https://rdrr.io/pkg/serodynamics/man/as_case_data.html)
+  [`serodynamics::as_case_data()`](https://ucd-serg.github.io/serodynamics/reference/as_case_data.html)
   (must contain `id` and `antigen_iso` columns, and time/value
   attributes).
 

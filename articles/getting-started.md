@@ -1,6 +1,7 @@
 # Getting Started with shigella
 
 ``` r
+
 library(shigella)
 ```
 
@@ -23,6 +24,7 @@ function reshapes raw longitudinal data into a format compatible with
 the `serodynamics` package:
 
 ``` r
+
 # Example with real data (not run)
 dat_long <- process_shigella_data(
   data = raw_data,
@@ -48,6 +50,7 @@ antibody models:
 #### Computing Residual Metrics
 
 ``` r
+
 # Compute residuals at individual level
 metrics_id <- compute_residual_metrics(
   model = posterior_draws,
@@ -74,6 +77,7 @@ metrics_overall <- compute_residual_metrics(
 Compare model fit metrics between different modeling approaches:
 
 ``` r
+
 comparison <- model_comparison_table(
   metrics_overall = metrics_model1,
   metrics_pointwise = metrics_model2,
@@ -90,6 +94,7 @@ function creates trajectory plots for population-level (“newperson”)
 predictions:
 
 ``` r
+
 fig <- fig2_overall_newperson(
   overall_models = list(
     IpaB = model_ipab,
@@ -113,6 +118,7 @@ These datasets have the same structure as real data but contain
 synthetic values.
 
 ``` r
+
 # Load mock data
 data("mock_posterior_draws")
 data("mock_case_data")

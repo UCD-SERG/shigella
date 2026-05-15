@@ -1,7 +1,7 @@
 # Mock case data for testing
 
 A mock longitudinal antibody dataset compatible with
-[`serodynamics::as_case_data()`](https://rdrr.io/pkg/serodynamics/man/as_case_data.html),
+[`serodynamics::as_case_data()`](https://ucd-serg.github.io/serodynamics/reference/as_case_data.html),
 for testing functions like
 [`compute_residual_metrics`](https://ucd-serg.github.io/shigella/reference/compute_residual_metrics.md).
 
