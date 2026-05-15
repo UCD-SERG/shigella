@@ -15,7 +15,7 @@ library(patchwork)
 library(serodynamics)
 library(serocalculator)
 
-source("R/compute_residual_correlation_v3.R")  # v3
+source("R/compute_residual_correlation.R")  # v3
 
 set.seed(2026)
 

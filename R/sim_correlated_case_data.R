@@ -37,7 +37,7 @@
 #' @returns a `case_data` object plus attributes recording the truth:
 #'   - `"truth"` — list with mu, tau_P, tau_B, tau_eps, Omega_P,
 #'     Omega_B, Omega_eps
-#'   - `"theta_true"` — N x K x P array of true subject parameters
+#'   - `"theta_true"` — N x P x K array of true subject parameters
 #' @export
 #' @example inst/examples/sim_correlated_case_data-examples.R
 sim_correlated_case_data <- function(
@@ -111,6 +111,9 @@ sim_correlated_case_data <- function(
   
   # Draw theta_i for each subject
   theta_vec <- MASS::mvrnorm(n = n, mu = mu_vec, Sigma = sigma_full)
+  if (is.null(dim(theta_vec))) {
+    theta_vec <- matrix(theta_vec, nrow = 1L)
+  }
   
   # dim n x PK; reshape to N x P x K
   theta_arr <- array(NA_real_, dim = c(n, n_param, n_biomarker))

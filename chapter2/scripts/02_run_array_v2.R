@@ -127,7 +127,7 @@ Omega_B_true <- make_omega_2x2(scn$rho_B)
 sim_dat <- tryCatch({
   sim_correlated_case_data(
     n                 = scn$n,
-    Omega_B           = Omega_B_true,
+    omega_B           = Omega_B_true,
     antigen_isos      = c("IgG", "IgA"),
     n_obs_per_subject = 5L
   )

@@ -19,7 +19,7 @@ postprocess_stan_output <- function(stan_fit,
                                     stratification = "None") {
 
   model <- match.arg(model)
-  has_kron <- model %in% c("model_2", "model_1")
+  has_kron <- identical(model, "model_2")
 
   if (!requireNamespace("posterior", quietly = TRUE)) {
     cli::cli_abort("Package {.pkg posterior} required for cmdstanr 

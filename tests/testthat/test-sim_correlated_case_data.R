@@ -16,3 +16,10 @@ test_that("sim_correlated_case_data attaches the truth attributes", {
   expect_equal(truth$omega_B, omega_B)
   expect_true(!is.null(attr(sim, "theta_true")))
 })
+
+test_that("sim_correlated_case_data supports n = 1", {
+  sim <- sim_correlated_case_data(n = 1, seed = 2026)
+
+  expect_s3_class(sim, "case_data")
+  expect_equal(length(unique(sim$id)), 1)
+})

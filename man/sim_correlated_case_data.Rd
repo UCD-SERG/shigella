@@ -56,7 +56,7 @@ a \code{case_data} object plus attributes recording the truth:
 \itemize{
 \item \code{"truth"} — list with mu, tau_P, tau_B, tau_eps, Omega_P,
 Omega_B, Omega_eps
-\item \code{"theta_true"} — N x K x P array of true subject parameters
+\item \code{"theta_true"} — N x P x K array of true subject parameters
 }
 }
 \description{

@@ -61,7 +61,7 @@ compute_residual_correlation_ch1_v3 <- function(fit,
 
   rho_residual_log <- cor(merged_log$log_resid_igg, merged_log$log_resid_iga)
 
-  rho_residual_log_ci <- cor.test(rho_residual_log, nrow(merged_log))
+  rho_residual_log_ci <- fisher_z_ci(rho_residual_log, nrow(merged_log))
 
   # Cluster bootstrap CI (subject-level resample) — more defensible
   rho_residual_log_ci_cluster <- cluster_bootstrap_residual_ci(

@@ -49,7 +49,7 @@ cat("Generating n =", N_BIG, "subjects with TRUE rho_B =", TRUE_RHO, "\n\n")
 
 sim_dat <- sim_correlated_case_data(
   n                 = N_BIG,
-  Omega_B           = Omega_B_true,
+  omega_B           = Omega_B_true,
   antigen_isos      = c("IgG", "IgA"),
   n_obs_per_subject = 5L
 )
@@ -152,7 +152,7 @@ cat("###############################################\n\n")
 set.seed(42)
 sim_small <- sim_correlated_case_data(
   n                 = 30,
-  Omega_B           = Omega_B_true,
+  omega_B           = Omega_B_true,
   antigen_isos      = c("IgG", "IgA"),
   n_obs_per_subject = 5L
 )

@@ -64,7 +64,7 @@ cat("      Compile dir:", compile_dir, "\n\n")
 cat("[4/8] Testing sim_correlated_case_data() ...\n")
 test_dat <- sim_correlated_case_data(
   n              = 5,
-  Omega_B        = matrix(c(1, 0.6, 0.6, 1), 2, 2),
+  omega_B        = matrix(c(1, 0.6, 0.6, 1), 2, 2),
   antigen_isos   = c("IgG", "IgA"),
   n_obs_per_subject = 3L
 )

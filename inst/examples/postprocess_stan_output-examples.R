@@ -34,13 +34,14 @@ if (requireNamespace("cmdstanr", quietly = TRUE)) {
   )
 
   ## Post-process the raw fit into tidy sr_model format
-  tidy_fit <- postprocess_stan_output(
-    stan_fit      = raw_fit,
-    original_data = sim_data,
-    priors        = priors
+  processed <- postprocess_stan_output(
+    stan_fit  = raw_fit,
+    ids       = attr(stan_data, "ids"),
+    antigens  = attr(stan_data, "antigens"),
+    model     = "model_2"
   )
 
-  class(tidy_fit)
-  head(tidy_fit)
+  class(processed$sr_tibble)
+  names(processed$cov_summaries)
 }
 }
