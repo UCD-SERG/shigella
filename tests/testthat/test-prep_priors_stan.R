@@ -15,3 +15,13 @@ test_that("prep_priors_stan defaults are weakly informative", {
     expect_true(all(priors$mu_hyp_sd <= 20))
   }
 })
+
+test_that("prep_priors_stan includes biomarker priors only for model_2", {
+  priors_model_2 <- prep_priors_stan(model = "model_2")
+  priors_model_1 <- prep_priors_stan(model = "model_1")
+
+  expect_true("tau_B_scale" %in% names(priors_model_2))
+  expect_true("lkj_B_eta" %in% names(priors_model_2))
+  expect_false("tau_B_scale" %in% names(priors_model_1))
+  expect_false("lkj_B_eta" %in% names(priors_model_1))
+})

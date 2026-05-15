@@ -40,7 +40,7 @@ prep_priors_stan <- function(
 
   model <- match.arg(model)
 
-  has_kron <- model %in% c("model_2", "model_1")
+  has_kron <- identical(model, "model_2")
 
   if (length(mu_hyp_mean) != 5) {
     cli::cli_abort("{.arg mu_hyp_mean} must be length 5.")
