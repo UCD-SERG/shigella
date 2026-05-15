@@ -208,12 +208,12 @@ sim_correlated_case_data <- function(
     tau_P = tau_P,
     tau_B = tau_B,
     tau_eps = tau_eps,
-    Omega_P = omega_P,
-    Omega_B = omega_B,
-    Omega_eps = omega_eps,
-    Sigma_P = sigma_P,
-    Sigma_B = sigma_B,
-    Sigma_eps = sigma_eps
+    omega_P = omega_P,
+    omega_B = omega_B,
+    omega_eps = omega_eps,
+    sigma_P = sigma_P,
+    sigma_B = sigma_B,
+    sigma_eps = sigma_eps
   )
   attr(case, "theta_true") <- theta_arr
   
