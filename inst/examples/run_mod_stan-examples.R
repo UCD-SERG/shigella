@@ -4,6 +4,10 @@
 ## dataset. Uses minimal MCMC settings so the example completes
 ## quickly. For realistic settings, see the Phase 2 simulation
 ## scripts (run on Shiva HPC).
+## Wrapped in \dontrun{} because this example requires a compiled
+## cmdstan installation, which is not available in every CI environment.
+
+\dontrun{
 
 if (requireNamespace("cmdstanr", quietly = TRUE)) {
 
@@ -28,4 +32,5 @@ if (requireNamespace("cmdstanr", quietly = TRUE)) {
 
   class(fit)
   head(fit)
+}
 }

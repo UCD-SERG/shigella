@@ -2,7 +2,10 @@
 ##
 ## Convert a raw cmdstanr fit object into the tidy `sr_model` format
 ## with priors and fitted_residuals attached as attributes.
+## Wrapped in \dontrun{} because this example requires a compiled
+## cmdstan installation, which is not available in every CI environment.
 
+\dontrun{
 if (requireNamespace("cmdstanr", quietly = TRUE)) {
 
   set.seed(2026)
@@ -39,4 +42,5 @@ if (requireNamespace("cmdstanr", quietly = TRUE)) {
 
   class(tidy_fit)
   head(tidy_fit)
+}
 }

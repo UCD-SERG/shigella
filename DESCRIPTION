@@ -20,11 +20,12 @@ Imports:
     tidyr
 URL: https://ucd-serg.github.io/shigella/
 Remotes: 
-    UCD-SERG/serodynamics
+    UCD-SERG/serodynamics,
+    stan-dev/cmdstanr
 Suggests: 
     arsenal,
     bayesplot,
-    cmdstanr,
+    cmdstanr (>= 0.9.0),
     coda,
     forcats,
     furrr,
@@ -51,7 +52,7 @@ Suggests:
     rmarkdown,
     runjags,
     scales,
-    serodynamics,
+    serodynamics (>= 0.0.0.9050),
     spelling,
     table1,
     testthat (>= 3.0.0),

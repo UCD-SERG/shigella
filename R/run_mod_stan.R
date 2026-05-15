@@ -40,14 +40,7 @@
 #' @param show_messages Logical; whether to show CmdStan messages.
 #'
 #' @returns sr_model tibble
-#' @examples
-#' \dontrun{
-#' source(system.file(
-#'   "examples",
-#'   "run_mod_stan-examples.R",
-#'   package = "shigella"
-#' ))
-#' }
+#' @example inst/examples/run_mod_stan-examples.R
 #' @export
 run_mod_stan <- function(data,
                          model           = c("model_2", "model_1"),
