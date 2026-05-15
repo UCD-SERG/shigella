@@ -205,7 +205,7 @@ run_mod_stan <- function(data,
   }
 
   # Calculate fitted/residuals
-  if (exists("calc_fit_mod", mode = "function")) {
+  if (requireNamespace("serodynamics", quietly = TRUE)) {
     fit_res <- tryCatch(
       serodynamics:::calc_fit_mod(modeled_dat = sr_out, original_data = dl_sub),
       error = function(e) {
