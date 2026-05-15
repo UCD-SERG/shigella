@@ -80,7 +80,7 @@ postprocess_stan_output <- function(stan_fit,
 
   cov_summaries <- list()
 
-  # ---- Residual covariance (model_2 only — model_1 uses independent residuals) ----
+  # ---- Residual covariance (model_2 only — model_1 uses independent residuals)
   if (has_kron) {
     tryCatch({
       omega_eps_arr <- posterior::as_draws_array(

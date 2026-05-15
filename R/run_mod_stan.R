@@ -132,7 +132,7 @@ run_mod_stan <- function(data,
   stanfit_list <- list()
   cov_list     <- list()
 
-  # ---- Compile model once (cmdstanr caches, but avoids repeated filesystem hits) ----
+  # ---- Compile model once(cmdstanr caches and avoids repeated filesystem hits)
   cli::cli_inform(c("i" = "Compiling {.strong {model}} (or using cache)..."))
   mod <- cmdstanr::cmdstan_model(
     stan_file = stan_file,
