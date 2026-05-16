@@ -113,7 +113,7 @@ postprocess_stan_output <- function(stan_fit,
       omega_P_arr <- posterior::as_draws_array(
         stan_fit$draws(variables = "Omega_P")
       )
-      omega_P_list <- summarize_array_of_matrix_draws(
+      omega_P_list <- summarize_matrix_array(
         omega_P_arr, "Omega_P", K, P, P
       )
       for (k in seq_len(K)) {
