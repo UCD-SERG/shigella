@@ -46,16 +46,18 @@ model_comparison_table <- function(metrics_overall,
     dplyr::mutate(
       delta_MAE = .data$MAE - base_mae,
       delta_RMSE = .data$RMSE - base_rmse,
-      pct_improve_MAE = dplyr::case_when(
-        is.na(base_mae) ~ NA_real_,
-        abs(base_mae) <= .Machine$double.eps ~ NA_real_,
-        .default = 100 * .data$delta_MAE / base_mae
-      ),
-      pct_improve_RMSE = dplyr::case_when(
-        is.na(base_rmse) ~ NA_real_,
-        abs(base_rmse) <= .Machine$double.eps ~ NA_real_,
-        .default = 100 * .data$delta_RMSE / base_rmse
-      )
+      pct_improve_MAE = if (is.na(base_mae) ||
+                            abs(base_mae) <= .Machine$double.eps) {
+        NA_real_
+      } else {
+        100 * .data$delta_MAE / base_mae
+      },
+      pct_improve_RMSE = if (is.na(base_rmse) ||
+                             abs(base_rmse) <= .Machine$double.eps) {
+        NA_real_
+      } else {
+        100 * .data$delta_RMSE / base_rmse
+      }
     )
 }
 
