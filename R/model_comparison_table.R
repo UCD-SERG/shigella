@@ -49,12 +49,12 @@ model_comparison_table <- function(metrics_overall,
       pct_improve_MAE = dplyr::case_when(
         is.na(base_mae) ~ NA_real_,
         abs(base_mae) <= .Machine$double.eps ~ NA_real_,
-        TRUE ~ 100 * .data$delta_MAE / base_mae
+        .default = 100 * .data$delta_MAE / base_mae
       ),
       pct_improve_RMSE = dplyr::case_when(
         is.na(base_rmse) ~ NA_real_,
         abs(base_rmse) <= .Machine$double.eps ~ NA_real_,
-        TRUE ~ 100 * .data$delta_RMSE / base_rmse
+        .default = 100 * .data$delta_RMSE / base_rmse
       )
     )
 }
@@ -95,17 +95,11 @@ make_model_comparison_table <- function(model_serospecific, data_serospecific,
     scale = scale,
     summary_level = "id_antigen"
   ) |>
-    dplyr::select(
-      .data$id,
-      .data$antigen_iso,
-      .data$MAE,
-      .data$RMSE,
-      .data$n_obs
-    ) |>
+    dplyr::select("id", "antigen_iso", "MAE", "RMSE", "n_obs") |>
     dplyr::rename(
-      MAE_serospecific  = .data$MAE,
-      RMSE_serospecific = .data$RMSE,
-      n_obs_serospecific = .data$n_obs
+      MAE_serospecific   = "MAE",
+      RMSE_serospecific  = "RMSE",
+      n_obs_serospecific = "n_obs"
     )
 
   m_over <- compute_residual_metrics(
@@ -116,17 +110,11 @@ make_model_comparison_table <- function(model_serospecific, data_serospecific,
     scale = scale,
     summary_level = "id_antigen"
   ) |>
-    dplyr::select(
-      .data$id,
-      .data$antigen_iso,
-      .data$MAE,
-      .data$RMSE,
-      .data$n_obs
-    ) |>
+    dplyr::select("id", "antigen_iso", "MAE", "RMSE", "n_obs") |>
     dplyr::rename(
-      MAE_overall  = .data$MAE,
-      RMSE_overall = .data$RMSE,
-      n_obs_overall = .data$n_obs
+      MAE_overall   = "MAE",
+      RMSE_overall  = "RMSE",
+      n_obs_overall = "n_obs"
     )
 
   dplyr::full_join(m_sero, m_over, by = c("id", "antigen_iso")) |>
@@ -136,26 +124,26 @@ make_model_comparison_table <- function(model_serospecific, data_serospecific,
       pct_improve_MAE = dplyr::case_when(
         is.na(.data$MAE_overall) ~ NA_real_,
         abs(.data$MAE_overall) <= .Machine$double.eps ~ NA_real_,
-        TRUE ~ 100 * .data$delta_MAE / .data$MAE_overall
+        .default = 100 * .data$delta_MAE / .data$MAE_overall
       ),
       pct_improve_RMSE = dplyr::case_when(
         is.na(.data$RMSE_overall) ~ NA_real_,
         abs(.data$RMSE_overall) <= .Machine$double.eps ~ NA_real_,
-        TRUE ~ 100 * .data$delta_RMSE / .data$RMSE_overall
+        .default = 100 * .data$delta_RMSE / .data$RMSE_overall
       ),
       best_MAE = dplyr::case_when(
         is.na(.data$MAE_overall) | is.na(.data$MAE_serospecific) ~
           NA_character_,
         abs(.data$delta_MAE) <= tie_tol ~ "tie",
         .data$delta_MAE > 0 ~ "serospecific",
-        TRUE ~ "overall"
+        .default = "overall"
       ),
       best_RMSE = dplyr::case_when(
         is.na(.data$RMSE_overall) | is.na(.data$RMSE_serospecific) ~
           NA_character_,
         abs(.data$delta_RMSE) <= tie_tol ~ "tie",
         .data$delta_RMSE > 0 ~ "serospecific",
-        TRUE ~ "overall"
+        .default = "overall"
       ),
       best_overall = dplyr::case_when(
         .data$best_MAE == "serospecific" &
@@ -164,7 +152,7 @@ make_model_comparison_table <- function(model_serospecific, data_serospecific,
           .data$best_RMSE == "overall" ~ "overall",
         .data$best_MAE == "tie" &
           .data$best_RMSE == "tie" ~ "tie",
-        TRUE ~ "mixed"
+        .default = "mixed"
       )
     ) |>
     dplyr::arrange(.data$id)

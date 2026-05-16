@@ -32,9 +32,9 @@ postprocess_stan_output <- function(stan_fit,
 
   # cmdstanr returns draws via $draws() which is a draws_array
   # Convert to data frame format for processing
-  draws_df <- posterior::as_draws_df(
+  draws_df <- tibble::as_tibble(posterior::as_draws_df(
     stan_fit$draws(variables = param_names)
-  )
+  ))
 
   n_chain <- max(draws_df$.chain)
 

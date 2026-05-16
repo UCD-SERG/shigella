@@ -2,7 +2,7 @@ test_that("postprocess_stan_output is callable", {
   expect_true(is.function(postprocess_stan_output))
 })
 
-test_that("summarize_array_of_matrix_draws returns a list of matrices", {
+test_that("summarize_matrix_array returns a list of matrices", {
   # Build a minimal mock draws_array for array[2] corr_matrix[3] Omega_P
   # Variable names: Omega_P[k,i,j] for k in 1:2, i in 1:3, j in 1:3
   var_names <- c()
@@ -23,8 +23,8 @@ test_that("summarize_array_of_matrix_draws returns a list of matrices", {
       variable  = var_names
     )
   )
-  result <- summarize_array_of_matrix_draws(arr_data, "Omega_P",
-                                            n_arr = 2L, nrow = 3L, ncol = 3L)
+  result <- shigella:::summarize_matrix_array(arr_data, "Omega_P",
+                                              n_arr = 2L, n_row = 3L, n_col = 3L)
 
   expect_type(result, "list")
   expect_length(result, 2L)
