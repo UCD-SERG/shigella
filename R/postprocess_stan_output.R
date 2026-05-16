@@ -104,6 +104,28 @@ postprocess_stan_output <- function(stan_fit,
     })
   }
 
+  # ---- Parameter correlation (model_1 only — per-biomarker Omega_P[k]) ----
+  # model_1 generates array[K] corr_matrix[P] Omega_P; cmdstanr names
+  # cells Omega_P[k,p,q]. model_2's single Omega_P is handled above.
+  if (!has_kron) {
+    P <- length(param_names)
+    tryCatch({
+      omega_P_arr <- posterior::as_draws_array(
+        stan_fit$draws(variables = "Omega_P")
+      )
+      omega_P_list <- summarize_array_of_matrix_draws(
+        omega_P_arr, "Omega_P", K, P, P
+      )
+      for (k in seq_len(K)) {
+        dimnames(omega_P_list[[k]]) <- list(param_names, param_names)
+      }
+      names(omega_P_list) <- antigens
+      cov_summaries$Omega_P <- omega_P_list
+    }, error = function(e) {
+      cli::cli_warn("model_1 Omega_P not extracted: {e$message}")
+    })
+  }
+
   # ---- log_lik for LOO ----
   tryCatch({
     cov_summaries$log_lik <- posterior::as_draws_matrix(
