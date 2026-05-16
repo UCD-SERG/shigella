@@ -12,7 +12,8 @@
 #'   - `Omega_eps`, `Sigma_eps`: residual covariance (Model 2 only)
 #'   - `Omega_B`, `Sigma_B`:     biomarker covariance (Model 2 only)
 #'   - `Omega_P`:                parameter corr matrix (Model 2: single matrix;
-#'                               Model 1: named list of K matrices, one per biomarker)
+#'                               Model 1: named list of K matrices, one per 
+#'                               biomarker)
 #'   - `Sigma_P`:                parameter covariance (Model 2 only)
 #'   - `stan_fit`:               raw CmdStanMCMC object (when with_post = TRUE)
 #'

@@ -87,7 +87,8 @@ attributes are also attached:
 \item \code{Omega_eps}, \code{Sigma_eps}: residual covariance (Model 2 only)
 \item \code{Omega_B}, \code{Sigma_B}:     biomarker covariance (Model 2 only)
 \item \code{Omega_P}:                parameter corr matrix (Model 2: single matrix;
-Model 1: named list of K matrices, one per biomarker)
+Model 1: named list of K matrices, one per
+biomarker)
 \item \code{Sigma_P}:                parameter covariance (Model 2 only)
 \item \code{stan_fit}:               raw CmdStanMCMC object (when with_post = TRUE)
 }
