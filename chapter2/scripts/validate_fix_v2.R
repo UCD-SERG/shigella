@@ -26,17 +26,10 @@ suppressPackageStartupMessages({
   library(serodynamics)
   library(cmdstanr)
   library(posterior)
+  library(shigella)
 })
 
-source("R/prep_data_stan.R")
-source("R/prep_priors_stan.R")
-source("R/postprocess_stan_output.R")
-source("R/run_mod_stan.R")
-source("R/sim_correlated_case_data.R")
-
-make_omega_2x2 <- function(rho) {
-  matrix(c(1, rho, rho, 1), nrow = 2, ncol = 2)
-}
+source("R/make_omega_2x2.R")
 
 scenarios <- list(
   list(name = "A", n = 48, rho_B = 0.6),
