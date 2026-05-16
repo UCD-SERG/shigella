@@ -16,6 +16,7 @@
 #'   \code{delta_MAE}, \code{delta_RMSE}, \code{pct_improve_MAE},
 #'   \code{pct_improve_RMSE}.
 #'
+#' @importFrom rlang .data
 #' @export
 model_comparison_table <- function(metrics_overall,
                                    metrics_pointwise,
@@ -47,13 +48,13 @@ model_comparison_table <- function(metrics_overall,
       delta_MAE = .data$MAE - base_mae,
       delta_RMSE = .data$RMSE - base_rmse,
       pct_improve_MAE = if (is.na(base_mae) ||
-                            abs(base_mae) <= .Machine$double.eps) {
+                              abs(base_mae) <= .Machine$double.eps) {
         NA_real_
       } else {
         100 * .data$delta_MAE / base_mae
       },
       pct_improve_RMSE = if (is.na(base_rmse) ||
-                             abs(base_rmse) <= .Machine$double.eps) {
+                               abs(base_rmse) <= .Machine$double.eps) {
         NA_real_
       } else {
         100 * .data$delta_RMSE / base_rmse
