@@ -39,7 +39,7 @@ functions work without modification.
 ## Wrapped in \dontrun{} because this example requires a compiled
 ## cmdstan installation, which is not available in every CI environment.
 
-\dontrun{
+if (interactive()) {
 if (requireNamespace("cmdstanr", quietly = TRUE)) {
 
   set.seed(2026)

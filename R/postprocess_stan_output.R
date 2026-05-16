@@ -38,7 +38,7 @@ postprocess_stan_output <- function(stan_fit,
 
   n_chain <- max(draws_df$.chain)
 
-  sr_tibble <- .extract_param_draws_to_tibbles(
+  sr_tibble <- .extract_param_draws(
     param_names    = param_names,
     draws_df       = draws_df,
     N              = N,
@@ -120,9 +120,14 @@ postprocess_stan_output <- function(stan_fit,
 }
 
 # Helper: extract draws for all param_names into a single tibble.
-.extract_param_draws_to_tibbles <- function(param_names, draws_df, N, K,
-                                            ids, antigens, stratification,
-                                            n_chain) {
+.extract_param_draws <- function(param_names, 
+                                 draws_df, 
+                                 N, 
+                                 K,
+                                 ids, 
+                                 antigens, 
+                                 stratification,
+                                 n_chain) {
   out_list <- list()
   row_counter <- 1L
 

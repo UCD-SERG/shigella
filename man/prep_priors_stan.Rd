@@ -19,7 +19,9 @@ prep_priors_stan(
 \arguments{
 \item{mu_hyp_mean}{\link{numeric} length-5 prior mean for population params}
 
-\item{mu_hyp_sd}{\link{numeric} length-5 prior SD for population params}
+\item{mu_hyp_sd}{\link{numeric} length-5 prior SD for population params.
+Weakly informative, Stan-friendly. JAGS original was c(1, 316, 1, 32, 1).
+5.0 on log-scale params covers ~5 orders of magnitude — plenty wide.}
 
 \item{tau_P_scale}{half-Cauchy scale for parameter SDs}
 
