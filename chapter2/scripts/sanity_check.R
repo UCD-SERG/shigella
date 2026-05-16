@@ -21,21 +21,15 @@ cat("[1/8] Loading packages...\n")
 suppressPackageStartupMessages({
   library(dplyr)
   library(tidyr)
-  library(serodynamics)
   library(cmdstanr)
   library(posterior)
   library(cli)
   library(tibble)
+  library(shigella)
 })
 cat("      OK\n\n")
 
-# ---- 2. Source local helpers ----
-cat("[2/8] Sourcing R/ helpers...\n")
-source("R/prep_data_stan.R")
-source("R/prep_priors_stan.R")
-source("R/postprocess_stan_output.R")
-source("R/run_mod_stan.R")
-source("R/sim_correlated_case_data.R")
+cat("[2/8] Package functions loaded via library(shigella)...\n")
 cat("      OK\n\n")
 
 # ---- 3. Verify Stan files + compile dir ----

@@ -24,19 +24,15 @@ setwd("~/chapter2")
 suppressPackageStartupMessages({
   library(dplyr)
   library(tidyr)
-  library(serodynamics)
   library(cmdstanr)        # Not rstan
   library(posterior)       # for as_draws_df, as_draws_array
   library(cli)
   library(tibble)
+  library(shigella)
 })
 
-# Source local helpers (cmdstanr-compatible versions)
-source("R/prep_data_stan.R")
-source("R/prep_priors_stan.R")
-source("R/postprocess_stan_output.R")
-source("R/run_mod_stan.R")
-source("R/sim_correlated_case_data.R")
+source("R/make_omega_2x2.R")
+source("R/run_one_replicate.R")
 
 set.seed(2026)
 
@@ -58,10 +54,6 @@ n_chains      <- 4
 n_iter_warmup <- 1500
 n_iter_sample <- 1500
 
-make_omega_2x2 <- function(rho) {
-  matrix(c(1, rho, rho, 1), nrow = 2, ncol = 2)
-}
-
 # ==========================================================================
 # 2. Run scenarios
 # ==========================================================================
@@ -75,100 +67,14 @@ for (s_name in names(scenarios)) {
   scenario_results <- list()
 
   for (rep in 1:n_replicates) {
-    cat(sprintf("\n[Scenario %s rep %d/%d] %s\n",
-                s_name, rep, n_replicates, format(Sys.time())))
-    t0 <- Sys.time()
-
-    Omega_B_true <- make_omega_2x2(scn$rho_B)
-
-    set.seed(2026 * 100 + rep)
-    sim_dat <- tryCatch({
-      sim_correlated_case_data(
-        n                 = scn$n,
-        omega_B           = Omega_B_true,
-        antigen_isos      = c("IgG", "IgA"),
-        n_obs_per_subject = 5L
-      )
-    }, error = function(e) {
-      cat(sprintf("  SIM ERROR: %s\n", conditionMessage(e))); NULL
-    })
-    if (is.null(sim_dat)) {
-      scenario_results[[rep]] <- list(scenario = s_name, rep = rep,
-                                       status = "SIM_FAILED")
-      next
-    }
-
-    fit <- tryCatch({
-      run_mod_stan(
-        data            = sim_dat,
-        model           = "model_2",
-        chains          = n_chains,
-        iter_warmup     = n_iter_warmup,
-        iter_sampling   = n_iter_sample,
-        parallel_chains = n_chains,
-        adapt_delta     = 0.99,
-        max_treedepth   = 12,
-        init            = 0.1,
-        with_post       = TRUE,
-        stan_dir        = "inst/stan",
-        refresh         = 200,
-        show_messages   = FALSE
-      )
-    }, error = function(e) {
-      cat(sprintf("  FIT ERROR: %s\n", conditionMessage(e))); NULL
-    })
-    if (is.null(fit)) {
-      scenario_results[[rep]] <- list(scenario = s_name, rep = rep,
-                                       status = "FIT_FAILED")
-      next
-    }
-
-    rho_B_post <- tryCatch({
-      sf <- attr(fit, "stan_fit")[[1]]
-      # cmdstanr API: $draws() returns posterior draws_array
-      omega_B_draws <- posterior::as_draws_df(
-        sf$draws(variables = "Omega_B[1,2]")
-      )
-      omega_B_draws[["Omega_B[1,2]"]]
-    }, error = function(e) {
-      cat(sprintf("  EXTRACT ERROR: %s\n", conditionMessage(e))); NULL
-    })
-    if (is.null(rho_B_post)) {
-      scenario_results[[rep]] <- list(scenario = s_name, rep = rep,
-                                       status = "EXTRACT_FAILED")
-      next
-    }
-
-    # Diagnostics
-    n_divergent <- tryCatch({
-      sf <- attr(fit, "stan_fit")[[1]]
-      sum(sf$diagnostic_summary()$num_divergent)
-    }, error = function(e) NA_integer_)
-
-    elapsed <- as.numeric(Sys.time() - t0, units = "mins")
-
-    scenario_results[[rep]] <- list(
-      scenario          = s_name,
-      rep               = rep,
-      status            = "OK",
-      true_rho_B        = scn$rho_B,
-      est_rho_B_median  = median(rho_B_post),
-      est_rho_B_mean    = mean(rho_B_post),
-      est_rho_B_lo      = quantile(rho_B_post, 0.025, names = FALSE),
-      est_rho_B_hi      = quantile(rho_B_post, 0.975, names = FALSE),
-      bias              = median(rho_B_post) - scn$rho_B,
-      n_divergent       = n_divergent,
-      elapsed_min       = elapsed
+    scenario_results[[rep]] <- run_one_replicate(
+      s_name        = s_name,
+      scn           = scn,
+      rep           = rep,
+      n_chains      = n_chains,
+      n_iter_warmup = n_iter_warmup,
+      n_iter_sample = n_iter_sample
     )
-
-    cat(sprintf("  rho_B = %.3f [%.3f, %.3f], bias = %+.3f, %d div, %.1f min\n",
-                median(rho_B_post),
-                quantile(rho_B_post, 0.025, names = FALSE),
-                quantile(rho_B_post, 0.975, names = FALSE),
-                median(rho_B_post) - scn$rho_B,
-                n_divergent,
-                elapsed))
-
     saveRDS(scenario_results, sprintf("outputs/02_intermediate_%s.rds", s_name))
   }
 

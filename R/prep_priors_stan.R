@@ -13,7 +13,9 @@
 #'
 #'
 #' @param mu_hyp_mean [numeric] length-5 prior mean for population params
-#' @param mu_hyp_sd [numeric] length-5 prior SD for population params
+#' @param mu_hyp_sd [numeric] length-5 prior SD for population params.
+#'   Weakly informative, Stan-friendly. JAGS original was c(1, 316, 1, 32, 1).
+#'   5.0 on log-scale params covers ~5 orders of magnitude — plenty wide.
 #' @param tau_P_scale half-Cauchy scale for parameter SDs
 #' @param tau_B_scale half-Cauchy scale for biomarker SDs (Model 2 only)
 #' @param tau_eps_scale half-Cauchy scale for residual SDs
@@ -27,8 +29,6 @@
 #' @export
 prep_priors_stan <- function(
     mu_hyp_mean   = c(1.0, 7.0, 1.0, -4.0, -1.0),
-    # Weakly informative, Stan-friendly. JAGS original was c(1, 316, 1, 32, 1)
-    # 5.0 on log-scale params covers ~5 orders of magnitude — plenty wide
     mu_hyp_sd     = c(5.0, 5.0, 5.0, 5.0, 5.0),
     tau_P_scale   = 1.0,
     tau_B_scale   = 1.0,

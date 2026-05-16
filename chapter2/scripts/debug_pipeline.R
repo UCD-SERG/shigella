@@ -21,17 +21,11 @@ cat("========================================================\n\n")
 suppressPackageStartupMessages({
   library(dplyr)
   library(tidyr)
-  library(serodynamics)
   library(cmdstanr)
   library(posterior)
   library(tibble)
+  library(shigella)
 })
-
-source("R/prep_data_stan.R")
-source("R/prep_priors_stan.R")
-source("R/postprocess_stan_output.R")
-source("R/run_mod_stan.R")
-source("R/sim_correlated_case_data.R")
 
 # ==========================================================================
 # LAYER 1: Simulation function — does it actually generate correlated data?

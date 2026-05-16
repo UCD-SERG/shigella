@@ -22,19 +22,15 @@ cat("Time:", format(Sys.time()), "\n")
 suppressPackageStartupMessages({
   library(dplyr)
   library(tidyr)
-  library(serodynamics)
   library(cmdstanr)
   library(posterior)
   library(cli)
   library(tibble)
+  library(shigella)
 })
 
 .STEP("Source helpers")
-source("R/prep_data_stan.R")
-source("R/prep_priors_stan.R")
-source("R/postprocess_stan_output.R")
-source("R/run_mod_stan.R")
-source("R/sim_correlated_case_data.R")
+source("R/make_omega_2x2.R")
 
 # ==========================================================================
 # 1. Read SLURM array task ID + R_TOTAL
@@ -111,10 +107,6 @@ cat(sprintf("  Existing files: %d\n", length(list.files(compile_dir))))
 # ==========================================================================
 # 5. Run one fit
 # ==========================================================================
-make_omega_2x2 <- function(rho) {
-  matrix(c(1, rho, rho, 1), nrow = 2, ncol = 2)
-}
-
 .STEP("Begin fit")
 t0 <- Sys.time()
 

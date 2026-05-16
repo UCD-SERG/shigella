@@ -14,20 +14,20 @@
 #'   - `Omega_P`, `Sigma_P`:     parameter covariance
 #'   - `stan_fit`:               raw CmdStanMCMC object (when with_post = TRUE)
 #'
-#' @param data case_data object (from sim_correlated_case_data() or 
+#' @param data case_data object (from sim_correlated_case_data() or
 #' as_case_data())
 #' @param model character: "model_1", "model_2"
-#' @param chains, iter_sampling, iter_warmup, adapt_delta, max_treedepth, seed, 
+#' @param chains, iter_sampling, iter_warmup, adapt_delta, max_treedepth, seed,
 #' parallel_chains
 #'        standard cmdstanr arguments
 #' @param strat optional stratification variable (default NA)
 #' @param with_post return raw CmdStanMCMC object as attribute (default FALSE)
-#' @param stan_dir Optional directory containing `model_*.stan` files. 
-#' If `NULL`, the function first looks for Stan files installed with the 
-#' package using `system.file("stan", ..., package = "shigella")`, then falls 
+#' @param stan_dir Optional directory containing `model_*.stan` files.
+#' If `NULL`, the function first looks for Stan files installed with the
+#' package using `system.file("stan", ..., package = "shigella")`, then falls
 #' back to `inst/stan` for interactive development.
 #' @param compile_dir directory where cmdstanr writes compiled binaries.
-#'                    Default uses STAN_COMPILE_DIR env var, or 
+#'                    Default uses STAN_COMPILE_DIR env var, or
 #'                    /tmp/<user>/cmdstan_bin if /home is noexec.
 #' @param init initial value strategy. Numeric value scales down random init
 #'             (default 0.1 to avoid -inf in multi_normal_cholesky_lpdf)
@@ -65,7 +65,7 @@ run_mod_stan <- function(data,
   if (!requireNamespace("cmdstanr", quietly = TRUE)) {
     cli::cli_abort(c(
       "Package {.pkg cmdstanr} is required.",
-      "i" = "Install it with: install.packages('cmdstanr', 
+      "i" = "Install it with: install.packages('cmdstanr',
       repos = 'https://mc-stan.org/r-packages/')"
     ))
   }
@@ -76,49 +76,11 @@ run_mod_stan <- function(data,
   model <- match.arg(model)
 
   # ---- Locate Stan source file ----
-  stan_basename <- paste0(model, ".stan")
-  
-  if (is.null(stan_dir)) {
-    stan_file <- system.file(
-      "stan",
-      stan_basename,
-      package = "shigella",
-      mustWork = FALSE
-    )
-    
-    # Fallback for interactive development before the package is installed.
-    if (identical(stan_file, "") || !file.exists(stan_file)) {
-      stan_file <- file.path("inst", "stan", stan_basename)
-    }
-  } else {
-    stan_file <- file.path(stan_dir, stan_basename)
-  }
-  
-  if (!file.exists(stan_file)) {
-    cli::cli_abort(c(
-      "Cannot locate Stan file: {.file {stan_file}}",
-      "i" = "Working directory is: {.path {getwd()}}",
-      "i" = "If running interactively, check that 
-      {.file inst/stan/{stan_basename}} exists.",
-      "i" = "If running from an installed package, use system.file('stan', 
-      '{stan_basename}', package = 'shigella')."
-    ))
-  }
-  
+  stan_file <- .locate_stan_file(model, stan_dir)
   cli::cli_inform(c("i" = "Using Stan file: {.file {stan_file}}"))
 
   # ---- Determine compile output directory ----
-  # Priority: argument > environment variable > /tmp fallback
-  if (is.null(compile_dir)) {
-    compile_dir <- Sys.getenv("STAN_COMPILE_DIR", unset = "")
-    if (compile_dir == "") {
-      user <- Sys.getenv("USER", unset = "default")
-      compile_dir <- file.path("/tmp", user, "cmdstan_bin")
-    }
-  }
-  if (!dir.exists(compile_dir)) {
-    dir.create(compile_dir, recursive = TRUE, mode = "0755")
-  }
+  compile_dir <- .setup_compile_dir(compile_dir)
   cli::cli_inform(c("i" = "Compile output directory: {.path {compile_dir}}"))
 
   # ---- Stratification ----
@@ -154,7 +116,7 @@ run_mod_stan <- function(data,
     full_data <- c(stan_data, priors)
 
     # ---- Sample ----
-    cli::cli_inform(c("i" = "Sampling {.strong {model}} with {chains} 
+    cli::cli_inform(c("i" = "Sampling {.strong {model}} with {chains}
                       chains..."))
     fit <- mod$sample(
       data            = full_data,
@@ -222,4 +184,54 @@ run_mod_stan <- function(data,
 
   class(sr_out) <- union("sr_model", class(sr_out))
   return(sr_out)
+}
+
+# Helper: locate the Stan source file for the given model.
+.locate_stan_file <- function(model, stan_dir) {
+  stan_basename <- paste0(model, ".stan")
+
+  if (is.null(stan_dir)) {
+    stan_file <- system.file(
+      "stan",
+      stan_basename,
+      package = "shigella",
+      mustWork = FALSE
+    )
+
+    # Fallback for interactive development before the package is installed.
+    if (identical(stan_file, "") || !file.exists(stan_file)) {
+      stan_file <- file.path("inst", "stan", stan_basename)
+    }
+  } else {
+    stan_file <- file.path(stan_dir, stan_basename)
+  }
+
+  if (!file.exists(stan_file)) {
+    cli::cli_abort(c(
+      "Cannot locate Stan file: {.file {stan_file}}",
+      "i" = "Working directory is: {.path {getwd()}}",
+      "i" = "If running interactively, check that
+      {.file inst/stan/{stan_basename}} exists.",
+      "i" = "If running from an installed package, use system.file('stan',
+      '{stan_basename}', package = 'shigella')."
+    ))
+  }
+
+  stan_file
+}
+
+# Helper: resolve and create the compile output directory.
+# Priority: argument > environment variable > /tmp fallback.
+.setup_compile_dir <- function(compile_dir) {
+  if (is.null(compile_dir)) {
+    compile_dir <- Sys.getenv("STAN_COMPILE_DIR", unset = "")
+    if (compile_dir == "") {
+      user <- Sys.getenv("USER", unset = "default")
+      compile_dir <- file.path("/tmp", user, "cmdstan_bin")
+    }
+  }
+  if (!dir.exists(compile_dir)) {
+    dir.create(compile_dir, recursive = TRUE, mode = "0755")
+  }
+  compile_dir
 }

@@ -16,6 +16,7 @@ library(serodynamics)
 library(serocalculator)
 
 source("R/compute_residual_correlation.R")  # v3
+source("R/build_summary_row.R")
 
 set.seed(2026)
 
@@ -62,21 +63,6 @@ cat("\n  Cluster bootstrap 95% CI: [",
 # ==========================================================================
 # 2. Summary table with CIs
 # ==========================================================================
-build_summary_row <- function(corr, param_name) {
-  r <- corr$param_results[[param_name]]
-  if (is.null(r) || is.na(r$rho)) return(NULL)
-  tibble::tibble(
-    Antigen       = corr$antigen,
-    Parameter     = param_name,
-    n             = r$n,
-    rho           = r$rho,
-    ci_fisher_lo  = r$ci_fisher[1],
-    ci_fisher_hi  = r$ci_fisher[2],
-    ci_boot_lo    = r$ci_boot[1],
-    ci_boot_hi    = r$ci_boot[2]
-  )
-}
-
 all_results <- list()
 for (antigen_corr in list(ipab_corr, sonnei_corr, sf2a_corr)) {
   for (pname in c("y0", "y1", "t1", "alpha", "shape")) {

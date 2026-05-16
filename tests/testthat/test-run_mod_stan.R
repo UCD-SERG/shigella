@@ -12,9 +12,9 @@ test_that("run_mod_stan completes a minimal fit (slow)", {
     "Stan tests are skipped unless RUN_STAN_TESTS=true."
   )
   skip_if_not_installed("cmdstanr")
-  
+
   sim <- sim_correlated_case_data(n = 3, seed = 2026)
-  
+
   fit <- run_mod_stan(
     data          = sim,
     model         = "model_2",
@@ -24,6 +24,10 @@ test_that("run_mod_stan completes a minimal fit (slow)", {
     refresh       = 0,
     show_messages = FALSE
   )
-  
+
   expect_s3_class(fit, "sr_model")
+})
+
+test_that("run_mod_stan has expected function signature", {
+  expect_snapshot(names(formals(run_mod_stan)))
 })

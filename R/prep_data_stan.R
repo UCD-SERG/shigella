@@ -38,28 +38,19 @@
 #' @example inst/examples/prep_data_stan-examples.R
 prep_data_stan <- function(data,
                            drop_newperson = TRUE) {
-  
-  # Route raw case_data through serodynamics::prep_data() first
-  if (inherits(data, "case_data")) {
-    if (!requireNamespace("serodynamics", quietly = TRUE)) {
-      cli::cli_abort(c(
-        "Package {.pkg serodynamics} is required.",
-        "i" = "Install it before using {.fn prep_data_stan}."
-      ))
-    }
-    prepped_jags_data <- serodynamics::prep_data(
-      data,
-      add_newperson = FALSE
-    )
-  } else if (inherits(data, "prepped_jags_data")) {
+
+  # Route prepped_jags_data directly; convert case_data via helper
+  if (inherits(data, "prepped_jags_data")) {
     prepped_jags_data <- data
+  } else if (inherits(data, "case_data")) {
+    prepped_jags_data <- .case_data_to_prepped_jags(data)
   } else {
     cli::cli_abort(c(
-      "{.arg data} must be a {.cls case_data} or {.cls prepped_jags_data} 
+      "{.arg data} must be a {.cls case_data} or {.cls prepped_jags_data}
       object", "i" = "Got an object of class {.cls {class(data)}}."
     ))
   }
-  
+
   # Extract arrays
   smpl_t  <- prepped_jags_data$smpl.t    # [nsubj, max_visits]
   logy    <- prepped_jags_data$logy      # [nsubj, max_visits, K]
@@ -67,7 +58,7 @@ prep_data_stan <- function(data,
   K       <- prepped_jags_data$n_antigen_isos
   N_full  <- prepped_jags_data$nsubj
   ids_all <- attr(prepped_jags_data, "ids")
-  
+
   # Drop the "newperson" dummy row if present
   if (drop_newperson && "newperson" %in% ids_all) {
     keep_idx <- which(ids_all != "newperson")
@@ -80,29 +71,20 @@ prep_data_stan <- function(data,
     ids_kept <- ids_all
     N        <- N_full
   }
-  
+
   max_obs <- ncol(smpl_t)
   P       <- 5L
-  
+
   # Replace NA with 0; Stan ignores these via the n_obs[i] guard in
   # the likelihood loop (for (t_idx in 1:n_obs[i])).
   time_obs <- smpl_t
   time_obs[is.na(time_obs)] <- 0
   log_y <- logy
   log_y[is.na(log_y)] <- 0
-  
+
   # Sanity checks
-  if (any(nsmpl > max_obs)) {
-    cli::cli_abort(
-      "n_obs[{which(nsmpl > max_obs)}] > max_obs. Array sizes inconsistent."
-    )
-  }
-  if (any(nsmpl == 0)) {
-    cli::cli_warn(
-      "Subject(s) with 0 observations detected; these contribute no likelihood."
-    )
-  }
-  
+  .validate_stan_arrays(nsmpl, max_obs)
+
   antigens <- attr(prepped_jags_data, "antigens")
   stan_data <- list(
     N        = N,
@@ -113,9 +95,37 @@ prep_data_stan <- function(data,
     time_obs = time_obs,
     log_y    = log_y
   )
-  
+
   # Attach metadata for postprocessing
   attr(stan_data, "ids")      <- ids_kept
   attr(stan_data, "antigens") <- antigens
   return(stan_data)
+}
+
+# Helper: convert a case_data object to prepped_jags_data via serodynamics.
+.case_data_to_prepped_jags <- function(data) {
+  if (!requireNamespace("serodynamics", quietly = TRUE)) {
+    cli::cli_abort(c(
+      "Package {.pkg serodynamics} is required.",
+      "i" = "Install it before using {.fn prep_data_stan}."
+    ))
+  }
+  serodynamics::prep_data(
+    data,
+    add_newperson = FALSE
+  )
+}
+
+# Helper: sanity-check array sizes and zero-observation subjects.
+.validate_stan_arrays <- function(nsmpl, max_obs) {
+  if (any(nsmpl > max_obs)) {
+    cli::cli_abort(
+      "n_obs[{which(nsmpl > max_obs)}] > max_obs. Array sizes inconsistent."
+    )
+  }
+  if (any(nsmpl == 0)) {
+    cli::cli_warn(
+      "Subject(s) with 0 observations detected; these contribute no likelihood."
+    )
+  }
 }

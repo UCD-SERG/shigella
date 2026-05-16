@@ -22,7 +22,7 @@ postprocess_stan_output <- function(stan_fit,
   has_kron <- identical(model, "model_2")
 
   if (!requireNamespace("posterior", quietly = TRUE)) {
-    cli::cli_abort("Package {.pkg posterior} required for cmdstanr 
+    cli::cli_abort("Package {.pkg posterior} required for cmdstanr
                    postprocessing.")
   }
 
@@ -35,48 +35,19 @@ postprocess_stan_output <- function(stan_fit,
   draws_df <- posterior::as_draws_df(
     stan_fit$draws(variables = param_names)
   )
-  
+
   n_chain <- max(draws_df$.chain)
 
-  out_list <- list()
-  row_counter <- 1L
-
-  for (p in seq_along(param_names)) {
-    pname <- param_names[p]
-    # Find columns matching pname[i,k]
-    matching_cols <- grep(paste0("^", pname, "\\["), colnames(draws_df), 
-                          value = TRUE)
-    if (length(matching_cols) != N * K) {
-      cli::cli_abort(
-        "Expected {N * K} {.var {pname}} draws; got {length(matching_cols)}."
-      )
-    }
-
-    for (col_name in matching_cols) {
-      m <- regmatches(col_name, regexec("\\[(\\d+),(\\d+)\\]", col_name))[[1]]
-      subj_idx <- as.integer(m[2])
-      iso_idx  <- as.integer(m[3])
-
-      # Extract draws for this parameter index
-      sub_df <- draws_df[, c(".chain", ".iteration", col_name)]
-
-      for (ch in seq_len(n_chain)) {
-        chain_data <- sub_df[sub_df$.chain == ch, ]
-        out_list[[row_counter]] <- tibble::tibble(
-          Iteration      = chain_data$.iteration,
-          Chain          = ch,
-          Parameter      = pname,
-          Iso_type       = antigens[iso_idx],
-          Stratification = stratification,
-          Subject        = ids[subj_idx],
-          value          = chain_data[[col_name]]
-        )
-        row_counter <- row_counter + 1L
-      }
-    }
-  }
-
-  sr_tibble <- dplyr::bind_rows(out_list)
+  sr_tibble <- .extract_param_draws_to_tibbles(
+    param_names    = param_names,
+    draws_df       = draws_df,
+    N              = N,
+    K              = K,
+    ids            = ids,
+    antigens       = antigens,
+    stratification = stratification,
+    n_chain        = n_chain
+  )
 
   cov_summaries <- list()
 
@@ -116,13 +87,13 @@ postprocess_stan_output <- function(stan_fit,
       sigma_P_arr <- posterior::as_draws_array(
         stan_fit$draws(variables = "Sigma_P")
       )
-      cov_summaries$Omega_B <- summarize_matrix_draws(omega_B_arr, 
+      cov_summaries$Omega_B <- summarize_matrix_draws(omega_B_arr,
                                                       "Omega_B", K, K)
-      cov_summaries$Sigma_B <- summarize_matrix_draws(sigma_B_arr, 
+      cov_summaries$Sigma_B <- summarize_matrix_draws(sigma_B_arr,
                                                       "Sigma_B", K, K)
-      cov_summaries$Omega_P <- summarize_matrix_draws(omega_P_arr, 
+      cov_summaries$Omega_P <- summarize_matrix_draws(omega_P_arr,
                                                       "Omega_P", 5L, 5L)
-      cov_summaries$Sigma_P <- summarize_matrix_draws(sigma_P_arr, 
+      cov_summaries$Sigma_P <- summarize_matrix_draws(sigma_P_arr,
                                                       "Sigma_P", 5L, 5L)
       dimnames(cov_summaries$Omega_B) <- list(antigens, antigens)
       dimnames(cov_summaries$Sigma_B) <- list(antigens, antigens)
@@ -148,19 +119,46 @@ postprocess_stan_output <- function(stan_fit,
   ))
 }
 
-# Helper: summarize a draws_array of a matrix variable to a single matrix
-# by taking the median across all draws.
-summarize_matrix_draws <- function(draws_arr, var_name, nrow, ncol) {
-  result <- matrix(NA_real_, nrow = nrow, ncol = ncol)
-  var_dim <- dimnames(draws_arr)$variable
-  for (i in seq_len(nrow)) {
-    for (j in seq_len(ncol)) {
-      cell_name <- sprintf("%s[%d,%d]", var_name, i, j)
-      if (cell_name %in% var_dim) {
-        cell_draws <- as.numeric(draws_arr[, , cell_name])
-        result[i, j] <- median(cell_draws, na.rm = TRUE)
+# Helper: extract draws for all param_names into a single tibble.
+.extract_param_draws_to_tibbles <- function(param_names, draws_df, N, K,
+                                            ids, antigens, stratification,
+                                            n_chain) {
+  out_list <- list()
+  row_counter <- 1L
+
+  for (pname in param_names) {
+    # Find columns matching pname[i,k]
+    matching_cols <- grep(paste0("^", pname, "\\["), colnames(draws_df),
+                          value = TRUE)
+    if (length(matching_cols) != N * K) {
+      cli::cli_abort(
+        "Expected {N * K} {.var {pname}} draws; got {length(matching_cols)}."
+      )
+    }
+
+    for (col_name in matching_cols) {
+      m <- regmatches(col_name, regexec("\\[(\\d+),(\\d+)\\]", col_name))[[1]]
+      subj_idx <- as.integer(m[2])
+      iso_idx  <- as.integer(m[3])
+
+      # Extract draws for this parameter index
+      sub_df <- draws_df[, c(".chain", ".iteration", col_name)]
+
+      for (ch in seq_len(n_chain)) {
+        chain_data <- sub_df[sub_df$.chain == ch, ]
+        out_list[[row_counter]] <- tibble::tibble(
+          Iteration      = chain_data$.iteration,
+          Chain          = ch,
+          Parameter      = pname,
+          Iso_type       = antigens[iso_idx],
+          Stratification = stratification,
+          Subject        = ids[subj_idx],
+          value          = chain_data[[col_name]]
+        )
+        row_counter <- row_counter + 1L
       }
     }
   }
-  result
+
+  dplyr::bind_rows(out_list)
 }

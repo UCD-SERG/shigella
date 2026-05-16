@@ -23,3 +23,12 @@ test_that("sim_correlated_case_data supports n = 1", {
   expect_s3_class(sim, "case_data")
   expect_equal(length(unique(sim$id)), 1)
 })
+
+test_that("sim_correlated_case_data theta_true structure is stable", {
+  sim <- sim_correlated_case_data(n = 5, seed = 2026)
+  theta <- attr(sim, "theta_true")
+  expect_snapshot(dim(theta))
+  expect_snapshot(dimnames(theta))
+  truth <- attr(sim, "truth")
+  expect_snapshot(names(truth))
+})

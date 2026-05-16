@@ -25,3 +25,9 @@ test_that("prep_priors_stan includes biomarker priors only for model_2", {
   expect_false("tau_B_scale" %in% names(priors_model_1))
   expect_false("lkj_B_eta" %in% names(priors_model_1))
 })
+
+test_that("prep_priors_stan model_2 structure is stable", {
+  priors <- prep_priors_stan(model = "model_2")
+  expect_snapshot(names(priors))
+  expect_snapshot(sapply(priors, class))
+})

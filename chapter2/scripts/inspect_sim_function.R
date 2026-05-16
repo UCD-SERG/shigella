@@ -15,7 +15,7 @@ cat("\n========================================================\n")
 cat(" INSPECT: sim_correlated_case_data() internals\n")
 cat("========================================================\n\n")
 
-source("R/sim_correlated_case_data.R")
+library(shigella)
 
 # Print the function body
 cat("=== Function body ===\n")
