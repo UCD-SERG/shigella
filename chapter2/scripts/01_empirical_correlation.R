@@ -18,6 +18,7 @@ library(serocalculator)
 source("R/correlation_utils.R")
 source("R/compute_residual_correlation.R")
 source("R/build_summary_row.R")
+source("R/plot_empirical_correlation.R")
 
 set.seed(2026)
 
@@ -126,48 +127,13 @@ all_scatter <- dplyr::bind_rows(
   sf2a_corr$scatter_df
 ) |>
   dplyr::mutate(
-    Parameter = factor(parameter,
-                       levels = c("y0", "y1", "t1", "alpha", "shape")),
-    Antigen   = factor(antigen, levels = c("IpaB", "Sonnei", "Sf2a")),
+    Parameter   = factor(parameter,
+                         levels = c("y0", "y1", "t1", "alpha", "shape")),
+    Antigen     = factor(antigen, levels = c("IpaB", "Sonnei", "Sf2a")),
     panel_label = sprintf("rho=%.2f [%.2f,%.2f]", rho, ci_lower, ci_upper)
   )
 
-p_grid <- ggplot(all_scatter, aes(x = IgG, y = IgA)) +
-  geom_point(alpha = 0.6, size = 1.8) +
-  geom_smooth(method = "lm", se = TRUE, color = "steelblue",
-              linewidth = 0.7, alpha = 0.15) +
-  facet_grid(
-    rows = vars(Antigen),
-    cols = vars(Parameter),
-    scales = "free",
-    labeller = labeller(
-      Parameter = c(y0 = "log(y0)", y1 = "log(y1)", t1 = "log(t1)",
-                    alpha = "log(alpha)", shape = "log(shape-1)")
-    )
-  ) +
-  geom_text(
-    data = all_scatter |>
-      dplyr::group_by(Antigen, Parameter) |>
-      dplyr::slice(1),
-    aes(label = panel_label),
-    x = -Inf, y = Inf, hjust = -0.1, vjust = 1.5,
-    size = 2.8, fontface = "bold", color = "#B2182B"
-  ) +
-  labs(
-    title = "Panel B Supplement - IgG vs IgA posterior medians per subject",
-    subtitle = "Each point = one individual; rho [95% CI] shown in each panel",
-    x = "IgG parameter (posterior median)",
-    y = "IgA parameter (posterior median)"
-  ) +
-  theme_bw(base_size = 10) +
-  theme(
-    strip.background = element_rect(fill = "grey20"),
-    strip.text = element_text(color = "white", face = "bold"),
-    plot.title = element_text(face = "bold"),
-    axis.text = element_text(size = 7),
-    panel.grid.minor = element_blank()
-  )
-
+p_grid <- plot_param_scatter_grid(all_scatter)
 ggsave("outputs/01v3_scatter_grid.png", p_grid,
        width = 14, height = 8, dpi = 150, bg = "white")
 
@@ -176,40 +142,12 @@ ggsave("outputs/01v3_scatter_grid.png", p_grid,
 # ==========================================================================
 forest_df <- summary_df |>
   dplyr::mutate(
-    param_label = factor(Parameter,
-                         levels = c("y0", "y1", "t1", "alpha", "shape")),
+    param_label   = factor(Parameter,
+                           levels = c("y0", "y1", "t1", "alpha", "shape")),
     antigen_color = factor(Antigen, levels = c("IpaB", "Sonnei", "Sf2a"))
   )
 
-p_forest <- ggplot(forest_df,
-                   aes(x = rho, y = param_label, color = antigen_color)) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "grey50") +
-  geom_vline(xintercept = 0.5, linetype = "dotted", color = "grey40") +
-  geom_point(size = 3, position = position_dodge(width = 0.5)) +
-  geom_errorbarh(
-    aes(xmin = ci_fisher_lo, xmax = ci_fisher_hi),
-    height = 0.2,
-    position = position_dodge(width = 0.5),
-    linewidth = 0.8
-  ) +
-  scale_color_manual(values = c("IpaB" = "#2166AC",
-                                 "Sonnei" = "#4393C3",
-                                 "Sf2a" = "#92C5DE"),
-                     name = "Antigen") +
-  scale_x_continuous(limits = c(-0.5, 1), breaks = seq(-0.5, 1, 0.25)) +
-  labs(
-    title = "Parameter correlation 95% CI (Fisher z; subject-level, n_subj>=11)",
-    subtitle = "Dashed = 0 (independence); dotted = 0.5 (Cohen large)",
-    x = "rho_parameter",
-    y = NULL
-  ) +
-  theme_bw(base_size = 11) +
-  theme(
-    plot.title = element_text(face = "bold"),
-    legend.position = "bottom",
-    panel.grid.major.y = element_blank()
-  )
-
+p_forest <- plot_param_forest(forest_df)
 ggsave("outputs/01v3_forest_plot.png", p_forest,
        width = 10, height = 5, dpi = 150, bg = "white")
 

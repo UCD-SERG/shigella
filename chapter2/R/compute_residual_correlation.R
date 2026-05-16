@@ -73,14 +73,6 @@ compute_residual_correlation_ch1_v3 <- function(fit,
   # pair of IgG/IgA medians), so observations ARE independent across subjects.
   # Fisher z CI here is valid.
 
-  extract_param_medians <- function(fit_obj, iso_label) {
-    fit_obj |>
-      dplyr::filter(Iso_type == iso_label,
-                    Parameter %in% c("y0", "y1", "t1", "alpha", "shape")) |>
-      dplyr::group_by(Subject, Parameter) |>
-      dplyr::summarise(med = median(value, na.rm = TRUE), .groups = "drop")
-  }
-
   med_igg <- extract_param_medians(fit, "IgG")
   med_iga <- extract_param_medians(fit, "IgA")
 

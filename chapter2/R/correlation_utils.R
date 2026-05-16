@@ -72,6 +72,19 @@ cluster_bootstrap_residual_ci <- function(merged_log, n_boot = 1000,
 }
 
 
+#' Extract posterior median per subject/parameter for one isotype
+#'
+#' @param fit_obj sr_model object
+#' @param iso_label character, e.g. "IgG" or "IgA"
+extract_param_medians <- function(fit_obj, iso_label) {
+  fit_obj |>
+    dplyr::filter(Iso_type == iso_label,
+                  Parameter %in% c("y0", "y1", "t1", "alpha", "shape")) |>
+    dplyr::group_by(Subject, Parameter) |>
+    dplyr::summarise(med = median(value, na.rm = TRUE), .groups = "drop")
+}
+
+
 #' LR test for residual independence (chi-squared with df=1)
 lr_test_independence <- function(rho, n) {
   if (abs(rho) >= 1 || n < 4) return(list(statistic = NA, p_value = NA))

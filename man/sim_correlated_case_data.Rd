@@ -63,17 +63,57 @@ Omega_B, Omega_eps
 Extends \code{\link[serodynamics:sim_case_data]{serodynamics::sim_case_data()}} to inject known correlation
 structure at two levels:
 \enumerate{
-\item \strong{Parameter-level correlation} (Omega_B): "high IgG responder
-tends to be high IgA responder" — implemented via the Kronecker
-structure vec(Theta_i) ~ N(vec(M), Sigma_B kron Sigma_P).
-\item \strong{Residual-level correlation} (Omega_eps): "IgG and IgA
-measurement errors co-vary within a time point" — implemented via
-multivariate log-normal observation noise with covariance
-Sigma_eps.
+\item \strong{Parameter-level (between-biomarker) correlation} via a Kronecker
+covariance on the vectorised per-subject parameter matrix.
+\item \strong{Residual-level correlation} via multivariate log-normal
+observation noise.
 }
 
-This is the data-generating process for the Chapter 2 simulation
-study.
+\strong{Data-generating process}
+
+\emph{Subject parameters.}  Let \eqn{\Theta_i} be the \eqn{P \times K}
+matrix of log-scale kinetic parameters for subject \eqn{i}
+(rows = parameters, columns = biomarkers).  Draw
+\deqn{
+  \mathrm{vec}(\Theta_i) \sim
+  \mathcal{N}\!\bigl(\mathrm{vec}(M),\;
+                       \Sigma_B \otimes \Sigma_P\bigr),
+}
+where \eqn{M} is a \eqn{P \times K} population-mean matrix,
+\eqn{\Sigma_P = \mathrm{diag}(\tau_P)\,\Omega_P\,\mathrm{diag}(\tau_P)}
+is the \eqn{P \times P} within-biomarker parameter covariance, and
+\eqn{\Sigma_B = \mathrm{diag}(\tau_B)\,\Omega_B\,\mathrm{diag}(\tau_B)}
+is the \eqn{K \times K} between-biomarker covariance.
+
+\emph{Observation model.}  For each subject \eqn{i}, time \eqn{t}, and
+biomarker \eqn{k},
+\deqn{
+  \log y_{i,t,k} = \log \mu_{i,t,k} + \varepsilon_{i,t,k},
+  \quad
+  \boldsymbol{\varepsilon}_{i,t} \sim
+  \mathcal{N}(\mathbf{0},\, \Sigma_\varepsilon),
+}
+where
+\eqn{\Sigma_\varepsilon =
+  \mathrm{diag}(\tau_\varepsilon)\,\Omega_\varepsilon\,
+  \mathrm{diag}(\tau_\varepsilon)}.
+
+\emph{Two-phase kinetics.}  The deterministic log-mean follows
+\deqn{
+  \log \mu_{i,t,k} =
+  \begin{cases}
+    \log(y0_{ik}) + \beta_{ik}\,t, & t \le t1_{ik},\\[4pt]
+    \dfrac{1}{1-s_{ik}}
+      \log\!\bigl(y1_{ik}^{1-s_{ik}}
+             - (1-s_{ik})\,\alpha_{ik}(t - t1_{ik})\bigr),
+    & t > t1_{ik},
+  \end{cases}
+}
+with growth rate
+\eqn{\beta_{ik} = (\log y1_{ik} - \log y0_{ik})\,/\,t1_{ik}}
+and shape \eqn{s_{ik} = \exp(\mathtt{log\_rm1}_{ik}) + 1 > 1}.
+
+This is the data-generating process for the Chapter 2 simulation study.
 }
 \examples{
 ## Example
