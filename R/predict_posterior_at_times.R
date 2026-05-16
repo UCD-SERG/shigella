@@ -54,11 +54,11 @@ predict_posterior_at_times <- function(model, ids, antigen_iso, times) {
     dplyr::filter(.data$Subject %in% ids, .data$Iso_type == antigen_iso)
 
   param_wide <- sr_model_sub |>
-    dplyr::select(.data$Chain, .data$Iteration, .data$Iso_type,
-                  .data$Parameter, .data$value, .data$Subject) |>
+    dplyr::select("Chain", "Iteration", "Iso_type",
+                  "Parameter", "value", "Subject") |>
     tidyr::pivot_wider(
-      names_from = .data$Parameter,
-      values_from = .data$value
+      names_from = "Parameter",
+      values_from = "value"
     ) |>
     dplyr::arrange(.data$Chain, .data$Iteration) |>
     dplyr::mutate(
