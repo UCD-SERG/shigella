@@ -15,19 +15,27 @@ test_that("run_mod_stan completes a minimal fit (slow)", {
 
   sim <- sim_correlated_case_data(n = 3, seed = 2026)
 
-  fit <- run_mod_stan(
+  fit <- suppressWarnings(run_mod_stan(
     data          = sim,
     model         = "model_2",
     chains        = 1,
-    iter_warmup   = 100,
+    iter_warmup   = 200,
     iter_sampling = 100,
+    adapt_delta   = 0.99,
+    max_treedepth = 15,
     refresh       = 0,
     show_messages = FALSE
-  )
+  ))
 
   expect_s3_class(fit, "sr_model")
 })
 
 test_that("run_mod_stan has expected function signature", {
-  expect_snapshot(names(formals(run_mod_stan)))
+  expect_equal(
+    names(formals(run_mod_stan)),
+    c("data", "model", "chains", "iter_sampling", "iter_warmup",
+      "adapt_delta", "max_treedepth", "seed", "strat", "parallel_chains",
+      "with_post", "stan_dir", "compile_dir", "init", "refresh",
+      "show_messages", "...")
+  )
 })

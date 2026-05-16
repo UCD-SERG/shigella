@@ -27,8 +27,21 @@ test_that("sim_correlated_case_data supports n = 1", {
 test_that("sim_correlated_case_data theta_true structure is stable", {
   sim <- sim_correlated_case_data(n = 5, seed = 2026)
   theta <- attr(sim, "theta_true")
-  expect_snapshot(dim(theta))
-  expect_snapshot(dimnames(theta))
+
+  expect_equal(dim(theta), c(5L, 5L, 2L))
+  expect_equal(
+    dimnames(theta),
+    list(
+      subject  = as.character(1:5),
+      param    = c("log_y0", "log_y1m0", "log_t1", "log_alpha", "log_rm1"),
+      biomarker = c("biomarker_1", "biomarker_2")
+    )
+  )
+
   truth <- attr(sim, "truth")
-  expect_snapshot(names(truth))
+  expect_equal(
+    names(truth),
+    c("mu", "tau_P", "tau_B", "tau_eps", "omega_P", "omega_B", "omega_eps",
+      "sigma_P", "sigma_B", "sigma_eps")
+  )
 })
