@@ -84,9 +84,11 @@ Output: an \code{sr_model} tibble with the same column schema as \code{run_mod()
 so all existing plot / summary functions work unchanged. Stan-specific
 attributes are also attached:
 \itemize{
-\item \code{Omega_eps}, \code{Sigma_eps}: residual covariance (all models)
+\item \code{Omega_eps}, \code{Sigma_eps}: residual covariance (Model 2 only)
 \item \code{Omega_B}, \code{Sigma_B}:     biomarker covariance (Model 2 only)
-\item \code{Omega_P}, \code{Sigma_P}:     parameter covariance
+\item \code{Omega_P}:                parameter corr matrix (Model 2: single matrix;
+Model 1: named list of K matrices, one per biomarker)
+\item \code{Sigma_P}:                parameter covariance (Model 2 only)
 \item \code{stan_fit}:               raw CmdStanMCMC object (when with_post = TRUE)
 }
 }

@@ -9,9 +9,11 @@
 #' Output: an `sr_model` tibble with the same column schema as `run_mod()`,
 #' so all existing plot / summary functions work unchanged. Stan-specific
 #' attributes are also attached:
-#'   - `Omega_eps`, `Sigma_eps`: residual covariance (all models)
+#'   - `Omega_eps`, `Sigma_eps`: residual covariance (Model 2 only)
 #'   - `Omega_B`, `Sigma_B`:     biomarker covariance (Model 2 only)
-#'   - `Omega_P`, `Sigma_P`:     parameter covariance
+#'   - `Omega_P`:                parameter corr matrix (Model 2: single matrix;
+#'                               Model 1: named list of K matrices, one per biomarker)
+#'   - `Sigma_P`:                parameter covariance (Model 2 only)
 #'   - `stan_fit`:               raw CmdStanMCMC object (when with_post = TRUE)
 #'
 #' @param data case_data object (from sim_correlated_case_data() or
