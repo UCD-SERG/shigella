@@ -34,10 +34,9 @@ functions work without modification.
 \examples{
 ## Example: postprocess_stan_output()
 ##
-## Convert a raw cmdstanr fit object into the tidy `sr_model` format
-## with priors and fitted_residuals attached as attributes.
-## Wrapped in \dontrun{} because this example requires a compiled
-## cmdstan installation, which is not available in every CI environment.
+## Convert a raw cmdstanr fit object into a list with sr_tibble
+## (tidy parameter draws) and cov_summaries (covariance matrices).
+## Requires a compiled cmdstan installation.
 
 if (interactive()) {
 if (requireNamespace("cmdstanr", quietly = TRUE)) {

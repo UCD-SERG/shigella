@@ -6,10 +6,7 @@
 \alias{shigella-package}
 \title{shigella: Bayesian Modeling of Shigella Antibody Kinetics}
 \description{
-Tools for multivariate Bayesian hierarchical modeling of
-antibody response trajectories following confirmed Shigella infection,
-supporting kinetic parameter estimation and serosurveillance
-applications via Stan (cmdstanr) backends.
+Tools for multivariate Bayesian hierarchical modeling of antibody response trajectories following confirmed Shigella infection, supporting kinetic parameter estimation and serosurveillance applications via Stan (cmdstanr) backends.
 }
 \seealso{
 Useful links:

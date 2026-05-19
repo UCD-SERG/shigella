@@ -74,7 +74,7 @@ sr_model tibble
 \description{
 Fits the two-phase antibody kinetics model using \strong{cmdstanr}.
 The \code{compile_dir} argument allows compiled Stan binaries to be written to
-a writable directory (default: \code{/tmp}), which is useful on HPC systems
+a writable directory (default: \verb{/tmp}), which is useful on HPC systems
 where the home directory is mounted non-executable.
 
 Output: an \code{sr_model} tibble with the same column schema as \code{run_mod()},
