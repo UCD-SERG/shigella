@@ -1,14 +1,22 @@
-# ==========================================================================
-# phase0_no_slurm_reproducibility.R
-# ==========================================================================
+# ============================================================================
+# phase0_interactive_reproducibility_n48.R
+#
+# Execution:
+#   salloc --time=04:00:00 --cpus-per-task=2 --mem=10G
+#   Rscript scripts/phase0_interactive_reproducibility_n48.R
+#   exit
+#
+# Purpose: reproduce a Phase 1 (sbatch) fit under interactive SLURM to confirm
+# determinism across allocation modes. n=48 version (full cohort size).
+# ============================================================================
 
 # ----- 0. Setup + paths -----
 setwd("~/shigella/chapter2")
 
 cat("\n", strrep("=", 70), "\n", sep = "")
-cat(" PHASE 0: NO-SLURM REPRODUCIBILITY TEST\n")
-cat(" Purpose: Run identical fit OUTSIDE Slurm to isolate environment\n")
-cat(" Goal: 'Does this only happen on Slurm?'\n")
+cat(" PHASE 0: INTERACTIVE SLURM REPRODUCIBILITY TEST (n=48)\n")
+cat(" Purpose: Run identical fit via salloc to compare with Phase 1 sbatch\n")
+cat(" Goal: confirm determinism across interactive vs batch allocation modes\n")
 cat(strrep("=", 70), "\n\n", sep = "")
 
 cat(sprintf("Started at:     %s\n", format(Sys.time())))
@@ -19,8 +27,8 @@ cat(sprintf("Working dir:    %s\n\n", getwd()))
 dir.create("logs/phase0",   recursive = TRUE, showWarnings = FALSE)
 dir.create("outputs/phase0", recursive = TRUE, showWarnings = FALSE)
 
-# Status tracker — written incrementally so we know where we crashed even
-# if the script dies mid-way. Mirrors Ezra's request for crash-resilient logs.
+# Status tracker — written incrementally so we know WHERE we crashed even
+# if the script dies mid-way.
 status_file <- "outputs/phase0/PHASE0_STATUS.txt"
 unlink(status_file)
 write_status(status_file, "INIT", "Phase 0 started")
@@ -97,7 +105,7 @@ cat(strrep("-", 70), "\n", sep = "")
 write_status(status_file,"COMPILE_DIR", "setting up")
 
 user <- Sys.getenv("USER", unset = "unknown")
-compile_dir <- file.path("/tmp", user, "cmdstan_bin_phase0")
+compile_dir <- file.path("/tmp", user, "cmdstan_bin_phase0_n48")
 if (!dir.exists(compile_dir)) {
   dir.create(compile_dir, recursive = TRUE, mode = "0755")
 }
@@ -114,7 +122,7 @@ if (file.exists(testfile)) {
   stop("compile_dir is not writable — cannot proceed")
 }
 
-# Executable test 
+# Executable test
 shellscript <- file.path(compile_dir, "_test_exec.sh")
 writeLines(c("#!/bin/bash", "echo executable"), shellscript)
 Sys.chmod(shellscript, "0755")
@@ -133,7 +141,7 @@ unlink(shellscript)
 write_status(status_file,"COMPILE_DIR", "OK")
 cat("\n")
 
-# ----- 4. Simulate small data (n=5, fixed seed) -----
+# ----- 4. Simulate small data -----
 cat(strrep("-", 70), "\n", sep = "")
 cat("STEP 4: Simulate small synthetic data\n")
 cat(strrep("-", 70), "\n", sep = "")
@@ -145,7 +153,7 @@ true_rho_B <- 0.6
 omega_B_true <- matrix(c(1, true_rho_B, true_rho_B, 1), 2, 2)
 
 sim_data <- sim_correlated_case_data(
-  n                 = 5,                            
+  n                 = 48,                            # changed to 48
   omega_B           = omega_B_true,
   antigen_isos      = c("IgG", "IgA"),
   n_obs_per_subject = 5L
@@ -156,13 +164,13 @@ cat(sprintf("  total rows:  %d\n", nrow(sim_data)))
 cat(sprintf("  isotypes:    %s\n", paste(unique(sim_data$antigen_iso), collapse = ", ")))
 cat(sprintf("  true rho_B:  %.3f\n", true_rho_B))
 
-saveRDS(sim_data, "outputs/phase0/sim_data_n5.rds")
-cat("  saved -> outputs/phase0/sim_data_n5.rds\n")
+saveRDS(sim_data, "outputs/phase0/sim_data_n48.rds")
+cat("  saved -> outputs/phase0/sim_data_n48.rds\n")
 
 write_status(status_file,"SIMULATE", "OK")
 cat("\n")
 
-# ----- 5. Run single fit -----
+# ----- 5. Run single fit, capture EVERYTHING -----
 cat(strrep("-", 70), "\n", sep = "")
 cat("STEP 5: Fit model_2 (Kronecker), light settings, single chain\n")
 cat(strrep("-", 70), "\n", sep = "")
@@ -171,12 +179,12 @@ write_status(status_file,"FIT", "running")
 t_start <- Sys.time()
 
 saveRDS(
-  list(scenario = "phase0_no_slurm",
+  list(scenario = "phase0_interactive",
        status   = "FIT_STARTED",
        started_at = format(t_start),
        true_rho_B = true_rho_B,
-       n = 5),
-  "outputs/phase0/one_fit_n5.rds"
+       n = 48),
+  "outputs/phase0/one_fit_n48.rds"
 )
 
 fit <- tryCatch({
@@ -184,8 +192,8 @@ fit <- tryCatch({
     data            = sim_data,
     model           = "model_2",
     chains          = 2,
-    iter_warmup     = 500,
-    iter_sampling   = 500,
+    iter_warmup     = 1000,
+    iter_sampling   = 1000,
     parallel_chains = 2,
     adapt_delta     = 0.95,
     max_treedepth   = 12,
@@ -202,13 +210,13 @@ fit <- tryCatch({
   print(sys.calls())
   write_status(status_file,"FIT", paste("CRASHED:", conditionMessage(e)))
   saveRDS(
-    list(scenario = "phase0_no_slurm",
+    list(scenario = "phase0_interactive",
          status   = "FIT_FAILED",
          error    = conditionMessage(e),
          crashed_at = format(Sys.time()),
          true_rho_B = true_rho_B,
-         n = 5),
-    "outputs/phase0/one_fit_n5.rds"
+         n = 48),
+    "outputs/phase0/one_fit_n48.rds"
   )
   NULL
 })
@@ -218,9 +226,8 @@ cat(sprintf("\n  Fit elapsed: %.2f min\n", elapsed))
 
 if (is.null(fit)) {
   cat("\n", strrep("!", 70), "\n", sep = "")
-  cat(" PHASE 0 RESULT: FIT CRASHED OUTSIDE SLURM\n")
-  cat(" This is a HIGH-SIGNAL finding for Ezra.\n")
-  cat(" → Confirms problem is NOT Slurm-specific.\n")
+  cat(" PHASE 0 RESULT: FIT CRASHED IN INTERACTIVE SLURM\n")
+  cat(" → Both interactive and batch modes fail.\n")
   cat(" → Skip Phase 1-3, jump to Phase 4 over-parameterization diagnosis.\n")
   cat(strrep("!", 70), "\n", sep = "")
   write_status(status_file,"DONE", "Phase 0 FAILED — see error above")
@@ -241,8 +248,7 @@ sf <- attr(fit, "stan_fit")[[1]]
 diag <- sf$diagnostic_summary(diagnostics = c("divergences",
                                               "treedepth",
                                               "ebfmi"))
-n_total_draws <- sum(diag$num_divergent) + sum(diag$num_max_treedepth)
-total_iters   <- 2 * 500   # chains * iter_sampling
+total_iters   <- 2 * 1000   # chains * iter_sampling
 
 cat(sprintf("  divergent transitions:   %d / %d (%.2f%%)\n",
             sum(diag$num_divergent), total_iters,
@@ -278,7 +284,7 @@ cat(strrep("-", 70), "\n", sep = "")
 write_status(status_file,"SAVE", "writing rds")
 
 result_bundle <- list(
-  scenario            = "phase0_no_slurm",
+  scenario            = "phase0_interactive",
   status              = "OK",
   elapsed_min         = elapsed,
   started_at          = format(t_start),
@@ -287,7 +293,7 @@ result_bundle <- list(
   pkg_versions        = pkg_versions,
   cmdstan_version     = cmdstan_ver,
   true_rho_B          = true_rho_B,
-  n_subjects          = 5,
+  n_subjects          = 48,
   fit_settings        = list(chains = 2, warmup = 500, sampling = 500,
                              adapt_delta = 0.95, max_treedepth = 12),
   diagnostic_summary  = diag,
@@ -297,12 +303,12 @@ result_bundle <- list(
                           sf$draws("Omega_B[1,2]")))
 )
 
-saveRDS(result_bundle, "outputs/phase0/one_fit_n5.rds")
-saveRDS(result_bundle$diagnostic_summary, "outputs/phase0/one_fit_n5_diag.rds")
+saveRDS(result_bundle, "outputs/phase0/one_fit_n48.rds")
+saveRDS(result_bundle$diagnostic_summary, "outputs/phase0/one_fit_n48_diag.rds")
 
 write_status(status_file,"SAVE", "OK")
-cat("  saved -> outputs/phase0/one_fit_n5.rds\n")
-cat("  saved -> outputs/phase0/one_fit_n5_diag.rds\n\n")
+cat("  saved -> outputs/phase0/one_fit_n48.rds\n")
+cat("  saved -> outputs/phase0/one_fit_n48_diag.rds\n\n")
 
 # ----- 8. Final summary block -----
 cat(strrep("=", 70), "\n", sep = "")
@@ -326,11 +332,11 @@ cat(sprintf("  Max-treedepth hits:  %d / %d\n",
 cat(strrep("=", 70), "\n\n", sep = "")
 
 cat(" NEXT STEP:\n")
-cat("   1. Inspect outputs/phase0/one_fit_n5.rds + logs/phase0/*.log\n")
-cat("   2. If divergent rate ≤ 5% AND R-hat ≤ 1.01:\n")
-cat("        → Proceed to Phase 1 (sbatch slurm/phase1_single.sbatch)\n")
+cat("   1. Inspect outputs/phase0/one_fit_n48.rds + logs/phase0/*.log\n")
+cat("   2. If divergent rate <= 5% AND R-hat <= 1.01:\n")
+cat("        -> Proceed to Phase 1 (sbatch slurm/phase1_single_n48.sbatch)\n")
 cat("   3. If divergent rate > 10% OR R-hat > 1.02:\n")
-cat("        → This is a NO-Slurm reproducible failure.\n")
-cat("        → Skip Phase 1-3, jump to Phase 4 over-param diagnosis.\n\n")
+cat("        -> Phase 0 interactive fit failed.\n")
+cat("        -> Skip Phase 1-3, jump to Phase 4 over-param diagnosis.\n\n")
 
 write_status(status_file,"DONE", "Phase 0 completed successfully")

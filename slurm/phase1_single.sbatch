@@ -2,7 +2,7 @@
 # ==========================================================================
 # phase1_single.sbatch — SLURM single-task diagnostic run
 #
-# Purpose: Run the SAME n=5 fit as phase0_no_slurm_reproducibility.R, but
+# Purpose: Run the SAME n=5 fit as phase0_interactive_reproducibility.R, but
 # inside a SLURM compute job. Direct comparison isolates "is the issue
 # SLURM or the code itself?" 
 #

@@ -253,7 +253,7 @@ if (file.exists(phase0_file)) {
   }
 } else {
   cat("\n  [INFO] Phase 0 result not found — comparison skipped.\n")
-  cat("         Run phase0_no_slurm_reproducibility.R first if you want\n")
+  cat("         Run phase0_interactive_reproducibility.R first if you want\n")
   cat("         direct apples-to-apples comparison.\n")
 }
 
