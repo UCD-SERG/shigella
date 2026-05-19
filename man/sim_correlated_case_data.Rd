@@ -2,7 +2,7 @@
 % Please edit documentation in R/sim_correlated_case_data.R
 \name{sim_correlated_case_data}
 \alias{sim_correlated_case_data}
-\title{Simulate correlated longitudinal case data (Chapter 2)}
+\title{Simulate correlated longitudinal case data}
 \usage{
 sim_correlated_case_data(
   n = 48,
@@ -47,7 +47,7 @@ parameters}
 (default 5, matching the Shigella SOSAR cohort)}
 
 \item{time_grid}{\link{numeric} follow-up times in days
-(default c(2, 7, 30, 90, 180) mimicking Chapter 1)}
+(default c(2, 7, 30, 90, 180))}
 
 \item{seed}{\link{integer} RNG seed}
 }
@@ -113,7 +113,7 @@ with growth rate
 \eqn{\beta_{ik} = (\log y1_{ik} - \log y0_{ik})\,/\,t1_{ik}}
 and shape \eqn{s_{ik} = \exp(\mathtt{log\_rm1}_{ik}) + 1 > 1}.
 
-This is the data-generating process for the Chapter 2 simulation study.
+This is the data-generating process for a Kronecker-correlated simulation study.
 }
 \examples{
 ## Example

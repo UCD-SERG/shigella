@@ -1,4 +1,4 @@
-#' @title Simulate correlated longitudinal case data (Chapter 2)
+#' @title Simulate correlated longitudinal case data
 #' @description
 #' Extends [serodynamics::sim_case_data()] to inject known correlation
 #' structure at two levels:
@@ -52,7 +52,7 @@
 #' \eqn{\beta_{ik} = (\log y1_{ik} - \log y0_{ik})\,/\,t1_{ik}}
 #' and shape \eqn{s_{ik} = \exp(\mathtt{log\_rm1}_{ik}) + 1 > 1}.
 #'
-#' This is the data-generating process for the Chapter 2 simulation study.
+#' This is the data-generating process for a Kronecker-correlated simulation study.
 #'
 #' @param n [integer] number of individuals to simulate
 #' @param mu [numeric] length-P vector of population means on log scale
@@ -71,7 +71,7 @@
 #' @param n_obs_per_subject [integer] number of observations per subject
 #'   (default 5, matching the Shigella SOSAR cohort)
 #' @param time_grid [numeric] follow-up times in days
-#'   (default c(2, 7, 30, 90, 180) mimicking Chapter 1)
+#'   (default c(2, 7, 30, 90, 180))
 #' @param seed [integer] RNG seed
 #'
 #' @returns a `case_data` object plus attributes recording the truth:

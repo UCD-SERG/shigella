@@ -1,10 +1,9 @@
-#' @title Run Stan model — cmdstanr version (Shiva-compatible)
+#' @title Run Stan model using the cmdstanr backend
 #' @description
-#' Fits the two-phase antibody kinetics model using **cmdstanr** instead of
-#' rstan. This is required on HPC systems like Shiva where:
-#'   - rstan can have toolchain conflicts with conda R
-#'   - cmdstanr's `dir` argument lets us write compiled binaries to a
-#'     writable/executable location (e.g., /tmp), bypassing /home noexec
+#' Fits the two-phase antibody kinetics model using **cmdstanr**.
+#' The `compile_dir` argument allows compiled Stan binaries to be written to
+#' a writable directory (default: `/tmp`), which is useful on HPC systems
+#' where the home directory is mounted non-executable.
 #'
 #' Output: an `sr_model` tibble with the same column schema as `run_mod()`,
 #' so all existing plot / summary functions work unchanged. Stan-specific
@@ -31,7 +30,7 @@
 #' back to `inst/stan` for interactive development.
 #' @param compile_dir directory where cmdstanr writes compiled binaries.
 #'                    Default uses STAN_COMPILE_DIR env var, or
-#'                    /tmp/<user>/cmdstan_bin if /home is noexec.
+#'                    /tmp/<user>/cmdstan_bin.
 #' @param init initial value strategy. Numeric value scales down random init
 #'             (default 0.1 to avoid -inf in multi_normal_cholesky_lpdf)
 #' @param ... additional priors passed to prep_priors_stan()

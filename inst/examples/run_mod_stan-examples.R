@@ -1,11 +1,8 @@
 ## Example: run_mod_stan()
 ##
-## Fit the Chapter 2 Kronecker Stan model on a small synthetic
-## dataset. Uses minimal MCMC settings so the example completes
-## quickly. For realistic settings, see the Phase 2 simulation
-## scripts (run on Shiva HPC).
-## Wrapped in \dontrun{} because this example requires a compiled
-## cmdstan installation, which is not available in every CI environment.
+## Fit the Kronecker Stan model on a small synthetic dataset.
+## Uses minimal MCMC settings so the example completes quickly.
+## Requires a compiled cmdstan installation.
 
 if (interactive()) {
 

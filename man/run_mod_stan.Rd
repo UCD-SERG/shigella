@@ -2,7 +2,7 @@
 % Please edit documentation in R/run_mod_stan.R
 \name{run_mod_stan}
 \alias{run_mod_stan}
-\title{Run Stan model — cmdstanr version (Shiva-compatible)}
+\title{Run Stan model using the cmdstanr backend}
 \usage{
 run_mod_stan(
   data,
@@ -57,7 +57,7 @@ back to \code{inst/stan} for interactive development.}
 
 \item{compile_dir}{directory where cmdstanr writes compiled binaries.
 Default uses STAN_COMPILE_DIR env var, or
-/tmp/\if{html}{\out{<user>}}/cmdstan_bin if /home is noexec.}
+/tmp/\if{html}{\out{<user>}}/cmdstan_bin.}
 
 \item{init}{initial value strategy. Numeric value scales down random init
 (default 0.1 to avoid -inf in multi_normal_cholesky_lpdf)}
@@ -72,13 +72,10 @@ Default uses STAN_COMPILE_DIR env var, or
 sr_model tibble
 }
 \description{
-Fits the two-phase antibody kinetics model using \strong{cmdstanr} instead of
-rstan. This is required on HPC systems like Shiva where:
-\itemize{
-\item rstan can have toolchain conflicts with conda R
-\item cmdstanr's \code{dir} argument lets us write compiled binaries to a
-writable/executable location (e.g., /tmp), bypassing /home noexec
-}
+Fits the two-phase antibody kinetics model using \strong{cmdstanr}.
+The \code{compile_dir} argument allows compiled Stan binaries to be written to
+a writable directory (default: \code{/tmp}), which is useful on HPC systems
+where the home directory is mounted non-executable.
 
 Output: an \code{sr_model} tibble with the same column schema as \code{run_mod()},
 so all existing plot / summary functions work unchanged. Stan-specific
@@ -96,12 +93,9 @@ biomarker)
 \examples{
 ## Example: run_mod_stan()
 ##
-## Fit the Chapter 2 Kronecker Stan model on a small synthetic
-## dataset. Uses minimal MCMC settings so the example completes
-## quickly. For realistic settings, see the Phase 2 simulation
-## scripts (run on Shiva HPC).
-## Wrapped in \dontrun{} because this example requires a compiled
-## cmdstan installation, which is not available in every CI environment.
+## Fit the Kronecker Stan model on a small synthetic dataset.
+## Uses minimal MCMC settings so the example completes quickly.
+## Requires a compiled cmdstan installation.
 
 if (interactive()) {
 
