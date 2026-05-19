@@ -101,31 +101,3 @@ prep_data_stan <- function(data,
   attr(stan_data, "antigens") <- antigens
   return(stan_data)
 }
-
-# Helper: convert a case_data object to prepped_jags_data via serodynamics.
-.case_data_to_prepped_jags <- function(data) {
-  if (!requireNamespace("serodynamics", quietly = TRUE)) {
-    cli::cli_abort(c(
-      "Package {.pkg serodynamics} is required.",
-      "i" = "Install it before using {.fn prep_data_stan}."
-    ))
-  }
-  serodynamics::prep_data(
-    data,
-    add_newperson = FALSE
-  )
-}
-
-# Helper: sanity-check array sizes and zero-observation subjects.
-.validate_stan_arrays <- function(nsmpl, max_obs) {
-  if (any(nsmpl > max_obs)) {
-    cli::cli_abort(
-      "n_obs[{which(nsmpl > max_obs)}] > max_obs. Array sizes inconsistent."
-    )
-  }
-  if (any(nsmpl == 0)) {
-    cli::cli_warn(
-      "Subject(s) with 0 observations detected; these contribute no likelihood."
-    )
-  }
-}
