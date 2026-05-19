@@ -22,18 +22,14 @@ dir.create("outputs/phase0", recursive = TRUE, showWarnings = FALSE)
 # Status tracker — written incrementally so we know where we crashed even
 # if the script dies mid-way. Mirrors Ezra's request for crash-resilient logs.
 status_file <- "outputs/phase0/PHASE0_STATUS.txt"
-.write_status <- function(step, msg = "") {
-  cat(sprintf("[%s] STEP=%s | %s\n", format(Sys.time()), step, msg),
-      file = status_file, append = TRUE)
-}
 unlink(status_file)
-.write_status("INIT", "Phase 0 started")
+write_status(status_file, "INIT", "Phase 0 started")
 
 # ----- 1. Package loading with version capture -----
 cat(strrep("-", 70), "\n", sep = "")
 cat("STEP 1: Load packages + capture versions\n")
 cat(strrep("-", 70), "\n", sep = "")
-.write_status("LOAD_PACKAGES", "loading")
+write_status(status_file,"LOAD_PACKAGES", "loading")
 
 suppressPackageStartupMessages({
   library(dplyr)
@@ -63,14 +59,14 @@ cat(sprintf("  %-15s %s\n", "cmdstan", cmdstan_ver))
 saveRDS(c(pkg_versions, cmdstan = cmdstan_ver),
         "outputs/phase0/env_versions.rds")
 
-.write_status("LOAD_PACKAGES", "OK")
+write_status(status_file,"LOAD_PACKAGES", "OK")
 cat("\n")
 
 # ----- 2. Verify Stan files present -----
 cat(strrep("-", 70), "\n", sep = "")
 cat("STEP 2: Verify Stan files\n")
 cat(strrep("-", 70), "\n", sep = "")
-.write_status("VERIFY_STAN", "checking")
+write_status(status_file,"VERIFY_STAN", "checking")
 
 stan_files <- c(
   m1 = system.file("stan", "model_1.stan", package = "shigella"),
@@ -91,14 +87,14 @@ for (n in names(stan_files)) {
   }
 }
 
-.write_status("VERIFY_STAN", "OK")
+write_status(status_file,"VERIFY_STAN", "OK")
 cat("\n")
 
 # ----- 3. compile_dir setup -----
 cat(strrep("-", 70), "\n", sep = "")
 cat("STEP 3: Set up compile directory\n")
 cat(strrep("-", 70), "\n", sep = "")
-.write_status("COMPILE_DIR", "setting up")
+write_status(status_file,"COMPILE_DIR", "setting up")
 
 user <- Sys.getenv("USER", unset = "unknown")
 compile_dir <- file.path("/tmp", user, "cmdstan_bin_phase0")
@@ -134,14 +130,14 @@ if (length(exec_out) > 0 && exec_out == "executable") {
 }
 unlink(shellscript)
 
-.write_status("COMPILE_DIR", "OK")
+write_status(status_file,"COMPILE_DIR", "OK")
 cat("\n")
 
 # ----- 4. Simulate small data (n=5, fixed seed) -----
 cat(strrep("-", 70), "\n", sep = "")
 cat("STEP 4: Simulate small synthetic data\n")
 cat(strrep("-", 70), "\n", sep = "")
-.write_status("SIMULATE", "running")
+write_status(status_file,"SIMULATE", "running")
 
 set.seed(20260513)   # matches meeting date, so reproducible
 
@@ -163,14 +159,14 @@ cat(sprintf("  true rho_B:  %.3f\n", true_rho_B))
 saveRDS(sim_data, "outputs/phase0/sim_data_n5.rds")
 cat("  saved -> outputs/phase0/sim_data_n5.rds\n")
 
-.write_status("SIMULATE", "OK")
+write_status(status_file,"SIMULATE", "OK")
 cat("\n")
 
 # ----- 5. Run single fit -----
 cat(strrep("-", 70), "\n", sep = "")
 cat("STEP 5: Fit model_2 (Kronecker), light settings, single chain\n")
 cat(strrep("-", 70), "\n", sep = "")
-.write_status("FIT", "running")
+write_status(status_file,"FIT", "running")
 
 t_start <- Sys.time()
 
@@ -204,7 +200,7 @@ fit <- tryCatch({
   cat("\n  [FIT ERROR]:", conditionMessage(e), "\n")
   cat("  [STACK TRACE]:\n")
   print(sys.calls())
-  .write_status("FIT", paste("CRASHED:", conditionMessage(e)))
+  write_status(status_file,"FIT", paste("CRASHED:", conditionMessage(e)))
   saveRDS(
     list(scenario = "phase0_no_slurm",
          status   = "FIT_FAILED",
@@ -227,18 +223,18 @@ if (is.null(fit)) {
   cat(" → Confirms problem is NOT Slurm-specific.\n")
   cat(" → Skip Phase 1-3, jump to Phase 4 over-parameterization diagnosis.\n")
   cat(strrep("!", 70), "\n", sep = "")
-  .write_status("DONE", "Phase 0 FAILED — see error above")
+  write_status(status_file,"DONE", "Phase 0 FAILED — see error above")
   quit(status = 1)
 }
 
-.write_status("FIT", "OK")
+write_status(status_file,"FIT", "OK")
 cat("\n")
 
 # ----- 6. Extract diagnostics from cmdstanr fit -----
 cat(strrep("-", 70), "\n", sep = "")
 cat("STEP 6: Extract diagnostics\n")
 cat(strrep("-", 70), "\n", sep = "")
-.write_status("DIAG", "extracting")
+write_status(status_file,"DIAG", "extracting")
 
 sf <- attr(fit, "stan_fit")[[1]]
 
@@ -272,14 +268,14 @@ if (!is.null(draws_summary)) {
   print(draws_summary)
 }
 
-.write_status("DIAG", "OK")
+write_status(status_file,"DIAG", "OK")
 cat("\n")
 
 # ----- 7. Save full diagnostic bundle -----
 cat(strrep("-", 70), "\n", sep = "")
 cat("STEP 7: Save diagnostic bundle\n")
 cat(strrep("-", 70), "\n", sep = "")
-.write_status("SAVE", "writing rds")
+write_status(status_file,"SAVE", "writing rds")
 
 result_bundle <- list(
   scenario            = "phase0_no_slurm",
@@ -304,7 +300,7 @@ result_bundle <- list(
 saveRDS(result_bundle, "outputs/phase0/one_fit_n5.rds")
 saveRDS(result_bundle$diagnostic_summary, "outputs/phase0/one_fit_n5_diag.rds")
 
-.write_status("SAVE", "OK")
+write_status(status_file,"SAVE", "OK")
 cat("  saved -> outputs/phase0/one_fit_n5.rds\n")
 cat("  saved -> outputs/phase0/one_fit_n5_diag.rds\n\n")
 
@@ -337,4 +333,4 @@ cat("   3. If divergent rate > 10% OR R-hat > 1.02:\n")
 cat("        → This is a NO-Slurm reproducible failure.\n")
 cat("        → Skip Phase 1-3, jump to Phase 4 over-param diagnosis.\n\n")
 
-.write_status("DONE", "Phase 0 completed successfully")
+write_status(status_file,"DONE", "Phase 0 completed successfully")

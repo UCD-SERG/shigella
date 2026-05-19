@@ -38,14 +38,10 @@ job_id <- slurm_env["SLURM_JOB_ID"]
 if (job_id == "") job_id <- format(Sys.time(), "%Y%m%d_%H%M%S")
 status_file <- sprintf("outputs/phase1/PHASE1_STATUS_%s.txt", job_id)
 
-.write_status <- function(step, msg = "") {
-  cat(sprintf("[%s] STEP=%s | %s\n", format(Sys.time()), step, msg),
-      file = status_file, append = TRUE)
-}
-.write_status("INIT", sprintf("Phase 1 started, jobid=%s", job_id))
+write_status(status_file, "INIT", sprintf("Phase 1 started, jobid=%s", job_id))
 
 # ----- 1. Load packages -----
-.write_status("LOAD_PACKAGES", "loading")
+write_status(status_file,"LOAD_PACKAGES", "loading")
 suppressPackageStartupMessages({
   library(dplyr)
   library(tidyr)
@@ -66,10 +62,10 @@ cmdstan_ver <- tryCatch(cmdstanr::cmdstan_version(), error = function(e) "UNKNOW
 cat("=== Package versions ===\n")
 for (n in names(pkg_versions)) cat(sprintf("  %-15s %s\n", n, pkg_versions[n]))
 cat(sprintf("  %-15s %s\n\n", "cmdstan", cmdstan_ver))
-.write_status("LOAD_PACKAGES", "OK")
+write_status(status_file,"LOAD_PACKAGES", "OK")
 
 # ----- 2. Compile dir — SLURM-specific (per-task subdir) -----
-.write_status("COMPILE_DIR", "setting up")
+write_status(status_file,"COMPILE_DIR", "setting up")
 compile_dir <- Sys.getenv("STAN_COMPILE_DIR", unset = "")
 if (compile_dir == "") {
   # Fallback if sbatch didn't set it
@@ -81,10 +77,10 @@ if (!dir.exists(compile_dir)) {
 }
 cat(sprintf("=== compile_dir: %s ===\n", compile_dir))
 cat(sprintf("    existing files: %d\n\n", length(list.files(compile_dir))))
-.write_status("COMPILE_DIR", "OK")
+write_status(status_file,"COMPILE_DIR", "OK")
 
 # ----- 3. Simulate (IDENTICAL to Phase 0 — same seed, same n) -----
-.write_status("SIMULATE", "running")
+write_status(status_file,"SIMULATE", "running")
 set.seed(20260513)
 true_rho_B   <- 0.6
 omega_B_true <- matrix(c(1, true_rho_B, true_rho_B, 1), 2, 2)
@@ -97,7 +93,7 @@ sim_data <- sim_correlated_case_data(
 )
 cat(sprintf("=== Simulated: n=%d, rho_B=%.1f, total rows=%d ===\n\n",
             length(unique(sim_data$id)), true_rho_B, nrow(sim_data)))
-.write_status("SIMULATE", "OK")
+write_status(status_file,"SIMULATE", "OK")
 
 # ----- 4. Save STARTED placeholder so crash mid-fit is still informative -----
 out_file <- sprintf("outputs/phase1/one_fit_n5_jobid_%s.rds", job_id)
@@ -117,7 +113,7 @@ saveRDS(
 )
 
 # ----- 5. Run fit -----
-.write_status("FIT", "running")
+write_status(status_file,"FIT", "running")
 cat("=== Fitting model_2 (Kronecker) ===\n")
 t_start <- Sys.time()
 
@@ -142,7 +138,7 @@ fit <- tryCatch({
   cat("\n  [FIT ERROR]:", conditionMessage(e), "\n")
   cat("  [STACK TRACE]:\n")
   print(sys.calls())
-  .write_status("FIT", paste("CRASHED:", conditionMessage(e)))
+  write_status(status_file,"FIT", paste("CRASHED:", conditionMessage(e)))
   saveRDS(
     list(scenario = "phase1_slurm_single", status = "FIT_FAILED",
          job_id = job_id,
@@ -165,14 +161,14 @@ if (is.null(fit)) {
   cat("   - If Phase 0 OK but Phase 1 FAIL → Slurm env issue\n")
   cat("   - If both fail → code / model identifiability issue\n")
   cat(strrep("!", 70), "\n", sep = "")
-  .write_status("DONE", "Phase 1 FAILED")
+  write_status(status_file,"DONE", "Phase 1 FAILED")
   quit(status = 1)
 }
 
-.write_status("FIT", "OK")
+write_status(status_file,"FIT", "OK")
 
 # ----- 6. Diagnostics -----
-.write_status("DIAG", "extracting")
+write_status(status_file,"DIAG", "extracting")
 sf <- attr(fit, "stan_fit")[[1]]
 diag <- sf$diagnostic_summary(diagnostics = c("divergences", "treedepth", "ebfmi"))
 total_iters <- 2 * 500
@@ -195,10 +191,10 @@ draws_summary <- posterior::summarise_draws(
 )
 cat("\n  Omega_B[1,2] summary:\n")
 print(draws_summary)
-.write_status("DIAG", "OK")
+write_status(status_file,"DIAG", "OK")
 
 # ----- 7. Save bundle -----
-.write_status("SAVE", "writing rds")
+write_status(status_file,"SAVE", "writing rds")
 result_bundle <- list(
   scenario            = "phase1_slurm_single",
   status              = "OK",
@@ -261,7 +257,7 @@ if (file.exists(phase0_file)) {
   cat("         direct apples-to-apples comparison.\n")
 }
 
-.write_status("SAVE", "OK")
+write_status(status_file,"SAVE", "OK")
 cat("\n=== Phase 1 complete ===\n")
 cat(sprintf("    Results: %s\n\n", out_file))
-.write_status("DONE", "Phase 1 OK")
+write_status(status_file,"DONE", "Phase 1 OK")
