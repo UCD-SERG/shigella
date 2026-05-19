@@ -49,7 +49,7 @@ postprocess_stan_output <- function(stan_fit,
   if (has_kron) {
     cov_summaries <- c(
       .extract_residual_cov_stan(stan_fit, K, antigens),
-      .extract_kronecker_matrices_stan(stan_fit, K, param_names, antigens)
+      .extract_kron_matrices(stan_fit, K, param_names, antigens)
     )
   } else {
     cov_summaries <- .extract_model1_omega_p_stan(

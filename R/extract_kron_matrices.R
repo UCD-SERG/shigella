@@ -2,8 +2,7 @@
 # Returns a (possibly empty) named list. Model 2 only.
 #' @keywords internal
 #' @noRd
-.extract_kronecker_matrices_stan <- function(stan_fit, K, param_names,
-                                             antigens) {
+.extract_kron_matrices <- function(stan_fit, K, param_names, antigens) {
   tryCatch({
     omega_B_arr <- posterior::as_draws_array(
       stan_fit$draws(variables = "Omega_B")
