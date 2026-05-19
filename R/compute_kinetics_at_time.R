@@ -1,0 +1,20 @@
+# Helper: compute log-scale mean for one biomarker at one time point.
+# Implements the two-phase power-law kinetics model.
+#' @keywords internal
+#' @noRd
+.compute_kinetics_at_time <- function(log_y0, log_y1m0, log_t1,
+                                      log_alpha, log_rm1, tt) {
+  y0    <- exp(log_y0)
+  y1    <- y0 + exp(log_y1m0)
+  t1_j  <- exp(log_t1)
+  alpha <- exp(log_alpha)
+  shape <- exp(log_rm1) + 1
+
+  if (tt <= t1_j) {
+    beta_growth <- (log(y1) - log(y0)) / t1_j
+    return(log(y0) + beta_growth * tt)
+  }
+
+  term <- y1^(1 - shape) - (1 - shape) * alpha * (tt - t1_j)
+  if (term <= 0) log(y0) else log(term) / (1 - shape)
+}

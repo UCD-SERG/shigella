@@ -1,11 +1,20 @@
 # Helper: run prep + sample + postprocess for one stratum.
+# Accepts the full dataset plus strat/stratum identifiers and slices
+# internally, so the caller loop body only needs one function call.
 # Returns a list with sr_tibble, cov_summaries, stan_fit, and priors.
 #' @keywords internal
 #' @noRd
-.run_single_stratum <- function(mod, dl_sub, model, chains, parallel_chains,
+.run_single_stratum <- function(stratum, data, strat,
+                                mod, model, chains, parallel_chains,
                                 iter_warmup, iter_sampling, seed,
                                 adapt_delta, max_treedepth, init,
-                                refresh, show_messages, stratum, ...) {
+                                refresh, show_messages, ...) {
+  dl_sub <- if (is.na(strat)) {
+    data
+  } else {
+    data[data[[strat]] == stratum, , drop = FALSE]
+  }
+
   prepped   <- serodynamics::prep_data(dl_sub)
   stan_data <- shigella::prep_data_stan(prepped)
   priors    <- shigella::prep_priors_stan(model = model, ...)

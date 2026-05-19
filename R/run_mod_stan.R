@@ -106,19 +106,16 @@ run_mod_stan <- function(data,
   )
 
   for (i in strat_list) {
-    if (is.na(strat)) {
-      dl_sub <- data
-    } else {
-      dl_sub <- data[data[[strat]] == i, , drop = FALSE]
-    }
-
     result <- .run_single_stratum(
-      mod, dl_sub, model, chains, parallel_chains,
-      iter_warmup, iter_sampling, seed,
-      adapt_delta, max_treedepth, init, refresh, show_messages,
-      stratum = i, ...
+      stratum = i, data = data, strat = strat,
+      mod = mod, model = model, chains = chains,
+      parallel_chains = parallel_chains,
+      iter_warmup = iter_warmup, iter_sampling = iter_sampling,
+      seed = seed, adapt_delta = adapt_delta,
+      max_treedepth = max_treedepth, init = init,
+      refresh = refresh, show_messages = show_messages,
+      ...
     )
-
     combined_out[[i]] <- result$sr_tibble
     cov_list[[i]]     <- result$cov_summaries
     stanfit_list[[i]] <- result$stan_fit
