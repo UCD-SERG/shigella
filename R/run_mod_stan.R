@@ -142,8 +142,10 @@ run_mod_stan <- function(data,
   }
 
   # Calculate fitted/residuals
+  # calc_fit_mod is not exported by serodynamics; ::: is a deliberate,
+  # tolerated compromise until the upstream package exports it.
   fit_res <- tryCatch(
-    serodynamics:::calc_fit_mod(modeled_dat = sr_out, original_data = data),
+    serodynamics:::calc_fit_mod(modeled_dat = sr_out, original_data = data), # nolint: namespace_linter
     error = function(e) {
       cli::cli_warn("calc_fit_mod failed: {e$message}")
       NULL

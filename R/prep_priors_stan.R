@@ -3,9 +3,9 @@
 #' Translates the JAGS prior specification into Stan's LKJ + half-Cauchy
 #' decomposition.
 #'
-#' Defaults match the JAGS Chapter 1 model (which works), with two
-#' adjustments for Stan compatibility:
-#'   - mu_hyp_sd capped at 10 (was 316 in JAGS) — Stan's HMC sampler
+#' Defaults match the JAGS prior specification, with two adjustments for
+#' Stan compatibility:
+#'   - mu_hyp_sd capped at ~5 (was 316 in JAGS) — Stan's HMC sampler
 #'     handles weakly-informative priors better with more reasonable scales.
 #'     JAGS Gibbs sampling tolerates wider priors, but Stan's gradient-based
 #'     HMC explores the tails too aggressively when sd is huge.
