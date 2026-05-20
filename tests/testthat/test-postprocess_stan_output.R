@@ -23,7 +23,7 @@ test_that("summarize_matrix_array returns a list of matrices", {
       variable  = var_names
     )
   )
-  result <- shigella:::summarize_matrix_array(arr_data, "Omega_P",
+  result <- shigella:::.summarize_matrix_array(arr_data, "Omega_P",
                                               n_arr = 2L, n_row = 3L, n_col = 3L)
 
   expect_type(result, "list")

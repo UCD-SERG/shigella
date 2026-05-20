@@ -10,7 +10,7 @@
 # determinism across allocation modes. Run the n=5 version first as a fast
 # smoke test before committing to the n=48 full-cohort run.
 # ============================================================================
-setwd("~/shigella/chapter2")
+setwd("~/shigella")
 suppressPackageStartupMessages(library(shigella))
 
 run_phase0_diagnostic(

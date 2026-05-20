@@ -183,11 +183,14 @@ run_phase1_diagnostic <- function(n,
     diagnostics = c("divergences", "treedepth", "ebfmi")
   )
   total_iters  <- chains * iter_sampling
-  draws_summary <- posterior::summarise_draws(
-    sf$draws(variables = "Omega_B[1,2]"),
-    "median", "mean", "sd",
-    ~ quantile(.x, c(0.025, 0.975), na.rm = TRUE),
-    "ess_bulk", "rhat"
+  draws_summary <- tryCatch(
+    posterior::summarise_draws(
+      sf$draws(variables = "Omega_B[1,2]"),
+      "median", "mean", "sd",
+      ~ quantile(.x, c(0.025, 0.975), na.rm = TRUE),
+      "ess_bulk", "rhat"
+    ),
+    error = function(e) NULL
   )
   cat("=== Diagnostics ===\n")
   cat(sprintf("  divergent:     %d / %d (%.2f%%)\n",
@@ -198,8 +201,12 @@ run_phase1_diagnostic <- function(n,
               100 * sum(diag$num_max_treedepth) / total_iters))
   cat(sprintf("  E-BFMI:        %s\n",
               paste(sprintf("%.3f", diag$ebfmi), collapse = ", ")))
-  cat("\n  Omega_B[1,2] summary:\n")
-  print(draws_summary)
+  if (!is.null(draws_summary)) {
+    cat("\n  Omega_B[1,2] summary:\n")
+    print(draws_summary)
+  } else {
+    cat("\n  [INFO] Omega_B[1,2] not available in this fit.\n")
+  }
   write_status(status_file, "DIAG", "OK")
 
   # ----- 7. Save bundle -----
@@ -222,8 +229,9 @@ run_phase1_diagnostic <- function(n,
     ),
     diagnostic_summary = diag,
     omega_B_summary    = draws_summary,
-    rho_B_posterior    = as.vector(
-      posterior::as_draws_array(sf$draws("Omega_B[1,2]"))
+    rho_B_posterior    = tryCatch(
+      as.vector(posterior::as_draws_array(sf$draws("Omega_B[1,2]"))),
+      error = function(e) NULL
     )
   )
   saveRDS(result_bundle, out_file)
@@ -232,7 +240,7 @@ run_phase1_diagnostic <- function(n,
   phase0_file <- file.path(phase0_dir, sprintf("one_fit_%s.rds", tag))
   if (file.exists(phase0_file)) {
     ph0 <- readRDS(phase0_file)
-    if (!is.null(ph0$omega_B_summary)) {
+    if (!is.null(ph0$omega_B_summary) && !is.null(draws_summary)) {
       cat("\n=== Phase 0 vs Phase 1 comparison ===\n")
       cmp <- data.frame(
         metric = c("status", "elapsed_min", "post_median",

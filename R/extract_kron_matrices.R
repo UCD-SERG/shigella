@@ -17,10 +17,10 @@
       stan_fit$draws(variables = "Sigma_P")
     )
 
-    omega_B <- summarize_matrix_draws(omega_B_arr, "Omega_B", K, K)
-    sigma_B <- summarize_matrix_draws(sigma_B_arr, "Sigma_B", K, K)
-    omega_P <- summarize_matrix_draws(omega_P_arr, "Omega_P", 5L, 5L)
-    sigma_P <- summarize_matrix_draws(sigma_P_arr, "Sigma_P", 5L, 5L)
+    omega_B <- .summarize_matrix_draws(omega_B_arr, "Omega_B", K, K)
+    sigma_B <- .summarize_matrix_draws(sigma_B_arr, "Sigma_B", K, K)
+    omega_P <- .summarize_matrix_draws(omega_P_arr, "Omega_P", 5L, 5L)
+    sigma_P <- .summarize_matrix_draws(sigma_P_arr, "Sigma_P", 5L, 5L)
 
     dimnames(omega_B) <- list(antigens, antigens)
     dimnames(sigma_B) <- list(antigens, antigens)

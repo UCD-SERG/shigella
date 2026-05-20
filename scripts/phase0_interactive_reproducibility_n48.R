@@ -11,7 +11,7 @@
 # Run phase0_interactive_reproducibility.R (n=5) first to confirm the
 # pipeline works before committing to this longer run.
 # ============================================================================
-setwd("~/shigella/chapter2")
+setwd("~/shigella")
 suppressPackageStartupMessages(library(shigella))
 
 run_phase0_diagnostic(

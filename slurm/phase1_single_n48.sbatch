@@ -17,7 +17,7 @@ source "$HOME/miniconda3/etc/profile.d/conda.sh"
 conda activate r_chapter2
 
 # ==========================================================================
-# 2. Banner — dumped to .out so Ezra has full context
+# 2. Banner
 # ==========================================================================
 echo "========================================================================"
 echo " PHASE 1 SLURM SINGLE JOB"
@@ -48,7 +48,7 @@ export MKL_NUM_THREADS=1
 export OPENBLAS_NUM_THREADS=1
 
 # ==========================================================================
-# 5. cd to chapter2 and run
+# 5. Change to submit dir and run
 # ==========================================================================
 cd "$SLURM_SUBMIT_DIR"   
 

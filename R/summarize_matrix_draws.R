@@ -6,7 +6,7 @@
 #'
 #' @keywords internal
 #' @noRd
-summarize_matrix_draws <- function(draws_arr, var_name, nrow, ncol) {
+.summarize_matrix_draws <- function(draws_arr, var_name, nrow, ncol) {
   result <- matrix(NA_real_, nrow = nrow, ncol = ncol)
   var_dim <- dimnames(draws_arr)$variable
   for (i in seq_len(nrow)) {

@@ -10,8 +10,8 @@
     sigma_eps_arr <- posterior::as_draws_array(
       stan_fit$draws(variables = "Sigma_eps")
     )
-    omega_eps <- summarize_matrix_draws(omega_eps_arr, "Omega_eps", K, K)
-    sigma_eps <- summarize_matrix_draws(sigma_eps_arr, "Sigma_eps", K, K)
+    omega_eps <- .summarize_matrix_draws(omega_eps_arr, "Omega_eps", K, K)
+    sigma_eps <- .summarize_matrix_draws(sigma_eps_arr, "Sigma_eps", K, K)
     dimnames(omega_eps) <- list(antigens, antigens)
     dimnames(sigma_eps) <- list(antigens, antigens)
     list(Omega_eps = omega_eps, Sigma_eps = sigma_eps)
