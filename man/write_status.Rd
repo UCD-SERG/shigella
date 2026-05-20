@@ -7,13 +7,14 @@
 write_status(status_file, step, msg = "")
 }
 \arguments{
-\item{status_file}{path to the status log file (character)}
+\item{status_file}{Path to the status log file (character).}
 
-\item{step}{character label for the current step}
+\item{step}{Character label for the current step.}
 
-\item{msg}{optional message string (default \code{""})}
+\item{msg}{Optional message string (default \code{""})}
 }
 \description{
-Write a step-status line to a diagnostic log file
+Appends a timestamped status entry to a log file. Intended for use in
+long-running HPC diagnostic scripts so crash location is visible even
+when the script dies mid-way.
 }
-\keyword{internal}
