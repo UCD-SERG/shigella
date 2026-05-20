@@ -1,5 +1,12 @@
-# For `array[n_arr] matrix[n_row, n_col]` Stan variables, cmdstanr names
-# cells `var[k,i,j]`. Returns a list of n_arr matrices.
+#' Summarize an array-of-matrices variable from posterior draws
+#'
+#' For Stan variables declared as `array[n_arr] matrix[n_row, n_col]`,
+#' cmdstanr names cells `var[k,i,j]`. Returns a list of `n_arr` matrices.
+#'
+#' @details Returns element-wise posterior medians only. Credible intervals
+#'   are not computed. For full posterior summaries use
+#'   [posterior::summarise_draws()] directly.
+#'
 #' @keywords internal
 #' @noRd
 summarize_matrix_array <- function(draws_arr, var_name,

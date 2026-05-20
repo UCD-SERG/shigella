@@ -12,7 +12,10 @@
   dl_sub <- if (is.na(strat)) {
     data
   } else {
-    data[data[[strat]] == stratum, , drop = FALSE]
+    sub <- data[data[[strat]] == stratum, , drop = FALSE]
+    # Restore non-standard classes (e.g. case_data) dropped by [.data.frame
+    class(sub) <- class(data)
+    sub
   }
 
   prepped   <- serodynamics::prep_data(dl_sub)

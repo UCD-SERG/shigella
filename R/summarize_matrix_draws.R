@@ -1,3 +1,9 @@
+#' Summarize a matrix variable from posterior draws
+#'
+#' @details Returns element-wise posterior medians only. Credible intervals
+#'   are not computed. For full posterior summaries use
+#'   [posterior::summarise_draws()] directly.
+#'
 #' @keywords internal
 #' @noRd
 summarize_matrix_draws <- function(draws_arr, var_name, nrow, ncol) {
