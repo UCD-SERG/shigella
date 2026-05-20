@@ -62,11 +62,11 @@
 #' @param tau_B [numeric] length-K vector of SDs across biomarkers
 #' @param tau_eps [numeric] length-K vector of residual SDs
 #' @param omega_P [matrix] P x P parameter correlation matrix
-#'   (default: identity — no within-biomarker parameter correlation)
+#'   (default: identity - no within-biomarker parameter correlation)
 #' @param omega_B [matrix] K x K biomarker correlation matrix
-#'   (default: identity — Scenario 2, residual correlation only)
+#'   (default: identity - Scenario 2, residual correlation only)
 #' @param omega_eps [matrix] K x K residual correlation matrix
-#'   (default: identity — no residual correlation)
+#'   (default: identity - no residual correlation)
 #' @param antigen_isos [character] names for the K biomarkers
 #' @param n_obs_per_subject [integer] number of observations per subject
 #'   (default 5, matching the Shigella SOSAR cohort)
@@ -75,9 +75,9 @@
 #' @param seed [integer] RNG seed
 #'
 #' @returns a `case_data` object plus attributes recording the truth:
-#'   - `"truth"` — list with mu, tau_P, tau_B, tau_eps, omega_P,
+#'   - `"truth"` - list with mu, tau_P, tau_B, tau_eps, omega_P,
 #'     omega_B, omega_eps, sigma_P, sigma_B, sigma_eps
-#'   - `"theta_true"` — N x P x K array of true subject parameters
+#'   - `"theta_true"` - N x P x K array of true subject parameters
 #' @export
 #' @example inst/examples/sim_correlated_case_data-examples.R
 sim_correlated_case_data <- function(

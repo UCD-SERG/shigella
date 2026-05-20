@@ -14,7 +14,7 @@
 #'   (default `"outputs/phase0"`). Used for the Phase 0 vs Phase 1
 #'   comparison table.
 #' @param true_rho_B True Kronecker biomarker correlation (default `0.6`).
-#' @param seed Random seed — must match Phase 0 (default `20260513`).
+#' @param seed Random seed - must match Phase 0 (default `20260513`).
 #' @param chains Number of MCMC chains (default `2`).
 #' @param adapt_delta Stan `adapt_delta` (default `0.95`).
 #' @param max_treedepth Stan `max_treedepth` (default `12`).
@@ -102,7 +102,7 @@ run_phase1_diagnostic <- function(n,
   cat(sprintf("    existing files: %d\n\n", length(list.files(compile_dir))))
   write_status(status_file, "COMPILE_DIR", "OK")
 
-  # ----- 3. Simulate (identical to Phase 0 — same seed, same n) -----
+  # ----- 3. Simulate (identical to Phase 0 - same seed, same n) -----
   write_status(status_file, "SIMULATE", "running")
   set.seed(seed)
   omega_B_true <- matrix(c(1, true_rho_B, true_rho_B, 1), 2, 2)
@@ -266,7 +266,7 @@ run_phase1_diagnostic <- function(n,
                              sprintf("p0_vs_p1_comparison_%s.rds", job_id)))
     }
   } else {
-    cat("\n  [INFO] Phase 0 result not found — comparison skipped.\n")
+    cat("\n  [INFO] Phase 0 result not found - comparison skipped.\n")
     cat(sprintf("         Run phase0_interactive_reproducibility_%s.R first",
                 tag))
     cat(" for direct comparison.\n")

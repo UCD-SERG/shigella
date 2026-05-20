@@ -12,11 +12,10 @@ Description: Tools for multivariate Bayesian hierarchical modeling of
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-Imports: 
+Imports:
     cli,
     dplyr,
     MASS,
-    rlang,
     tibble
 URL: https://ucd-serg.github.io/shigella/
 Remotes: 

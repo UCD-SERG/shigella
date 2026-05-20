@@ -5,17 +5,17 @@
 #'
 #' Defaults match the JAGS prior specification, with two adjustments for
 #' Stan compatibility:
-#'   - mu_hyp_sd capped at ~5 (was 316 in JAGS) — Stan's HMC sampler
+#'   - mu_hyp_sd capped at ~5 (was 316 in JAGS) - Stan's HMC sampler
 #'     handles weakly-informative priors better with more reasonable scales.
 #'     JAGS Gibbs sampling tolerates wider priors, but Stan's gradient-based
 #'     HMC explores the tails too aggressively when sd is huge.
-#'   - tau scales = 1.0 (was 2.5) — keeps initial steps reasonable
+#'   - tau scales = 1.0 (was 2.5) - keeps initial steps reasonable
 #'
 #'
 #' @param mu_hyp_mean [numeric] length-5 prior mean for population params
 #' @param mu_hyp_sd [numeric] length-5 prior SD for population params.
 #'   Weakly informative, Stan-friendly. JAGS original was c(1, 316, 1, 32, 1).
-#'   5.0 on log-scale params covers ~5 orders of magnitude — plenty wide.
+#'   5.0 on log-scale params covers ~5 orders of magnitude - plenty wide.
 #' @param tau_P_scale half-Cauchy scale for parameter SDs
 #' @param tau_B_scale half-Cauchy scale for biomarker SDs (Model 2 only)
 #' @param tau_eps_scale half-Cauchy scale for residual SDs
