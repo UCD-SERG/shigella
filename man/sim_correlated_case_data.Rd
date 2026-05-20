@@ -33,13 +33,13 @@ parameters}
 \item{tau_eps}{\link{numeric} length-K vector of residual SDs}
 
 \item{omega_P}{\link{matrix} P x P parameter correlation matrix
-(default: identity — no within-biomarker parameter correlation)}
+(default: identity - no within-biomarker parameter correlation)}
 
 \item{omega_B}{\link{matrix} K x K biomarker correlation matrix
-(default: identity — Scenario 2, residual correlation only)}
+(default: identity - Scenario 2, residual correlation only)}
 
 \item{omega_eps}{\link{matrix} K x K residual correlation matrix
-(default: identity — no residual correlation)}
+(default: identity - no residual correlation)}
 
 \item{antigen_isos}{\link{character} names for the K biomarkers}
 
@@ -54,9 +54,9 @@ parameters}
 \value{
 a \code{case_data} object plus attributes recording the truth:
 \itemize{
-\item \code{"truth"} — list with mu, tau_P, tau_B, tau_eps, omega_P,
+\item \code{"truth"} - list with mu, tau_P, tau_B, tau_eps, omega_P,
 omega_B, omega_eps, sigma_P, sigma_B, sigma_eps
-\item \code{"theta_true"} — N x P x K array of true subject parameters
+\item \code{"theta_true"} - N x P x K array of true subject parameters
 }
 }
 \description{

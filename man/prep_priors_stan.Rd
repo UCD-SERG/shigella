@@ -21,7 +21,7 @@ prep_priors_stan(
 
 \item{mu_hyp_sd}{\link{numeric} length-5 prior SD for population params.
 Weakly informative, Stan-friendly. JAGS original was c(1, 316, 1, 32, 1).
-5.0 on log-scale params covers ~5 orders of magnitude — plenty wide.}
+5.0 on log-scale params covers ~5 orders of magnitude - plenty wide.}
 
 \item{tau_P_scale}{half-Cauchy scale for parameter SDs}
 
@@ -47,11 +47,11 @@ decomposition.
 Defaults match the JAGS prior specification, with two adjustments for
 Stan compatibility:
 \itemize{
-\item mu_hyp_sd capped at ~5 (was 316 in JAGS) — Stan's HMC sampler
+\item mu_hyp_sd capped at ~5 (was 316 in JAGS) - Stan's HMC sampler
 handles weakly-informative priors better with more reasonable scales.
 JAGS Gibbs sampling tolerates wider priors, but Stan's gradient-based
 HMC explores the tails too aggressively when sd is huge.
-\item tau scales = 1.0 (was 2.5) — keeps initial steps reasonable
+\item tau scales = 1.0 (was 2.5) - keeps initial steps reasonable
 }
 }
 \examples{

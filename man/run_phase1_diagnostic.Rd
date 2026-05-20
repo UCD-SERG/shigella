@@ -35,7 +35,7 @@ comparison table.}
 
 \item{true_rho_B}{True Kronecker biomarker correlation (default \code{0.6}).}
 
-\item{seed}{Random seed — must match Phase 0 (default \code{20260513}).}
+\item{seed}{Random seed - must match Phase 0 (default \code{20260513}).}
 
 \item{chains}{Number of MCMC chains (default \code{2}).}
 
