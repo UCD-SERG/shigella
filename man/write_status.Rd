@@ -11,7 +11,7 @@ write_status(status_file, step, msg = "")
 
 \item{step}{Character label for the current step.}
 
-\item{msg}{Optional message string (default \code{""})}
+\item{msg}{Optional message string (default \code{""}).}
 }
 \description{
 Appends a timestamped status entry to a log file. Intended for use in

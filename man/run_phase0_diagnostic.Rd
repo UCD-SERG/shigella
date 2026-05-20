@@ -40,7 +40,7 @@ run_phase0_diagnostic(
 \item{max_treedepth}{Stan \code{max_treedepth} (default \code{12}).}
 
 \item{compile_dir}{Directory for compiled Stan binaries. If \code{NULL},
-defaults to \code{/tmp/<USER>/cmdstan_bin_phase0_<tag>}.}
+defaults to \verb{/tmp/<USER>/cmdstan_bin_phase0_<tag>}.}
 }
 \value{
 Invisibly returns the result bundle list, or \code{NULL} if the fit

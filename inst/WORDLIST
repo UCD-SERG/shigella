@@ -7,6 +7,7 @@ HPC
 LKJ
 ORCID
 SDs
+SLURM
 SOSAR
 attr
 biomarker
@@ -25,6 +26,7 @@ lpdf
 newperson
 params
 rstan
+sbatch
 sd
 serosurveillance
 sr

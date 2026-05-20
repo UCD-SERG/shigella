@@ -5,7 +5,8 @@
 #' @noRd
 .extract_draws_for_cell <- function(col_name, draws_df, pname,
                                     ids, antigens, stratification, n_chain) {
-  m        <- regmatches(col_name, regexec("\\[(\\d+),(\\d+)\\]", col_name))[[1]]
+  m        <- regmatches(col_name, regexec("\\[(\\d+),(\\d+)\\]", 
+                                           col_name))[[1]]
   subj_idx <- as.integer(m[2])
   iso_idx  <- as.integer(m[3])
   sub_df   <- draws_df[, c(".chain", ".iteration", col_name)]
