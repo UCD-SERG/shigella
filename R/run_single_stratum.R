@@ -19,8 +19,8 @@
   }
 
   prepped   <- serodynamics::prep_data(dl_sub)
-  stan_data <- shigella::prep_data_stan(prepped)
-  priors    <- shigella::prep_priors_stan(model = model, ...)
+  stan_data <- prep_data_stan(prepped)
+  priors    <- prep_priors_stan(model = model, ...)
   full_data <- c(stan_data, priors)
 
   cli::cli_inform(c("i" = "Sampling {.strong {model}} with {chains} chains..."))
@@ -38,7 +38,7 @@
     show_messages   = show_messages
   )
 
-  processed <- shigella::postprocess_stan_output(
+  processed <- postprocess_stan_output(
     stan_fit       = fit,
     ids            = attr(stan_data, "ids"),
     antigens       = attr(stan_data, "antigens"),

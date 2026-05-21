@@ -187,8 +187,9 @@ run_phase0_diagnostic <- function(n,
     ),
     diagnostic_summary = diag,
     omega_B_summary    = draws_summary,
-    rho_B_posterior    = as.vector(
-      posterior::as_draws_array(sf$draws("Omega_B[1,2]"))
+    rho_B_posterior    = tryCatch(
+      as.vector(posterior::as_draws_array(sf$draws("Omega_B[1,2]"))),
+      error = function(e) NULL
     )
   )
   saveRDS(result_bundle, out_file)
