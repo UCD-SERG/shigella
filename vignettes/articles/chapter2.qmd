@@ -17,10 +17,6 @@ format:
     
     toc: true
     number-sections: true
-vignette: >
-  %\VignetteIndexEntry{chapter2}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{quarto::html}
 execute:
   echo: false
   warning: false
