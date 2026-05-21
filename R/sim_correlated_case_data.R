@@ -77,7 +77,11 @@
 #' @returns a `case_data` object plus attributes recording the truth:
 #'   - `"truth"` - list with mu, tau_P, tau_B, tau_eps, omega_P,
 #'     omega_B, omega_eps, sigma_P, sigma_B, sigma_eps
-#'   - `"theta_true"` - N x P x K array of true subject parameters
+#'   - `"theta_true"` - N x P x K array of true subject parameters in
+    **Stan's internal log-scale parameterisation**:
+    `log_y0`, `log_y1m0`, `log_t1`, `log_alpha`, `log_rm1`.
+    Postprocessed posterior summaries use natural-scale names
+    (`y0`, `y1`, `t1`, `alpha`, `shape`); apply `exp()` before comparing.
 #' @export
 #' @example inst/examples/sim_correlated_case_data-examples.R
 sim_correlated_case_data <- function(

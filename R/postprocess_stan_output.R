@@ -26,6 +26,7 @@ postprocess_stan_output <- function(stan_fit,
                    postprocessing.")
   }
 
+  # Names must match `generated quantities` block in both model_1.stan and model_2.stan.
   param_names <- c("y0", "y1", "t1", "alpha", "shape")
   N <- length(ids)
   K <- length(antigens)
