@@ -20,6 +20,7 @@
 #' @param max_treedepth Stan `max_treedepth` (default `12`).
 #' @return Invisibly returns the result bundle list, or `NULL` if the fit
 #'   crashed.
+#' @example inst/examples/run_phase1_diagnostic-examples.R
 #' @export
 run_phase1_diagnostic <- function(n,
                                    iter_warmup,

@@ -185,7 +185,7 @@ correlation.
 | Stan data list assembly | `R/prep_data_stan.R` |
 | Prior hyperparameter list | `R/prep_priors_stan.R` |
 | MCMC fit invocation (cmdstanr) | `R/run_mod_stan.R` |
-| Posterior summary + diagnostics | `R/postprocess_stan_output.R`, `R/summarize_matrix_array.R` |
+| Posterior summary + diagnostics | `R/postprocess_stan_output.R`, `R/extract_model1_omega_p_stan.R` |
 | Phase 0 (interactive SLURM) workflow | `R/run_phase0_diagnostic.R` |
 | Phase 1 (batch SLURM) workflow | `R/run_phase1_diagnostic.R` |
 

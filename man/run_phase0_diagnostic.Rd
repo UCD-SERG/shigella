@@ -52,3 +52,21 @@ allocation (\code{salloc}), extracts diagnostics, and saves a result bundle.
 Use this to establish a Phase 0 baseline for comparing with Phase 1
 sbatch results and confirming determinism across allocation modes.
 }
+\examples{
+if (interactive()) {
+
+if (requireNamespace("cmdstanr", quietly = TRUE)) {
+
+  result <- run_phase0_diagnostic(
+    n             = 5,
+    iter_warmup   = 200,
+    iter_sampling = 200,
+    tag           = "n5",
+    output_dir    = file.path(tempdir(), "phase0"),
+    chains        = 1L
+  )
+
+  names(result)  # status, elapsed_min, diagnostic_summary, omega_B_summary, ...
+}
+}
+}

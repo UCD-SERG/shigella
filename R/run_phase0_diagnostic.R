@@ -19,6 +19,7 @@
 #'   defaults to `/tmp/<USER>/cmdstan_bin_phase0_<tag>`.
 #' @return Invisibly returns the result bundle list, or `NULL` if the fit
 #'   crashed.
+#' @example inst/examples/run_phase0_diagnostic-examples.R
 #' @export
 run_phase0_diagnostic <- function(n,
                                    iter_warmup,

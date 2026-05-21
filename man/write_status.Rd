@@ -18,3 +18,9 @@ Appends a timestamped status entry to a log file. Intended for use in
 long-running HPC diagnostic scripts so crash location is visible even
 when the script dies mid-way.
 }
+\examples{
+log_file <- tempfile(fileext = ".txt")
+write_status(log_file, "INIT", "starting")
+write_status(log_file, "DONE")
+readLines(log_file)
+}
