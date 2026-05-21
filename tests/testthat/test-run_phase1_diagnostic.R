@@ -29,6 +29,8 @@ test_that("run_phase1_diagnostic runs with minimal Stan settings", {
   if (!is.null(result)) {
     expect_equal(result$status, "OK")
     expect_equal(result$n_subjects, 3L)
-    expect_true(file.exists(file.path(out_dir, "one_fit_test.rds")))
+    # run_phase1_diagnostic saves as one_fit_{tag}_jobid_{timestamp}.rds
+    rds_files <- list.files(out_dir, pattern = "^one_fit_test.*\\.rds$")
+    expect_true(length(rds_files) > 0)
   }
 })
