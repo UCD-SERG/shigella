@@ -26,7 +26,8 @@ postprocess_stan_output <- function(stan_fit,
                    postprocessing.")
   }
 
-  # Names must match `generated quantities` block in both model_1.stan and model_2.stan.
+  # Names must match `generated quantities` block in both model_1.stan and 
+  # model_2.stan.
   param_names <- c("y0", "y1", "t1", "alpha", "shape")
   N <- length(ids)
   K <- length(antigens)
@@ -36,7 +37,7 @@ postprocess_stan_output <- function(stan_fit,
   ))
   n_chain <- max(draws_df$.chain)
 
-  sr_tibble <- .extract_param_draws(
+  sr_tibble <- .extract_param_draws( # nolint: object_usage_linter
     param_names    = param_names,
     draws_df       = draws_df,
     N              = N,
@@ -49,16 +50,16 @@ postprocess_stan_output <- function(stan_fit,
 
   if (has_kron) {
     cov_summaries <- c(
-      .extract_residual_cov_stan(stan_fit, K, antigens),
-      .extract_kron_matrices(stan_fit, K, param_names, antigens)
+      .extract_residual_cov_stan(stan_fit, K, antigens), # nolint: object_usage_linter
+      .extract_kron_matrices(stan_fit, K, param_names, antigens) # nolint: object_usage_linter
     )
   } else {
-    cov_summaries <- .extract_model1_omega_p_stan(
+    cov_summaries <- .extract_model1_omega_p_stan( # nolint: object_usage_linter
       stan_fit, K, param_names, antigens
     )
   }
 
-  cov_summaries <- c(cov_summaries, .extract_log_lik_stan(stan_fit))
+  cov_summaries <- c(cov_summaries, .extract_log_lik_stan(stan_fit)) # nolint: object_usage_linter
 
   return(list(
     sr_tibble     = sr_tibble,
