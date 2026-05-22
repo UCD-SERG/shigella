@@ -13,7 +13,12 @@
     data
   } else {
     sub <- data[data[[strat]] == stratum, , drop = FALSE]
-    # Restore non-standard classes (e.g. case_data) dropped by [.data.frame
+    # Restore all non-structural attributes (class, id_var, biomarker_var,
+    # time_in_days, value_var, etc.) dropped by [.data.frame subsetting.
+    standard_attrs <- c("names", "class", "row.names")
+    for (a in setdiff(names(attributes(data)), standard_attrs)) {
+      attr(sub, a) <- attr(data, a)
+    }
     class(sub) <- class(data)
     sub
   }

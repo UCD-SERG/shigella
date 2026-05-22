@@ -72,10 +72,10 @@ run_phase1_diagnostic <- function(n,
   write_status(status_file, "LOAD_PACKAGES", "logging")
   pkg_versions <- c(
     R            = R.version.string,
-    cmdstanr     = as.character(utils::packageVersion("cmdstanr")),
-    posterior    = as.character(utils::packageVersion("posterior")),
-    shigella     = as.character(utils::packageVersion("shigella")),
-    serodynamics = as.character(utils::packageVersion("serodynamics"))
+    cmdstanr     = .safe_pkg_version("cmdstanr"),
+    posterior    = .safe_pkg_version("posterior"),
+    shigella     = .safe_pkg_version("shigella"),
+    serodynamics = .safe_pkg_version("serodynamics")
   )
   cmdstan_ver <- tryCatch(
     cmdstanr::cmdstan_version(), error = function(e) "UNKNOWN"
