@@ -89,7 +89,7 @@ run_mod_stan <- function(data,
   if (is.na(strat)) {
     strat_list <- "None"
   } else {
-    strat_list <- unique(data[[strat]])
+    strat_list <- as.character(unique(data[[strat]]))
   }
 
   combined_out <- list()
@@ -105,6 +105,7 @@ run_mod_stan <- function(data,
   )
 
   for (i in strat_list) {
+    i <- as.character(i)
     result <- .run_single_stratum(
       stratum = i, data = data, strat = strat,
       mod = mod, model = model, chains = chains,
