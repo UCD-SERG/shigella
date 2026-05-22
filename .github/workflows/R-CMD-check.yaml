@@ -21,6 +21,8 @@ jobs:
         config:
           - {os: ubuntu-latest, r: 'release'}
           - {os: ubuntu-latest, r: 'devel', http-user-agent: 'release'}
+          - {os: macos-latest, r: 'release'}
+          - {os: windows-latest, r: 'release'}
 
     env:
       GITHUB_PAT: ${{ github.token }}
@@ -41,8 +43,32 @@ jobs:
         with:
           extra-packages: any::rcmdcheck
           needs: check
+          
+      - name: Cache CmdStan installation
+        id: cache-cmdstan
+        uses: actions/cache@v4
+        with:
+          path: ~/.cmdstan
+          key: cmdstan-${{ runner.os }}-2.36.0
+          restore-keys: |
+            cmdstan-${{ runner.os }}-
+
+      - name: Install CmdStan
+        if: steps.cache-cmdstan.outputs.cache-hit != 'true'
+        env:
+          GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cmdstanr::install_cmdstan(
+            cores     = 2,
+            overwrite = FALSE,
+            version   = "2.36.0"
+          )
+        shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
+        env:                                      
+          RUN_STAN_TESTS: "true"                
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
