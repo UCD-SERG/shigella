@@ -20,6 +20,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Kwan Ho Lee \email{ksjlee@ucdavis.edu}
   \item Douglas Ezra Morrison \email{demorrison@ucdavis.edu} (\href{https://orcid.org/0000-0002-7195-830X}{ORCID})
 }
 
