@@ -44,7 +44,7 @@ jobs:
           if [[ '${{ github.event_name }}' != 'pull_request' ]]; then
             echo "Not a pull request, running full setup"
             echo "skip=false" >> $GITHUB_OUTPUT
-          elif [[ '${{ contains(github.event.pull_request.labels.*.name, 'skip-cp-setup') }}' == 'true' ]]; then
+          elif [[ "${{ contains(github.event.pull_request.labels.*.name, 'skip-cp-setup') }}" == 'true' ]]; then
             echo "Skip label present, skipping most setup steps"
             echo "skip=true" >> $GITHUB_OUTPUT
           else
