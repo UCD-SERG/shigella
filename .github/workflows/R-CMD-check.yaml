@@ -43,7 +43,6 @@ jobs:
         with:
           extra-packages: any::rcmdcheck, any::cmdstanr
           needs: check
-          
       - name: Cache CmdStan installation
         id: cache-cmdstan
         uses: actions/cache@v4
@@ -67,8 +66,8 @@ jobs:
         shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
-        env:                                      
-          RUN_STAN_TESTS: "true"                
+        env:
+          RUN_STAN_TESTS: "true"
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'

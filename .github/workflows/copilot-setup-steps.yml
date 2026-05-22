@@ -114,7 +114,7 @@ jobs:
                          getOption("repos")))
             }
             cmdstanr::check_cmdstan_toolchain(fix = TRUE)
-            cmdstanr::install_cmdstan(cores = 2, overwrite = FALSE)
+            cmdstanr::install_cmdstan(cores = 2, overwrite = FALSE, version = "2.36.0")
             cat("\ncmdstan version: ",
                 as.character(cmdstanr::cmdstan_version()), "\n")
           '
