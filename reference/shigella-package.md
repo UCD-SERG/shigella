@@ -14,5 +14,7 @@ Useful links:
 
 Authors:
 
+- Kwan Ho Lee <ksjlee@ucdavis.edu>
+
 - Douglas Ezra Morrison <demorrison@ucdavis.edu>
   ([ORCID](https://orcid.org/0000-0002-7195-830X))
