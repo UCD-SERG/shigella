@@ -13,11 +13,18 @@ URL: https://ucd-serg.github.io/shigella/
 Remotes:
     UCD-SERG/serodynamics
 Suggests:
+    cmdstanr,
     knitr,
+    posterior,
     rmarkdown,
     serodynamics (>= 0.0.0.9011),
     spelling,
     testthat (>= 3.0.0)
+Imports:
+    cli,
+    dplyr,
+    MASS,
+    tibble
 VignetteBuilder: knitr
 Depends:
     R (>= 3.5)
