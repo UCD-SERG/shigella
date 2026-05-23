@@ -24,10 +24,35 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::covr, any::xml2
+          extra-packages: any::covr, any::xml2, stan-dev/cmdstanr
           needs: coverage
 
+      - name: Cache CmdStan installation
+        id: cache-cmdstan
+        uses: actions/cache@v4
+        with:
+          path: ~/.cmdstan
+          key: cmdstan-${{ runner.os }}-2.36.0
+          restore-keys: |
+            cmdstan-${{ runner.os }}-
+
+      - name: Install CmdStan
+        if: steps.cache-cmdstan.outputs.cache-hit != 'true'
+        env:
+          GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cmdstanr::check_cmdstan_toolchain()
+          cmdstanr::install_cmdstan(
+            cores     = 2,
+            overwrite = FALSE,
+            version   = "2.36.0"
+          )
+        shell: Rscript {0}
+
       - name: Test coverage
+        env:
+          RUN_STAN_TESTS: "true"
         run: |
           cov <- covr::package_coverage(
             quiet = FALSE,
@@ -65,3 +90,5 @@ jobs:
         uses: codecov/test-results-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          
+          
