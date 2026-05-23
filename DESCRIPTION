@@ -1,11 +1,14 @@
 Package: shigella
-Title: What the Package Does (One Line, Title Case)
+Title: Bayesian Modeling of Shigella Antibody Kinetics
 Version: 0.0.0.9008
 Authors@R: c(
     person("Kwan Ho", "Lee", , "ksjlee@ucdavis.edu", role = c("aut", "cre")),
     person("Douglas Ezra", "Morrison", , "demorrison@ucdavis.edu", role = c("aut"),
            comment = c(ORCID = "0000-0002-7195-830X")))
-Description: What the package does (one paragraph).
+Description: Tools for multivariate Bayesian hierarchical modeling of
+    antibody response trajectories following confirmed Shigella infection,
+    supporting kinetic parameter estimation and serosurveillance
+    applications via Stan (cmdstanr) backends.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
