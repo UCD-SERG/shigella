@@ -15,3 +15,6 @@ data/*
 /.quarto/
 *.pdf
 README_files
+shigella.Rcheck/
+shigella*.tar.gz
+shigella*.tgz

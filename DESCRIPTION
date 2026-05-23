@@ -1,6 +1,6 @@
 Package: shigella
 Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9006
+Version: 0.0.0.9007
 Authors@R: c(
     person("Kwan Ho", "Lee", , "ksjlee@ucdavis.edu", role = c("aut", "cre")),
     person("Douglas Ezra", "Morrison", , "demorrison@ucdavis.edu", role = c("aut"),
@@ -9,55 +9,19 @@ Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-Imports: 
-    cli,
-    dplyr,
-    ggplot2,
-    rlang,
-    serocalculator,
-    tibble,
-    tidyr
 URL: https://ucd-serg.github.io/shigella/
-Remotes: 
+Remotes:
     UCD-SERG/serodynamics
-Suggests: 
-    arsenal,
-    bayesplot,
-    coda,
-    forcats,
-    furrr,
-    future,
-    future.apply,
-    ggeasy,
-    ggmcmc,
-    gridExtra,
-    gtsummary,
-    haven,
-    here,
-    huxtable,
-    kableExtra,
+Suggests:
     knitr,
-    magrittr,
-    mgcv,
-    parameters,
-    patchwork,
-    plotly,
-    purrr,
-    quarto,
-    readxl,
     rmarkdown,
-    runjags,
-    scales,
     serodynamics (>= 0.0.0.9011),
     spelling,
-    table1,
-    testthat (>= 3.0.0),
-    tidyverse
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
-Depends: 
+Depends:
     R (>= 3.5)
-LazyData: true
 Config/testthat/edition: 3
 Config/Needs/website: quarto
 Language: en-US
-Config/roxygen2/version: 8.0.0
+RoxygenNote: 8.0.0
