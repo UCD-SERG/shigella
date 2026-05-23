@@ -23,19 +23,20 @@
 #' @example inst/examples/run_phase1_diagnostic-examples.R
 #' @export
 run_phase1_diagnostic <- function(n,
-                                   iter_warmup,
-                                   iter_sampling,
-                                   tag,
-                                   output_dir    = "outputs/phase1",
-                                   phase0_dir    = "outputs/phase0",
-                                   true_rho_B    = 0.6,
-                                   seed          = 20260513L,
-                                   chains        = 2L,
-                                   adapt_delta   = 0.95,
-                                   max_treedepth = 12L) {
+                                  iter_warmup,
+                                  iter_sampling,
+                                  tag,
+                                  output_dir    = "outputs/phase1",
+                                  phase0_dir    = "outputs/phase0",
+                                  true_rho_B    = 0.6,
+                                  seed          = 20260513L,
+                                  chains        = 2L,
+                                  adapt_delta   = 0.95,
+                                  max_treedepth = 12L) {
   cat("\n", strrep("=", 70), "\n", sep = "")
   cat(sprintf(" PHASE 1: SLURM SINGLE JOB DIAGNOSTIC (%s)\n", tag))
-  cat(" Purpose: fit inside Slurm; compare with Phase 0 to isolate attribution\n")
+  cat(" Purpose: fit inside Slurm; compare with Phase 0 to isolate 
+      attribution\n")
   cat(strrep("=", 70), "\n\n", sep = "")
 
   # ----- 0. SLURM environment -----

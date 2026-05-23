@@ -21,11 +21,13 @@
     cli::cli_abort("{.arg omega_P} must be a P x P matrix.")
   }
 
-  if (!is.matrix(omega_B) || !identical(dim(omega_B), c(n_biomarker, n_biomarker))) {
+  if (!is.matrix(omega_B) || !identical(dim(omega_B), c(n_biomarker, 
+                                                        n_biomarker))) {
     cli::cli_abort("{.arg omega_B} must be a K x K matrix.")
   }
 
-  if (!is.matrix(omega_eps) || !identical(dim(omega_eps), c(n_biomarker, n_biomarker))) {
+  if (!is.matrix(omega_eps) || !identical(dim(omega_eps), c(n_biomarker, 
+                                                            n_biomarker))) {
     cli::cli_abort("{.arg omega_eps} must be a K x K matrix.")
   }
 

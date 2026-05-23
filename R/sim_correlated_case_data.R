@@ -52,7 +52,8 @@
 #' \eqn{\beta_{ik} = (\log y1_{ik} - \log y0_{ik})\,/\,t1_{ik}}
 #' and shape \eqn{s_{ik} = \exp(\mathtt{log\_rm1}_{ik}) + 1 > 1}.
 #'
-#' This is the data-generating process for a Kronecker-correlated simulation study.
+#' This is the data-generating process for a Kronecker-correlated simulation 
+#' study.
 #'
 #' @param n [integer] number of individuals to simulate
 #' @param mu [numeric] length-P vector of population means on log scale

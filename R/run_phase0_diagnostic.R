@@ -22,16 +22,16 @@
 #' @example inst/examples/run_phase0_diagnostic-examples.R
 #' @export
 run_phase0_diagnostic <- function(n,
-                                   iter_warmup,
-                                   iter_sampling,
-                                   tag,
-                                   output_dir    = "outputs/phase0",
-                                   true_rho_B    = 0.6,
-                                   seed          = 20260513L,
-                                   chains        = 2L,
-                                   adapt_delta   = 0.95,
-                                   max_treedepth = 12L,
-                                   compile_dir   = NULL) {
+                                  iter_warmup,
+                                  iter_sampling,
+                                  tag,
+                                  output_dir    = "outputs/phase0",
+                                  true_rho_B    = 0.6,
+                                  seed          = 20260513L,
+                                  chains        = 2L,
+                                  adapt_delta   = 0.95,
+                                  max_treedepth = 12L,
+                                  compile_dir   = NULL) {
   cat("\n", strrep("=", 70), "\n", sep = "")
   cat(sprintf(" PHASE 0: INTERACTIVE SLURM REPRODUCIBILITY TEST (%s)\n", tag))
   cat(" Purpose: fit via salloc to compare determinism with Phase 1 sbatch\n")

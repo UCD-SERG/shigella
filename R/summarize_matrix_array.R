@@ -10,7 +10,7 @@
 #' @keywords internal
 #' @noRd
 .summarize_matrix_array <- function(draws_arr, var_name,
-                                   n_arr, n_row, n_col) {
+                                    n_arr, n_row, n_col) {
   var_dim <- dimnames(draws_arr)$variable
 
   lapply(seq_len(n_arr), function(k) {

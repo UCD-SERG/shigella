@@ -4,9 +4,9 @@
 \name{shigella-package}
 \alias{shigella}
 \alias{shigella-package}
-\title{shigella: Bayesian Modeling of Shigella Antibody Kinetics}
+\title{shigella: What the Package Does (One Line, Title Case)}
 \description{
-Tools for multivariate Bayesian hierarchical modeling of antibody response trajectories following confirmed Shigella infection, supporting kinetic parameter estimation and serosurveillance applications via Stan (cmdstanr) backends.
+What the package does (one paragraph).
 }
 \seealso{
 Useful links:
@@ -25,3 +25,4 @@ Authors:
 }
 
 }
+\keyword{internal}
