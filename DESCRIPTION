@@ -1,39 +1,27 @@
 Package: shigella
-Title: Bayesian Modeling of Shigella Antibody Kinetics
-Version: 0.0.0.9006
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9007
 Authors@R: c(
     person("Kwan Ho", "Lee", , "ksjlee@ucdavis.edu", role = c("aut", "cre")),
     person("Douglas Ezra", "Morrison", , "demorrison@ucdavis.edu", role = c("aut"),
            comment = c(ORCID = "0000-0002-7195-830X")))
-Description: Tools for multivariate Bayesian hierarchical modeling of
-    antibody response trajectories following confirmed Shigella infection,
-    supporting kinetic parameter estimation and serosurveillance
-    applications via Stan (cmdstanr) backends.
+Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-Imports:
-    cli,
-    dplyr,
-    MASS,
-    tibble
 URL: https://ucd-serg.github.io/shigella/
-Remotes: 
-    UCD-SERG/serodynamics,
-    stan-dev/cmdstanr
+Remotes:
+    UCD-SERG/serodynamics
 Suggests:
-    cmdstanr (>= 0.9.0),
     knitr,
-    posterior,
-    quarto,
     rmarkdown,
-    serodynamics (>= 0.0.0.9050),
+    serodynamics (>= 0.0.0.9011),
     spelling,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
-Depends: 
+Depends:
     R (>= 3.5)
 Config/testthat/edition: 3
 Config/Needs/website: quarto
 Language: en-US
-Config/roxygen2/version: 8.0.0
+RoxygenNote: 8.0.0

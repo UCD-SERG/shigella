@@ -20,7 +20,3 @@
 ^shigella\.Rcheck$
 ^shigella.*\.tar\.gz$
 ^shigella.*\.tgz$
-^scripts$
-^slurm$
-^\.quarto$
-^\.lintr$

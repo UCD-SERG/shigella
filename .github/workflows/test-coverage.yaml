@@ -24,10 +24,9 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::covr, any::xml2
+          extra-packages: any::covr, any::xml2, stan-dev/cmdstanr
           needs: coverage
 
-      # ADD THIS: cache CmdStan
       - name: Cache CmdStan installation
         id: cache-cmdstan
         uses: actions/cache@v4
@@ -37,7 +36,6 @@ jobs:
           restore-keys: |
             cmdstan-${{ runner.os }}-
 
-      # ADD THIS: install CmdStan if cache is missing
       - name: Install CmdStan
         if: steps.cache-cmdstan.outputs.cache-hit != 'true'
         env:
@@ -92,4 +90,5 @@ jobs:
         uses: codecov/test-results-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          
           
