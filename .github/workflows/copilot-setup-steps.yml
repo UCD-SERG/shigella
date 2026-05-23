@@ -99,7 +99,7 @@ jobs:
             any::rmarkdown
             any::testthat
             any::posterior
-            any::cmdstanr
+            stan-dev/cmdstanr
             d-morrison/altdoc@recursive-qmd-search
           needs: check
 

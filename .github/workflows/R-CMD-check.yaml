@@ -41,7 +41,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck, any::cmdstanr
+          extra-packages: any::rcmdcheck, stan-dev/cmdstanr
           needs: check
       - name: Cache CmdStan installation
         id: cache-cmdstan
