@@ -225,6 +225,9 @@ jobs:
           # The CLI reads CLAUDE_CODE_OAUTH_TOKEN as a belt-and-suspenders
           # backup to the credentials file.
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Required so Claude can use the `Bash(gh ...)` tools in the
+          # allowlist (gh CLI errors out without auth even on read ops).
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -o pipefail
           # stdout → comment body. stderr → log AND a file so the
