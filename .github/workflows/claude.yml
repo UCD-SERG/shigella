@@ -256,17 +256,20 @@ jobs:
           PR_HEAD_SHA: ${{ steps.ctx.outputs.pr_head_sha }}
         run: |
           set -euo pipefail
-          # Only push if Claude actually committed something on top of the
-          # PR head SHA we checked out.
-          if [ "$(git rev-parse HEAD)" = "$PR_HEAD_SHA" ]; then
-            echo "No new commits from Claude."
-            exit 0
-          fi
-          # Also sweep any uncommitted edits into a final commit so we don't
-          # lose work if Claude forgot to commit.
+          # Sweep any uncommitted/staged edits into a commit FIRST. Claude
+          # sometimes runs `git add` without `git commit` and reports "files
+          # are staged"; without this sweep happening before the
+          # HEAD-unchanged check below, those edits would be silently
+          # discarded.
           if [ -n "$(git status --porcelain)" ]; then
             git add -A
             git commit -m "@claude: auto-commit residual uncommitted changes"
+          fi
+          # Now check whether HEAD has moved past the PR head SHA we
+          # checked out. If not, Claude made no committable changes.
+          if [ "$(git rev-parse HEAD)" = "$PR_HEAD_SHA" ]; then
+            echo "No new commits from Claude."
+            exit 0
           fi
           git push origin "HEAD:$PR_HEAD_REF"
 
