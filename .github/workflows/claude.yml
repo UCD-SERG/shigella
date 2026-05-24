@@ -227,11 +227,15 @@ jobs:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
         run: |
           set -o pipefail
+          # stdout → comment body. stderr → log AND a file so the
+          # "Update sticky comment" step can surface it on failure.
           claude --print \
             --max-turns 20 \
             --allowed-tools 'Read,Glob,Grep,LS,Edit,Write,Bash(git add:*),Bash(git commit:*),Bash(git rm:*),Bash(git mv:*),Bash(git status:*),Bash(git diff:*),Bash(git log:*),Bash(npm:*),Bash(Rscript:*),Bash(R CMD:*),Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr checks:*),Bash(gh issue view:*),Bash(gh run view:*),Bash(gh run list:*),Bash(gh api:*)' \
             --disallowed-tools 'Bash(git push:*),WebFetch' \
-            < /tmp/claude-prompt.txt > /tmp/claude-output.md
+            < /tmp/claude-prompt.txt \
+            > /tmp/claude-output.md \
+            2> >(tee /tmp/claude-stderr.log >&2)
 
       - name: Configure git for push
         if: always() && steps.ctx.outputs.is_pr == 'true'
@@ -271,11 +275,31 @@ jobs:
         run: |
           set -euo pipefail
 
+          # GitHub comments cap at ~65k chars; leave headroom for failure
+          # diagnostics + footer.
+          MAX_STDOUT_BYTES=50000
+          MAX_STDERR_BYTES=8000
+
           if [ "$RUN_OUTCOME" = "success" ] && [ -s /tmp/claude-output.md ]; then
-            # GitHub comments cap at ~65k chars; leave headroom for footer.
-            head -c 60000 /tmp/claude-output.md > /tmp/comment-body.md
+            head -c "$MAX_STDOUT_BYTES" /tmp/claude-output.md > /tmp/comment-body.md
           else
-            printf '%s' ":x: **Claude encountered an error or produced no output.**" > /tmp/comment-body.md
+            {
+              printf '%s\n\n' ":x: **Claude exited with an error.**"
+              if [ -s /tmp/claude-output.md ]; then
+                printf '%s\n\n' "**Partial stdout** (last $MAX_STDOUT_BYTES bytes):"
+                printf '```\n'
+                tail -c "$MAX_STDOUT_BYTES" /tmp/claude-output.md
+                printf '\n```\n\n'
+              fi
+              if [ -s /tmp/claude-stderr.log ]; then
+                printf '%s\n\n' "**stderr tail** (last $MAX_STDERR_BYTES bytes):"
+                printf '```\n'
+                tail -c "$MAX_STDERR_BYTES" /tmp/claude-stderr.log
+                printf '\n```\n'
+              else
+                printf '%s\n' "_No stderr captured._"
+              fi
+            } > /tmp/comment-body.md
           fi
 
           {
