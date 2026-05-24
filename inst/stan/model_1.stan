@@ -4,6 +4,10 @@
 // Model 1 (formerly Model A): Independent biomarker antibody kinetics.
 // Each biomarker fit independently — no cross-biomarker correlation.
 //
+// Log-space kinetics: uses log_two_phase_curve() ported from model_2.stan.
+// This removes the discontinuous fallback (no `if base <= 0`) and aligns
+// the likelihood implementation with the validated model_2.stan.
+//
 // Compatible with serodynamics::prep_data_stan() output:
 //   N, K, P, max_obs, n_obs[N], time_obs[N, max_obs], log_y[N, max_obs, K]
 //
@@ -11,18 +15,32 @@
 // ============================================================
 
 functions {
-  real two_phase_curve(real t, real y0, real y1, real t1,
-                       real alpha, real shape) {
-    real beta;
+  // Compute log(y(t)) DIRECTLY (matching JAGS reference and model_2.stan)
+  // Uses log-space parameters where natural:
+  //   - log_y0, log_y1 are log of baseline / peak antibody
+  //   - t1, alpha, shape are in natural scale
+  real log_two_phase_curve(real t,
+                            real log_y0, real log_y1,
+                            real t1, real alpha, real shape) {
     if (t <= t1) {
-      beta = log(y1 / y0) / t1;
-      return y0 * exp(beta * t);
+      // Active phase: log(y(t)) = log(y0) + beta * t
+      //   where beta = (log(y1) - log(y0)) / t1
+      real beta = (log_y1 - log_y0) / t1;
+      return log_y0 + beta * t;
     } else {
-      real base = pow(y1, 1 - shape) - (1 - shape) * alpha * (t - t1);
-      if (base <= 0) {
-        return y0 * 0.01;
-      }
-      return pow(base, 1 / (1 - shape));
+      // Recovery phase: log(y(t)) = 1/(1-shape) * log(inside)
+      // inside = y1^(1-shape) - (1-shape)*alpha*(t-t1)
+      //
+      // Since shape > 1, (1 - shape) < 0:
+      //   y1^(1-shape) = exp((1-shape) * log_y1)  (small positive)
+      //   -(1-shape)*alpha*(t-t1) = (shape-1)*alpha*(t-t1)  (positive)
+      // So inside = small_positive + positive = positive  ✓
+      // No need for fallback because both terms are guaranteed positive.
+      real one_minus_shape = 1 - shape;
+      real first_term  = exp(one_minus_shape * log_y1);
+      real second_term = (shape - 1) * alpha * (t - t1);
+      real inside = first_term + second_term;
+      return log(inside) / one_minus_shape;
     }
   }
 }
@@ -77,13 +95,13 @@ model {
     if (n_obs[i] > 0) {
       for (o in 1:n_obs[i]) {
         for (k in 1:K) {
-          real y0_o = exp(theta[i, k][1]);
-          real y1_o = y0_o + exp(theta[i, k][2]);
-          real t1_o = exp(theta[i, k][3]);
-          real alpha_o = exp(theta[i, k][4]);
-          real shape_o = exp(theta[i, k][5]) + 1;
-          real mu_log = log(two_phase_curve(time_obs[i, o], y0_o, y1_o,
-                                             t1_o, alpha_o, shape_o));
+          real log_y0_o = theta[i, k][1];
+          real log_y1_o = log_sum_exp(log_y0_o, theta[i, k][2]);
+          real t1_o     = exp(theta[i, k][3]);
+          real alpha_o  = exp(theta[i, k][4]);
+          real shape_o  = exp(theta[i, k][5]) + 1;
+          real mu_log = log_two_phase_curve(time_obs[i, o], log_y0_o, log_y1_o,
+                                             t1_o, alpha_o, shape_o);
           log_y[i, o, k] ~ normal(mu_log, tau_eps[k]);
         }
       }
@@ -118,13 +136,13 @@ generated quantities {
     if (n_obs[i] > 0) {
       for (o in 1:n_obs[i]) {
         for (k in 1:K) {
-          real y0_o = exp(theta[i, k][1]);
-          real y1_o = y0_o + exp(theta[i, k][2]);
-          real t1_o = exp(theta[i, k][3]);
-          real alpha_o = exp(theta[i, k][4]);
-          real shape_o = exp(theta[i, k][5]) + 1;
-          real mu_log = log(two_phase_curve(time_obs[i, o], y0_o, y1_o,
-                                             t1_o, alpha_o, shape_o));
+          real log_y0_o = theta[i, k][1];
+          real log_y1_o = log_sum_exp(log_y0_o, theta[i, k][2]);
+          real t1_o     = exp(theta[i, k][3]);
+          real alpha_o  = exp(theta[i, k][4]);
+          real shape_o  = exp(theta[i, k][5]) + 1;
+          real mu_log = log_two_phase_curve(time_obs[i, o], log_y0_o, log_y1_o,
+                                             t1_o, alpha_o, shape_o);
           log_lik[i] += normal_lpdf(log_y[i, o, k] | mu_log, tau_eps[k]);
         }
       }
