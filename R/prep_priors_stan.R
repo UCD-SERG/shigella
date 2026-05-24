@@ -63,8 +63,10 @@ prep_priors_stan <- function(
     priors$lkj_B_eta   <- lkj_B_eta
   }
 
-  attr(priors, "model")            <- model
-  attr(priors, "used_stan_priors") <- priors
+  attr(priors, "model")               <- model
+  # Snapshot of the list itself so run_mod_stan can attach it to the output
+  # without re-calling prep_priors_stan (self-referential by design).
+  attr(priors, "stan_input_snapshot") <- priors
   class(priors) <- c("curve_params_priors_stan", "list")
   return(priors)
 }

@@ -131,7 +131,7 @@ run_mod_stan <- function(data,
       nIterations = iter_sampling + iter_warmup,
       nWarmup     = iter_warmup,
       model_type  = model,
-      priors      = attr(priors, "used_stan_priors")
+      priors      = attr(priors, "stan_input_snapshot")
     )
 
   if (length(cov_list) == 1) {

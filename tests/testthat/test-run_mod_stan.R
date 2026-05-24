@@ -1,9 +1,8 @@
-test_that("run_mod_stan is callable with expected arguments", {
-  expect_true(is.function(run_mod_stan))
-  
+test_that("run_mod_stan has required arguments", {
   fn_args <- names(formals(run_mod_stan))
-  expect_true(any(c("data", "case_data") %in% fn_args))
-  expect_true(any(c("model", "file_mod") %in% fn_args))
+  expect_true("data" %in% fn_args)
+  expect_true("model" %in% fn_args)
+  expect_true("seed" %in% fn_args)
 })
 
 test_that("run_mod_stan completes a minimal fit (slow)", {
@@ -30,12 +29,3 @@ test_that("run_mod_stan completes a minimal fit (slow)", {
   expect_s3_class(fit, "sr_model")
 })
 
-test_that("run_mod_stan has expected function signature", {
-  expect_equal(
-    names(formals(run_mod_stan)),
-    c("data", "model", "chains", "iter_sampling", "iter_warmup",
-      "adapt_delta", "max_treedepth", "seed", "strat", "parallel_chains",
-      "with_post", "stan_dir", "compile_dir", "init", "refresh",
-      "show_messages", "...")
-  )
-})

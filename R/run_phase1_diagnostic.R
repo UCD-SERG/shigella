@@ -18,10 +18,13 @@
 #' @param chains Number of MCMC chains (default `2`).
 #' @param adapt_delta Stan `adapt_delta` (default `0.95`).
 #' @param max_treedepth Stan `max_treedepth` (default `12`).
+#' @param compile_dir Directory for compiled Stan binaries. If `NULL`,
+#'   falls back to the `STAN_COMPILE_DIR` environment variable, then
+#'   `/tmp/<USER>/cmdstan_bin_phase1_<tag>_<jobid>`.
 #' @return Invisibly returns the result bundle list, or `NULL` if the fit
 #'   crashed.
 #' @example inst/examples/run_phase1_diagnostic-examples.R
-#' @export
+#' @keywords internal
 run_phase1_diagnostic <- function(n,
                                   iter_warmup,
                                   iter_sampling,
@@ -32,7 +35,8 @@ run_phase1_diagnostic <- function(n,
                                   seed          = 20260513L,
                                   chains        = 2L,
                                   adapt_delta   = 0.95,
-                                  max_treedepth = 12L) {
+                                  max_treedepth = 12L,
+                                  compile_dir   = NULL) {
   cat("\n", strrep("=", 70), "\n", sep = "")
   cat(sprintf(" PHASE 1: SLURM SINGLE JOB DIAGNOSTIC (%s)\n", tag))
   cat(" Purpose: fit inside Slurm; compare with Phase 0 to isolate 
@@ -90,12 +94,14 @@ run_phase1_diagnostic <- function(n,
 
   # ----- 2. Compile dir (SLURM-specific, per-task subdir) -----
   write_status(status_file, "COMPILE_DIR", "setting up")
-  compile_dir <- Sys.getenv("STAN_COMPILE_DIR", unset = "")
-  if (compile_dir == "") {
-    user        <- Sys.getenv("USER", unset = "unknown")
-    compile_dir <- file.path(
-      "/tmp", user, sprintf("cmdstan_bin_phase1_%s_%s", tag, job_id)
-    )
+  if (is.null(compile_dir)) {
+    compile_dir <- Sys.getenv("STAN_COMPILE_DIR", unset = "")
+    if (compile_dir == "") {
+      user        <- Sys.getenv("USER", unset = "unknown")
+      compile_dir <- file.path(
+        "/tmp", user, sprintf("cmdstan_bin_phase1_%s_%s", tag, job_id)
+      )
+    }
   }
   if (!dir.exists(compile_dir)) {
     dir.create(compile_dir, recursive = TRUE, mode = "0755")

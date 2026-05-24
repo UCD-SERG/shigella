@@ -8,7 +8,7 @@
 # ==========================================================================
 suppressPackageStartupMessages(library(shigella))
 
-run_phase1_diagnostic(
+shigella:::run_phase1_diagnostic(
   n             = 5,
   iter_warmup   = 500,
   iter_sampling = 500,

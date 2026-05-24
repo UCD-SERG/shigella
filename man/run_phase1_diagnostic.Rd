@@ -15,7 +15,8 @@ run_phase1_diagnostic(
   seed = 20260513L,
   chains = 2L,
   adapt_delta = 0.95,
-  max_treedepth = 12L
+  max_treedepth = 12L,
+  compile_dir = NULL
 )
 }
 \arguments{
@@ -42,6 +43,10 @@ comparison table.}
 \item{adapt_delta}{Stan \code{adapt_delta} (default \code{0.95}).}
 
 \item{max_treedepth}{Stan \code{max_treedepth} (default \code{12}).}
+
+\item{compile_dir}{Directory for compiled Stan binaries. If \code{NULL},
+falls back to the \code{STAN_COMPILE_DIR} environment variable, then
+\verb{/tmp/<USER>/cmdstan_bin_phase1_<tag>_<jobid>}.}
 }
 \value{
 Invisibly returns the result bundle list, or \code{NULL} if the fit
@@ -78,3 +83,4 @@ if (interactive()) {
   }
 }
 }
+\keyword{internal}

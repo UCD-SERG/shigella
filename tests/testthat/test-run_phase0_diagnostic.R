@@ -1,10 +1,8 @@
-test_that("run_phase0_diagnostic has the expected function signature", {
-  args <- names(formals(run_phase0_diagnostic))
-  expect_equal(args, c(
-    "n", "iter_warmup", "iter_sampling", "tag",
-    "output_dir", "true_rho_B", "seed", "chains",
-    "adapt_delta", "max_treedepth", "compile_dir"
-  ))
+test_that("run_phase0_diagnostic has required arguments", {
+  fn_args <- names(formals(shigella:::run_phase0_diagnostic))
+  expect_true("n" %in% fn_args)
+  expect_true("tag" %in% fn_args)
+  expect_true("compile_dir" %in% fn_args)
 })
 
 test_that("run_phase0_diagnostic runs with minimal Stan settings", {

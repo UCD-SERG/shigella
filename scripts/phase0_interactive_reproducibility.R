@@ -13,7 +13,7 @@
 setwd("~/shigella")
 suppressPackageStartupMessages(library(shigella))
 
-run_phase0_diagnostic(
+shigella:::run_phase0_diagnostic(
   n             = 5,
   iter_warmup   = 500,
   iter_sampling = 500,
