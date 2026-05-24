@@ -30,20 +30,6 @@ jobs:
         with:
           fetch-depth: 1
 
-      # Workaround for anthropics/claude-code-action#1281: the OAuth token
-      # passed via `claude_code_oauth_token:` intermittently doesn't reach the
-      # spawned Claude Code subprocess, which then crashes at SDK init with
-      # `apiKey`/`authToken` both null. Pre-writing the credentials file (same
-      # path/format `claude setup-token` would produce locally) is the
-      # documented bypass — the CLI reads it directly.
-      - name: Pre-write Claude credentials (workaround for action#1281)
-        run: |
-          mkdir -p "$HOME/.claude"
-          cat > "$HOME/.claude/.credentials.json" <<'EOF'
-          {"claudeAiOauth": {"accessToken": "${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}", "subscriptionType": "max"}}
-          EOF
-          chmod 600 "$HOME/.claude/.credentials.json"
-
       - name: Run Claude Code
         id: claude
         uses: anthropics/claude-code-action@v1
