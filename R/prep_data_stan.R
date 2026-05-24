@@ -74,6 +74,9 @@ prep_data_stan <- function(data,
 
   max_obs <- ncol(smpl_t)
   P       <- 5L
+  # Cannot derive P from prepped_jags_data dimensions; hardcoded to match
+  # model_2.stan's expected layout (log_y0, log_y1m0, log_t1, log_alpha, log_rm1).
+  stopifnot(P == 5L)
 
   # Replace NA with 0; Stan ignores these via the n_obs[i] guard in
   # the likelihood loop (for (t_idx in 1:n_obs[i])).

@@ -113,6 +113,10 @@ sim_correlated_case_data <- function(
     time_grid, n_obs_per_subject
   )
 
+  .validate_corr_matrix(omega_P, "omega_P")
+  .validate_corr_matrix(omega_B, "omega_B")
+  .validate_corr_matrix(omega_eps, "omega_eps")
+
   mats <- .build_sigma_matrices(mu, tau_P, tau_B, tau_eps,
                                 omega_P, omega_B, omega_eps)
   sigma_eps <- mats$sigma_eps

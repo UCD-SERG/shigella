@@ -24,6 +24,41 @@ test_that("sim_correlated_case_data supports n = 1", {
   expect_equal(length(unique(sim$id)), 1)
 })
 
+test_that(".validate_corr_matrix rejects non-square omega", {
+  # 2x3 matrix fails the square check before .validate_corr_matrix even runs
+  # (caught by .validate_sim_inputs dimension check)
+  bad_omega <- matrix(0, nrow = 2, ncol = 3)
+  expect_error(
+    sim_correlated_case_data(n = 2, omega_B = bad_omega, seed = 1),
+    regexp = "omega_B"
+  )
+})
+
+test_that(".validate_corr_matrix rejects non-symmetric omega", {
+  bad_omega <- matrix(c(1, 0.5, 0.3, 1), nrow = 2)  # asymmetric
+  expect_error(
+    sim_correlated_case_data(n = 2, omega_B = bad_omega, seed = 1),
+    regexp = "symmetric"
+  )
+})
+
+test_that(".validate_corr_matrix rejects non-unit-diagonal omega", {
+  bad_omega <- matrix(c(2, 0, 0, 2), nrow = 2)  # diagonal != 1
+  expect_error(
+    sim_correlated_case_data(n = 2, omega_B = bad_omega, seed = 1),
+    regexp = "unit diagonal"
+  )
+})
+
+test_that(".validate_corr_matrix rejects non-PSD omega", {
+  # Symmetric, unit diagonal, but min eigenvalue = -1
+  bad_omega <- matrix(c(1, 2, 2, 1), nrow = 2)
+  expect_error(
+    sim_correlated_case_data(n = 2, omega_B = bad_omega, seed = 1),
+    regexp = "positive semi-definite"
+  )
+})
+
 test_that("sim_correlated_case_data theta_true structure is stable", {
   sim <- sim_correlated_case_data(n = 5, seed = 2026)
   theta <- attr(sim, "theta_true")

@@ -16,5 +16,11 @@
   }
 
   term <- y1^(1 - shape) - (1 - shape) * alpha * (tt - t1_j)
-  if (term <= 0) log(y0) else log(term) / (1 - shape)
+  if (term <= 0) {
+    cli::cli_abort(c(
+      "Trajectory infeasibility detected at t = {tt}",
+      "i" = "term = {term} <= 0; parameter combination is invalid for the two-phase model"
+    ))
+  }
+  log(term) / (1 - shape)
 }
