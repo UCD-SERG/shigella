@@ -16,11 +16,13 @@ options(knitr.kable.NA = "")  # nolint: undesirable_function_linter
 
 Chapter 1 established a univariate Bayesian hierarchical model for the
 post-symptom-onset antibody trajectory of a single antigen-isotype
-biomarker, fitting each biomarker independently. This independence
+biomarker, fitting each biomarker independently. 
+This independence
 assumption is biologically unrealistic: within the same subject, IgG and
 IgA responses share the same infection event, the same immune system,
 and the same antigenic stimulation, so their kinetic parameters are
-expected to co-vary. Ignoring this dependence discards information that
+expected to co-vary. 
+Ignoring this dependence discards information that
 could improve parameter estimation precision and downstream
 seroincidence inference.
 
@@ -49,7 +51,8 @@ proposes next steps.
 
 Following Teunis et al. (2016), the post-symptom-onset antibody
 concentration $y(t)$ in a subject's blood at time $t$ is modeled as a
-deterministic two-phase trajectory. This formulation builds on the
+deterministic two-phase trajectory. 
+This formulation builds on the
 within-host rise--decay seroresponse models developed by de Graaf et al.
 (2014) and Teunis et al. (2016):
 
@@ -80,8 +83,8 @@ for subject $i$ and biomarker $k$.
 ## The multivariate extension {#sec-mv}
 
 Let $K$ index biomarkers (antigen-isotype pairs; $K=2$ for the IgG/IgA
-pair) and $P = 5$ the number of kinetic parameters. Stack the
-per-subject log-scale parameters across biomarkers:
+pair) and $P = 5$ the number of kinetic parameters. 
+Stack the per-subject log-scale parameters across biomarkers:
 
 $$
 \boldsymbol{\theta}_i \;=\;
@@ -99,7 +102,8 @@ $$ {#eq-kron}
 where $\otimes$ denotes the Kronecker product,
 $\Sigma_B \in \mathbb{R}^{K \times K}$ is the between-biomarker
 covariance, and $\Sigma_P \in \mathbb{R}^{P \times P}$ is the
-between-parameter covariance. This is the multivariate hierarchical
+between-parameter covariance. 
+This is the multivariate hierarchical
 parameterization used to separate covariance across response dimensions
 from covariance across kinetic parameters (Gelman et al., 2014).
 
@@ -115,7 +119,8 @@ $$
 
 The decomposition $\Sigma_B \otimes \Sigma_P$ is non-unique up to a
 scalar: for any $c \neq 0$, the pair $(c\Sigma_B, c^{-1}\Sigma_P)$
-yields the same product. To resolve this, $\Sigma_B$ and $\Sigma_P$ are
+yields the same product. 
+To resolve this, $\Sigma_B$ and $\Sigma_P$ are
 constrained to be correlation matrices and the marginal variances
 are absorbed into separate positive scale vectors:
 
@@ -141,7 +146,8 @@ $\boldsymbol{\tau}_P \in \mathbb{R}_+^P$.
 
 The LKJ prior is used because it defines a proper prior over correlation
 matrices and allows transparent control over concentration around the
-identity matrix (Lewandowski et al., 2009). I do not impose a sign
+identity matrix (Lewandowski et al., 2009). 
+I do not impose a sign
 constraint on $\rho_B$: although IgG and IgA responses share the same
 infection event, class switching and mucosal/systemic response timing
 can differ, so early post-infection data may plausibly support either
@@ -171,7 +177,8 @@ correlation.
 The Stan implementation should use a non-centered hierarchical
 parameterization, because non-centered forms often reduce difficult
 funnel-like posterior geometry in hierarchical models fitted with HMC
-(Betancourt & Girolami, 2015). In code, this means sampling
+(Betancourt & Girolami, 2015). 
+In code, this means sampling
 standard-normal latent variables and transforming them through the
 Cholesky factor of the structured covariance matrix rather than sampling
 subject-level parameters directly.
@@ -188,14 +195,16 @@ are tested here:
 | Realistic | 48 | 10 | $+0.6$ | 1000 / 1000 | 2 | 20260513 |
 
 The two sample sizes are chosen as a sanity check ($n=5$) and as the
-Chapter-1 IpaB analytical cohort size ($n=48$). Each fit is run twice
+Chapter-1 IpaB analytical cohort size ($n=48$). 
+Each fit is run twice
 with identical seed and model file but in two different execution modes
 (interactive `salloc` vs batch `sbatch`) to verify execution determinism
 (see @sec-results).
 
 For the later multi-replicate simulation study, performance summaries
 should be reported with Monte Carlo standard errors, rather than
-interpreted from a small pilot alone. Following Morris et al. (2019),
+interpreted from a small pilot alone. 
+Following Morris et al. (2019),
 the planned full simulation should summarize bias, mean squared error,
 coverage, and the Monte Carlo standard error of each performance
 measure.
@@ -239,7 +248,8 @@ knitr::kable(cmp_n5,
 ```
 
 All numerical summaries are bit-for-bit identical between the two
-execution modes. Stan's HMC sampler is deterministic given identical
+execution modes. 
+Stan's HMC sampler is deterministic given identical
 seed, model, data, and runtime, so this match confirms that:
 
 1.  The cluster environment (SLURM batch vs interactive allocation,
@@ -337,7 +347,8 @@ observation density at $K = 2, P = 5$ may exceed $n = 48$.
 
 The LKJ(2) prior on a $K = 2$ correlation matrix is unimodal in
 $\rho_B$, but the likelihood for $\Omega_B$ given a finite dataset may
-not be. With only two chains, a mode-finding sampler could locate two
+not be. 
+With only two chains, a mode-finding sampler could locate two
 distinct modes that yield large $\hat R$ even after warmup, as appears
 to be the case here.
 
@@ -345,17 +356,20 @@ to be the case here.
 
 The least glamorous and most consequential possibility: that
 `sim_correlated_case_data()` does not actually produce data drawn from
-the exact structure that `inst/stan/model_2.stan` assumes. Candidate
+the exact structure that `inst/stan/model_2.stan` assumes. 
+Candidate
 sources of mismatch include Cholesky-factor ordering conventions,
 biomarker-vs-parameter axis ordering in the Kronecker product, or
-noise-model parameterization. This must be checked first, because if
+noise-model parameterization. 
+This must be checked first, because if
 confirmed it would make the other two analyses moot.
 
 ## Open questions
 
 Distinguishing among the three mechanisms above will require further
 investigation, and the appropriate sequencing of those investigations is
-itself a question on which advisor input is welcomed. A natural next
+itself a question on which advisor input is welcomed. 
+A natural next
 step is a targeted simulation-based calibration workflow: simulate from
 known parameter values, refit the model, and verify that posterior
 summaries recover the known truth across repeated datasets (Talts et
