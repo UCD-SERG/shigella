@@ -32,12 +32,12 @@ run_phase0_diagnostic <- function(n,
                                   adapt_delta   = 0.95,
                                   max_treedepth = 12L,
                                   compile_dir   = NULL) {
-  cat("\n", strrep("=", 70), "\n", sep = "")
-  cat(sprintf(" PHASE 0: INTERACTIVE SLURM REPRODUCIBILITY TEST (%s)\n", tag))
-  cat(" Purpose: fit via salloc to compare determinism with Phase 1 sbatch\n")
-  cat(strrep("=", 70), "\n\n", sep = "")
-  cat(sprintf("Started at:  %s\n", format(Sys.time())))
-  cat(sprintf("Host:        %s\n\n", Sys.info()[["nodename"]]))
+  cli::cli_h1("PHASE 0: INTERACTIVE SLURM REPRODUCIBILITY TEST ({tag})")
+  cli::cli_inform(c(
+    "Purpose: fit via salloc to compare determinism with Phase 1 sbatch",
+    "Started at: {format(Sys.time())}",
+    "Host: {Sys.info()[['nodename']]}"
+  ))
 
   dir.create("logs/phase0", recursive = TRUE, showWarnings = FALSE)
   dir.create(output_dir,    recursive = TRUE, showWarnings = FALSE)
@@ -59,9 +59,9 @@ run_phase0_diagnostic <- function(n,
     cmdstanr::cmdstan_version(), error = function(e) "UNKNOWN"
   )
   for (pkg in names(pkg_versions)) {
-    cat(sprintf("  %-15s %s\n", pkg, pkg_versions[pkg]))
+    cat(sprintf("  %-15s %s\n", pkg, pkg_versions[pkg])) # nolint: undesirable_function_linter
   }
-  cat(sprintf("  %-15s %s\n\n", "cmdstan", cmdstan_ver))
+  cat(sprintf("  %-15s %s\n\n", "cmdstan", cmdstan_ver)) # nolint: undesirable_function_linter
   saveRDS(
     c(pkg_versions, cmdstan = cmdstan_ver),
     file.path(output_dir, "env_versions.rds")
@@ -78,8 +78,10 @@ run_phase0_diagnostic <- function(n,
   if (!dir.exists(compile_dir)) {
     dir.create(compile_dir, recursive = TRUE, mode = "0755")
   }
-  cat(sprintf("  compile_dir:    %s\n", compile_dir))
-  cat(sprintf("  existing files: %d\n\n", length(list.files(compile_dir))))
+  cli::cli_inform(c(
+    "compile_dir: {compile_dir}",
+    "existing files: {length(list.files(compile_dir))}"
+  ))
   write_status(status_file, "COMPILE_DIR", "OK")
 
   # ----- 3. Simulate -----
@@ -92,11 +94,10 @@ run_phase0_diagnostic <- function(n,
     antigen_isos      = c("IgG", "IgA"),
     n_obs_per_subject = 5L
   )
-  cat(sprintf("  n_subjects: %d, rows: %d, true rho_B: %.3f\n",
-              length(unique(sim_data$id)), nrow(sim_data), true_rho_B))
+  cli::cli_inform(sprintf("n_subjects: %d, rows: %d, true rho_B: %.3f",
+                          length(unique(sim_data$id)), nrow(sim_data), true_rho_B))
   saveRDS(sim_data, file.path(output_dir, sprintf("sim_data_%s.rds", tag)))
   write_status(status_file, "SIMULATE", "OK")
-  cat("\n")
 
   # ----- 4. Fit -----
   write_status(status_file, "FIT", "running")
@@ -124,7 +125,7 @@ run_phase0_diagnostic <- function(n,
       show_messages   = TRUE
     )
   }, error = function(e) {
-    cat("\n  [FIT ERROR]:", conditionMessage(e), "\n")
+    cli::cli_inform("[FIT ERROR]: {conditionMessage(e)}")
     write_status(status_file, "FIT", paste("CRASHED:", conditionMessage(e)))
     saveRDS(
       list(scenario = "phase0_interactive", status = "FIT_FAILED",
@@ -136,11 +137,10 @@ run_phase0_diagnostic <- function(n,
   })
 
   elapsed <- as.numeric(Sys.time() - t_start, units = "mins")
-  cat(sprintf("\n  Fit elapsed: %.2f min\n\n", elapsed))
+  cli::cli_inform(sprintf("Fit elapsed: %.2f min", elapsed))
 
   if (is.null(fit)) {
-    cat(strrep("!", 70), "\n")
-    cat(" PHASE 0 RESULT: FIT CRASHED\n")
+    cli::cli_alert_danger("PHASE 0 RESULT: FIT CRASHED")
     write_status(status_file, "DONE", "Phase 0 FAILED")
     return(invisible(NULL))
   }
@@ -163,11 +163,10 @@ run_phase0_diagnostic <- function(n,
     error = function(e) NULL
   )
   if (!is.null(draws_summary)) {
-    cat("\n  Omega_B[1,2] posterior summary:\n")
+    cli::cli_inform("Omega_B[1,2] posterior summary:")
     print(draws_summary)
   }
   write_status(status_file, "DIAG", "OK")
-  cat("\n")
 
   # ----- 6. Save bundle -----
   write_status(status_file, "SAVE", "writing rds")
@@ -199,35 +198,36 @@ run_phase0_diagnostic <- function(n,
     file.path(output_dir, sprintf("one_fit_%s_diag.rds", tag))
   )
   write_status(status_file, "SAVE", "OK")
-  cat(sprintf("  saved -> %s\n\n", out_file))
+  cli::cli_inform("saved -> {out_file}")
 
   # ----- 7. Summary -----
-  cat(strrep("=", 70), "\n")
-  cat(" PHASE 0 RESULT SUMMARY\n")
-  cat(strrep("=", 70), "\n")
-  cat(sprintf("  Status:              OK\n"))
-  cat(sprintf("  Elapsed:             %.2f min\n", elapsed))
-  cat(sprintf("  True rho_B:          %+.3f\n",    true_rho_B))
+  cli::cli_h1("PHASE 0 RESULT SUMMARY")
+  cli::cli_inform(sprintf("  Status:              OK"))
+  cli::cli_inform(sprintf("  Elapsed:             %.2f min", elapsed))
+  cli::cli_inform(sprintf("  True rho_B:          %+.3f", true_rho_B))
   if (!is.null(draws_summary)) {
-    cat(sprintf("  Recovered median:    %+.3f  [%.3f, %.3f]\n",
-                draws_summary$median,
-                draws_summary$`2.5%`,
-                draws_summary$`97.5%`))
-    cat(sprintf("  ESS_bulk:            %.0f\n", draws_summary$ess_bulk))
-    cat(sprintf("  R-hat:               %.3f\n", draws_summary$rhat))
+    cli::cli_inform(sprintf("  Recovered median:    %+.3f  [%.3f, %.3f]",
+                            draws_summary$median,
+                            draws_summary$`2.5%`,
+                            draws_summary$`97.5%`))
+    cli::cli_inform(sprintf("  ESS_bulk:            %.0f", draws_summary$ess_bulk))
+    cli::cli_inform(sprintf("  R-hat:               %.3f", draws_summary$rhat))
   }
-  cat(sprintf("  Divergent:           %d / %d\n",
-              sum(diag$num_divergent), total_iters))
-  cat(sprintf("  Max-treedepth hits:  %d / %d\n",
-              sum(diag$num_max_treedepth), total_iters))
-  cat(strrep("=", 70), "\n\n")
+  cli::cli_inform(sprintf("  Divergent:           %d / %d",
+                          sum(diag$num_divergent), total_iters))
+  cli::cli_inform(sprintf("  Max-treedepth hits:  %d / %d",
+                          sum(diag$num_max_treedepth), total_iters))
 
-  cat(" NEXT STEP:\n")
-  cat(sprintf("   1. Inspect %s + logs/phase0/*.log\n", out_file))
-  cat("   2. If divergent rate <= 5% AND R-hat <= 1.01:\n")
-  cat("        -> Proceed to Phase 1 (sbatch slurm/phase1_single.sbatch)\n")
-  cat("   3. If divergent rate > 10% OR R-hat > 1.02:\n")
-  cat("        -> Skip Phase 1-3, jump to Phase 4 diagnosis.\n\n")
+  cli::cli_h2("NEXT STEP")
+  cli::cli_inform(sprintf("  1. Inspect %s + logs/phase0/*.log", out_file))
+  cli::cli_inform(c(
+    "  2. If divergent rate <= 5% AND R-hat <= 1.01:",
+    "       -> Proceed to Phase 1 (sbatch slurm/phase1_single.sbatch)"
+  ))
+  cli::cli_inform(c(
+    "  3. If divergent rate > 10% OR R-hat > 1.02:",
+    "       -> Skip Phase 1-3, jump to Phase 4 diagnosis."
+  ))
 
   write_status(status_file, "DONE", "Phase 0 completed successfully")
   invisible(result_bundle)

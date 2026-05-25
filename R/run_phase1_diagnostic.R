@@ -37,11 +37,10 @@ run_phase1_diagnostic <- function(n,
                                   adapt_delta   = 0.95,
                                   max_treedepth = 12L,
                                   compile_dir   = NULL) {
-  cat("\n", strrep("=", 70), "\n", sep = "")
-  cat(sprintf(" PHASE 1: SLURM SINGLE JOB DIAGNOSTIC (%s)\n", tag))
-  cat(" Purpose: fit inside Slurm; compare with Phase 0 to isolate 
-      attribution\n")
-  cat(strrep("=", 70), "\n\n", sep = "")
+  cli::cli_h1("PHASE 1: SLURM SINGLE JOB DIAGNOSTIC ({tag})")
+  cli::cli_inform(
+    "Purpose: fit inside Slurm; compare with Phase 0 to isolate attribution"
+  )
 
   # ----- 0. SLURM environment -----
   slurm_env <- c(
@@ -55,13 +54,14 @@ run_phase1_diagnostic <- function(n,
     HOSTNAME            = Sys.info()[["nodename"]],
     TMPDIR              = Sys.getenv("TMPDIR")
   )
-  cat("=== SLURM environment ===\n")
+  cli::cli_h2("SLURM environment")
   for (env_name in names(slurm_env)) {
-    cat(sprintf("  %-22s = %s\n", env_name, slurm_env[env_name]))
+    cat(sprintf("  %-22s = %s\n", env_name, slurm_env[env_name])) # nolint: undesirable_function_linter
   }
-  cat("\n")
-  cat(sprintf("Started at:  %s\n", format(Sys.time())))
-  cat(sprintf("R version:   %s\n\n", R.version.string))
+  cli::cli_inform(c(
+    "Started at: {format(Sys.time())}",
+    "R version: {R.version.string}"
+  ))
 
   dir.create("logs/phase1", recursive = TRUE, showWarnings = FALSE)
   dir.create(output_dir,    recursive = TRUE, showWarnings = FALSE)
@@ -85,11 +85,11 @@ run_phase1_diagnostic <- function(n,
   cmdstan_ver <- tryCatch(
     cmdstanr::cmdstan_version(), error = function(e) "UNKNOWN"
   )
-  cat("=== Package versions ===\n")
+  cli::cli_h2("Package versions")
   for (pkg in names(pkg_versions)) {
-    cat(sprintf("  %-15s %s\n", pkg, pkg_versions[pkg]))
+    cat(sprintf("  %-15s %s\n", pkg, pkg_versions[pkg])) # nolint: undesirable_function_linter
   }
-  cat(sprintf("  %-15s %s\n\n", "cmdstan", cmdstan_ver))
+  cat(sprintf("  %-15s %s\n\n", "cmdstan", cmdstan_ver)) # nolint: undesirable_function_linter
   write_status(status_file, "LOAD_PACKAGES", "OK")
 
   # ----- 2. Compile dir (SLURM-specific, per-task subdir) -----
@@ -106,8 +106,10 @@ run_phase1_diagnostic <- function(n,
   if (!dir.exists(compile_dir)) {
     dir.create(compile_dir, recursive = TRUE, mode = "0755")
   }
-  cat(sprintf("=== compile_dir: %s ===\n",    compile_dir))
-  cat(sprintf("    existing files: %d\n\n", length(list.files(compile_dir))))
+  cli::cli_inform(c(
+    "compile_dir: {compile_dir}",
+    "existing files: {length(list.files(compile_dir))}"
+  ))
   write_status(status_file, "COMPILE_DIR", "OK")
 
   # ----- 3. Simulate (identical to Phase 0 - same seed, same n) -----
@@ -120,8 +122,8 @@ run_phase1_diagnostic <- function(n,
     antigen_isos      = c("IgG", "IgA"),
     n_obs_per_subject = 5L
   )
-  cat(sprintf("=== Simulated: n=%d, rho_B=%.1f, total rows=%d ===\n\n",
-              length(unique(sim_data$id)), true_rho_B, nrow(sim_data)))
+  cli::cli_inform(sprintf("Simulated: n=%d, rho_B=%.1f, total rows=%d",
+                          length(unique(sim_data$id)), true_rho_B, nrow(sim_data)))
   write_status(status_file, "SIMULATE", "OK")
 
   # ----- 4. Save STARTED placeholder -----
@@ -138,7 +140,7 @@ run_phase1_diagnostic <- function(n,
 
   # ----- 5. Fit -----
   write_status(status_file, "FIT", "running")
-  cat("=== Fitting model_2 (Kronecker) ===\n")
+  cli::cli_h2("Fitting model_2 (Kronecker)")
   t_start <- Sys.time()
   fit <- tryCatch({
     run_mod_stan(
@@ -157,7 +159,7 @@ run_phase1_diagnostic <- function(n,
       show_messages   = TRUE
     )
   }, error = function(e) {
-    cat("\n  [FIT ERROR]:", conditionMessage(e), "\n")
+    cli::cli_inform("[FIT ERROR]: {conditionMessage(e)}")
     write_status(status_file, "FIT", paste("CRASHED:", conditionMessage(e)))
     saveRDS(
       list(scenario = scenario, status = "FIT_FAILED", job_id = job_id,
@@ -169,16 +171,16 @@ run_phase1_diagnostic <- function(n,
   })
 
   elapsed <- as.numeric(Sys.time() - t_start, units = "mins")
-  cat(sprintf("\n=== Fit elapsed: %.2f min ===\n\n", elapsed))
+  cli::cli_inform(sprintf("Fit elapsed: %.2f min", elapsed))
 
   if (is.null(fit)) {
     phase0_file <- file.path(phase0_dir, sprintf("one_fit_%s.rds", tag))
-    cat(strrep("!", 70), "\n")
-    cat(" PHASE 1 RESULT: FIT CRASHED INSIDE SLURM\n")
-    cat(sprintf(" Compare with %s to determine:\n", phase0_file))
-    cat("   - If Phase 0 OK but Phase 1 FAIL -> Slurm env issue\n")
-    cat("   - If both fail -> code / model identifiability issue\n")
-    cat(strrep("!", 70), "\n")
+    cli::cli_alert_danger("PHASE 1 RESULT: FIT CRASHED INSIDE SLURM")
+    cli::cli_inform("Compare with {phase0_file} to determine:")
+    cli::cli_inform(c(
+      " " = "If Phase 0 OK but Phase 1 FAIL -> Slurm env issue",
+      " " = "If both fail -> code / model identifiability issue"
+    ))
     write_status(status_file, "DONE", "Phase 1 FAILED")
     return(invisible(NULL))
   }
@@ -200,20 +202,20 @@ run_phase1_diagnostic <- function(n,
     ),
     error = function(e) NULL
   )
-  cat("=== Diagnostics ===\n")
-  cat(sprintf("  divergent:     %d / %d (%.2f%%)\n",
-              sum(diag$num_divergent), total_iters,
-              100 * sum(diag$num_divergent) / total_iters))
-  cat(sprintf("  max-treedepth: %d / %d (%.2f%%)\n",
-              sum(diag$num_max_treedepth), total_iters,
-              100 * sum(diag$num_max_treedepth) / total_iters))
-  cat(sprintf("  E-BFMI:        %s\n",
-              paste(sprintf("%.3f", diag$ebfmi), collapse = ", ")))
+  cli::cli_h2("Diagnostics")
+  cli::cli_inform(sprintf("  divergent:     %d / %d (%.2f%%)",
+                          sum(diag$num_divergent), total_iters,
+                          100 * sum(diag$num_divergent) / total_iters))
+  cli::cli_inform(sprintf("  max-treedepth: %d / %d (%.2f%%)",
+                          sum(diag$num_max_treedepth), total_iters,
+                          100 * sum(diag$num_max_treedepth) / total_iters))
+  cli::cli_inform(sprintf("  E-BFMI:        %s",
+                          paste(sprintf("%.3f", diag$ebfmi), collapse = ", ")))
   if (!is.null(draws_summary)) {
-    cat("\n  Omega_B[1,2] summary:\n")
+    cli::cli_inform("Omega_B[1,2] summary:")
     print(draws_summary)
   } else {
-    cat("\n  [INFO] Omega_B[1,2] not available in this fit.\n")
+    cli::cli_inform("[INFO] Omega_B[1,2] not available in this fit.")
   }
   write_status(status_file, "DIAG", "OK")
 
@@ -249,7 +251,7 @@ run_phase1_diagnostic <- function(n,
   if (file.exists(phase0_file)) {
     ph0 <- readRDS(phase0_file)
     if (!is.null(ph0$omega_B_summary) && !is.null(draws_summary)) {
-      cat("\n=== Phase 0 vs Phase 1 comparison ===\n")
+      cli::cli_h2("Phase 0 vs Phase 1 comparison")
       cmp <- data.frame(
         metric = c("status", "elapsed_min", "post_median",
                    "post_lo_2.5", "post_hi_97.5",
@@ -282,14 +284,14 @@ run_phase1_diagnostic <- function(n,
                              sprintf("p0_vs_p1_comparison_%s.rds", job_id)))
     }
   } else {
-    cat("\n  [INFO] Phase 0 result not found - comparison skipped.\n")
-    cat(sprintf("         Run phase0_interactive_reproducibility_%s.R first",
-                tag))
-    cat(" for direct comparison.\n")
+    cli::cli_inform(c(
+      "[INFO] Phase 0 result not found - comparison skipped.",
+      "       Run phase0_interactive_reproducibility_{tag}.R first for direct comparison."
+    ))
   }
 
   write_status(status_file, "SAVE", "OK")
-  cat(sprintf("\n=== Phase 1 complete ===\n    Results: %s\n\n", out_file))
+  cli::cli_inform("Phase 1 complete. Results: {out_file}")
   write_status(status_file, "DONE", "Phase 1 OK")
   invisible(result_bundle)
 }

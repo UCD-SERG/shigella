@@ -112,6 +112,8 @@ model {
 }
 
 generated quantities {
+  // NOTE: Kinetics recomputed here intentionally — Stan scoping requires
+  // local variables to be redefined; this is not duplication that can be eliminated.
   array[K] corr_matrix[P] Omega_P;
   for (k in 1:K) {
     Omega_P[k] = multiply_lower_tri_self_transpose(L_Omega_P[k]);

@@ -23,7 +23,7 @@
     sub
   }
 
-  prepped   <- serodynamics::prep_data(dl_sub)
+  prepped   <- serodynamics::prep_data(dl_sub, add_newperson = FALSE)
   stan_data <- prep_data_stan(prepped)
   priors    <- prep_priors_stan(model = model, ...)
   full_data <- c(stan_data, priors)

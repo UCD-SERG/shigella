@@ -175,6 +175,8 @@ model {
 }
 
 generated quantities {
+  // NOTE: Kinetics recomputed here intentionally — Stan scoping requires
+  // local variables to be redefined; this is not duplication that can be eliminated.
   corr_matrix[K] Omega_B = multiply_lower_tri_self_transpose(L_Omega_B);
   corr_matrix[P] Omega_P = multiply_lower_tri_self_transpose(L_Omega_P);
   corr_matrix[K] Omega_eps = multiply_lower_tri_self_transpose(L_Omega_eps);
@@ -199,6 +201,7 @@ generated quantities {
 
   vector[N] log_lik;
   {
+    // L_Sigma_eps rebuilt here per Stan scoping; intentional, not accidental.
     matrix[K, K] L_Sigma_eps = diag_pre_multiply(tau_eps, L_Omega_eps);
     for (i in 1:N) {
       log_lik[i] = 0;
