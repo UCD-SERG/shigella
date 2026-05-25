@@ -6,7 +6,7 @@
   vapply(
     seq_len(n_biomarker),
     function(j) {
-      .compute_kinetics_at_time(
+      .compute_kinetics_at_time( # nolint: object_usage_linter
         theta_arr[i, 1, j],
         theta_arr[i, 2, j],
         theta_arr[i, 3, j],
