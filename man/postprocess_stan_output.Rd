@@ -9,7 +9,8 @@ postprocess_stan_output(
   ids,
   antigens,
   model = c("model_2", "model_1"),
-  stratification = "None"
+  stratification = "None",
+  param_names = c("y0", "y1", "t1", "alpha", "shape")
 )
 }
 \arguments{
@@ -22,6 +23,12 @@ postprocess_stan_output(
 \item{model}{"model_1", "model_2"}
 
 \item{stratification}{label for this stratum}
+
+\item{param_names}{Character vector of parameter names to extract from the
+Stan model's \code{generated quantities} block. Must match the variable
+names exactly as declared in both \file{inst/stan/model_1.stan} and
+\file{inst/stan/model_2.stan}. Defaults to
+\code{c("y0", "y1", "t1", "alpha", "shape")}.}
 }
 \value{
 list with sr_tibble and cov_summaries

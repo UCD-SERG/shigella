@@ -30,9 +30,7 @@ as_case_data())}
 
 \item{model}{character: "model_1", "model_2"}
 
-\item{chains, }{iter_sampling, iter_warmup, adapt_delta, max_treedepth, seed,
-parallel_chains
-standard cmdstanr arguments}
+\item{chains}{Number of chains to run.}
 
 \item{iter_sampling}{Number of post-warmup iterations per chain.}
 
