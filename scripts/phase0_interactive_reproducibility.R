@@ -10,7 +10,13 @@
 # determinism across allocation modes. Run the n=5 version first as a fast
 # smoke test before committing to the n=48 full-cohort run.
 # ============================================================================
-setwd("~/shigella")
+local({
+  flag <- grep("^--file=", commandArgs(trailingOnly = FALSE), value = TRUE)
+  if (length(flag)) {
+    root <- dirname(dirname(normalizePath(sub("^--file=", "", flag))))
+    if (file.exists(file.path(root, "DESCRIPTION"))) setwd(root)
+  }
+})
 suppressPackageStartupMessages(library(shigella))
 
 shigella:::run_phase0_diagnostic(

@@ -11,7 +11,13 @@
 # Run phase0_interactive_reproducibility.R (n=5) first to confirm the
 # pipeline works before committing to this longer run.
 # ============================================================================
-setwd("~/shigella")
+local({
+  flag <- grep("^--file=", commandArgs(trailingOnly = FALSE), value = TRUE)
+  if (length(flag)) {
+    root <- dirname(dirname(normalizePath(sub("^--file=", "", flag))))
+    if (file.exists(file.path(root, "DESCRIPTION"))) setwd(root)
+  }
+})
 suppressPackageStartupMessages(library(shigella))
 
 shigella:::run_phase0_diagnostic(
