@@ -177,7 +177,7 @@ run_phase1_diagnostic <- function(n,
 
   if (is.null(fit)) {
     phase0_file <- file.path(phase0_dir, sprintf("one_fit_%s.rds", tag))
-    cli::cli_inform("Error: PHASE 1 RESULT: FIT CRASHED INSIDE SLURM")
+    cli::cli_warn("PHASE 1 RESULT: FIT CRASHED INSIDE SLURM")
     cli::cli_inform("Compare with {phase0_file} to determine:")
     cli::cli_inform(c(
       " " = "If Phase 0 OK but Phase 1 FAIL -> Slurm env issue",

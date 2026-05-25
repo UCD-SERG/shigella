@@ -11,6 +11,15 @@
   alpha <- exp(log_alpha)
   shape <- exp(log_rm1) + 1
 
+  if (abs(1 - shape) < .Machine$double.eps * 100) {
+    cli::cli_abort(c(
+      "shape == 1 is degenerate for the two-phase model",
+      "i" = paste0("log_rm1 appears to be -Inf or extremely negative;",
+                   " the decay phase is undefined."),
+      "i" = "shape = {shape}"
+    ))
+  }
+
   if (tt <= t1_j) {
     beta_growth <- (log(y1) - log(y0)) / t1_j
     return(log(y0) + beta_growth * tt)
