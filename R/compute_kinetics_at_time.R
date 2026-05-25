@@ -23,7 +23,8 @@
   if (abs(1 - shape) < sqrt(.Machine$double.eps)) {
     cli::cli_abort(c(
       "shape ~= 1 is degenerate for the two-phase model",
-      "i" = "log_rm1 = {log_rm1} produces shape = {shape}, |1 - shape| = {abs(1 - shape)}",
+      "i" = "log_rm1 = {log_rm1} produces shape = {shape}, |1 - shape| = 
+      {abs(1 - shape)}",
       "i" = paste0("the decay-phase formula log(term) / (1 - shape) is",
                    " undefined or numerically unstable in this region.")
     ))
