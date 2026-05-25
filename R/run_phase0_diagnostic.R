@@ -142,8 +142,9 @@ run_phase0_diagnostic <- function(n,
   cli::cli_inform(sprintf("Fit elapsed: %.2f min", elapsed))
 
   if (is.null(fit)) {
-    cli::cli_warn("PHASE 0 RESULT: FIT CRASHED")
+    # write status before signaling — ensures cleanup under options(warn = 2)
     write_status(status_file, "DONE", "Phase 0 FAILED")
+    cli::cli_warn("PHASE 0 RESULT: FIT CRASHED")
     return(invisible(NULL))
   }
   write_status(status_file, "FIT", "OK")

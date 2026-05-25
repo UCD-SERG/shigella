@@ -177,13 +177,14 @@ run_phase1_diagnostic <- function(n,
 
   if (is.null(fit)) {
     phase0_file <- file.path(phase0_dir, sprintf("one_fit_%s.rds", tag))
+    # write status before signaling — ensures cleanup under options(warn = 2)
+    write_status(status_file, "DONE", "Phase 1 FAILED")
     cli::cli_warn("PHASE 1 RESULT: FIT CRASHED INSIDE SLURM")
     cli::cli_inform("Compare with {phase0_file} to determine:")
     cli::cli_inform(c(
       " " = "If Phase 0 OK but Phase 1 FAIL -> Slurm env issue",
       " " = "If both fail -> code / model identifiability issue"
     ))
-    write_status(status_file, "DONE", "Phase 1 FAILED")
     return(invisible(NULL))
   }
   write_status(status_file, "FIT", "OK")

@@ -11,18 +11,22 @@
   alpha <- exp(log_alpha)
   shape <- exp(log_rm1) + 1
 
-  if (abs(1 - shape) < .Machine$double.eps * 100) {
-    cli::cli_abort(c(
-      "shape == 1 is degenerate for the two-phase model",
-      "i" = paste0("log_rm1 appears to be -Inf or extremely negative;",
-                   " the decay phase is undefined."),
-      "i" = "shape = {shape}"
-    ))
-  }
-
   if (tt <= t1_j) {
     beta_growth <- (log(y1) - log(y0)) / t1_j
     return(log(y0) + beta_growth * tt)
+  }
+
+  # Tolerance is sqrt(.Machine$double.eps) (~1.5e-8): well outside the
+  # production prior on shape (typical |1 - shape| > 0.3), but excludes
+  # the numerically-unstable region where log(term) / (1 - shape) loses
+  # meaningful precision.
+  if (abs(1 - shape) < sqrt(.Machine$double.eps)) {
+    cli::cli_abort(c(
+      "shape ~= 1 is degenerate for the two-phase model",
+      "i" = "log_rm1 = {log_rm1} produces shape = {shape}, |1 - shape| = {abs(1 - shape)}",
+      "i" = paste0("the decay-phase formula log(term) / (1 - shape) is",
+                   " undefined or numerically unstable in this region.")
+    ))
   }
 
   term <- y1^(1 - shape) - (1 - shape) * alpha * (tt - t1_j)
