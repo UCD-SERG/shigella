@@ -122,8 +122,10 @@ run_phase1_diagnostic <- function(n,
     antigen_isos      = c("IgG", "IgA"),
     n_obs_per_subject = 5L
   )
-  cli::cli_inform(sprintf("Simulated: n=%d, rho_B=%.1f, total rows=%d",
-                          length(unique(sim_data$id)), true_rho_B, nrow(sim_data)))
+  cli::cli_inform(sprintf(
+    "Simulated: n=%d, rho_B=%.1f, total rows=%d",
+    length(unique(sim_data$id)), true_rho_B, nrow(sim_data)
+  ))
   write_status(status_file, "SIMULATE", "OK")
 
   # ----- 4. Save STARTED placeholder -----
@@ -175,7 +177,7 @@ run_phase1_diagnostic <- function(n,
 
   if (is.null(fit)) {
     phase0_file <- file.path(phase0_dir, sprintf("one_fit_%s.rds", tag))
-    cli::cli_alert_danger("PHASE 1 RESULT: FIT CRASHED INSIDE SLURM")
+    cli::cli_inform("Error: PHASE 1 RESULT: FIT CRASHED INSIDE SLURM")
     cli::cli_inform("Compare with {phase0_file} to determine:")
     cli::cli_inform(c(
       " " = "If Phase 0 OK but Phase 1 FAIL -> Slurm env issue",
@@ -286,7 +288,8 @@ run_phase1_diagnostic <- function(n,
   } else {
     cli::cli_inform(c(
       "[INFO] Phase 0 result not found - comparison skipped.",
-      "       Run phase0_interactive_reproducibility_{tag}.R first for direct comparison."
+      paste0("       Run phase0_interactive_reproducibility_{tag}.R",
+             " first for direct comparison.")
     ))
   }
 

@@ -94,8 +94,10 @@ run_phase0_diagnostic <- function(n,
     antigen_isos      = c("IgG", "IgA"),
     n_obs_per_subject = 5L
   )
-  cli::cli_inform(sprintf("n_subjects: %d, rows: %d, true rho_B: %.3f",
-                          length(unique(sim_data$id)), nrow(sim_data), true_rho_B))
+  cli::cli_inform(sprintf(
+    "n_subjects: %d, rows: %d, true rho_B: %.3f",
+    length(unique(sim_data$id)), nrow(sim_data), true_rho_B
+  ))
   saveRDS(sim_data, file.path(output_dir, sprintf("sim_data_%s.rds", tag)))
   write_status(status_file, "SIMULATE", "OK")
 
@@ -140,7 +142,7 @@ run_phase0_diagnostic <- function(n,
   cli::cli_inform(sprintf("Fit elapsed: %.2f min", elapsed))
 
   if (is.null(fit)) {
-    cli::cli_alert_danger("PHASE 0 RESULT: FIT CRASHED")
+    cli::cli_inform("Error: PHASE 0 RESULT: FIT CRASHED")
     write_status(status_file, "DONE", "Phase 0 FAILED")
     return(invisible(NULL))
   }
@@ -210,7 +212,9 @@ run_phase0_diagnostic <- function(n,
                             draws_summary$median,
                             draws_summary$`2.5%`,
                             draws_summary$`97.5%`))
-    cli::cli_inform(sprintf("  ESS_bulk:            %.0f", draws_summary$ess_bulk))
+    cli::cli_inform(
+      sprintf("  ESS_bulk:            %.0f", draws_summary$ess_bulk)
+    )
     cli::cli_inform(sprintf("  R-hat:               %.3f", draws_summary$rhat))
   }
   cli::cli_inform(sprintf("  Divergent:           %d / %d",

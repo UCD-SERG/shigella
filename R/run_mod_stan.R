@@ -124,7 +124,8 @@ run_mod_stan <- function(data,
   if (is.null(priors)) {
     cli::cli_abort(c(
       "No strata were fitted.",
-      "i" = "{.code strat_list} appears to be empty; provide at least one stratum."
+      "i" = paste0("{.code strat_list} appears to be empty;",
+                   " provide at least one stratum.")
     ))
   }
 

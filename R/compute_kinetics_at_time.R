@@ -2,8 +2,9 @@
 # Implements the two-phase power-law kinetics model.
 #' @keywords internal
 #' @noRd
-.compute_kinetics_at_time <- function(log_y0, log_y1m0, log_t1,
-                                      log_alpha, log_rm1, tt) {
+.compute_kinetics_at_time <- function(
+    log_y0, log_y1m0, # nolint: object_name_linter. Stan param name.
+    log_t1, log_alpha, log_rm1, tt) {
   y0    <- exp(log_y0)
   y1    <- y0 + exp(log_y1m0)
   t1_j  <- exp(log_t1)
@@ -19,7 +20,8 @@
   if (term <= 0) {
     cli::cli_abort(c(
       "Trajectory infeasibility detected at t = {tt}",
-      "i" = "term = {term} <= 0; parameter combination is invalid for the two-phase model"
+      "i" = paste0("term = {term} <= 0; parameter combination",
+                   " is invalid for the two-phase model")
     ))
   }
   log(term) / (1 - shape)

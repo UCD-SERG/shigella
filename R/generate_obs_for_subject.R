@@ -16,7 +16,8 @@
     tt        <- obs_times[tt_idx]
     log_mu_k  <- .compute_log_mu_k(theta_arr, i, n_biomarker, tt)
     z         <- rnorm(n_biomarker)
-    # u_eps is upper-triangular Cholesky from R's chol(); t(u_eps) %*% z gives MVN(0, sigma_eps) draws.
+    # u_eps is upper-triangular Cholesky from R's chol();
+    # t(u_eps) %*% z gives MVN(0, sigma_eps) draws.
     log_y_obs <- log_mu_k + as.vector(t(u_eps) %*% z)
 
     for (j in seq_len(n_biomarker)) {

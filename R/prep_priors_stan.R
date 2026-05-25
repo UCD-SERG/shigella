@@ -58,7 +58,8 @@ prep_priors_stan <- function(
   )
 
   if (has_kron) {
-    # model_2 uses an LKJ prior on the epsilon correlation matrix; model_1 does not.
+    # model_2 uses an LKJ prior on the epsilon correlation matrix;
+    # model_1 does not.
     priors$tau_B_scale <- tau_B_scale
     priors$lkj_B_eta   <- lkj_B_eta
     priors$lkj_eps_eta <- lkj_eps_eta

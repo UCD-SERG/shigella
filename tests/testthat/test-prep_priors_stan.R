@@ -31,7 +31,7 @@ test_that("prep_priors_stan model_2 structure is stable", {
   expect_equal(
     names(priors),
     c("mu_hyp_mean", "mu_hyp_sd", "tau_P_scale", "tau_eps_scale",
-      "lkj_P_eta", "lkj_eps_eta", "tau_B_scale", "lkj_B_eta")
+      "lkj_P_eta", "tau_B_scale", "lkj_B_eta", "lkj_eps_eta")
   )
   expect_true(all(vapply(priors, is.numeric, logical(1L))))
 })
