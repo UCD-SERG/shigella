@@ -19,9 +19,7 @@
 #' @param data case_data object (from sim_correlated_case_data() or
 #' as_case_data())
 #' @param model character: "model_1", "model_2"
-#' @param chains, iter_sampling, iter_warmup, adapt_delta, max_treedepth, seed,
-#' parallel_chains
-#'        standard cmdstanr arguments
+#' @param chains Number of chains to run.
 #' @param strat optional stratification variable (default NA)
 #' @param with_post return raw CmdStanMCMC object as attribute (default FALSE)
 #' @param stan_dir Optional directory containing `model_*.stan` files.
@@ -95,6 +93,7 @@ run_mod_stan <- function(data,
   combined_out <- list()
   stanfit_list <- list()
   cov_list     <- list()
+  priors       <- NULL
 
   # ---- Compile model once(cmdstanr caches and avoids repeated filesystem hits)
   cli::cli_inform(c("i" = "Compiling {.strong {model}} (or using cache)..."))
@@ -120,6 +119,13 @@ run_mod_stan <- function(data,
     cov_list[[i]]     <- result$cov_summaries
     stanfit_list[[i]] <- result$stan_fit
     priors            <- result$priors
+  }
+
+  if (is.null(priors)) {
+    cli::cli_abort(c(
+      "No strata were fitted.",
+      "i" = "{.code strat_list} appears to be empty; provide at least one stratum."
+    ))
   }
 
   sr_out <- dplyr::bind_rows(combined_out)

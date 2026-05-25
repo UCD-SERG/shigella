@@ -54,13 +54,14 @@ prep_priors_stan <- function(
     mu_hyp_sd     = mu_hyp_sd,
     tau_P_scale   = tau_P_scale,
     tau_eps_scale = tau_eps_scale,
-    lkj_P_eta     = lkj_P_eta,
-    lkj_eps_eta   = lkj_eps_eta
+    lkj_P_eta     = lkj_P_eta
   )
 
   if (has_kron) {
+    # model_2 uses an LKJ prior on the epsilon correlation matrix; model_1 does not.
     priors$tau_B_scale <- tau_B_scale
     priors$lkj_B_eta   <- lkj_B_eta
+    priors$lkj_eps_eta <- lkj_eps_eta
   }
 
   attr(priors, "model")               <- model

@@ -4,7 +4,7 @@
 #' @noRd
 .generate_obs_for_subject <- function(i, n_obs_per_subject, time_grid,
                                       n_biomarker, theta_arr, antigen_isos,
-                                      l_eps) {
+                                      u_eps) {
   obs_times <- sort(
     sample(time_grid, size = n_obs_per_subject, replace = FALSE)
   )
@@ -16,7 +16,8 @@
     tt        <- obs_times[tt_idx]
     log_mu_k  <- .compute_log_mu_k(theta_arr, i, n_biomarker, tt)
     z         <- rnorm(n_biomarker)
-    log_y_obs <- log_mu_k + as.vector(t(l_eps) %*% z)
+    # u_eps is upper-triangular Cholesky from R's chol(); t(u_eps) %*% z gives MVN(0, sigma_eps) draws.
+    log_y_obs <- log_mu_k + as.vector(t(u_eps) %*% z)
 
     for (j in seq_len(n_biomarker)) {
       rows[[row_counter]] <- data.frame(

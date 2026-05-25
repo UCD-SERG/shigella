@@ -127,10 +127,10 @@ sim_correlated_case_data <- function(
                                     n_param, n_biomarker, antigen_isos)
 
   # --- Generate observations ---
-  l_eps <- chol(sigma_eps)
+  u_eps <- chol(sigma_eps)
 
   rows <- .generate_obs_rows(n, n_obs_per_subject, time_grid,
-                             n_biomarker, theta_arr, antigen_isos, l_eps)
+                             n_biomarker, theta_arr, antigen_isos, u_eps)
 
   sim_df <- dplyr::bind_rows(rows)
 

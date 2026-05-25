@@ -3,27 +3,6 @@ title: "Chapter 2 — Correlated Multivariate Antibody Kinetics"
 subtitle: "A Kronecker-structured Bayesian hierarchical model: methodology and Phase 0/1 simulation diagnostics"
 author: "Kwan Ho Lee"
 date: today
-format:
-  html:
-    toc: true
-    toc-depth: 3
-    number-sections: true
-    embed-resources: true
-    theme: cosmo
-    code-fold: true
-    fig-width: 7
-    fig-height: 4.5
-  docx:
-    
-    toc: true
-    number-sections: true
-execute:
-  echo: false
-  warning: false
-  message: false
-editor: 
-  markdown: 
-    wrap: 72
 ---
 
 ```{r setup}

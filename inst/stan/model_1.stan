@@ -59,7 +59,9 @@ data {
   real<lower=0> tau_P_scale;
   real<lower=0> tau_eps_scale;
   real<lower=0> lkj_P_eta;
-  real<lower=0> lkj_eps_eta;
+  // lkj_eps_eta is NOT used here: model_1 uses independent per-biomarker
+  // residual scales (tau_eps[k]), not an LKJ prior on epsilon correlation.
+  // For the LKJ epsilon prior, see model_2.stan.
 }
 
 parameters {
