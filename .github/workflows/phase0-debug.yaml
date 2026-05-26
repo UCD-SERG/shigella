@@ -230,6 +230,28 @@ jobs:
           exit 0
         env:
           OUT_DIR: outputs/ci/phase0_n${{ inputs.n }}_run${{ github.run_id }}
+          
+      - name: Run bimodality diagnostic
+        # Runs after the fit so the new RDS is available. Reads its own
+        # OUT_DIR from the positional argument we pass. Skips with a
+        # warning (not a fail) if the script or RDS is missing.
+        if: always()
+        env:
+          OUT_DIR: outputs/ci/phase0_n${{ inputs.n }}_run${{ github.run_id }}
+        run: |
+          set +e
+          if [ ! -f scripts/diagnostic_bimodality.R ]; then
+            echo "diagnostic_bimodality.R missing; skipping."
+            exit 0
+          fi
+          if [ ! -f "${OUT_DIR}/one_fit_n${N_SUBJECTS}_ci.rds" ]; then
+            echo "Fit RDS missing at ${OUT_DIR}; skipping diagnostic."
+            exit 0
+          fi
+          echo "Running diagnostic_bimodality.R on ${OUT_DIR}..."
+          Rscript scripts/diagnostic_bimodality.R "${OUT_DIR}" 2>&1 \
+            | tee "${OUT_DIR}/diagnostic_bimodality.log"
+          exit 0
 
       - name: Commit outputs back to the branch
         if: always()
