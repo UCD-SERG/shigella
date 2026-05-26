@@ -119,10 +119,27 @@ jobs:
         shell: Rscript {0}
 
       - name: Install shigella package + dependencies
-        # No GITHUB_PAT — both serodynamics and cmdstanr are public on GitHub,
-        # so anonymous API access is sufficient. Setting an empty/invalid
-        # GITHUB_PAT would cause 401 Bad credentials (worse than no token).
         run: |
+          # ----- Diagnostic: what env vars are inherited from setup-r? -----
+          cat("Before unset:\n")
+          cat("  GITHUB_PAT   = ", shQuote(Sys.getenv("GITHUB_PAT")),   "\n", sep="")
+          cat("  GITHUB_TOKEN = ", shQuote(Sys.getenv("GITHUB_TOKEN")), "\n", sep="")
+
+          # ----- Force anonymous GitHub access -----
+          # r-lib/actions/setup-r@v2 auto-injects GITHUB_PAT for R package
+          # installs to avoid rate-limit. That token is only valid for the
+          # *current* repo (shigella). When remotes::install_deps() fetches
+          # serodynamics (a different public repo), GitHub validates the
+          # token, finds it invalid for that scope, and returns 401 —
+          # which is worse than anonymous access.
+          Sys.unsetenv("GITHUB_PAT")
+          Sys.unsetenv("GITHUB_TOKEN")
+
+          cat("After unset:\n")
+          cat("  GITHUB_PAT   = ", shQuote(Sys.getenv("GITHUB_PAT")),   "\n", sep="")
+          cat("  GITHUB_TOKEN = ", shQuote(Sys.getenv("GITHUB_TOKEN")), "\n", sep="")
+
+          # ----- Install -----
           remotes::install_deps(".", dependencies = TRUE, upgrade = "never")
           devtools::install(".", dependencies = FALSE, upgrade = "never",
                             quick = TRUE, build = FALSE)
