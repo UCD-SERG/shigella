@@ -1,6 +1,6 @@
 Package: shigella
 Title: Bayesian Modeling of Shigella Antibody Kinetics
-Version: 0.0.0.9008
+Version: 0.0.0.9009
 Authors@R: c(
     person("Kwan Ho", "Lee", , "ksjlee@ucdavis.edu", role = c("aut", "cre")),
     person("Douglas Ezra", "Morrison", , "demorrison@ucdavis.edu", role = c("aut"),
