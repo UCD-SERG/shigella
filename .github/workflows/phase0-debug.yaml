@@ -133,13 +133,13 @@ jobs:
         shell: Rscript {0}
 
       - name: Install local shigella package
-        # setup-r-dependencies already installed everything from DESCRIPTION
-        # plus the Remotes: field. We just need to install the local package
-        # itself, with dependencies = FALSE since they're already in place.
-        run: |
-          remotes::install_local(".", dependencies = FALSE, force = TRUE,
-                                 upgrade = "never")
-        shell: Rscript {0}
+        # Use R CMD INSTALL (base R, shell-level) instead of devtools::install
+        # or remotes::install_local. setup-r-dependencies@v2 doesn't guarantee
+        # remotes/devtools remain in the user library after it finishes, and
+        # devtools::install's `upgrade` arg expectations vary by version.
+        # R CMD INSTALL has no such dependencies — it's the lowest-level
+        # installer and always works.
+        run: R CMD INSTALL --no-multiarch --with-keep.source .
 
       - name: Run Phase 0 diagnostic
         id: run
