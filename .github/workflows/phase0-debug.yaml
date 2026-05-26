@@ -133,11 +133,12 @@ jobs:
         shell: Rscript {0}
 
       - name: Install local shigella package
-        # setup-r-dependencies installs all DESCRIPTION dependencies but not
-        # the local package itself. devtools::install handles that.
+        # setup-r-dependencies already installed everything from DESCRIPTION
+        # plus the Remotes: field. We just need to install the local package
+        # itself, with dependencies = FALSE since they're already in place.
         run: |
-          devtools::install(".", dependencies = FALSE, upgrade = "never",
-                            quick = TRUE, build = FALSE)
+          remotes::install_local(".", dependencies = FALSE, force = TRUE,
+                                 upgrade = "never")
         shell: Rscript {0}
 
       - name: Run Phase 0 diagnostic
