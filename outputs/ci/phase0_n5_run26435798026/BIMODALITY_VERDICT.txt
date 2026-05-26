@@ -1,0 +1,19 @@
+PER-CHAIN MEDIANS:
+  Chain 1: median=+0.045  95% CrI [-0.599, +0.657]
+  Chain 2: median=+0.241  95% CrI [+0.200, +0.343]
+  (overall: Rhat=1.766  ESS_bulk=16)
+
+PAIRS PLOT INTERPRETATION:
+  Bundle stores only Omega_B[1,2] draws; M[2,k] / tau_B not available.
+  Hypothesis TRUE => opposite-sign chain medians; bimodal overall density
+  (two peaks straddling 0); per-chain density unimodal but at opposite modes.
+  At n=48: M[2,2] (log-boost, biomarker-2) anti-correlated with Omega_B[1,2]
+  in joint scatter is the defining feature of the sign-flip.
+
+VERDICT: WEAKLY BIMODAL
+
+CAVEAT:
+  n=5 is weakly informative; bimodality may show only partial chain separation
+  (Rhat 1.1-1.5). For n=48 look for: (i) bimodal Omega_B[1,2] marginal;
+  (ii) M[2,2] anti-correlated with Omega_B[1,2]; (iii) Rhat > 1.1 with
+  ESS_bulk < 200 despite adequate iteration count.
