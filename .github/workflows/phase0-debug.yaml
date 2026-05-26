@@ -8,6 +8,16 @@ name: Phase 0 Debug Loop
 #   to the branch under outputs/ci/ so Claude can read them in the
 #   next turn.
 #
+# Architecture note:
+#   This workflow uses the standard r-lib/actions/setup-r-dependencies@v2
+#   pattern, matching every other R workflow in this repo (R-CMD-check,
+#   test-coverage, pkgdown, etc.). That action handles DESCRIPTION
+#   parsing, Remotes: field resolution, system dependencies, caching,
+#   and (critically) GitHub authentication correctly. Earlier versions
+#   of this workflow tried to call remotes::install_deps() directly
+#   and hit 401 errors that turned out to be due to token plumbing
+#   that setup-r-dependencies handles transparently.
+#
 # Trigger:
 #   Manual only (workflow_dispatch). Use either the "Run workflow"
 #   button in the Actions tab, or:
@@ -49,33 +59,49 @@ permissions:
   contents: write
 
 concurrency:
-  # one phase0 run at a time per branch — prevents conflicting commits
   group: phase0-debug-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   phase0:
     runs-on: ubuntu-latest
-    timeout-minutes: 350     # 350 min is safely under the 360 free-tier cap
+    timeout-minutes: 350
     env:
-      N_SUBJECTS:    ${{ inputs.n }}
-      ITER_WARMUP:   ${{ inputs.iter_warmup }}
-      ITER_SAMPLING: ${{ inputs.iter_sampling }}
-      CHAINS:        ${{ inputs.chains }}
-      CMDSTAN_VERSION: "2.38.0"
+      # Matches every other R workflow in this repo. Required for setup-r-dependencies
+      # to authenticate package downloads from GitHub (including UCD-SERG/serodynamics
+      # via the Remotes: field in DESCRIPTION).
+      GITHUB_PAT:       ${{ secrets.GITHUB_TOKEN }}
+      N_SUBJECTS:       ${{ inputs.n }}
+      ITER_WARMUP:      ${{ inputs.iter_warmup }}
+      ITER_SAMPLING:    ${{ inputs.iter_sampling }}
+      CHAINS:           ${{ inputs.chains }}
+      CMDSTAN_VERSION:  "2.38.0"
 
     steps:
       - name: Checkout PR branch
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
-          # persist-credentials default true; needed for the later push.
 
       - name: Setup R
         uses: r-lib/actions/setup-r@v2
         with:
-          r-version: "release"
           use-public-rspm: true
+
+      - name: Install package dependencies
+        # This step handles:
+        #   - DESCRIPTION Imports / Depends / LinkingTo / Suggests
+        #   - Remotes: field (stan-dev/cmdstanr, UCD-SERG/serodynamics)
+        #   - System libraries (apt-get install)
+        #   - Caching (transparent)
+        # The same action and same auth setup are used by R-CMD-check.yaml.
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::devtools
+            any::posterior
+            stan-dev/cmdstanr
+          needs: check
 
       - name: Cache cmdstan
         id: cache-cmdstan
@@ -83,33 +109,21 @@ jobs:
         with:
           path: ~/.cmdstan
           key: cmdstan-${{ runner.os }}-${{ env.CMDSTAN_VERSION }}
-
-      - name: System dependencies for R packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev \
-                                  libfontconfig1-dev libharfbuzz-dev libfribidi-dev \
-                                  libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
-
-      - name: Install R packages (CRAN + r-universe)
-        run: |
-          install.packages(c("devtools", "remotes", "posterior", "rlang"))
-          install.packages("cmdstanr",
-            repos = c("https://stan-dev.r-universe.dev",
-                      "https://cloud.r-project.org"))
-        shell: Rscript {0}
+          restore-keys: |
+            cmdstan-${{ runner.os }}-
 
       - name: Install cmdstan (only if cache miss)
         if: steps.cache-cmdstan.outputs.cache-hit != 'true'
         run: |
           cmdstanr::check_cmdstan_toolchain(fix = TRUE)
-          cmdstanr::install_cmdstan(version = Sys.getenv("CMDSTAN_VERSION"),
-                                    cores = 2)
+          cmdstanr::install_cmdstan(
+            version = Sys.getenv("CMDSTAN_VERSION"),
+            cores = 2
+          )
         shell: Rscript {0}
 
       - name: Register cmdstan path
         run: |
-          # Whether cached or freshly installed, point cmdstanr at it.
           paths <- list.files("~/.cmdstan", pattern = "^cmdstan-",
                               full.names = TRUE)
           stopifnot(length(paths) >= 1)
@@ -118,29 +132,10 @@ jobs:
           cat("cmdstan version:", cmdstanr::cmdstan_version(), "\n")
         shell: Rscript {0}
 
-      - name: Install shigella package + dependencies
+      - name: Install local shigella package
+        # setup-r-dependencies installs all DESCRIPTION dependencies but not
+        # the local package itself. devtools::install handles that.
         run: |
-          # ----- Diagnostic: what env vars are inherited from setup-r? -----
-          cat("Before unset:\n")
-          cat("  GITHUB_PAT   = ", shQuote(Sys.getenv("GITHUB_PAT")),   "\n", sep="")
-          cat("  GITHUB_TOKEN = ", shQuote(Sys.getenv("GITHUB_TOKEN")), "\n", sep="")
-
-          # ----- Force anonymous GitHub access -----
-          # r-lib/actions/setup-r@v2 auto-injects GITHUB_PAT for R package
-          # installs to avoid rate-limit. That token is only valid for the
-          # *current* repo (shigella). When remotes::install_deps() fetches
-          # serodynamics (a different public repo), GitHub validates the
-          # token, finds it invalid for that scope, and returns 401 —
-          # which is worse than anonymous access.
-          Sys.unsetenv("GITHUB_PAT")
-          Sys.unsetenv("GITHUB_TOKEN")
-
-          cat("After unset:\n")
-          cat("  GITHUB_PAT   = ", shQuote(Sys.getenv("GITHUB_PAT")),   "\n", sep="")
-          cat("  GITHUB_TOKEN = ", shQuote(Sys.getenv("GITHUB_TOKEN")), "\n", sep="")
-
-          # ----- Install -----
-          remotes::install_deps(".", dependencies = TRUE, upgrade = "never")
           devtools::install(".", dependencies = FALSE, upgrade = "never",
                             quick = TRUE, build = FALSE)
         shell: Rscript {0}
@@ -155,7 +150,6 @@ jobs:
           mkdir -p "${OUT_DIR}"
 
           Rscript -e '
-            # Explicit %||% for R < 4.4 compatibility on GitHub runners
             `%||%` <- function(a, b) if (is.null(a)) b else a
 
             out_dir <- Sys.getenv("OUT_DIR")
@@ -183,14 +177,13 @@ jobs:
               NULL
             })
 
-            # Write a structured SUMMARY.txt that Claude can grep.
             summary_path <- file.path(out_dir, "SUMMARY.txt")
             lines <- c(
-              sprintf("RUN_ID: %s",   Sys.getenv("GITHUB_RUN_ID")),
-              sprintf("N: %d",        n),
+              sprintf("RUN_ID: %s",      Sys.getenv("GITHUB_RUN_ID")),
+              sprintf("N: %d",           n),
               sprintf("ITER_WARMUP: %d", iter_warmup),
               sprintf("ITER_SAMPLING: %d", iter_samp),
-              sprintf("CHAINS: %d",   chains)
+              sprintf("CHAINS: %d",      chains)
             )
 
             if (is.null(res)) {
@@ -213,7 +206,6 @@ jobs:
                 sprintf("TREEDEPTH: %d / %d",       sum(d$num_max_treedepth %||% 0L), total_iters)
               )
 
-              # Diagnostic verdict — Claude can read this directly.
               ess  <- s$ess_bulk %||% 0
               rhat <- s$rhat %||% Inf
               divg <- sum(d$num_divergent %||% 0L) / total_iters
@@ -234,8 +226,6 @@ jobs:
             cat("\n=== End SUMMARY.txt ===\n")
           ' 2>&1 | tee "${OUT_DIR}/run.log"
 
-          # Always succeed at the workflow level — the SUMMARY.txt
-          # carries the pass/fail signal.
           exit 0
         env:
           OUT_DIR: outputs/ci/phase0_n${{ inputs.n }}_run${{ github.run_id }}
@@ -244,7 +234,6 @@ jobs:
         if: always()
         run: |
           set -euo pipefail
-          # Skip cleanly if outputs/ci/ wasn't created (e.g. an earlier step failed).
           if [ ! -d outputs/ci ] || [ -z "$(ls -A outputs/ci 2>/dev/null)" ]; then
             echo "outputs/ci/ is empty or missing; nothing to commit."
             exit 0
