@@ -1,11 +1,28 @@
 #!/usr/bin/env Rscript
 # Bimodality / sign-label-ambiguity diagnostic for Omega_B[1,2]
-# Usage: Rscript scripts/diagnostic_bimodality.R
+# Usage: Rscript scripts/diagnostic_bimodality.R <out_dir>
+#   out_dir: run output directory containing SUMMARY.txt and one_fit_n<N>_ci.rds
+#   If omitted, falls back to hardcoded n=5 path for local development.
 
-rds_path <- "outputs/ci/phase0_n5_run26435798026/one_fit_n5_ci.rds"
-out_dir  <- "outputs/ci/phase0_n5_run26435798026"
+args <- commandArgs(trailingOnly = TRUE)
+if (length(args) >= 1L) {
+  out_dir <- args[1L]
+} else {
+  out_dir <- "outputs/ci/phase0_n5_run26435798026"
+}
 
+summary_path <- file.path(out_dir, "SUMMARY.txt")
+if (!file.exists(summary_path)) stop("Missing SUMMARY.txt: ", summary_path)
+
+lines <- readLines(summary_path)
+n_line <- grep("^N:", lines, value = TRUE)
+if (length(n_line) == 0L) stop("N: line not found in SUMMARY.txt")
+N <- as.integer(sub("^N:\\s*", "", n_line[1L]))
+if (is.na(N)) stop("Could not parse N from SUMMARY.txt")
+
+rds_path <- file.path(out_dir, sprintf("one_fit_n%d_ci.rds", N))
 if (!file.exists(rds_path)) stop("Missing RDS: ", rds_path)
+
 bundle   <- readRDS(rds_path)
 rho_all  <- bundle$rho_B_posterior
 n_chains <- bundle$fit_settings$chains
@@ -15,14 +32,11 @@ if (is.null(rho_all)) stop("rho_B_posterior is NULL (fit may have crashed)")
 if (length(rho_all) != n_chains * n_iter)
   stop(sprintf("Expected %d draws, got %d", n_chains * n_iter, length(rho_all)))
 
-# as_draws_array [iter, chain, var] -> as.vector() column-major:
-# first n_iter elements = chain 1, next n_iter = chain 2, etc.
 chain_draws <- lapply(seq_len(n_chains),
   function(ch) rho_all[((ch-1)*n_iter+1):(ch*n_iter)])
 cq <- function(x, p) quantile(x, p, names=FALSE)
 cstats <- lapply(chain_draws, function(x) c(med=median(x), lo=cq(x,.025), hi=cq(x,.975)))
 
-# --- Per-chain density plot (other kinetic params not saved in bundle) ---
 png_path <- file.path(out_dir, "diagnostic_bimodality_pairs.png")
 png(png_path, width=900, height=420, res=120)
 par(mfrow=c(1L, n_chains+1L), mar=c(4,4,3,1))
@@ -38,7 +52,6 @@ for (ch in seq_len(n_chains)) {
 dev.off()
 cat("Pairs plot:", png_path, "\n")
 
-# --- Verdict ---
 signs     <- sapply(cstats, function(s) sign(s["med"]))
 med_range <- diff(range(sapply(cstats, function(s) s["med"])))
 rhat      <- bundle$omega_B_summary$rhat
