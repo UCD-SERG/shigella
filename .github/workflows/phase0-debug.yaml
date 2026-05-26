@@ -119,11 +119,10 @@ jobs:
         shell: Rscript {0}
 
       - name: Install shigella package + dependencies
-        env:
-          GITHUB_PAT: ${{ secrets.SERODYNAMICS_PAT }}
+        # No GITHUB_PAT — both serodynamics and cmdstanr are public on GitHub,
+        # so anonymous API access is sufficient. Setting an empty/invalid
+        # GITHUB_PAT would cause 401 Bad credentials (worse than no token).
         run: |
-          # remotes::install_deps() reads GITHUB_PAT for authenticated API calls.
-          # SERODYNAMICS_PAT must have read access to UCD-SERG/serodynamics.
           remotes::install_deps(".", dependencies = TRUE, upgrade = "never")
           devtools::install(".", dependencies = FALSE, upgrade = "never",
                             quick = TRUE, build = FALSE)
@@ -228,6 +227,11 @@ jobs:
         if: always()
         run: |
           set -euo pipefail
+          # Skip cleanly if outputs/ci/ wasn't created (e.g. an earlier step failed).
+          if [ ! -d outputs/ci ] || [ -z "$(ls -A outputs/ci 2>/dev/null)" ]; then
+            echo "outputs/ci/ is empty or missing; nothing to commit."
+            exit 0
+          fi
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add outputs/ci/
@@ -235,9 +239,7 @@ jobs:
             echo "No new outputs to commit."
             exit 0
           fi
-          # [skip ci] prevents the push from triggering other workflows
           git commit -m "ci(phase0): n=${N_SUBJECTS} run ${GITHUB_RUN_ID} [skip ci]"
-          # Push to the branch we ran on
           BRANCH="${GITHUB_REF#refs/heads/}"
           git push origin "HEAD:${BRANCH}"
 
