@@ -1,0 +1,248 @@
+name: Phase 0 Debug Loop
+
+# ------------------------------------------------------------------
+# Purpose:
+#   Run Phase 0 diagnostic (no SLURM dependency) on a GitHub runner so
+#   that Claude can iterate diagnosis -> fix -> re-run inside this PR
+#   without round-tripping through Shiva. Results are committed back
+#   to the branch under outputs/ci/ so Claude can read them in the
+#   next turn.
+#
+# Trigger:
+#   Manual only (workflow_dispatch). Use either the "Run workflow"
+#   button in the Actions tab, or:
+#     gh workflow run phase0-debug.yaml \
+#        --ref <branch-name> -f n=5
+#
+# Outputs (committed to the triggered branch):
+#   outputs/ci/phase0_n<N>_run<RUNID>/
+#     SUMMARY.txt            (structured diagnostics for Claude)
+#     one_fit_n<N>_ci.rds    (full fit bundle)
+#     one_fit_n<N>_ci_diag.rds
+#     run.log                (full Rscript stdout/stderr)
+#     ERROR.txt              (only if the fit failed)
+# ------------------------------------------------------------------
+
+on:
+  workflow_dispatch:
+    inputs:
+      n:
+        description: "Number of subjects (5 for fast iteration, 48 for full cohort)"
+        required: true
+        default: "5"
+        type: choice
+        options: ["5", "48"]
+      iter_warmup:
+        description: "Warmup iterations per chain"
+        required: false
+        default: "500"
+      iter_sampling:
+        description: "Sampling iterations per chain"
+        required: false
+        default: "500"
+      chains:
+        description: "Number of MCMC chains"
+        required: false
+        default: "2"
+
+permissions:
+  contents: write
+
+concurrency:
+  # one phase0 run at a time per branch — prevents conflicting commits
+  group: phase0-debug-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  phase0:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350     # 350 min is safely under the 360 free-tier cap
+    env:
+      N_SUBJECTS:    ${{ inputs.n }}
+      ITER_WARMUP:   ${{ inputs.iter_warmup }}
+      ITER_SAMPLING: ${{ inputs.iter_sampling }}
+      CHAINS:        ${{ inputs.chains }}
+      CMDSTAN_VERSION: "2.38.0"
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          # persist-credentials default true; needed for the later push.
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "release"
+          use-public-rspm: true
+
+      - name: Cache cmdstan
+        id: cache-cmdstan
+        uses: actions/cache@v4
+        with:
+          path: ~/.cmdstan
+          key: cmdstan-${{ runner.os }}-${{ env.CMDSTAN_VERSION }}
+
+      - name: System dependencies for R packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev \
+                                  libfontconfig1-dev libharfbuzz-dev libfribidi-dev \
+                                  libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+
+      - name: Install R packages (CRAN + r-universe)
+        run: |
+          install.packages(c("devtools", "remotes", "posterior", "rlang"))
+          install.packages("cmdstanr",
+            repos = c("https://stan-dev.r-universe.dev",
+                      "https://cloud.r-project.org"))
+        shell: Rscript {0}
+
+      - name: Install cmdstan (only if cache miss)
+        if: steps.cache-cmdstan.outputs.cache-hit != 'true'
+        run: |
+          cmdstanr::check_cmdstan_toolchain(fix = TRUE)
+          cmdstanr::install_cmdstan(version = Sys.getenv("CMDSTAN_VERSION"),
+                                    cores = 2)
+        shell: Rscript {0}
+
+      - name: Register cmdstan path
+        run: |
+          # Whether cached or freshly installed, point cmdstanr at it.
+          paths <- list.files("~/.cmdstan", pattern = "^cmdstan-",
+                              full.names = TRUE)
+          stopifnot(length(paths) >= 1)
+          cmdstanr::set_cmdstan_path(paths[1])
+          cat("cmdstan at:", cmdstanr::cmdstan_path(), "\n")
+          cat("cmdstan version:", cmdstanr::cmdstan_version(), "\n")
+        shell: Rscript {0}
+
+      - name: Install shigella package + dependencies
+        run: |
+          # remotes handles the Remotes: field in DESCRIPTION
+          # (UCD-SERG/serodynamics, stan-dev/cmdstanr).
+          remotes::install_deps(".", dependencies = TRUE, upgrade = "never")
+          devtools::install(".", dependencies = FALSE, upgrade = "never",
+                            quick = TRUE, build = FALSE)
+        shell: Rscript {0}
+
+      - name: Run Phase 0 diagnostic
+        id: run
+        run: |
+          set +e   # don't abort if Rscript exits non-zero — we capture errors ourselves
+          mkdir -p outputs/ci
+          OUT_DIR="outputs/ci/phase0_n${N_SUBJECTS}_run${GITHUB_RUN_ID}"
+          echo "out_dir=${OUT_DIR}" >> "$GITHUB_OUTPUT"
+          mkdir -p "${OUT_DIR}"
+
+          Rscript -e '
+            # Explicit %||% for R < 4.4 compatibility on GitHub runners
+            `%||%` <- function(a, b) if (is.null(a)) b else a
+
+            out_dir <- Sys.getenv("OUT_DIR")
+            n           <- as.integer(Sys.getenv("N_SUBJECTS"))
+            iter_warmup <- as.integer(Sys.getenv("ITER_WARMUP"))
+            iter_samp   <- as.integer(Sys.getenv("ITER_SAMPLING"))
+            chains      <- as.integer(Sys.getenv("CHAINS"))
+
+            suppressPackageStartupMessages(library(shigella))
+
+            res <- tryCatch({
+              shigella:::run_phase0_diagnostic(
+                n             = n,
+                iter_warmup   = iter_warmup,
+                iter_sampling = iter_samp,
+                tag           = sprintf("n%d_ci", n),
+                output_dir    = out_dir,
+                chains        = chains
+              )
+            }, error = function(e) {
+              writeLines(
+                c("STATUS: FIT_FAILED",
+                  paste("ERROR:", conditionMessage(e))),
+                file.path(out_dir, "ERROR.txt"))
+              NULL
+            })
+
+            # Write a structured SUMMARY.txt that Claude can grep.
+            summary_path <- file.path(out_dir, "SUMMARY.txt")
+            lines <- c(
+              sprintf("RUN_ID: %s",   Sys.getenv("GITHUB_RUN_ID")),
+              sprintf("N: %d",        n),
+              sprintf("ITER_WARMUP: %d", iter_warmup),
+              sprintf("ITER_SAMPLING: %d", iter_samp),
+              sprintf("CHAINS: %d",   chains)
+            )
+
+            if (is.null(res)) {
+              lines <- c(lines, "STATUS: FAILED",
+                         "See ERROR.txt for the R-side error message.")
+            } else {
+              s <- res$omega_B_summary
+              d <- res$diagnostic_summary
+              total_iters <- iter_samp * chains
+              lines <- c(lines,
+                "STATUS: OK",
+                sprintf("ELAPSED_MIN: %.2f",        res$elapsed_min  %||% NA_real_),
+                sprintf("TRUE_RHO_B: %+.3f",        res$true_rho_B   %||% NA_real_),
+                sprintf("POST_MEDIAN_RHO_B: %+.3f", s$median         %||% NA_real_),
+                sprintf("POST_LO_2.5: %+.3f",      s[["2.5%"]]      %||% NA_real_),
+                sprintf("POST_HI_97.5: %+.3f",     s[["97.5%"]]     %||% NA_real_),
+                sprintf("ESS_BULK: %.0f",           s$ess_bulk       %||% NA_real_),
+                sprintf("RHAT: %.3f",               s$rhat           %||% NA_real_),
+                sprintf("DIVERGENT: %d / %d",       sum(d$num_divergent %||% 0L),    total_iters),
+                sprintf("TREEDEPTH: %d / %d",       sum(d$num_max_treedepth %||% 0L), total_iters)
+              )
+
+              # Diagnostic verdict — Claude can read this directly.
+              ess  <- s$ess_bulk %||% 0
+              rhat <- s$rhat %||% Inf
+              divg <- sum(d$num_divergent %||% 0L) / total_iters
+              ttdp <- sum(d$num_max_treedepth %||% 0L) / total_iters
+              verdict <- if (ess > 400 && rhat < 1.01 && divg < 0.05 && ttdp < 0.10) {
+                "HEALTHY"
+              } else if (ess > 100 && rhat < 1.10 && divg < 0.10 && ttdp < 0.30) {
+                "DEGRADED"
+              } else {
+                "PATHOLOGICAL"
+              }
+              lines <- c(lines, sprintf("VERDICT: %s", verdict))
+            }
+
+            writeLines(lines, summary_path)
+            cat("=== SUMMARY.txt ===\n")
+            cat(readLines(summary_path), sep = "\n")
+            cat("\n=== End SUMMARY.txt ===\n")
+          ' 2>&1 | tee "${OUT_DIR}/run.log"
+
+          # Always succeed at the workflow level — the SUMMARY.txt
+          # carries the pass/fail signal.
+          exit 0
+        env:
+          OUT_DIR: outputs/ci/phase0_n${{ inputs.n }}_run${{ github.run_id }}
+
+      - name: Commit outputs back to the branch
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add outputs/ci/
+          if git diff --cached --quiet; then
+            echo "No new outputs to commit."
+            exit 0
+          fi
+          # [skip ci] prevents the push from triggering other workflows
+          git commit -m "ci(phase0): n=${N_SUBJECTS} run ${GITHUB_RUN_ID} [skip ci]"
+          # Push to the branch we ran on
+          BRANCH="${GITHUB_REF#refs/heads/}"
+          git push origin "HEAD:${BRANCH}"
+
+      - name: Upload artifacts (backup)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase0-n${{ inputs.n }}-run${{ github.run_id }}
+          path: outputs/ci/
+          retention-days: 14
