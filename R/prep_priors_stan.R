@@ -34,7 +34,7 @@ prep_priors_stan <- function(
     tau_B_scale   = 1.0,
     tau_eps_scale = 1.0,
     lkj_P_eta     = 2.0,
-    lkj_B_eta     = 2.0,
+    lkj_B_eta     = 4.0,
     lkj_eps_eta   = 2.0,
     model         = c("model_2", "model_1")) {
 
