@@ -30,7 +30,7 @@ run_phase0_diagnostic <- function(n,
                                   seed          = 20260513L,
                                   chains        = 2L,
                                   adapt_delta   = 0.95,
-                                  max_treedepth = 15L,
+                                  max_treedepth = 20L,
                                   compile_dir   = NULL) {
   cli::cli_h1("PHASE 0: INTERACTIVE SLURM REPRODUCIBILITY TEST ({tag})")
   cli::cli_inform(c(
