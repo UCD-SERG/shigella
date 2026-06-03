@@ -11,6 +11,9 @@
 ^data-raw$
 ^README\.Rmd$
 ^\.lintr\.R$
+^\.lintr$
+^scripts$
+^slurm$
 ^_quarto\.yml$
 ^.*\.qmd$
 ^.*\.png$

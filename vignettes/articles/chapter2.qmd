@@ -1,0 +1,480 @@
+---
+title: "Chapter 2 — Correlated Multivariate Antibody Kinetics"
+subtitle: "A Kronecker-structured Bayesian hierarchical model: methodology and Phase 0/1 simulation diagnostics"
+author: "Kwan Ho Lee"
+date: today
+---
+
+```{r setup}
+#| include: false
+options(knitr.kable.NA = "")  # nolint: undesirable_function_linter
+```
+
+# Introduction {#sec-intro}
+
+## Motivation
+
+Chapter 1 established a univariate Bayesian hierarchical model for the
+post-symptom-onset antibody trajectory of a single antigen-isotype
+biomarker, fitting each biomarker independently. 
+This independence
+assumption is biologically unrealistic: within the same subject, IgG and
+IgA responses share the same infection event, the same immune system,
+and the same antigenic stimulation, so their kinetic parameters are
+expected to co-vary. 
+Ignoring this dependence discards information that
+could improve parameter estimation precision and downstream
+seroincidence inference.
+
+## Aim of Chapter 2
+
+Chapter 2 extends the Chapter 1 framework to a multivariate hierarchical
+model in which the random-effect covariance of the per-subject log-scale
+kinetic parameters has a Kronecker product structure,
+$\Sigma = \Sigma_B \otimes \Sigma_P$. Here $\Sigma_B$ captures
+correlation between biomarkers and $\Sigma_P$ captures correlation
+between kinetic parameters, reducing the unconstrained $5K \times 5K$
+joint covariance to a structured, interpretable factorization.
+
+## Scope of this document
+
+@sec-methods derives the model and maps each mathematical object to its
+implementation in the `shigella` R package and the Stan model file.
+@sec-results presents the Phase 0 (interactive SLURM) and Phase 1 (batch
+SLURM) reproducibility check at two sample sizes relevant to the Chapter
+1 cohort. @sec-discussion interprets the n = 48 fit pathology and
+proposes next steps.
+
+# Methods {#sec-methods}
+
+## The Chapter 1 univariate kinetic model
+
+Following Teunis et al. (2016), the post-symptom-onset antibody
+concentration $y(t)$ in a subject's blood at time $t$ is modeled as a
+deterministic two-phase trajectory. 
+This formulation builds on the
+within-host rise--decay seroresponse models developed by de Graaf et al.
+(2014) and Teunis et al. (2016):
+
+$$
+y(t) \;=\;
+\begin{cases}
+y_0 \exp(\beta t), & 0 \le t \le t_1 \quad \text{(rise phase)} \\[6pt]
+\left[ y_1^{1-r} - (1-r)\,\alpha\,(t - t_1) \right]^{1/(1-r)}, & t > t_1 \quad \text{(decay phase)}
+\end{cases}
+$$
+
+where $\beta = \log(y_1 / y_0) / t_1$. The five per-subject kinetic
+parameters are $(y_0, y_1, t_1, \alpha, r)$, denoting baseline level,
+peak level, time-to-peak, decay rate, and decay shape.
+
+For hierarchical modeling, these are reparameterized into unconstrained
+log-scale coordinates:
+
+$$
+\boldsymbol{\theta}_{i,k}
+\;=\;
+\bigl( \log y_{0}, \;\; \log(y_1 - y_0), \;\; \log t_1, \;\; \log\alpha, \;\; \log(r - 1) \bigr)_{i,k}
+\;\in\; \mathbb{R}^{5},
+$$
+
+for subject $i$ and biomarker $k$.
+
+## The multivariate extension {#sec-mv}
+
+Let $K$ index biomarkers (antigen-isotype pairs; $K=2$ for the IgG/IgA
+pair) and $P = 5$ the number of kinetic parameters. 
+Stack the per-subject log-scale parameters across biomarkers:
+
+$$
+\boldsymbol{\theta}_i \;=\;
+\bigl( \boldsymbol{\theta}_{i,1}^{\top},\,\boldsymbol{\theta}_{i,2}^{\top},\,\ldots,\,\boldsymbol{\theta}_{i,K}^{\top} \bigr)^{\top}
+\;\in\; \mathbb{R}^{KP}.
+$$
+
+The Chapter 2 random-effect prior is
+
+$$
+\boldsymbol{\theta}_i \;\sim\; \mathcal{N}_{KP}\bigl( \boldsymbol{\mu},\; \Sigma_B \otimes \Sigma_P \bigr),
+\qquad i = 1, \ldots, n,
+$$ {#eq-kron}
+
+where $\otimes$ denotes the Kronecker product,
+$\Sigma_B \in \mathbb{R}^{K \times K}$ is the between-biomarker
+covariance, and $\Sigma_P \in \mathbb{R}^{P \times P}$ is the
+between-parameter covariance. 
+This is the multivariate hierarchical
+parameterization used to separate covariance across response dimensions
+from covariance across kinetic parameters (Gelman et al., 2014).
+
+The Kronecker structure factorizes the cross-(biomarker, parameter)
+covariance as
+
+$$
+\mathrm{Cov}(\theta_{i, k, p},\, \theta_{i, k', p'})
+\;=\; \Sigma_B[k, k'] \cdot \Sigma_P[p, p'].
+$$
+
+## Identifiability and the LKJ–scale parameterization
+
+The decomposition $\Sigma_B \otimes \Sigma_P$ is non-unique up to a
+scalar: for any $c \neq 0$, the pair $(c\Sigma_B, c^{-1}\Sigma_P)$
+yields the same product. 
+To resolve this, $\Sigma_B$ and $\Sigma_P$ are
+constrained to be correlation matrices and the marginal variances
+are absorbed into separate positive scale vectors:
+
+$$
+\Sigma_B \;=\; \mathrm{diag}(\boldsymbol{\tau}_B)\,\Omega_B\,\mathrm{diag}(\boldsymbol{\tau}_B),
+\quad
+\Sigma_P \;=\; \mathrm{diag}(\boldsymbol{\tau}_P)\,\Omega_P\,\mathrm{diag}(\boldsymbol{\tau}_P),
+$$
+
+with $\Omega_B, \Omega_P$ correlation matrices (unit diagonal) and
+$\boldsymbol{\tau}_B \in \mathbb{R}_+^K$,
+$\boldsymbol{\tau}_P \in \mathbb{R}_+^P$.
+
+## Priors
+
+| Parameter | Prior | Rationale |
+|---------------------------|------------------|---------------------------|
+| $\boldsymbol{\mu} \in \mathbb{R}^{KP}$ | $\mathcal{N}(\mathbf{0}, 5\,\mathbf{I})$ componentwise | Weakly informative, on the log-scale parameter space |
+| $\Omega_B$ | $\mathrm{LKJ}(\eta = 2)$ | Mild concentration around independence; permits either sign of correlation |
+| $\Omega_P$ | $\mathrm{LKJ}(\eta = 2)$ | Same rationale |
+| $\boldsymbol{\tau}_B$ | $\mathrm{half\text{-}}\mathcal{N}(0,\,1)$ componentwise | Positive scale; weakly informative |
+| $\boldsymbol{\tau}_P$ | $\mathrm{half\text{-}}\mathcal{N}(0,\,1)$ componentwise | Same |
+
+The LKJ prior is used because it defines a proper prior over correlation
+matrices and allows transparent control over concentration around the
+identity matrix (Lewandowski et al., 2009). 
+I do not impose a sign
+constraint on $\rho_B$: although IgG and IgA responses share the same
+infection event, class switching and mucosal/systemic response timing
+can differ, so early post-infection data may plausibly support either
+positive or negative within-subject IgG--IgA correlation (Stavnezer et
+al., 2008; Mattoo & Cherry, 2005).
+
+The target estimand of interest for this calibration study is the
+off-diagonal entry $\rho_B \equiv \Omega_B[1,2]$, the between-biomarker
+correlation.
+
+## Mapping mathematics to code {#sec-code-map}
+
+| Mathematical object | Implemented in |
+|------------------------------------|------------------------------------|
+| Two-phase trajectory $y(t)$ + log-scale parameterization | `inst/stan/model_2.stan` (transformed parameters block) |
+| Synthetic data drawn from @eq-kron with known $\rho_B$ | `R/sim_correlated_case_data.R` |
+| Construction of $\Sigma_B \otimes \Sigma_P$ from $(\Omega_B, \Omega_P, \boldsymbol{\tau}_B, \boldsymbol{\tau}_P)$ | `R/build_sigma_matrices.R` |
+| Per-subject parameter draws $\boldsymbol{\theta}_i$ | `R/draw_subject_params.R` |
+| Mean trajectory $\log \mu_k(t)$ | `R/compute_log_mu_k.R` |
+| Stan data list assembly | `R/prep_data_stan.R` |
+| Prior hyperparameter list | `R/prep_priors_stan.R` |
+| MCMC fit invocation (cmdstanr) | `R/run_mod_stan.R` |
+| Posterior summary + diagnostics | `R/postprocess_stan_output.R`, `R/extract_model1_omega_p_stan.R` |
+| Phase 0 (interactive SLURM) workflow | `R/run_phase0_diagnostic.R` |
+| Phase 1 (batch SLURM) workflow | `R/run_phase1_diagnostic.R` |
+
+The Stan implementation should use a non-centered hierarchical
+parameterization, because non-centered forms often reduce difficult
+funnel-like posterior geometry in hierarchical models fitted with HMC
+(Betancourt & Girolami, 2015). 
+In code, this means sampling
+standard-normal latent variables and transforming them through the
+Cholesky factor of the structured covariance matrix rather than sampling
+subject-level parameters directly.
+
+## Simulation design
+
+The package function `sim_correlated_case_data()` generates data from
+@eq-kron with a user-specified ground-truth $\rho_B$. Two sample sizes
+are tested here:
+
+| Setting | $n$ subjects | Per-subject obs. | $\rho_B$ truth | Warmup / Sampling per chain | Chains | Seed |
+|-----------|----------:|----------:|----------:|----------:|----------:|----------:|
+| Light | 5 | 10 | $+0.6$ | 500 / 500 | 2 | 20260513 |
+| Realistic | 48 | 10 | $+0.6$ | 1000 / 1000 | 2 | 20260513 |
+
+The two sample sizes are chosen as a sanity check ($n=5$) and as the
+Chapter-1 IpaB analytical cohort size ($n=48$). 
+Each fit is run twice
+with identical seed and model file but in two different execution modes
+(interactive `salloc` vs batch `sbatch`) to verify execution determinism
+(see @sec-results).
+
+For the later multi-replicate simulation study, performance summaries
+should be reported with Monte Carlo standard errors, rather than
+interpreted from a small pilot alone. 
+Following Morris et al. (2019),
+the planned full simulation should summarize bias, mean squared error,
+coverage, and the Monte Carlo standard error of each performance
+measure.
+
+# Results {#sec-results}
+
+Sampler diagnostics are interpreted using standard HMC/NUTS guidance:
+divergences indicate numerical integration failures in difficult
+posterior geometry, maximum-treedepth saturation indicates that NUTS
+repeatedly required the maximum allowed trajectory length, and
+$\widehat R$ plus effective sample size summarize cross-chain
+convergence and Monte Carlo precision (Hoffman & Gelman, 2014;
+Betancourt, 2018; Vehtari et al., 2021).
+
+## Reproducibility at $n = 5$ {#sec-results-n5}
+
+@tbl-n5 reports the side-by-side comparison of Phase 0 and Phase 1 at
+$n = 5$.
+
+```{r}
+#| label: tbl-n5
+#| tbl-cap: "Phase 0 (interactive `salloc`) vs Phase 1 (batch `sbatch`) at 
+#| $n = 5$, $\\rho_B^{\\text{truth}} = +0.6$. Both phases use identical seed 
+#| and model file."
+
+cmp_n5 <- data.frame(
+  Metric         = c("Status", "Elapsed (min)", "Posterior median $\\rho_B$",
+                     "95% CrI lower (2.5%)", "95% CrI upper (97.5%)",
+                     "ESS_bulk", "$\\hat R$", "Divergent transitions (/1000)",
+                     "Max-treedepth hits (/1000)"),
+  Phase0 = c("OK", "9.54", "$-0.034$", "$-0.463$", "$+0.611$",
+             "6", "1.371", "13", "493"),
+  Phase1 = c("OK", "9.40", "$-0.034$", "$-0.463$", "$+0.611$",
+             "6", "1.371", "13", "493")
+)
+
+knitr::kable(cmp_n5, 
+             col.names = c("Metric", "Phase 0 (interactive)", 
+                           "Phase 1 (batch)"), 
+             align = "lrr")
+```
+
+All numerical summaries are bit-for-bit identical between the two
+execution modes. 
+Stan's HMC sampler is deterministic given identical
+seed, model, data, and runtime, so this match confirms that:
+
+1.  The cluster environment (SLURM batch vs interactive allocation,
+    compute-node `/tmp`, library paths) does not affect the fit.
+2.  Any pathology observed at higher $n$ is therefore a property of the
+    model–data combination, not an environment artifact.
+
+The $n = 5$ fit itself is uninformative ($\hat R = 1.37$, ESS = 6): at
+this sample size the LKJ(2) prior dominates the posterior, which is
+expected. The $n = 5$ run serves only as a reproducibility sanity check.
+
+## Reproducibility and fit pathology at $n = 48$ {#sec-results-n48}
+
+@tbl-n48 reports the same comparison at $n = 48$, the Chapter 1 IpaB
+cohort size.
+
+```{r}
+#| label: tbl-n48
+#| tbl-cap: "Phase 0 (interactive `salloc`) vs Phase 1 (batch `sbatch`) at 
+#| $n = 48$, $\\rho_B^{\\text{truth}} = +0.6$. Identical seed and model. Cells 
+#| flagged violate conventional diagnostic thresholds."
+
+cmp_n48 <- data.frame(
+  Metric = c("Status", "Elapsed (min)", "Posterior median $\\rho_B$",
+             "95% CrI lower (2.5%)", "95% CrI upper (97.5%)",
+             "ESS_bulk", "$\\hat R$", "Divergent transitions (/2000)",
+             "Max-treedepth hits (/2000)"),
+  Phase0 = c("OK", "144.54", "$-0.624$", "$-0.884$", "$-0.378$ ",
+             "2", "2.824 ", "1", "1999 "),
+  Phase1 = c("OK", "131.83", "$-0.624$", "$-0.884$", "$-0.378$",
+             "2", "2.824 ", "1", "1999 "),
+  Acceptable = c("OK", "—", "near $+0.6$", "—", "should contain $+0.6$",
+                 "$> 400$", "$< 1.01$", "$< 5\\%$", "$< 10\\%$")
+)
+knitr::kable(cmp_n48,
+             col.names = c("Metric", "Phase 0 (interactive)",
+                           "Phase 1 (batch)", "Acceptable"),
+             align = "lrrr")
+```
+
+Three observations from @tbl-n48 are central to the interpretation in
+@sec-discussion:
+
+1.  Phase 0 ≡ Phase 1 at$n = 48$ as well: all summaries match
+    bit-for-bit. Environment is again ruled out.
+2.  Posterior has the wrong sign: the true value is $\rho_B = +0.6$ but
+    the recovered median is $-0.624$. The 95% credible interval
+    $[-0.884,\,-0.378]$ does not contain the truth.
+3.  Severe sampler geometry pathology, but few divergences:
+    $\hat R = 2.82$ and 99.95% of transitions hit the maximum tree
+    depth, yet the divergent count is only 1 / 2000 (0.05%). This is a
+    specific signature: the sampler is unable to traverse the typical
+    set within the step budget, rather than falling into a funnel.
+
+# Discussion {#sec-discussion}
+
+## Departure from the over-parameterization pattern
+
+A naive prior expectation was that $n = 48$ would show weak
+identification — the canonical symptom being a posterior that is wide
+and roughly centered on the LKJ prior, with $\hat R \approx 1$ (chains
+agree they are uninformative) and credible-interval coverage at the
+nominal level.
+
+The observed pattern is qualitatively different:
+
+| Feature | Standard weak identification | Observed at $n = 48$ |
+|------------------------|------------------------|------------------------|
+| Posterior shape | Wide, prior-like | Narrow (sd ≈ 0.24), confidently wrong |
+| 95% CrI for truth | Wide, covers truth | Narrow, excludes truth |
+| Between-chain agreement | $\hat R \approx 1$ | $\hat R = 2.82$ |
+| Treedepth hits | Moderate | 99.95% |
+| Divergent count | Nonzero | 0.05% |
+
+The combination near-zero divergent count + near-100% treedepth +
+high$\hat R$ points away from "data uninformative for $\rho_B$" and
+toward "sampler trapped in a low-information region of parameter space."
+
+## Three candidate explanations
+
+After ruling out environment and code-determinism effects via
+@sec-results, three candidate mechanisms remain.
+
+### Structural identifiability of $\Sigma_B$ vs $\Sigma_P$ at finite $n$
+
+The Kronecker decomposition is asymptotically identified up to the
+scalar ambiguity resolved by the correlation-matrix constraint
+(@sec-mv). At infinite $n$ the data separate $\Omega_B$ from $\Omega_P$.
+At finite $n$, however, multiple $(\Omega_B, \Omega_P)$ pairs may yield
+observationally near-equivalent products $\Omega_B \otimes \Omega_P$.
+The boundary of empirical identifiability under our priors and
+observation density at $K = 2, P = 5$ may exceed $n = 48$.
+
+### Likelihood multimodality
+
+The LKJ(2) prior on a $K = 2$ correlation matrix is unimodal in
+$\rho_B$, but the likelihood for $\Omega_B$ given a finite dataset may
+not be. 
+With only two chains, a mode-finding sampler could locate two
+distinct modes that yield large $\hat R$ even after warmup, as appears
+to be the case here.
+
+### Simulation–model mismatch
+
+The least glamorous and most consequential possibility: that
+`sim_correlated_case_data()` does not actually produce data drawn from
+the exact structure that `inst/stan/model_2.stan` assumes. 
+Candidate
+sources of mismatch include Cholesky-factor ordering conventions,
+biomarker-vs-parameter axis ordering in the Kronecker product, or
+noise-model parameterization. 
+This must be checked first, because if
+confirmed it would make the other two analyses moot.
+
+## Open questions
+
+Distinguishing among the three mechanisms above will require further
+investigation, and the appropriate sequencing of those investigations is
+itself a question on which advisor input is welcomed. 
+A natural next
+step is a targeted simulation-based calibration workflow: simulate from
+known parameter values, refit the model, and verify that posterior
+summaries recover the known truth across repeated datasets (Talts et
+al., 2018).
+
+## Scope notes
+
+-   The findings here pertain to Model 2 at $n = 48$ under the specific
+    prior and simulation configuration described in @sec-methods.
+    Implications for the Chapter 1 univariate model, if any, are outside
+    the scope of this document.
+-   Only one true value of $\rho_B$ ($+0.6$) and only $K = 2$ biomarkers
+    were tested. Phase 0 and Phase 1 use the same seed.
+
+# Appendix A — Software environment {.appendix .unnumbered}
+
+| Component           | Version                                     |
+|---------------------|---------------------------------------------|
+| R                   | 4.6.0 (2026-04-24)                          |
+| cmdstanr            | 0.8.0                                       |
+| cmdstan             | 2.38.0                                      |
+| posterior           | 1.7.0                                       |
+| shigella            | 0.0.0.9006                                  |
+| serodynamics        | 0.0.0.9050                                  |
+| Compute environment | UC Davis Shiva HPC (`r_chapter2` conda env) |
+
+# Appendix B — Reproducibility {.appendix .unnumbered}
+
+Branch `chapter2-stan-simulation` of
+`https://github.com/UCD-SERG/shigella`.
+
+``` bash
+# Phase 0 (interactive SLURM via salloc)
+salloc --time=04:00:00 --cpus-per-task=2 --mem=20G
+Rscript scripts/phase0_interactive_reproducibility.R       # n=5
+Rscript scripts/phase0_interactive_reproducibility_n48.R   # n=48
+exit
+
+# Phase 1 (batch SLURM)
+sbatch --time=04:00:00 --cpus-per-task=2 --mem=20G \
+       --output=logs/phase1/phase1_%j.out \
+       slurm/phase1_single.sbatch         # n=5
+sbatch --time=08:00:00 --cpus-per-task=2 --mem=20G \
+       --output=logs/phase1/phase1_n48_%j.out \
+       slurm/phase1_single_n48.sbatch     # n=48
+```
+
+Result files: `outputs/phase{0,1}/one_fit_n{5,48}*.rds` and comparison
+tables `outputs/phase1/p0_vs_p1_comparison_<JOBID>.rds`.
+
+# References {.unnumbered}
+
+::: {#refs}
+Betancourt, M. (2018). *A conceptual introduction to Hamiltonian Monte
+Carlo*. arXiv:1701.02434. https://doi.org/10.48550/arXiv.1701.02434
+
+Betancourt, M., & Girolami, M. (2015). Hamiltonian Monte Carlo for
+hierarchical models. In *Current Trends in Bayesian Methodology with
+Applications* (pp. 79--101). Chapman & Hall/CRC.
+
+de Graaf, W. F., Kretzschmar, M. E. E., Teunis, P. F. M., & Diekmann, O.
+(2014). *A two-phase within-host model for immune response and its
+application to serological profiles of pertussis*. Epidemics, 9, 1--7.
+https://doi.org/10.1016/j.epidem.2014.08.002
+
+Gelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B., Vehtari, A., &
+Rubin, D. B. (2014). *Bayesian Data Analysis* (3rd ed.). Chapman &
+Hall/CRC.
+
+Hoffman, M. D., & Gelman, A. (2014). *The No-U-Turn Sampler: Adaptively
+setting path lengths in Hamiltonian Monte Carlo*. Journal of Machine
+Learning Research, 15, 1593--1623.
+
+Lewandowski, D., Kurowicka, D., & Joe, H. (2009). *Generating random
+correlation matrices based on vines and extended onion method*. Journal
+of Multivariate Analysis, 100(9), 1989--2001.
+https://doi.org/10.1016/j.jmva.2009.04.008
+
+Mattoo, S., & Cherry, J. D. (2005). *Molecular pathogenesis,
+epidemiology, and clinical manifestations of respiratory infections due
+to Bordetella pertussis and other Bordetella subspecies*. Clinical
+Microbiology Reviews, 18(2), 326--382.
+https://doi.org/10.1128/CMR.18.2.326-382.2005
+
+Morris, T. P., White, I. R., & Crowther, M. J. (2019). *Using simulation
+studies to evaluate statistical methods*. Statistics in Medicine,
+38(11), 2074--2102. https://doi.org/10.1002/sim.8086
+
+Stavnezer, J., Guikema, J. E. J., & Schrader, C. E. (2008). *Mechanism
+and regulation of class switch recombination*. Annual Review of
+Immunology, 26, 261--292.
+https://doi.org/10.1146/annurev.immunol.26.021607.090248
+
+Talts, S., Betancourt, M., Simpson, D., Vehtari, A., & Gelman, A.
+(2018). *Validating Bayesian inference algorithms with simulation-based
+calibration*. arXiv:1804.06788.
+https://doi.org/10.48550/arXiv.1804.06788
+
+Teunis, P. F. M., van Eijkeren, J. C. H., de Graaf, W. F., Bonačić
+Marinović, A., & Kretzschmar, M. E. E. (2016). *Linking the seroresponse
+to infection to within-host heterogeneity in antibody production*.
+Epidemics, 16, 33--39. https://doi.org/10.1016/j.epidem.2016.04.001
+
+Vehtari, A., Gelman, A., Simpson, D., Carpenter, B., & Bürkner, P.-C.
+(2021). *Rank-normalization, folding, and localization: An improved*
+$\widehat R$ for assessing convergence of MCMC. Bayesian Analysis,
+16(2), 667--718. https://doi.org/10.1214/20-BA1221
+:::
