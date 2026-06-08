@@ -1,0 +1,294 @@
+---
+title: "Chapter 1 — Supplement Figures & Tables"
+subtitle: "Reproduces every supplement table & figure from library(shigella) + the regenerated .rda"
+format:
+  html:
+    embed-resources: true
+    toc: true
+    toc-depth: 2
+    toc-location: right
+editor: visual
+---
+
+<!--
+PURPOSE
+  GitHub / package-phase reproducibility document. With the shigella package
+  installed, this renders every SUPPLEMENT table (S1–S4) and figure (S1–S6)
+  straight from library(shigella) — no source() of R/.
+
+HOW TO RUN
+  1. Regenerate the fitted .rda once via data-raw/00..05 (script 05 writes the
+     sensitivity_*.rda needed for the S3 table).
+  2. Edit CONFIG: point `rda_dir` at that folder (it must also contain the
+     sensitivity_*.rda).
+  3. Render (Quarto) or run chunk-by-chunk. No raw Excel is needed here.
+-->
+
+```{r}
+#| label: config
+#| message: false
+
+## ---- EDIT THIS -----------------------------------------------------------
+rda_dir <- "~/Data/Manuscript"   # *.rda objects + sensitivity_*.rda live here
+## --------------------------------------------------------------------------
+```
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+
+# Everything comes from the installed package: shigella's Imports load with it,
+# and the flextable/gt knit_print methods register on load. No source() of R/.
+library(shigella)
+```
+
+```{r}
+#| label: load-rda
+#| message: false
+
+supp_rda <- c(
+  # overall + serotype + combined fits (sum_* , mae_* , S5 PPC, S6 forest, S3)
+  "overall_IpaB_pop_6", "overall_Sf2a_pop_6", "overall_Sf3a_pop_6",
+  "overall_Sf6_pop_6",  "overall_Sonnei_pop_6",
+  "serotype_sf2a_3", "serotype_sf3a_3", "serotype_sonnei_3",
+  "combined_flexneri_sf2a", "combined_flexneri_sf3a",
+  # case data, DurDia-adjusted (S5 PPC raw_dat + MAE overall + S3 overall data)
+  "dL_clean_Ipab_new", "dL_clean_sf2a_new", "dL_clean_sf3a_new",
+  "dL_clean_sf6_new",  "dL_clean_sonnei_new",
+  # case data, base/original times (S3 Fig observed points)
+  "dL_clean_Ipab", "dL_clean_sf2a", "dL_clean_sf3a", "dL_clean_sf6", "dL_clean_sonnei",
+  # serotype case data (MAE serospec + S3 table serotype data + S3 Fig)
+  "dL_serotype_sf2a", "dL_serotype_sf3a", "dL_serotype_sonnei",
+  # combined case data (MAE combined + S3 Fig panel C)
+  "dL_combined_flexneri_sf2a_case", "dL_combined_flexneri_sf3a_case",
+  # age-stratified case data, adjusted (S1 / S2 Fig spaghetti)
+  "dL_clean_Ipab_new_under5", "dL_clean_sf2a_new_under5", "dL_clean_sf3a_new_under5",
+  "dL_clean_sf6_new_under5",  "dL_clean_sonnei_new_under5",
+  "dL_clean_Ipab_new_plus5",  "dL_clean_sf2a_new_plus5",  "dL_clean_sf3a_new_plus5",
+  "dL_clean_sf6_new_plus5",   "dL_clean_sonnei_new_plus5"
+)
+
+for (nm in supp_rda) {
+  load(file.path(path.expand(rda_dir), paste0(nm, ".rda")), envir = globalenv())
+}
+```
+
+```{r}
+#| label: shared-params-mae
+#| message: false
+#| warning: false
+
+sum_overall <- pop_param_summary(list(
+  IpaB = overall_IpaB_pop_6, Sf2a = overall_Sf2a_pop_6, Sf3a = overall_Sf3a_pop_6,
+  Sf6  = overall_Sf6_pop_6,  Sonnei = overall_Sonnei_pop_6))
+sum_serospec <- pop_param_summary(list(
+  Sf2a = serotype_sf2a_3, Sf3a = serotype_sf3a_3, Sonnei = serotype_sonnei_3))
+sum_combined <- pop_param_summary(list(
+  Sf2a = combined_flexneri_sf2a, Sf3a = combined_flexneri_sf3a))
+
+isos <- c("IgG", "IgA")
+mae_overall <- dplyr::bind_rows(lapply(isos, function(io) dplyr::bind_rows(
+  get_mae(overall_IpaB_pop_6,   dL_clean_Ipab_new,   "IpaB",   io),
+  get_mae(overall_Sf2a_pop_6,   dL_clean_sf2a_new,   "Sf2a",   io),
+  get_mae(overall_Sf3a_pop_6,   dL_clean_sf3a_new,   "Sf3a",   io),
+  get_mae(overall_Sf6_pop_6,    dL_clean_sf6_new,    "Sf6",    io),
+  get_mae(overall_Sonnei_pop_6, dL_clean_sonnei_new, "Sonnei", io)
+)))
+mae_serospec <- dplyr::bind_rows(lapply(isos, function(io) dplyr::bind_rows(
+  get_mae(serotype_sf2a_3,   dL_serotype_sf2a,   "Sf2a",   io),
+  get_mae(serotype_sf3a_3,   dL_serotype_sf3a,   "Sf3a",   io),
+  get_mae(serotype_sonnei_3, dL_serotype_sonnei, "Sonnei", io)
+)))
+mae_combined <- dplyr::bind_rows(lapply(isos, function(io) dplyr::bind_rows(
+  get_mae(combined_flexneri_sf2a, dL_combined_flexneri_sf2a_case, "Sf2a", io),
+  get_mae(combined_flexneri_sf3a, dL_combined_flexneri_sf3a_case, "Sf3a", io)
+)))
+```
+
+# S1 Table — Prior distributions
+
+```{r}
+#| label: s1-table
+table_s1_priors()
+```
+
+# S2 Table — MCMC settings
+
+```{r}
+#| label: s2-table
+table_s2_mcmc()
+```
+
+# S3 Table — Prior-specification robustness (MAE)
+
+> Reads `sensitivity_*.rda` directly from `rda_dir` and recomputes per-model MAE.
+
+```{r}
+#| label: s3-table
+#| message: false
+#| warning: false
+
+s3_datasets <- list(
+  dL_clean_sonnei_new = dL_clean_sonnei_new,
+  dL_clean_sf3a_new   = dL_clean_sf3a_new,
+  dL_clean_sf2a_new   = dL_clean_sf2a_new,
+  dL_serotype_sonnei  = dL_serotype_sonnei,
+  dL_serotype_sf3a    = dL_serotype_sf3a,
+  dL_serotype_sf2a    = dL_serotype_sf2a
+)
+
+build_table_s3(dir = rda_dir, datasets = s3_datasets)
+```
+
+# S4 Table — All models (overall + serotype + combined)
+
+```{r}
+#| label: s4-table
+#| message: false
+#| warning: false
+
+table_s4_all_models(sum_overall, sum_serospec, sum_combined)
+```
+
+# S1 Fig — Age-stratified raw trajectories (< 5 years)
+
+```{r}
+#| label: s1-fig
+#| fig-width: 10
+#| fig-height: 12
+#| message: false
+#| warning: false
+
+figure_s1_age_spaghetti(list(
+  IpaB   = dL_clean_Ipab_new_under5,
+  Sf2a   = dL_clean_sf2a_new_under5,
+  Sf3a   = dL_clean_sf3a_new_under5,
+  Sf6    = dL_clean_sf6_new_under5,
+  Sonnei = dL_clean_sonnei_new_under5
+))
+```
+
+# S2 Fig — Age-stratified raw trajectories (>= 5 years)
+
+```{r}
+#| label: s2-fig
+#| fig-width: 10
+#| fig-height: 12
+#| message: false
+#| warning: false
+
+figure_s2_age_spaghetti(list(
+  IpaB   = dL_clean_Ipab_new_plus5,
+  Sf2a   = dL_clean_sf2a_new_plus5,
+  Sf3a   = dL_clean_sf3a_new_plus5,
+  Sf6    = dL_clean_sf6_new_plus5,
+  Sonnei = dL_clean_sonnei_new_plus5
+))
+```
+
+# S3 Fig — Additional individual comparisons
+
+```{r}
+#| label: s3-fig
+#| fig-width: 10
+#| fig-height: 13
+#| message: false
+#| warning: false
+
+cmp_models <- list(
+  overall_Sf2a    = overall_Sf2a_pop_6,
+  serotype_sf2a   = serotype_sf2a_3,
+  overall_Sonnei  = overall_Sonnei_pop_6,
+  serotype_sonnei = serotype_sonnei_3,
+  overall_Sf3a    = overall_Sf3a_pop_6,
+  serotype_sf3a   = serotype_sf3a_3,
+  combined_sf3a   = combined_flexneri_sf3a
+)
+cmp_datasets <- list(
+  dL_clean_sf2a      = dL_clean_sf2a,
+  dL_serotype_sf2a   = dL_serotype_sf2a,
+  dL_clean_sonnei    = dL_clean_sonnei,
+  dL_serotype_sonnei = dL_serotype_sonnei,
+  dL_clean_sf3a      = dL_clean_sf3a,
+  dL_serotype_sf3a   = dL_serotype_sf3a
+)
+
+# default sids = c("SOSAR-23004", "SOSAR-21018", "SOSAR-21002")
+figure_s3_additional_comparison(cmp_models, cmp_datasets)
+```
+
+# S4 Fig — Per-individual MAE slopegraph
+
+```{r}
+#| label: s4-fig
+#| fig-width: 10
+#| fig-height: 10
+#| message: false
+#| warning: false
+
+figure_s4_mae_slopegraph(mae_overall, mae_serospec, mae_combined)
+```
+
+# S5 Fig — Posterior predictive checks
+
+```{r}
+#| label: s5-ipab
+#| fig-width: 6.83
+#| fig-height: 4.5
+#| message: false
+#| warning: false
+posterior_pred(overall_IpaB_pop_6,   dL_clean_Ipab_new,   by_antigen = TRUE, n_sim = 25, antigen_name = "IpaB")
+```
+
+```{r}
+#| label: s5-sf2a
+#| fig-width: 6.83
+#| fig-height: 4.5
+#| message: false
+#| warning: false
+posterior_pred(overall_Sf2a_pop_6,   dL_clean_sf2a_new,   by_antigen = TRUE, n_sim = 25, antigen_name = "Sf2a")
+```
+
+```{r}
+#| label: s5-sf3a
+#| fig-width: 6.83
+#| fig-height: 4.5
+#| message: false
+#| warning: false
+posterior_pred(overall_Sf3a_pop_6,   dL_clean_sf3a_new,   by_antigen = TRUE, n_sim = 25, antigen_name = "Sf3a")
+```
+
+```{r}
+#| label: s5-sf6
+#| fig-width: 6.83
+#| fig-height: 4.5
+#| message: false
+#| warning: false
+posterior_pred(overall_Sf6_pop_6,    dL_clean_sf6_new,    by_antigen = TRUE, n_sim = 25, antigen_name = "Sf6")
+```
+
+```{r}
+#| label: s5-sonnei
+#| fig-width: 6.83
+#| fig-height: 4.5
+#| message: false
+#| warning: false
+posterior_pred(overall_Sonnei_pop_6, dL_clean_sonnei_new, by_antigen = TRUE, n_sim = 25, antigen_name = "Sonnei")
+```
+
+# S6 Fig — Kinetic-parameter forest (model comparison)
+
+```{r}
+#| label: s6-fig
+#| fig-width: 10
+#| fig-height: 15
+#| message: false
+#| warning: false
+
+plot_model_comparison_forest(
+  pop_overall  = sum_overall,
+  pop_serospec = sum_serospec,
+  pop_combined = sum_combined
+)
+```
