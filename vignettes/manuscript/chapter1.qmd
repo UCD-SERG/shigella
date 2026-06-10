@@ -1101,11 +1101,6 @@ $\alpha$ is the decay rate, and $\rho$ controls the shape of antibody waning.
 Initial conditions are given by $y(0) = y_0$. The transition time $t_1$
 corresponds to the peak antibody response.
 
-<!-- FLAG: In the source docx this passage cited references [9] and [10]
-(Khanam EFGH; MAL-ED), which do not correspond to the two-phase model. The
-intended citations are almost certainly de Graaf (2014) and Teunis (2016),
-used as such above. Confirm before submission. -->
-
 ### Detailed laboratory processing parameters {.unnumbered}
 
 **Scaling factors for cross-plate normalization.** MFI values were divided by the
