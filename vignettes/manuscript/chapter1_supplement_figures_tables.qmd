@@ -10,6 +10,7 @@ format:
 editor: visual
 ---
 
+```{=html}
 <!--
 PURPOSE
   GitHub / package-phase reproducibility document. With the shigella package
@@ -23,6 +24,7 @@ HOW TO RUN
      sensitivity_*.rda).
   3. Render (Quarto) or run chunk-by-chunk. No raw Excel is needed here.
 -->
+```
 
 ```{r}
 #| label: config
@@ -151,7 +153,7 @@ build_table_s3(dir = rda_dir, datasets = s3_datasets)
 table_s4_all_models(sum_overall, sum_serospec, sum_combined)
 ```
 
-# S1 Fig — Age-stratified raw trajectories (< 5 years)
+# S1 Fig — Age-stratified raw trajectories (\< 5 years)
 
 ```{r}
 #| label: s1-fig
@@ -169,7 +171,7 @@ figure_s1_age_spaghetti(list(
 ))
 ```
 
-# S2 Fig — Age-stratified raw trajectories (>= 5 years)
+# S2 Fig — Age-stratified raw trajectories (\>= 5 years)
 
 ```{r}
 #| label: s2-fig
