@@ -16,7 +16,7 @@
 ##    named "_case" (not "_new") and use ORIGINAL timeindays.
 ##
 ##  cohort_name (infecting serotype) and age live IN the compiled sheet
-##  (columns J and M; see the raw-data screenshot), so process_shigella_data()
+##  , so process_shigella_data()
 ##  keeps them and the subset_*() helpers filter on them directly -- no separate
 ##  metadata join.
 ##
@@ -36,7 +36,7 @@
 
 source("data-raw/_config.R")
 
-# devtools::load_all()                      # makes R/data_prep.R functions available
+# devtools::load_all()                # makes R/data_prep.R functions available
 library(readxl)
 library(dplyr)
 
@@ -47,7 +47,7 @@ library(dplyr)
 ## isotype_name, cohort_name (J), age (M), and the antigen MFI columns.
 compiled <- readxl::read_excel(raw_files$compiled, sheet = raw_sheets$compiled)
 
-## --- DurDia (diarrhea duration prior to presentation) ---  [CONFIRMED]
+## --- DurDia (diarrhea duration prior to presentation) ---  
 ## Sheet "Duration of symptoms"; columns CaseID + DurDia_hours; 48 participants.
 ## Verified against dL_clean_sf2a_new: DurDia_days = DurDia_hours/24 and
 ## timeindays_new = (Actual day) + DurDia_days  (e.g. 3h -> +0.125 d).
