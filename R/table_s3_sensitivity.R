@@ -27,7 +27,7 @@
       "biomarker_group",
       Biomarker = "biomarker", Prior = "prior",
       `MAE (Overall)` = "mae_overall", `MAE (Serotype)` = "mae_serotype",
-      `\u0394MAE` = "delta_mae", Conclusion = "conclusion"
+      `Delta MAE` = "delta_mae", Conclusion = "conclusion"
     )
 }
 
@@ -43,17 +43,17 @@
 table_s3_sensitivity <- function(sensitivity_results) {
   .sensitivity_wide(sensitivity_results) |>
     gt::gt(groupname_col = "biomarker_group") |>
-    gt::fmt_number(columns = c("MAE (Overall)", "MAE (Serotype)", "\u0394MAE"),
+    gt::fmt_number(columns = c("MAE (Overall)", "MAE (Serotype)", "Delta MAE"),
                    decimals = 2) |>
     gt::cols_label(
       Biomarker = "Biomarker", Prior = "Prior",
       `MAE (Overall)` = "MAE (Overall)", `MAE (Serotype)` = "MAE (Serotype)",
-      `\u0394MAE` = gt::md("&Delta;MAE"), Conclusion = "Conclusion"
+      `Delta MAE` = gt::md("&Delta;MAE"), Conclusion = "Conclusion"
     ) |>
     gt::cols_width(
       Biomarker ~ gt::px(120), Prior ~ gt::px(100),
       `MAE (Overall)` ~ gt::px(110), `MAE (Serotype)` ~ gt::px(115),
-      `\u0394MAE` ~ gt::px(80), Conclusion ~ gt::px(130)
+      `Delta MAE` ~ gt::px(80), Conclusion ~ gt::px(130)
     ) |>
     gt::tab_header(
       title = gt::md("**Sensitivity analysis: prior specification robustness**")
