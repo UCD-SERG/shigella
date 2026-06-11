@@ -20,7 +20,7 @@ build_sensitivity_results <- function(files, datasets, scale = "log") {
 
       dataset <- get_dataset_for_sensitivity(antigen, model, datasets)
       if (is.null(dataset)) {
-        message("Skipped (no dataset mapping): ", basename(file))
+        cli::cli_inform("Skipped (no dataset mapping): {.file {basename(file)}}")
         return(tibble::tibble(biomarker = character(), prior = character(),
                               model = character(), mae = numeric()))
       }
@@ -29,7 +29,7 @@ build_sensitivity_results <- function(files, datasets, scale = "log") {
       mae_tbl <- get_mae(model = fit_obj, dataset = dataset,
                          antigen_label = antigen, iso = iso, scale = scale)
       if (nrow(mae_tbl) == 0) {
-        message("Skipped (empty MAE): ", basename(file))
+        cli::cli_inform("Skipped (empty MAE): {.file {basename(file)}}")
         return(tibble::tibble(biomarker = character(), prior = character(),
                               model = character(), mae = numeric()))
       }

@@ -10,9 +10,9 @@ figure_population_trajectories <- function(models, datasets) {
   p_ipab <- fig5_ipab_with_age(
     models$IpaB, models$IpaB_under5, models$IpaB_plus5, datasets$dL_clean_Ipab)
   p_sonnei <- fig5_with_individuals(models$serotype_sonnei, datasets$dL_serotype_sonnei,
-    "B) S. sonnei (Sero-specific, n=11)", individual_alpha = 0.22)
+    "B) S. sonnei (Serotype-specific, n=11)", individual_alpha = 0.22)
   p_sf2a <- fig5_with_individuals(models$serotype_sf2a, datasets$dL_serotype_sf2a,
-    "C) S. flexneri 2a (Sero-specific, n=17)", individual_alpha = 0.22)
+    "C) S. flexneri 2a (Serotype-specific, n=17)", individual_alpha = 0.22)
   p_sf3a <- fig5_with_individuals(models$combined_sf3a, datasets$dL_combined_sf3a,
     "D) S. flexneri 3a (Combined, n=25)", individual_alpha = 0.22)
   p_sf6 <- fig5_with_individuals(models$overall_Sf6, datasets$dL_clean_sf6,

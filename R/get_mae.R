@@ -23,7 +23,7 @@ get_mae <- function(model, dataset, antigen_label, iso, scale = "log") {
                     antigen = antigen_label, Iso_type = iso, mae = .data$MAE) |>
       dplyr::select("sid", "antigen", "Iso_type", "mae")
   }, error = function(e) {
-    message("Skipped: ", antigen_label, " ", iso, " - ", e$message)
+    cli::cli_inform("Skipped: {antigen_label} {iso} - {e$message}")
     tibble::tibble(sid = character(), antigen = character(),
                    Iso_type = character(), mae = numeric())
   })

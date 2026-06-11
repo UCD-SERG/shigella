@@ -54,7 +54,7 @@
     dplyr::group_by(.data$sid) |>
     dplyr::summarise(
       n_visits = dplyr::n(),
-      followup_days = max(.data[["Actual day"]], na.rm = TRUE) + 2,
+      followup_days = max(.data[["Actual day"]], na.rm = TRUE) + 2, # +2: days since symptom onset to day-0 blood draw
       .groups = "drop") |>
     dplyr::mutate(ge4_visits = factor(dplyr::if_else(.data$n_visits >= 4, "\u22654", "<4"),
                                       levels = c("<4", "\u22654")))

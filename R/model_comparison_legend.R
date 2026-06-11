@@ -6,7 +6,7 @@ model_comparison_legend <- function() {
     ggplot2::geom_line(ggplot2::aes(x = 1, y = 1,
       color = "Overall", linetype = "Overall")) +
     ggplot2::geom_line(ggplot2::aes(x = 1, y = 1,
-      color = "Sero-specific", linetype = "Sero-specific")) +
+      color = "Serotype-specific", linetype = "Serotype-specific")) +
     ggplot2::geom_line(ggplot2::aes(x = 1, y = 1,
       color = "Combined flexneri", linetype = "Combined flexneri")) +
     ggplot2::geom_point(ggplot2::aes(x = 1, y = 1, shape = "Observed"),

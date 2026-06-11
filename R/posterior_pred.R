@@ -21,10 +21,8 @@
     dplyr::mutate(mu_hat = serodynamics:::ab(.data$t, .data$y0, .data$y1,
                                              .data$t1, .data$alpha, .data$shape))
 
-  sim_tab <- tibble::tibble(Iso_type = character(), value = numeric(),
-                            estimate = character(), simulation = character())
-  for (j in seq_len(n_sim)) {
-    one <- dplyr::slice_sample(fitted_dat, by = c("Subject", "Iso_type", "t")) |>
+  sim_tab <- purrr::map_dfr(seq_len(n_sim), function(j) {
+    dplyr::slice_sample(fitted_dat, by = c("Subject", "Iso_type", "t")) |>
       dplyr::left_join(mod_prec_logy,
                        by = c("Iteration", "Chain", "Iso_type", "Stratification")) |>
       dplyr::mutate(sd = 1 / sqrt(.data$prec_logy)) |>
@@ -33,8 +31,7 @@
       dplyr::ungroup() |>
       dplyr::select("Iso_type", "value") |>
       dplyr::mutate(estimate = "simulated", simulation = as.character(j))
-    sim_tab <- dplyr::bind_rows(sim_tab, one)
-  }
+  })
 
   obs_prep <- obs_dat |>
     dplyr::select("Iso_type", "result") |>
@@ -85,8 +82,10 @@
 #' @param ... Unused (kept for call compatibility).
 #' @return A ggplot.
 #' @export
-posterior_pred <- function(data = NA, raw_dat = NA, by_antigen = FALSE,
+posterior_pred <- function(data = NULL, raw_dat = NULL, by_antigen = FALSE,
                            n_sim = 4, antigen_name = NULL, ...) {
+  if (is.null(data)) cli::cli_abort("{.arg data} must be supplied.")
+  if (is.null(raw_dat)) cli::cli_abort("{.arg raw_dat} must be supplied.")
   .ppc_simulate(data, raw_dat, n_sim) |>
     .ppc_density_plot(by_antigen = by_antigen, antigen_name = antigen_name)
 }

@@ -6,16 +6,14 @@
 #' @return One-row tibble: `file, antigen, iso, prior_key, model`.
 #' @export
 parse_sensitivity_filename <- function(path) {
-  nm <- basename(path) |>
-    stringr::str_remove("^sensitivity_") |>
-    stringr::str_remove("\\.rda$")
-
-  parts <- strsplit(nm, "_")[[1]]
-  if (length(parts) != 4) {
-    stop("Unexpected file name format: ", basename(path))
+  nm <- basename(path)
+  pattern <- "^sensitivity_(.+)_(IgG|IgA)_(primary|diffuse|informative)_(overall|serotype)\\.rda$"
+  m <- regmatches(nm, regexec(pattern, nm))[[1]]
+  if (length(m) != 5) {
+    cli::cli_abort("Unexpected sensitivity file name format: {.file {nm}}")
   }
   tibble::tibble(
-    file = path, antigen = parts[1], iso = parts[2],
-    prior_key = parts[3], model = parts[4]
+    file = path, antigen = m[2], iso = m[3],
+    prior_key = m[4], model = m[5]
   )
 }

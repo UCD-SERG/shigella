@@ -15,7 +15,7 @@ get_observed <- function(dataset, sid, iso) {
     "sid" %in% names(dataset) ~ "sid",
     TRUE ~ NA_character_
   )
-  if (is.na(id_col)) stop("Dataset has no 'id' or 'sid' column.")
+  if (is.na(id_col)) cli::cli_abort("Dataset has no {.code id} or {.code sid} column.")
 
   iso_col <- dplyr::case_when(
     "antigen_iso"  %in% names(dataset) ~ "antigen_iso",
@@ -23,7 +23,7 @@ get_observed <- function(dataset, sid, iso) {
     "Iso_type"     %in% names(dataset) ~ "Iso_type",
     TRUE ~ NA_character_
   )
-  if (is.na(iso_col)) stop("Dataset has no isotype column.")
+  if (is.na(iso_col)) cli::cli_abort("Dataset has no isotype column.")
 
   time_col <- dplyr::case_when(
     "timeindays" %in% names(dataset) ~ "timeindays",
@@ -31,13 +31,13 @@ get_observed <- function(dataset, sid, iso) {
     "timepoint"  %in% names(dataset) ~ "timepoint",
     TRUE ~ NA_character_
   )
-  if (is.na(time_col)) stop("Dataset has no time column.")
+  if (is.na(time_col)) cli::cli_abort("Dataset has no time column.")
 
   val_col <- if ("result" %in% names(dataset)) {
     "result"
   } else {
     mfi <- names(dataset)[grepl("_MFI$", names(dataset))]
-    if (length(mfi) == 1) mfi else stop("Dataset has no 'result'/_MFI column.")
+    if (length(mfi) == 1) mfi else cli::cli_abort("Dataset has no {.code result} or {.code _MFI} column.")
   }
 
   out <- dataset |>
@@ -47,7 +47,7 @@ get_observed <- function(dataset, sid, iso) {
     dplyr::filter(!is.na(.data$value))
 
   if (nrow(out) == 0) {
-    warning(sprintf("No observed data for sid='%s', iso='%s'.", sid, iso))
+    cli::cli_warn("No observed data for sid={.val {sid}}, iso={.val {iso}}.")
   }
   out
 }

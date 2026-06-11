@@ -22,10 +22,10 @@
                    color = "Overall", linetype = "Overall"), linewidth = 0.9) +
     ggplot2::geom_ribbon(data = pred_sero,
       ggplot2::aes(x = .data$t, ymin = .data$lo, ymax = .data$hi),
-      fill = .model_colours[["Sero-specific"]], alpha = 0.12) + # nolint: object_usage_linter
+      fill = .model_colours[["Serotype-specific"]], alpha = 0.12) + # nolint: object_usage_linter
     ggplot2::geom_line(data = pred_sero,
       ggplot2::aes(x = .data$t, y = .data$med,
-                   color = "Sero-specific", linetype = "Sero-specific"),
+                   color = "Serotype-specific", linetype = "Serotype-specific"),
       linewidth = 0.9)
 
   if (!is.null(model_combined)) {

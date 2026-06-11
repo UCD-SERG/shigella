@@ -15,7 +15,7 @@ get_prediction_summary <- function(model_output, sid, iso,
     dplyr::filter(.data$Subject == sid, .data$Iso_type == iso)
 
   if (nrow(sub) == 0) {
-    warning(paste("No data for", sid, iso))
+    cli::cli_warn("No data for {.val {sid}} {iso}")
     return(tibble::tibble(t = numeric(), med = numeric(),
                           lo = numeric(), hi = numeric()))
   }

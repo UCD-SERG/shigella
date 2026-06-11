@@ -6,12 +6,12 @@
 .mae_slope_long <- function(mae_overall, mae_serospec, mae_combined) {
   dplyr::bind_rows(
     dplyr::mutate(mae_overall,  model = "Overall"),
-    dplyr::mutate(mae_serospec, model = "Sero-specific"),
+    dplyr::mutate(mae_serospec, model = "Serotype-specific"),
     dplyr::mutate(mae_combined, model = "Combined")
   ) |>
     dplyr::mutate(
       biomarker = paste0(.data$antigen, " ", .data$Iso_type),
-      model = factor(.data$model, levels = c("Overall", "Sero-specific", "Combined"))
+      model = factor(.data$model, levels = c("Overall", "Serotype-specific", "Combined"))
     )
 }
 
@@ -73,10 +73,10 @@
       values = c("Overall better" = "grey70", "Alternative better" = "#5BBE7A"),
       name = "Lower MAE") +
     ggplot2::scale_fill_manual(
-      values = c("Overall" = "#3B82F6", "Sero-specific" = "#EF4444",
+      values = c("Overall" = "#3B82F6", "Serotype-specific" = "#EF4444",
                  "Combined" = "#10B981"), name = "Model") +
     ggplot2::scale_shape_manual(
-      values = c("Overall" = 22, "Sero-specific" = 21, "Combined" = 24), name = "Model") +
+      values = c("Overall" = 22, "Serotype-specific" = 21, "Combined" = 24), name = "Model") +
     ggplot2::facet_wrap(~ biomarker, scales = "free_y", ncol = 2) +
     ggplot2::labs(
       title = "Per-individual MAE across modeling approaches",

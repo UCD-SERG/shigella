@@ -6,7 +6,7 @@ load_fit_obj <- function(path) {
   e <- new.env(parent = emptyenv())
   load(path, envir = e)
   if (!exists("fit_obj", envir = e, inherits = FALSE)) {
-    stop("fit_obj not found in: ", basename(path))
+    cli::cli_abort("fit_obj not found in: {.file {basename(path)}}")
   }
   get("fit_obj", envir = e, inherits = FALSE)
 }

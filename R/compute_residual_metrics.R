@@ -48,6 +48,9 @@
   if (scale == "log") {
     n_nonpos <- sum(residual_data$obs <= 0) + sum(residual_data$pred_med <= 0)
     if (n_nonpos > 0) {
+      cli::cli_warn(
+        "Dropping {n_nonpos} non-positive observation{?s} before log-scale residuals."
+      )
       residual_data <- dplyr::filter(residual_data, .data$obs > 0, .data$pred_med > 0)
     }
     residual_data |>
