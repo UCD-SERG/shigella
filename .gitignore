@@ -20,3 +20,4 @@ shigella*.tar.gz
 shigella*.tgz
 do_commit.py
 .gitconfig_tmp
+.claude/

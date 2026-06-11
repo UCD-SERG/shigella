@@ -93,13 +93,12 @@ format:
 #| message: false
 
 ## ---- EDIT THESE ----------------------------------------------------------
-rda_dir <- "~/Data/Manuscript"   # folder with your existing *.rda
-r_dir   <- "~/chapter1-repro/R"                   # folder with the decomposed function files
+rda_dir <- "~/Data/Manuscript"   # folder holding the regenerated *.rda
 
 ## (Table 1 + Figure 1 only) raw Excel inputs. Leave as-is to skip those two.
-raw_compiled <- "~/chapter1-repro/path/to/3.8.2024 Compiled Shigella datav2.xlsx";  sheet_compiled <- "Compiled"
-raw_metadata <- "~/chapter1-repro/path/to/Additional metadata for Luminex sample set 10.28.2024.xlsx";  sheet_metadata <- "Metadata"
-raw_durdia   <- "~/chapter1-repro/path/to/Duration of diarrhea prior to presentation.xlsx";     sheet_durdia   <- "Duration of symptoms"
+raw_compiled <- "~/path/to/3.8.2024 Compiled Shigella datav2.xlsx";  sheet_compiled <- "Compiled"
+raw_metadata <- "~/path/to/Additional metadata for Luminex sample set 10.28.2024.xlsx";  sheet_metadata <- "Metadata"
+raw_durdia   <- "~/path/to/Duration of diarrhea prior to presentation.xlsx";     sheet_durdia   <- "Duration of symptoms"
 ## --------------------------------------------------------------------------
 ```
 
@@ -108,30 +107,11 @@ raw_durdia   <- "~/chapter1-repro/path/to/Duration of diarrhea prior to presenta
 #| message: false
 #| warning: false
 
-library(dplyr)
-library(tidyr)
-library(purrr)
-library(tibble)
-library(stringr)
-library(ggplot2)
-library(patchwork)
-library(scales)
-library(flextable)
-library(gt)
-library(data.table)
-library(cowplot)
-library(fs)
-
-# model engine internals used by the param / MAE / PPC helpers
-library(serocalculator)
-library(serodynamics)
-
-# Source every decomposed function file (one public function per file). Source
-# order does not matter: R resolves function calls at run time.
-invisible(lapply(
-  list.files(r_dir, pattern = "[.][Rr]$", full.names = TRUE),
-  source
-))
+# Everything comes from the installed package: shigella's Imports (dplyr, tidyr,
+# purrr, ggplot2, patchwork, scales, flextable, gt, cowplot, serocalculator,
+# serodynamics, ...) load with it, and the flextable/gt knit_print methods
+# register on load. No source() of R/ is needed.
+library(shigella)
 ```
 
 ```{r}
