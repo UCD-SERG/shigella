@@ -1,3 +1,9 @@
+utils::globalVariables(c(
+  ":=", ".", "sid", "unq_id", "isotype", "study_name", "serotype",
+  "cohort_name", "pid", "age", "row_id", "display_label",
+  "antigen", "antigen_clean", "timepoint", "timepoint_label"
+))
+
 #' Reshape + order the compiled table for the cross-reactivity heatmap
 #'
 #' Bangladesh (SOSAR) subset, antigens melted long, serotypes recoded (small

@@ -1,21 +1,44 @@
 Package: shigella
-Title: What the Package Does (One Line, Title Case)
+Title: Shigella Antibody-Kinetics Analysis and Reporting Tools
 Version: 0.0.0.9009
 Authors@R: c(
     person("Kwan Ho", "Lee", , "ksjlee@ucdavis.edu", role = c("aut", "cre")),
     person("Douglas Ezra", "Morrison", , "demorrison@ucdavis.edu", role = c("aut"),
            comment = c(ORCID = "0000-0002-7195-830X")))
-Description: What the package does (one paragraph).
+Description: Reproducible analysis tools for fitting and evaluating Bayesian
+    two-phase decay models of Shigella antibody kinetics from longitudinal
+    serosurvey data. Provides functions for posterior prediction, model
+    comparison, sensitivity analysis, and publication-ready tables and figures
+    supporting serosurveillance applications.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 URL: https://ucd-serg.github.io/shigella/
 Remotes:
     UCD-SERG/serodynamics
+Imports:
+    cli,
+    cowplot,
+    data.table,
+    dplyr,
+    flextable,
+    fs,
+    ggplot2,
+    gt,
+    gtsummary,
+    patchwork,
+    purrr,
+    rlang,
+    scales,
+    serocalculator,
+    serodynamics (>= 0.0.0.9011),
+    stringr,
+    tibble,
+    tidyr,
+    utils
 Suggests:
     knitr,
     rmarkdown,
-    serodynamics (>= 0.0.0.9011),
     spelling,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr

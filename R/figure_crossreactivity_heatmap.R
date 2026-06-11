@@ -1,3 +1,5 @@
+utils::globalVariables("isotype")
+
 #' Cross-reactivity heatmap (IgG | IgA, independent colour scales)
 #'
 #' @param compiled The `Compiled` sheet of the raw Shigella Excel.

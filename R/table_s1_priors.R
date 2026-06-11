@@ -31,15 +31,15 @@ table_s1_priors <- function() {
     ) |>
     gt::tab_row_group(
       label = "Population-level means (\u03BC\u2C7C)",
-      rows  = Level == "Population mean"
+      rows  = .data$Level == "Population mean"
     ) |>
     gt::tab_row_group(
       label = "Between-individual covariance",
-      rows  = Level == "Covariance"
+      rows  = .data$Level == "Covariance"
     ) |>
     gt::tab_row_group(
       label = "Observation model",
-      rows  = Level == "Measurement"
+      rows  = .data$Level == "Measurement"
     ) |>
     gt::cols_width(
       Parameter ~ gt::px(140),
