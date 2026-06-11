@@ -78,7 +78,7 @@
 
 #' S6 Fig: population kinetic-parameter forest plot (model comparison)
 #'
-#' Composes [.forest_params_long()] and per-parameter [.forest_panel()]s, then
+#' Composes `.forest_params_long()` and per-parameter `.forest_panel()`s, then
 #' stacks them with patchwork. y0, y1, t1, alpha are drawn on the log scale.
 #'
 #' @param pop_overall,pop_serospec `pop_param_summary()` tables for the overall

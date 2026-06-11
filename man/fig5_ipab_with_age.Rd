@@ -28,6 +28,6 @@ fig5_ipab_with_age(
 A ggplot.
 }
 \description{
-Builds the curves with \code{\link[=.age_stratified_curves]{.age_stratified_curves()}} and renders via
-\code{\link[=.fig5_age_plot]{.fig5_age_plot()}} over grey individual lines.
+Builds the curves with \code{.age_stratified_curves()} and renders via
+\code{.fig5_age_plot()} over grey individual lines.
 }

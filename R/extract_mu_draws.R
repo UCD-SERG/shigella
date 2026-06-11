@@ -5,7 +5,7 @@
 #' isotype) with one column per kinetic parameter on the **log/JAGS scale**
 #' (`y0`, `y1`, `t1`, `alpha`, `shape`).
 #'
-#' @param fit_object An `sr_model` object from [run_mod_pop()].
+#' @param fit_object An `sr_model` object from [serodynamics::run_mod_pop()].
 #' @param antigen_label Optional antigen label added as an `antigen` column,
 #'   used when stacking several antigens before summarising.
 #' @return A tibble with columns `Iteration`, `Chain`, `Iso_type`,

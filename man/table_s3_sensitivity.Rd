@@ -13,5 +13,5 @@ table_s3_sensitivity(sensitivity_results)
 A \code{gt_tbl}.
 }
 \description{
-Data shaping is in \code{\link[=.sensitivity_wide]{.sensitivity_wide()}}; this adds gt styling.
+Data shaping is in \code{.sensitivity_wide()}; this adds gt styling.
 }

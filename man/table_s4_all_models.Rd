@@ -20,7 +20,7 @@ model (Sf2a/Sf3a, n=25).}
 A \code{gt_tbl}.
 }
 \description{
-Composes \code{\link[=.combine_model_summaries]{.combine_model_summaries()}} and \code{\link[=.s4_display]{.s4_display()}}, then gt styling.
+Composes \code{.combine_model_summaries()} and \code{.s4_display()}, then gt styling.
 The three inputs are the \code{pop_param_summary()} outputs from the main
 manuscript (\code{pop_table_sum}, \code{pop_table_sum2}, \code{pop_table_sum3}).
 }

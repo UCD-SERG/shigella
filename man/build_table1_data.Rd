@@ -17,7 +17,7 @@ build_table1_data(compiled, metadata, durdia)
 A participant-level tibble ready for \code{\link[=table1_study_population]{table1_study_population()}}.
 }
 \description{
-Joins per-subject ids (\code{\link[=.table1_ids]{.table1_ids()}}), follow-up (\code{\link[=.table1_followup]{.table1_followup()}}),
-clinical variables (\code{\link[=.table1_clinical]{.table1_clinical()}}) and pre-presentation diarrhea
+Joins per-subject ids (\code{.table1_ids()}), follow-up (\code{.table1_followup()}),
+clinical variables (\code{.table1_clinical()}) and pre-presentation diarrhea
 duration onto the SOSAR cohort, then derives \code{completed_followup}.
 }

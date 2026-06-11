@@ -7,7 +7,7 @@
 extract_mu_draws(fit_object, antigen_label = NULL)
 }
 \arguments{
-\item{fit_object}{An \code{sr_model} object from \code{\link[=run_mod_pop]{run_mod_pop()}}.}
+\item{fit_object}{An \code{sr_model} object from \code{\link[serodynamics:run_mod_pop]{serodynamics::run_mod_pop()}}.}
 
 \item{antigen_label}{Optional antigen label added as an \code{antigen} column,
 used when stacking several antigens before summarising.}

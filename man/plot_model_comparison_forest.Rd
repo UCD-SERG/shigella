@@ -30,6 +30,6 @@ flexneri model (\code{NULL} to omit).}
 A patchwork figure.
 }
 \description{
-Composes \code{\link[=.forest_params_long]{.forest_params_long()}} and per-parameter \code{\link[=.forest_panel]{.forest_panel()}}s, then
+Composes \code{.forest_params_long()} and per-parameter \code{.forest_panel()}s, then
 stacks them with patchwork. y0, y1, t1, alpha are drawn on the log scale.
 }

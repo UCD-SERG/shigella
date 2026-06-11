@@ -53,7 +53,7 @@
 
 #' S4 Table: population kinetic parameters across all modeling approaches
 #'
-#' Composes [.combine_model_summaries()] and [.s4_display()], then gt styling.
+#' Composes `.combine_model_summaries()` and `.s4_display()`, then gt styling.
 #' The three inputs are the `pop_param_summary()` outputs from the main
 #' manuscript (`pop_table_sum`, `pop_table_sum2`, `pop_table_sum3`).
 #'

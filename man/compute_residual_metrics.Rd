@@ -31,7 +31,7 @@ or \code{"overall"}.}
 Tibble of residual metrics at the requested level (MAE, RMSE, ...).
 }
 \description{
-Builds observed values (\code{\link[=.observed_long]{.observed_long()}}), joins posterior-median
-predictions and computes residuals (\code{\link[=.pointwise_residuals]{.pointwise_residuals()}}), then aggregates
+Builds observed values (\code{.observed_long()}), joins posterior-median
+predictions and computes residuals (\code{.pointwise_residuals()}), then aggregates
 according to \code{summary_level}.
 }

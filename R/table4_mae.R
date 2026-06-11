@@ -129,10 +129,10 @@
 #' Table 4: per-individual prediction accuracy (MAE) across modeling approaches
 #'
 #' Orchestrates the Table 4 helpers: standardise each model's MAE
-#' ([.mae_standardize()]), summarise to median (IQR) ([.mae_summarise_one()]),
-#' assemble the wide table ([.mae_wide()]), pick the best model per
-#' antigen-isotype ([.mae_best_one()]), then build the display frame
-#' ([.mae_display_df()]) and flextable ([.mae_flextable()]).
+#' (`.mae_standardize()`), summarise to median (IQR) (`.mae_summarise_one()`),
+#' assemble the wide table (`.mae_wide()`), pick the best model per
+#' antigen-isotype (`.mae_best_one()`), then build the display frame
+#' (`.mae_display_df()`) and flextable (`.mae_flextable()`).
 #'
 #' @param mae_overall,mae_serospec,mae_combined `get_mae()` tibbles per model
 #'   class (`NULL` if not applicable).

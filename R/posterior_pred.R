@@ -73,8 +73,8 @@
 
 #' S5 Fig: posterior predictive check for one fitted model
 #'
-#' Composes [.ppc_simulate()] (the Monte-Carlo replicate generation) and
-#' [.ppc_density_plot()] (the overlaid densities).
+#' Composes `.ppc_simulate()` (the Monte-Carlo replicate generation) and
+#' `.ppc_density_plot()` (the overlaid densities).
 #'
 #' @param data A fitted `sr_model` (long draws with a `population_params`
 #'   attribute), e.g. `overall_IpaB_pop_6`.

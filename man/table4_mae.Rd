@@ -16,8 +16,8 @@ A list with \code{flextable} (the rendered table) and \code{winner_footnote}
 }
 \description{
 Orchestrates the Table 4 helpers: standardise each model's MAE
-(\code{\link[=.mae_standardize]{.mae_standardize()}}), summarise to median (IQR) (\code{\link[=.mae_summarise_one]{.mae_summarise_one()}}),
-assemble the wide table (\code{\link[=.mae_wide]{.mae_wide()}}), pick the best model per
-antigen-isotype (\code{\link[=.mae_best_one]{.mae_best_one()}}), then build the display frame
-(\code{\link[=.mae_display_df]{.mae_display_df()}}) and flextable (\code{\link[=.mae_flextable]{.mae_flextable()}}).
+(\code{.mae_standardize()}), summarise to median (IQR) (\code{.mae_summarise_one()}),
+assemble the wide table (\code{.mae_wide()}), pick the best model per
+antigen-isotype (\code{.mae_best_one()}), then build the display frame
+(\code{.mae_display_df()}) and flextable (\code{.mae_flextable()}).
 }

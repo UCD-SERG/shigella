@@ -17,5 +17,5 @@ A flextable.
 }
 \description{
 For each biomarker the winning model's parameter row is pulled by
-\code{\link[=.params_for_best_row]{.params_for_best_row()}}, formatted, then styled by \code{\link[=.table2_flextable]{.table2_flextable()}}.
+\code{.params_for_best_row()}, formatted, then styled by \code{.table2_flextable()}.
 }

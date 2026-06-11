@@ -70,8 +70,8 @@
 
 #' Per-observation / per-individual residual metrics on the log scale
 #'
-#' Builds observed values ([.observed_long()]), joins posterior-median
-#' predictions and computes residuals ([.pointwise_residuals()]), then aggregates
+#' Builds observed values (`.observed_long()`), joins posterior-median
+#' predictions and computes residuals (`.pointwise_residuals()`), then aggregates
 #' according to `summary_level`.
 #'
 #' @param model Fitted `sr_model`.

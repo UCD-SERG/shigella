@@ -70,7 +70,7 @@
 #' Table 2: kinetic parameters from the best-performing model per biomarker
 #'
 #' For each biomarker the winning model's parameter row is pulled by
-#' [.params_for_best_row()], formatted, then styled by [.table2_flextable()].
+#' `.params_for_best_row()`, formatted, then styled by `.table2_flextable()`.
 #'
 #' @param best_lookup Output of [select_best_models()].
 #' @param sum_overall,sum_serospec,sum_combined Parameter summaries

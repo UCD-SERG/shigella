@@ -64,8 +64,8 @@
 
 #' Assemble the participant-level data frame underlying Table 1
 #'
-#' Joins per-subject ids ([.table1_ids()]), follow-up ([.table1_followup()]),
-#' clinical variables ([.table1_clinical()]) and pre-presentation diarrhea
+#' Joins per-subject ids (`.table1_ids()`), follow-up (`.table1_followup()`),
+#' clinical variables (`.table1_clinical()`) and pre-presentation diarrhea
 #' duration onto the SOSAR cohort, then derives `completed_followup`.
 #'
 #' @param compiled `Compiled` sheet (MFI + `cohort_name` + `age`).

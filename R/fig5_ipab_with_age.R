@@ -69,8 +69,8 @@
 
 #' IpaB population-trajectory panel with age-stratified curves (Fig 5A)
 #'
-#' Builds the curves with [.age_stratified_curves()] and renders via
-#' [.fig5_age_plot()] over grey individual lines.
+#' Builds the curves with `.age_stratified_curves()` and renders via
+#' `.fig5_age_plot()` over grey individual lines.
 #'
 #' @param model_overall,model_under5,model_plus5 Fitted IpaB `sr_model`s.
 #' @param raw_overall Case data for the grey individual lines.

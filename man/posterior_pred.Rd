@@ -31,6 +31,6 @@ attribute), e.g. \code{overall_IpaB_pop_6}.}
 A ggplot.
 }
 \description{
-Composes \code{\link[=.ppc_simulate]{.ppc_simulate()}} (the Monte-Carlo replicate generation) and
-\code{\link[=.ppc_density_plot]{.ppc_density_plot()}} (the overlaid densities).
+Composes \code{.ppc_simulate()} (the Monte-Carlo replicate generation) and
+\code{.ppc_density_plot()} (the overlaid densities).
 }

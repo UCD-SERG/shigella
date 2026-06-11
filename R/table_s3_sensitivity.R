@@ -35,7 +35,7 @@
 
 #' S3 Table: prior-specification robustness (overall vs serotype MAE)
 #'
-#' Data shaping is in [.sensitivity_wide()]; this adds gt styling.
+#' Data shaping is in `.sensitivity_wide()`; this adds gt styling.
 #'
 #' @param sensitivity_results Output of [build_sensitivity_results()].
 #' @return A `gt_tbl`.

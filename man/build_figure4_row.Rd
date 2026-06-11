@@ -39,5 +39,5 @@ A patchwork row (IgG | IgA).
 Overlays overall (blue solid), serotype-specific (red dashed) and optional
 combined-flexneri (green dotted) posterior-median trajectories with 95\% CrI
 ribbons and the subject's observed points. Each panel is built by
-\code{\link[=.fig4_isotype_panel]{.fig4_isotype_panel()}}.
+\code{.fig4_isotype_panel()}.
 }
