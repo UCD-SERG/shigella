@@ -5,8 +5,8 @@
 \title{S5 Fig: posterior predictive check for one fitted model}
 \usage{
 posterior_pred(
-  data = NA,
-  raw_dat = NA,
+  data = NULL,
+  raw_dat = NULL,
   by_antigen = FALSE,
   n_sim = 4,
   antigen_name = NULL,
