@@ -576,6 +576,11 @@ typically completed long-term follow-up (median $\ge$ 95 days; @tbl-cohort).
 #| label: tbl-cohort
 #| tbl-cap: "**Characteristics of the longitudinal *Shigella* cohort.** Participant demographics and longitudinal sampling characteristics are shown overall and stratified by infecting serotype. Values summarize age at enrollment, number of samples per participant, and follow-up duration. Continuous variables: median (Q1–Q3) except hospital stay and follow-up: median (min–max). Follow-up duration (days) is measured from symptom onset. Participants were screened at presentation (day 0) and the baseline sample was collected at the day-2 enrollment visit; because symptom duration prior to presentation is included, time since symptom onset is computed as max(Actual day) + 2. \"Other\" serotypes include *S. boydii* (n=2), *S. dysenteriae* (n=1), *S. flexneri* 1c (n=1), untypeable *S. flexneri* (n=2), and RLDT-positive *Shigella* without culture confirmation (n=1)."
 
+if (!have_table1_raw)
+  cli::cli_abort(c(
+    "Table 1 requires all three raw Excel files.",
+    "i" = "Set {.code raw_compiled}, {.code raw_metadata}, and {.code raw_durdia} in the CONFIG chunk."
+  ))
 metadata <- readxl::read_excel(path.expand(raw_metadata), sheet = sheet_metadata)
 durdia   <- readxl::read_excel(path.expand(raw_durdia),   sheet = sheet_durdia)
 
@@ -602,6 +607,11 @@ beads, visible at multiple time points and for both IgG and IgA
 #| fig-width: 18
 #| fig-height: 22
 
+if (!have_compiled)
+  cli::cli_abort(c(
+    "Figure 1 requires the raw compiled Excel file.",
+    "i" = "Set {.code raw_compiled} in the CONFIG chunk."
+  ))
 figure_crossreactivity_heatmap(compiled)
 ```
 
