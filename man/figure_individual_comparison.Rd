@@ -30,5 +30,6 @@ A patchwork figure.
 Main-text individual model-comparison figure (Sf2a / Sonnei / Sf3a)
 }
 \note{
-The default sids are fixed representative subjects from the Dhaka cohort.
+The default sids are fixed representative subjects from the Dhaka
+cohort.
 }

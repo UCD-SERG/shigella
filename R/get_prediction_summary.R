@@ -26,7 +26,8 @@ get_prediction_summary <- function(model_output, sid, iso,
     dplyr::select("Iteration", "Chain", "Parameter", "value") |>
     tidyr::pivot_wider(names_from = "Parameter", values_from = "value")
 
-  # TODO(serodynamics export): see REPRODUCIBILITY.md "Known tech debt: serodynamics internal calls".
+  # TODO(serodynamics export): see REPRODUCIBILITY.md "Known tech debt: 
+  # serodynamics internal calls".
   pred_mat <- vapply(
     times,
     function(tt) {

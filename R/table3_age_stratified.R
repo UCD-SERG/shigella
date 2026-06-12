@@ -41,7 +41,7 @@ table3_age_stratified <- function(model_under5, model_plus5) {
     )) |>
     flextable::add_footer_lines(values = c(
       "Values are posterior medians (95% credible intervals) for population mean (mu.par) draws.", # nolint: line_length_linter.
-      "Age stratification shown only for IpaB (conserved antigen); O-antigen responses require serotype conditioning, producing subgroups too small for stable estimation."
+      "Age stratification shown only for IpaB (conserved antigen); O-antigen responses require serotype conditioning, producing subgroups too small for stable estimation." # nolint: line_length_linter.
     )) |> # nolint: line_length_linter.
     flextable::fontsize(size = 6, part = "footer") |>
     flextable::italic(part = "footer") |>

@@ -1,4 +1,5 @@
-# Needed for data.table-style subset shig_bg[isotype == "IgG"] used in the plotting helper below.
+# Needed for data.table-style subset shig_bg[isotype == "IgG"] used in the 
+# plotting helper below.
 utils::globalVariables("isotype")
 
 #' Cross-reactivity heatmap (IgG | IgA, independent colour scales)
@@ -21,7 +22,8 @@ figure_crossreactivity_heatmap <- function(compiled) {
         sep = "\n"
       ),
       theme = ggplot2::theme(
-        plot.caption = ggplot2::element_text(hjust = 0, size = 8, color = "grey40")
+        plot.caption = ggplot2::element_text(hjust = 0, size = 8, 
+                                             color = "grey40")
       ) # nolint: line_length_linter.
     )
 }

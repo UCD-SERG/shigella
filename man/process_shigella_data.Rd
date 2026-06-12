@@ -48,9 +48,10 @@ downstream step needs \code{index_id}, change \code{id_var} here -- but the ship
 \code{.rda} inputs and the manuscript figures use \code{id}.
 
 \strong{cohort_name / age.} The original bare object \code{dL_clean_sf2a} did not carry
-these two columns, so the base (non-\verb{_new}) datasets built here are a harmless
-superset of the originals (two extra metadata columns). This is cosmetic:
-the model fit (\code{prep_data_new()} uses only \code{id}/\code{antigen_iso}/\code{timeindays}/
-\code{result}) and the figures are unaffected, and keeping the columns is what
-makes the serotype / age subsets reproducible from one function.
+these two columns, so the base (non-\verb{_new}) datasets built here are a
+harmless superset of the originals (two extra metadata columns). This is
+cosmetic: the model fit (\code{prep_data_new()} uses only
+\code{id}/\code{antigen_iso}/\code{timeindays}/\code{result}) and the figures are unaffected,
+and keeping the columns is what makes the serotype / age subsets
+reproducible from one function.
 }

@@ -51,8 +51,8 @@ prep_heatmap_data <- function(compiled) {
     default = "Other"
   )]
   shig_bg[, serotype := factor(serotype,
-    levels = c("Sf2a", "Sf3a", "Sf6", "sonnei", "Other")
-  )] # nolint: line_length_linter.
+            levels = c("Sf2a", "Sf3a", "Sf6", "sonnei", "Other")
+          )] # nolint: line_length_linter.
 
   participants <- shig_bg[!duplicated(pid), .(pid, serotype, age, cohort_name)]
   data.table::setorder(participants, serotype, age, pid)
@@ -74,8 +74,8 @@ prep_heatmap_data <- function(compiled) {
     antigen == "sonnei_osp", "sonnei"
   )]
   shig_bg[, antigen_clean := factor(antigen_clean,
-    levels = c("IpaB", "Sf2a", "Sf3a", "Sf6", "sonnei")
-  )] # nolint: line_length_linter.
+            levels = c("IpaB", "Sf2a", "Sf3a", "Sf6", "sonnei")
+          )] # nolint: line_length_linter.
   shig_bg[, timepoint_label := factor(timepoint, levels = sort(unique(timepoint)))] # nolint: line_length_linter.
 
   attr(shig_bg, "y_label_lookup") <-

@@ -83,7 +83,8 @@
       ), name = "Model"
     ) +
     ggplot2::scale_shape_manual(
-      values = c("Overall" = 22, "Serotype-specific" = 21, "Combined" = 24), name = "Model"
+      values = c("Overall" = 22, "Serotype-specific" = 21, "Combined" = 24), 
+      name = "Model"
     ) + # nolint: line_length_linter.
     ggplot2::facet_wrap(~biomarker, scales = "free_y", ncol = 2) +
     ggplot2::labs(

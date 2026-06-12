@@ -28,7 +28,8 @@
 
 # Main function
 
-#' Pick the best-performing model per antigen-isotype (lowest per-individual MAE)
+#' Pick the best-performing model per antigen-isotype (lowest per-individual 
+#' MAE)
 #'
 #' @param mae_overall,mae_serospec,mae_combined `get_mae()` tibbles
 #'   (combine the per-antigen calls upstream). `NULL` for an unavailable

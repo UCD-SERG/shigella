@@ -37,7 +37,8 @@ rda_dir <- "~/Data/Manuscript" # folder holding the regenerated *.rda
 ## (Table 1 + Figure 1 only) raw Excel inputs. Leave as-is to skip those two.
 raw_compiled <- "~/path/to/3.8.2024 Compiled Shigella datav2.xlsx"
 sheet_compiled <- "Compiled"
-raw_metadata <- "~/path/to/Additional metadata for Luminex sample set 10.28.2024.xlsx"
+raw_metadata <- "~/path/to/
+Additional metadata for Luminex sample set 10.28.2024.xlsx"
 sheet_metadata <- "Metadata"
 raw_durdia <- "~/path/to/Duration of diarrhea prior to presentation.xlsx"
 sheet_durdia <- "Duration of symptoms"
@@ -71,11 +72,13 @@ main_rda <- c(
   "combined_flexneri_sf2a", "combined_flexneri_sf3a",
   # IpaB age fits (Table 3 + Fig 5A)
   "overall_IpaB_pop_under5", "overall_IpaB_pop_plus5",
-  # case data, DurDia-adjusted (Fig 2 spaghetti carries cohort_name; MAE overall)
+  # case data, DurDia-adjusted (Fig 2 spaghetti carries cohort_name; 
+  # MAE overall)
   "dL_clean_Ipab_new", "dL_clean_sf2a_new", "dL_clean_sf3a_new",
   "dL_clean_sf6_new", "dL_clean_sonnei_new",
   # case data, base/original times (observed points in Fig 4 / Fig 5)
-  "dL_clean_Ipab", "dL_clean_sf2a", "dL_clean_sf3a", "dL_clean_sf6", "dL_clean_sonnei",
+  "dL_clean_Ipab", "dL_clean_sf2a", "dL_clean_sf3a", "dL_clean_sf6", 
+  "dL_clean_sonnei",
   # serotype case data (original times; MAE serospec + observed points)
   "dL_serotype_sf2a", "dL_serotype_sf3a", "dL_serotype_sonnei",
   # combined case data (MAE combined + Fig 5 panel D)
@@ -91,7 +94,8 @@ have_compiled <- file.exists(path.expand(raw_compiled))
 have_table1_raw <- have_compiled &&
   file.exists(path.expand(raw_metadata)) && file.exists(path.expand(raw_durdia))
 if (have_compiled) {
-  compiled <- readxl::read_excel(path.expand(raw_compiled), sheet = sheet_compiled)
+  compiled <- readxl::read_excel(path.expand(raw_compiled), 
+                                 sheet = sheet_compiled)
 }
 ```
 
@@ -102,7 +106,8 @@ if (have_compiled) {
 
 # Population kinetic-parameter summaries (== pop_table_sum / 2 / 3 in your .qmd)
 sum_overall <- pop_param_summary(list(
-  IpaB = overall_IpaB_pop_6, Sf2a = overall_Sf2a_pop_6, Sf3a = overall_Sf3a_pop_6,
+  IpaB = overall_IpaB_pop_6, Sf2a = overall_Sf2a_pop_6, 
+  Sf3a = overall_Sf3a_pop_6,
   Sf6 = overall_Sf6_pop_6, Sonnei = overall_Sonnei_pop_6
 ))
 
@@ -114,7 +119,8 @@ sum_combined <- pop_param_summary(list(
   Sf2a = combined_flexneri_sf2a, Sf3a = combined_flexneri_sf3a
 ))
 
-# Per-individual MAE for each model class (drives Table 2 best-model pick + Table 4)
+# Per-individual MAE for each model class (drives Table 2 best-model pick + 
+# Table 4)
 isos <- c("IgG", "IgA")
 
 mae_overall <- dplyr::bind_rows(lapply(isos, function(io) {
@@ -148,7 +154,8 @@ mae_combined <- dplyr::bind_rows(lapply(isos, function(io) {
 > Needs the raw Excel (compiled + metadata + DurDia). Set the three paths in CONFIG to enable; otherwise this chunk is skipped.
 
 ```{r tbl1, eval=have_table1_raw, message=FALSE, warning=FALSE}
-metadata <- readxl::read_excel(path.expand(raw_metadata), sheet = sheet_metadata)
+metadata <- readxl::read_excel(path.expand(raw_metadata), 
+                               sheet = sheet_metadata)
 durdia <- readxl::read_excel(path.expand(raw_durdia), sheet = sheet_durdia)
 
 table1_study_population(build_table1_data(compiled, metadata, durdia))

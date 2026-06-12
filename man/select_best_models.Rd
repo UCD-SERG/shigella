@@ -2,7 +2,8 @@
 % Please edit documentation in R/select_best_models.R
 \name{select_best_models}
 \alias{select_best_models}
-\title{Pick the best-performing model per antigen-isotype (lowest per-individual MAE)}
+\title{Pick the best-performing model per antigen-isotype (lowest per-individual
+MAE)}
 \usage{
 select_best_models(mae_overall, mae_serospec = NULL, mae_combined = NULL)
 }
@@ -15,5 +16,6 @@ model class.}
 Tibble \verb{antigen, Iso_type, best_model}.
 }
 \description{
-Pick the best-performing model per antigen-isotype (lowest per-individual MAE)
+Pick the best-performing model per antigen-isotype (lowest per-individual
+MAE)
 }

@@ -59,15 +59,18 @@ supp_rda <- c(
   "dL_clean_Ipab_new", "dL_clean_sf2a_new", "dL_clean_sf3a_new",
   "dL_clean_sf6_new", "dL_clean_sonnei_new",
   # case data, base/original times (S3 Fig observed points)
-  "dL_clean_Ipab", "dL_clean_sf2a", "dL_clean_sf3a", "dL_clean_sf6", "dL_clean_sonnei",
+  "dL_clean_Ipab", "dL_clean_sf2a", "dL_clean_sf3a", "dL_clean_sf6", 
+  "dL_clean_sonnei",
   # serotype case data (MAE serospec + S3 table serotype data + S3 Fig)
   "dL_serotype_sf2a", "dL_serotype_sf3a", "dL_serotype_sonnei",
   # combined case data (MAE combined + S3 Fig panel C)
   "dL_combined_flexneri_sf2a_case", "dL_combined_flexneri_sf3a_case",
   # age-stratified case data, adjusted (S1 / S2 Fig spaghetti)
-  "dL_clean_Ipab_new_under5", "dL_clean_sf2a_new_under5", "dL_clean_sf3a_new_under5",
+  "dL_clean_Ipab_new_under5", "dL_clean_sf2a_new_under5", 
+  "dL_clean_sf3a_new_under5",
   "dL_clean_sf6_new_under5", "dL_clean_sonnei_new_under5",
-  "dL_clean_Ipab_new_plus5", "dL_clean_sf2a_new_plus5", "dL_clean_sf3a_new_plus5",
+  "dL_clean_Ipab_new_plus5", "dL_clean_sf2a_new_plus5", 
+  "dL_clean_sf3a_new_plus5",
   "dL_clean_sf6_new_plus5", "dL_clean_sonnei_new_plus5"
 )
 
@@ -82,7 +85,8 @@ for (nm in supp_rda) {
 #| warning: false
 
 sum_overall <- pop_param_summary(list(
-  IpaB = overall_IpaB_pop_6, Sf2a = overall_Sf2a_pop_6, Sf3a = overall_Sf3a_pop_6,
+  IpaB = overall_IpaB_pop_6, Sf2a = overall_Sf2a_pop_6, 
+  Sf3a = overall_Sf3a_pop_6,
   Sf6 = overall_Sf6_pop_6, Sonnei = overall_Sonnei_pop_6
 ))
 sum_serospec <- pop_param_summary(list(
@@ -249,7 +253,8 @@ figure_s4_mae_slopegraph(mae_overall, mae_serospec, mae_combined)
 #| fig-height: 4.5
 #| message: false
 #| warning: false
-posterior_pred(overall_IpaB_pop_6, dL_clean_Ipab_new, by_antigen = TRUE, n_sim = 25, antigen_name = "IpaB")
+posterior_pred(overall_IpaB_pop_6, dL_clean_Ipab_new, by_antigen = TRUE, 
+               n_sim = 25, antigen_name = "IpaB")
 ```
 
 ```{r}
@@ -258,7 +263,8 @@ posterior_pred(overall_IpaB_pop_6, dL_clean_Ipab_new, by_antigen = TRUE, n_sim =
 #| fig-height: 4.5
 #| message: false
 #| warning: false
-posterior_pred(overall_Sf2a_pop_6, dL_clean_sf2a_new, by_antigen = TRUE, n_sim = 25, antigen_name = "Sf2a")
+posterior_pred(overall_Sf2a_pop_6, dL_clean_sf2a_new, by_antigen = TRUE, 
+               n_sim = 25, antigen_name = "Sf2a")
 ```
 
 ```{r}
@@ -267,7 +273,8 @@ posterior_pred(overall_Sf2a_pop_6, dL_clean_sf2a_new, by_antigen = TRUE, n_sim =
 #| fig-height: 4.5
 #| message: false
 #| warning: false
-posterior_pred(overall_Sf3a_pop_6, dL_clean_sf3a_new, by_antigen = TRUE, n_sim = 25, antigen_name = "Sf3a")
+posterior_pred(overall_Sf3a_pop_6, dL_clean_sf3a_new, by_antigen = TRUE, 
+               n_sim = 25, antigen_name = "Sf3a")
 ```
 
 ```{r}
@@ -276,7 +283,8 @@ posterior_pred(overall_Sf3a_pop_6, dL_clean_sf3a_new, by_antigen = TRUE, n_sim =
 #| fig-height: 4.5
 #| message: false
 #| warning: false
-posterior_pred(overall_Sf6_pop_6, dL_clean_sf6_new, by_antigen = TRUE, n_sim = 25, antigen_name = "Sf6")
+posterior_pred(overall_Sf6_pop_6, dL_clean_sf6_new, by_antigen = TRUE, 
+               n_sim = 25, antigen_name = "Sf6")
 ```
 
 ```{r}
@@ -285,7 +293,8 @@ posterior_pred(overall_Sf6_pop_6, dL_clean_sf6_new, by_antigen = TRUE, n_sim = 2
 #| fig-height: 4.5
 #| message: false
 #| warning: false
-posterior_pred(overall_Sonnei_pop_6, dL_clean_sonnei_new, by_antigen = TRUE, n_sim = 25, antigen_name = "Sonnei")
+posterior_pred(overall_Sonnei_pop_6, dL_clean_sonnei_new, by_antigen = TRUE, 
+               n_sim = 25, antigen_name = "Sonnei")
 ```
 
 # S6 Fig — Kinetic-parameter forest (model comparison)

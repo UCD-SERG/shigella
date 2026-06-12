@@ -44,7 +44,8 @@ predict_posterior_at_times <- function(model, ids, antigen_iso, times) {
   cbind(param_medians_wide, dt1) |>
     tidyr::pivot_longer(cols = dplyr::starts_with("time"), values_to = "t") |>
     dplyr::select(-dplyr::all_of("name")) |>
-    # TODO(serodynamics export): see REPRODUCIBILITY.md "Known tech debt: serodynamics internal calls".
+    # TODO(serodynamics export): see REPRODUCIBILITY.md "Known tech debt: 
+    # serodynamics internal calls".
     dplyr::mutate(res = serodynamics:::ab(
       .data$t, .data$y0, .data$y1,
       .data$t1, .data$alpha, .data$shape

@@ -67,7 +67,8 @@
     flextable::add_footer_lines(values = c(
       paste0(
         "Values are posterior medians (95% credible intervals) for the ",
-        "population mean (mu.par) of each parameter under the best-performing model."
+        "population mean (mu.par) of each parameter under the best-performing 
+        model."
       ), # nolint: line_length_linter.
       paste0(
         "Best model was determined by per-individual MAE comparisons on shared ", # nolint: line_length_linter.
@@ -106,7 +107,7 @@ table2_kinetic_params <- function(best_lookup, sum_overall, sum_serospec, sum_co
   n_serospec <- purrr::map_int(models_serospec, .n)
   n_combined <- purrr::map_int(models_combined, .n)
 
-  best_data <- purrr::pmap_dfr(best_lookup, function(antigen, Iso_type, best_model) { # nolint: line_length_linter.
+  best_data <- purrr::pmap_dfr(best_lookup, function(antigen, Iso_type, best_model) { # nolint: line_length_linter, object_name_linter.
     .params_for_best_row(
       antigen, Iso_type, best_model,
       sum_overall, sum_serospec, sum_combined,
