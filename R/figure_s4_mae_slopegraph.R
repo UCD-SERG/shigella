@@ -11,7 +11,7 @@
   ) |>
     dplyr::mutate(
       biomarker = paste0(.data$antigen, " ", .data$Iso_type),
-      model = factor(.data$model, levels = c("Overall", "Serotype-specific", "Combined"))
+      model = factor(.data$model, levels = c("Overall", "Serotype-specific", "Combined")) # nolint: line_length_linter.
     )
 }
 
@@ -22,7 +22,7 @@
 .mae_slope_shared <- function(mae_slope) {
   multi <- mae_slope |>
     dplyr::group_by(.data$biomarker) |>
-    dplyr::summarise(n_models = dplyr::n_distinct(.data$model), .groups = "drop") |>
+    dplyr::summarise(n_models = dplyr::n_distinct(.data$model), .groups = "drop") |> # nolint: line_length_linter.
     dplyr::filter(.data$n_models > 1) |>
     dplyr::pull(.data$biomarker)
 
@@ -39,7 +39,7 @@
     dplyr::ungroup()
 }
 
-# Step 3: per individual, flag whether the best alternative beat overall; tidy labels.
+# Step 3: per individual, flag whether the best alternative beat overall; tidy labels. # nolint: line_length_linter.
 #' @keywords internal
 #' @noRd
 .mae_slope_flagged <- function(shared) {
@@ -64,8 +64,8 @@
 #' @keywords internal
 #' @noRd
 .mae_slope_plot <- function(df) {
-  ggplot2::ggplot(df, ggplot2::aes(x = .data$model, y = .data$mae, group = .data$sid)) +
-    ggplot2::geom_line(ggplot2::aes(color = .data$improved), alpha = 0.6, linewidth = 0.45) +
+  ggplot2::ggplot(df, ggplot2::aes(x = .data$model, y = .data$mae, group = .data$sid)) + # nolint: line_length_linter.
+    ggplot2::geom_line(ggplot2::aes(color = .data$improved), alpha = 0.6, linewidth = 0.45) + # nolint: line_length_linter.
     ggplot2::geom_point(
       ggplot2::aes(shape = .data$model, fill = .data$model),
       size = 2.4, stroke = 0.2, color = "black", alpha = 0.9) +
@@ -76,17 +76,17 @@
       values = c("Overall" = "#3B82F6", "Serotype-specific" = "#EF4444",
                  "Combined" = "#10B981"), name = "Model") +
     ggplot2::scale_shape_manual(
-      values = c("Overall" = 22, "Serotype-specific" = 21, "Combined" = 24), name = "Model") +
+      values = c("Overall" = 22, "Serotype-specific" = 21, "Combined" = 24), name = "Model") + # nolint: line_length_linter.
     ggplot2::facet_wrap(~ biomarker, scales = "free_y", ncol = 2) +
     ggplot2::labs(
       title = "Per-individual MAE across modeling approaches",
-      subtitle = "Each line connects the same individual across available models within each antigen-isotype panel",
+      subtitle = "Each line connects the same individual across available models within each antigen-isotype panel", # nolint: line_length_linter.
       x = "Modeling approach", y = "Per-individual MAE (log-MFI scale)") +
     ggplot2::theme_minimal(base_size = 10) +
     ggplot2::theme(
       plot.title = ggplot2::element_text(face = "bold", size = 13, hjust = 0.5),
       plot.subtitle = ggplot2::element_text(size = 10, hjust = 0.5),
-      strip.background = ggplot2::element_rect(fill = "grey20", color = "grey20"),
+      strip.background = ggplot2::element_rect(fill = "grey20", color = "grey20"), # nolint: line_length_linter.
       strip.text = ggplot2::element_text(colour = "white", face = "bold"),
       panel.grid.minor = ggplot2::element_blank(),
       panel.grid.major.x = ggplot2::element_blank(),

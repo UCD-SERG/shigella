@@ -16,7 +16,7 @@
       antigen  = factor(.data$antigen, levels = c("Sf2a", "Sonnei", "Sf3a")),
       Iso_type = factor(.data$Iso_type, levels = c("IgG", "IgA")),
       model    = factor(.data$model,
-                        levels = c("Overall", "Serotype-specific", "Combined flexneri"))
+                        levels = c("Overall", "Serotype-specific", "Combined flexneri")) # nolint: line_length_linter.
     ) |>
     dplyr::arrange(.data$antigen, .data$Iso_type, .data$model)
 }
@@ -40,12 +40,12 @@
       )
     ) |>
     dplyr::transmute(
-      Antigen = .data$antigen, Isotype = .data$Iso_type, Model = .data$model, n = .data$n,
-      `y0 (baseline)` = fmt_mci(.data$y0_med, .data$y0_lo, .data$y0_hi, digits = 1),
-      `y1 (peak)`     = fmt_mci(.data$y1_med, .data$y1_lo, .data$y1_hi, digits = 0),
-      `t1 (days)`     = fmt_mci(.data$t1_med, .data$t1_lo, .data$t1_hi, digits = 1),
-      `alpha (decay)` = fmt_mci(.data$alpha_med, .data$alpha_lo, .data$alpha_hi, digits = 2),
-      `rho (shape)`   = fmt_mci(.data$rho_med, .data$rho_lo, .data$rho_hi, digits = 2)
+      Antigen = .data$antigen, Isotype = .data$Iso_type, Model = .data$model, n = .data$n, # nolint: line_length_linter.
+      `y0 (baseline)` = fmt_mci(.data$y0_med, .data$y0_lo, .data$y0_hi, digits = 1), # nolint: line_length_linter.
+      `y1 (peak)`     = fmt_mci(.data$y1_med, .data$y1_lo, .data$y1_hi, digits = 0), # nolint: line_length_linter.
+      `t1 (days)`     = fmt_mci(.data$t1_med, .data$t1_lo, .data$t1_hi, digits = 1), # nolint: line_length_linter.
+      `alpha (decay)` = fmt_mci(.data$alpha_med, .data$alpha_lo, .data$alpha_hi, digits = 2), # nolint: line_length_linter.
+      `rho (shape)`   = fmt_mci(.data$rho_med, .data$rho_lo, .data$rho_hi, digits = 2) # nolint: line_length_linter.
     )
 }
 
@@ -70,7 +70,7 @@ table_s4_all_models <- function(sum_overall, sum_serospec, sum_combined) {
     .s4_display() |>
     gt::gt() |>
     gt::tab_header(
-      title = gt::md("**Population-level kinetic parameter estimates across all modeling approaches**")
+      title = gt::md("**Population-level kinetic parameter estimates across all modeling approaches**") # nolint: line_length_linter.
     ) |>
     gt::cols_label(
       Antigen = "Antigen", Isotype = "Isotype", Model = "Model", n = "n",
@@ -80,10 +80,10 @@ table_s4_all_models <- function(sum_overall, sum_serospec, sum_combined) {
       `alpha (decay)` = gt::md("&alpha; (decay)"),
       `rho (shape)`   = gt::md("&rho; (shape)")
     ) |>
-    gt::tab_source_note(gt::md("Values are posterior medians (95% credible intervals).")) |>
-    gt::tab_source_note(gt::md("The combined flexneri model pools *S. flexneri* 2a- and 3a-infected individuals (*n* = 25).")) |>
-    gt::tab_source_note(gt::md("*S. sonnei* was modeled as overall and serotype-specific only.")) |>
-    gt::tab_source_note(gt::md("MCMC settings: 4 chains, 10,000,000 iterations, 50,000 burn-in.")) |>
+    gt::tab_source_note(gt::md("Values are posterior medians (95% credible intervals).")) |> # nolint: line_length_linter.
+    gt::tab_source_note(gt::md("The combined flexneri model pools *S. flexneri* 2a- and 3a-infected individuals (*n* = 25).")) |> # nolint: line_length_linter.
+    gt::tab_source_note(gt::md("*S. sonnei* was modeled as overall and serotype-specific only.")) |> # nolint: line_length_linter.
+    gt::tab_source_note(gt::md("MCMC settings: 4 chains, 10,000,000 iterations, 50,000 burn-in.")) |> # nolint: line_length_linter.
     gt::cols_width(
       Antigen ~ gt::px(90), Isotype ~ gt::px(80), Model ~ gt::px(150),
       n ~ gt::px(50), gt::everything() ~ gt::px(130)

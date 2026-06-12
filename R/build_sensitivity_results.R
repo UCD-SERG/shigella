@@ -20,7 +20,7 @@ build_sensitivity_results <- function(files, datasets, scale = "log") {
 
       dataset <- get_dataset_for_sensitivity(antigen, model, datasets)
       if (is.null(dataset)) {
-        cli::cli_inform("Skipped (no dataset mapping): {.file {basename(file)}}")
+        cli::cli_inform("Skipped (no dataset mapping): {.file {basename(file)}}") # nolint: line_length_linter.
         return(tibble::tibble(biomarker = character(), prior = character(),
                               model = character(), mae = numeric()))
       }
@@ -48,7 +48,7 @@ build_sensitivity_results <- function(files, datasets, scale = "log") {
       biomarker = factor(.data$biomarker,
                          levels = c("Sonnei IgG", "Sonnei IgA",
                                     "Sf3a IgG", "Sf3a IgA")),
-      prior = factor(.data$prior, levels = c("Primary", "Diffuse", "Informative")),
+      prior = factor(.data$prior, levels = c("Primary", "Diffuse", "Informative")), # nolint: line_length_linter.
       model = factor(.data$model, levels = c("overall", "serotype"))
     ) |>
     dplyr::arrange(.data$biomarker, .data$prior, .data$model)

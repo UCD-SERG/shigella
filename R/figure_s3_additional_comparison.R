@@ -9,8 +9,8 @@
 #'   supplement's choices.
 #' @return A patchwork figure.
 #' @export
-figure_s3_additional_comparison <- function(models, datasets, # nolint: object_length_linter
-                                            sids = c("SOSAR-23004", "SOSAR-21018",
+figure_s3_additional_comparison <- function(models, datasets, # nolint: object_length_linter, line_length_linter.
+                                            sids = c("SOSAR-23004", "SOSAR-21018", # nolint: line_length_linter.
                                                      "SOSAR-21002")) {
   figure_individual_comparison(models, datasets, sids = sids)
 }

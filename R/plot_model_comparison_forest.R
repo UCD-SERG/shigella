@@ -26,7 +26,7 @@
 # Stack the (2 or 3) model summaries into one long, factor-ordered frame.
 #' @keywords internal
 #' @noRd
-.forest_params_long <- function(pop_overall, pop_serospec, pop_combined = NULL) {
+.forest_params_long <- function(pop_overall, pop_serospec, pop_combined = NULL) { # nolint: line_length_linter.
   out <- dplyr::bind_rows(
     .forest_long(pop_overall,  "Overall"),
     .forest_long(pop_serospec, "Serotype-specific"),
@@ -34,10 +34,10 @@
   )
   out |>
     dplyr::mutate(
-      antigen  = factor(.data$antigen, levels = c("IpaB", "Sf2a", "Sf3a", "Sf6", "Sonnei")),
+      antigen  = factor(.data$antigen, levels = c("IpaB", "Sf2a", "Sf3a", "Sf6", "Sonnei")), # nolint: line_length_linter.
       Iso_type = factor(.data$Iso_type, levels = c("IgG", "IgA")),
       model    = factor(.data$model,
-                        levels = c("Overall", "Serotype-specific", "Combined flexneri")),
+                        levels = c("Overall", "Serotype-specific", "Combined flexneri")), # nolint: line_length_linter.
       param    = stats::reorder(.data$param, .data$param_order)
     )
 }
@@ -52,7 +52,7 @@
     ggplot2::geom_linerange(
       ggplot2::aes(xmin = .data$lo, xmax = .data$hi),
       linewidth = line_width,
-      position = ggplot2::position_dodge(width = dodge_width), show.legend = FALSE) +
+      position = ggplot2::position_dodge(width = dodge_width), show.legend = FALSE) + # nolint: line_length_linter.
     ggplot2::geom_point(size = point_size,
       position = ggplot2::position_dodge(width = dodge_width)) +
     ggplot2::scale_colour_manual(values = colors, name = NULL) +
@@ -63,13 +63,13 @@
       panel.grid.major.y = ggplot2::element_blank(),
       panel.grid.minor   = ggplot2::element_blank(),
       strip.background = ggplot2::element_rect(fill = "grey20"),
-      strip.text = ggplot2::element_text(colour = "white", face = "bold", size = 12),
+      strip.text = ggplot2::element_text(colour = "white", face = "bold", size = 12), # nolint: line_length_linter.
       axis.text.y = ggplot2::element_text(face = "bold", size = 10),
       legend.position = "none",
       plot.margin = ggplot2::margin(4, 8, 4, 4))
   if (use_log) {
     p <- p + ggplot2::scale_x_log10(labels = function(x) ifelse(x >= 1,
-      formatC(x, format = "g", digits = 3), formatC(x, format = "e", digits = 0)))
+      formatC(x, format = "g", digits = 3), formatC(x, format = "e", digits = 0))) # nolint: line_length_linter.
   }
   p
 }
@@ -120,11 +120,11 @@ plot_model_comparison_forest <- function(pop_overall, pop_serospec,
                        "Green = combined S. flexneri (n=25, where applicable)"),
       caption = paste(
         "Panels faceted by isotype (IgG | IgA).\n",
-        "Parameters y\u2080, y\u2081, t\u2081, and \u03B1 plotted on log scale.\n",
+        "Parameters y\u2080, y\u2081, t\u2081, and \u03B1 plotted on log scale.\n", # nolint: line_length_linter.
         "IpaB and Sf6: overall model only (no serotype-specific model).\n",
         "MCMC: 10,000,000 iterations, 50,000 burn-in, 4 chains per model."),
       theme = ggplot2::theme(
-        plot.title    = ggplot2::element_text(face = "bold", size = 15, hjust = 0.5),
-        plot.subtitle = ggplot2::element_text(size = 9, hjust = 0.5, colour = "grey40"),
-        plot.caption  = ggplot2::element_text(size = 10, colour = "grey50", hjust = 0.5)))
+        plot.title    = ggplot2::element_text(face = "bold", size = 15, hjust = 0.5), # nolint: line_length_linter.
+        plot.subtitle = ggplot2::element_text(size = 9, hjust = 0.5, colour = "grey40"), # nolint: line_length_linter.
+        plot.caption  = ggplot2::element_text(size = 10, colour = "grey50", hjust = 0.5))) # nolint: line_length_linter.
 }

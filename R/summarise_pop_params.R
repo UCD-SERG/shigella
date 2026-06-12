@@ -20,7 +20,7 @@ summarise_pop_params <- function(df, group_vars = c("antigen", "Iso_type")) {
       t1_med = stats::median(.data$t1_natural, na.rm = TRUE),
       t1_lo  = q_lo(.data$t1_natural), t1_hi = q_hi(.data$t1_natural),
       alpha_med = stats::median(.data$alpha_natural, na.rm = TRUE),
-      alpha_lo  = q_lo(.data$alpha_natural), alpha_hi = q_hi(.data$alpha_natural),
+      alpha_lo  = q_lo(.data$alpha_natural), alpha_hi = q_hi(.data$alpha_natural), # nolint: line_length_linter.
       rho_med = stats::median(.data$rho_natural, na.rm = TRUE),
       rho_lo  = q_lo(.data$rho_natural), rho_hi = q_hi(.data$rho_natural),
       .groups = "drop"

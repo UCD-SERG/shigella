@@ -7,10 +7,10 @@
 #' @return A ggplot.
 #' @export
 figure_raw_spaghetti <- function(case_list, numeric_y = TRUE) {
-  dL_all <- stack_antigen_series(case_list)
+  dl_all <- stack_antigen_series(case_list)
 
   p <- ggplot2::ggplot(
-    dL_all,
+    dl_all,
     ggplot2::aes(x = .data$timeindays, y = .data$result,
                  group = .data$sid, color = .data$infecting_serotype)) +
     ggplot2::geom_line(
@@ -20,16 +20,16 @@ figure_raw_spaghetti <- function(case_list, numeric_y = TRUE) {
       ggplot2::aes(alpha = .data$infecting_serotype),
       size = 1.2, shape = 16, show.legend = FALSE) +
     ggplot2::scale_color_manual(values = serotype_palette()) +
-    ggplot2::scale_linewidth_manual(values = serotype_linewidth(), guide = "none") +
-    ggplot2::scale_alpha_manual(values = serotype_line_alpha(), guide = "none") +
+    ggplot2::scale_linewidth_manual(values = serotype_linewidth(), guide = "none") + # nolint: line_length_linter.
+    ggplot2::scale_alpha_manual(values = serotype_line_alpha(), guide = "none") + # nolint: line_length_linter.
     ggplot2::facet_grid(antigen ~ isotype_name, scales = "free_y") +
     ggplot2::labs(x = "Days since symptom onset",
                   y = "Antibody level (normalized MFI, log scale)",
                   color = "Infecting serotype") +
     ggplot2::theme_bw(base_size = 10) +
     ggplot2::theme(
-      strip.background = ggplot2::element_rect(fill = "grey15", colour = "grey15"),
-      strip.text       = ggplot2::element_text(colour = "white", face = "bold", size = 9),
+      strip.background = ggplot2::element_rect(fill = "grey15", colour = "grey15"), # nolint: line_length_linter.
+      strip.text       = ggplot2::element_text(colour = "white", face = "bold", size = 9), # nolint: line_length_linter.
       panel.grid.minor = ggplot2::element_blank(),
       axis.title       = ggplot2::element_text(face = "bold"),
       legend.position  = "bottom") +

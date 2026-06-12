@@ -3,11 +3,11 @@
 # Population mean curves for overall + the two age strata, factor-ordered.
 #' @keywords internal
 #' @noRd
-.age_stratified_curves <- function(model_overall, model_under5, model_plus5, t_grid) {
+.age_stratified_curves <- function(model_overall, model_under5, model_plus5, t_grid) { # nolint: line_length_linter.
   dplyr::bind_rows(
-    dplyr::mutate(pop_mean_curve(model_overall, t_grid), group = "Overall (n=48)"),
+    dplyr::mutate(pop_mean_curve(model_overall, t_grid), group = "Overall (n=48)"), # nolint: line_length_linter.
     dplyr::mutate(pop_mean_curve(model_under5,  t_grid), group = "<5 years"),
-    dplyr::mutate(pop_mean_curve(model_plus5,   t_grid), group = "\u22655 years")
+    dplyr::mutate(pop_mean_curve(model_plus5,   t_grid), group = "\u22655 years") # nolint: line_length_linter.
   ) |>
     dplyr::mutate(group = factor(.data$group,
       levels = c("<5 years", "\u22655 years", "Overall (n=48)")))
@@ -51,7 +51,7 @@
                   title = antigen_label) +
     ggplot2::theme_minimal(base_size = 12) +
     ggplot2::theme(
-      plot.title      = ggplot2::element_text(face = "bold", size = 13, hjust = 0.5),
+      plot.title      = ggplot2::element_text(face = "bold", size = 13, hjust = 0.5), # nolint: line_length_linter.
       strip.text      = ggplot2::element_text(face = "bold", size = 12),
       axis.title      = ggplot2::element_text(size = 11),
       axis.text       = ggplot2::element_text(size = 10),
@@ -80,10 +80,10 @@
 #' @export
 fig5_ipab_with_age <- function(model_overall, model_under5, model_plus5,
                                raw_overall,
-                               antigen_label = "A) IpaB (Overall + age-stratified)",
+                               antigen_label = "A) IpaB (Overall + age-stratified)", # nolint: line_length_linter.
                                t_grid = seq(0, 210, by = 5),
                                log_y = TRUE, xlim = c(0, 210)) {
-  all_curves <- .age_stratified_curves(model_overall, model_under5, model_plus5, t_grid)
+  all_curves <- .age_stratified_curves(model_overall, model_under5, model_plus5, t_grid) # nolint: line_length_linter.
   indiv_data <- extract_individual_obs(raw_overall)
   .fig5_age_plot(all_curves, indiv_data, antigen_label, log_y, xlim)
 }

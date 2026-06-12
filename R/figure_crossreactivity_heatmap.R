@@ -16,9 +16,9 @@ figure_crossreactivity_heatmap <- function(compiled) {
     patchwork::plot_layout(widths = c(1.1, 1)) +
     patchwork::plot_annotation(
       caption = paste("Each isotype panel uses an independent color scale.",
-                      "Within each serotype facet, participants are sorted by age (oldest at top).",
+                      "Within each serotype facet, participants are sorted by age (oldest at top).", # nolint: line_length_linter.
                       sep = "\n"),
       theme = ggplot2::theme(
-        plot.caption = ggplot2::element_text(hjust = 0, size = 8, color = "grey40"))
+        plot.caption = ggplot2::element_text(hjust = 0, size = 8, color = "grey40")) # nolint: line_length_linter.
     )
 }

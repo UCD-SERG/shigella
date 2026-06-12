@@ -22,15 +22,15 @@ make_heatmap <- function(data, iso_name, show_y_axis = TRUE,
                   y = if (show_y_axis) "Participants (age)" else NULL) +
     ggplot2::theme_bw(base_size = 10) +
     ggplot2::theme(
-      plot.title         = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5),
+      plot.title         = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5), # nolint: line_length_linter.
       axis.text.x        = ggplot2::element_text(size = 8),
-      axis.text.y        = if (show_y_axis) ggplot2::element_text(size = 7) else ggplot2::element_blank(),
-      axis.ticks.y       = if (show_y_axis) ggplot2::element_line() else ggplot2::element_blank(),
+      axis.text.y        = if (show_y_axis) ggplot2::element_text(size = 7) else ggplot2::element_blank(), # nolint: line_length_linter.
+      axis.ticks.y       = if (show_y_axis) ggplot2::element_line() else ggplot2::element_blank(), # nolint: line_length_linter.
       axis.title         = ggplot2::element_text(face = "bold"),
-      strip.background.x = ggplot2::element_rect(fill = "grey15", colour = "grey15"),
-      strip.background.y = ggplot2::element_rect(fill = "grey85", colour = "grey85"),
-      strip.text.x       = ggplot2::element_text(colour = "white", face = "bold", size = 9),
-      strip.text.y.left  = ggplot2::element_text(angle = 0, face = "bold", size = 9, hjust = 1),
+      strip.background.x = ggplot2::element_rect(fill = "grey15", colour = "grey15"), # nolint: line_length_linter.
+      strip.background.y = ggplot2::element_rect(fill = "grey85", colour = "grey85"), # nolint: line_length_linter.
+      strip.text.x       = ggplot2::element_text(colour = "white", face = "bold", size = 9), # nolint: line_length_linter.
+      strip.text.y.left  = ggplot2::element_text(angle = 0, face = "bold", size = 9, hjust = 1), # nolint: line_length_linter.
       strip.placement    = "outside",
       panel.grid         = ggplot2::element_blank(),
       legend.position    = "right",

@@ -19,7 +19,8 @@
         TRUE ~ NA_character_), levels = c("No", "Yes")),
       muac_cm = suppressWarnings(as.numeric(.data$MUAC)),
       hospital_stay_hours = suppressWarnings(as.numeric(.data$HosDur)) |>
-        dplyr::na_if(88) |> tidyr::replace_na(0)
+        dplyr::na_if(88) |>
+        tidyr::replace_na(0)
     ) |>
     dplyr::mutate(sex = factor(.data$sex,
                                levels = c("Male", "Female", "Transgender")))
@@ -54,9 +55,9 @@
     dplyr::group_by(.data$sid) |>
     dplyr::summarise(
       n_visits = dplyr::n(),
-      followup_days = max(.data[["Actual day"]], na.rm = TRUE) + 2, # +2: days since symptom onset to day-0 blood draw
+      followup_days = max(.data[["Actual day"]], na.rm = TRUE) + 2, # +2: days since symptom onset to day-0 blood draw # nolint: line_length_linter.
       .groups = "drop") |>
-    dplyr::mutate(ge4_visits = factor(dplyr::if_else(.data$n_visits >= 4, "\u22654", "<4"),
+    dplyr::mutate(ge4_visits = factor(dplyr::if_else(.data$n_visits >= 4, "\u22654", "<4"), # nolint: line_length_linter.
                                       levels = c("<4", "\u22654")))
 }
 
@@ -78,7 +79,7 @@ build_table1_data <- function(compiled, metadata, durdia) {
 
   df_durdia <- durdia |>
     dplyr::transmute(sid = .data$CaseID,
-                     durdia_hours = suppressWarnings(as.numeric(.data$DurDia_hours)))
+                     durdia_hours = suppressWarnings(as.numeric(.data$DurDia_hours))) # nolint: line_length_linter.
 
   .table1_ids(df_sosar) |>
     dplyr::left_join(.table1_followup(df_sosar), by = "sid") |>

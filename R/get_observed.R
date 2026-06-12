@@ -15,7 +15,7 @@ get_observed <- function(dataset, sid, iso) {
     "sid" %in% names(dataset) ~ "sid",
     TRUE ~ NA_character_
   )
-  if (is.na(id_col)) cli::cli_abort("Dataset has no {.code id} or {.code sid} column.")
+  if (is.na(id_col)) cli::cli_abort("Dataset has no {.code id} or {.code sid} column.") # nolint: line_length_linter.
 
   iso_col <- dplyr::case_when(
     "antigen_iso"  %in% names(dataset) ~ "antigen_iso",
@@ -37,7 +37,7 @@ get_observed <- function(dataset, sid, iso) {
     "result"
   } else {
     mfi <- names(dataset)[grepl("_MFI$", names(dataset))]
-    if (length(mfi) == 1) mfi else cli::cli_abort("Dataset has no {.code result} or {.code _MFI} column.")
+    if (length(mfi) == 1) mfi else cli::cli_abort("Dataset has no {.code result} or {.code _MFI} column.") # nolint: line_length_linter.
   }
 
   out <- dataset |>

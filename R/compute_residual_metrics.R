@@ -28,7 +28,7 @@
 # with residual / abs / squared columns on the chosen scale.
 #' @keywords internal
 #' @noRd
-.pointwise_residuals <- function(model, observed_data, ids, antigen_iso, scale) {
+.pointwise_residuals <- function(model, observed_data, ids, antigen_iso, scale) { # nolint: line_length_linter.
   obs_times <- sort(unique(observed_data$t))
 
   pred_summary <- predict_posterior_at_times(
@@ -49,9 +49,9 @@
     n_nonpos <- sum(residual_data$obs <= 0) + sum(residual_data$pred_med <= 0)
     if (n_nonpos > 0) {
       cli::cli_warn(
-        "Dropping {n_nonpos} non-positive observation{?s} before log-scale residuals."
+        "Dropping {n_nonpos} non-positive observation{?s} before log-scale residuals." # nolint: line_length_linter.
       )
-      residual_data <- dplyr::filter(residual_data, .data$obs > 0, .data$pred_med > 0)
+      residual_data <- dplyr::filter(residual_data, .data$obs > 0, .data$pred_med > 0) # nolint: line_length_linter.
     }
     residual_data |>
       dplyr::mutate(
@@ -88,13 +88,13 @@
 #' @export
 compute_residual_metrics <- function(model, dataset, ids, antigen_iso,
                                       scale = c("original", "log"),
-                                      summary_level = c("id_antigen", "pointwise",
+                                      summary_level = c("id_antigen", "pointwise", # nolint: line_length_linter.
                                                         "antigen", "overall")) {
   scale <- match.arg(scale)
   summary_level <- match.arg(summary_level)
 
   observed_data <- .observed_long(dataset, ids, antigen_iso)
-  residual_data <- .pointwise_residuals(model, observed_data, ids, antigen_iso, scale)
+  residual_data <- .pointwise_residuals(model, observed_data, ids, antigen_iso, scale) # nolint: line_length_linter.
 
   if (summary_level == "pointwise") {
     return(dplyr::select(residual_data, dplyr::all_of(c(

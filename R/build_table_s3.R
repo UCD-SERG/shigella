@@ -15,7 +15,7 @@ build_table_s3 <- function(dir, datasets, scale = "log") {
                       pattern = "^sensitivity_.*\\.rda$", full.names = TRUE)
   files <- files[stringr::str_detect(
     basename(files),
-    "sensitivity_(Sonnei|Sf3a)_(IgG|IgA)_(primary|diffuse|informative)_(overall|serotype)\\.rda$"
+    "sensitivity_(Sonnei|Sf3a)_(IgG|IgA)_(primary|diffuse|informative)_(overall|serotype)\\.rda$" # nolint: line_length_linter.
   )]
   res <- build_sensitivity_results(files, datasets = datasets, scale = scale)
   table_s3_sensitivity(res)

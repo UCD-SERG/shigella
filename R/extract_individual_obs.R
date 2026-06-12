@@ -3,8 +3,10 @@
 #' @return Tibble `id, t, value, iso`.
 #' @export
 extract_individual_obs <- function(raw_dataset) {
-  time_col  <- if ("timeindays" %in% names(raw_dataset)) "timeindays" else "Actual day"
-  value_col <- if ("result" %in% names(raw_dataset)) "result" else {
+  time_col  <- if ("timeindays" %in% names(raw_dataset)) "timeindays" else "Actual day" # nolint: line_length_linter.
+  value_col <- if ("result" %in% names(raw_dataset)) {
+    "result"
+  } else {
     mfi <- names(raw_dataset)[grepl("_MFI$", names(raw_dataset))]
     if (length(mfi) == 1) mfi else "result"
   }

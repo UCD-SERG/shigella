@@ -33,12 +33,12 @@ table1_study_population <- function(tab1_dat) {
         durdia_hours ~ "Diarrhea duration prior to presentation (hours)",
         n_visits ~ "Samples per participant",
         followup_days ~ "Follow-up duration, days",
-        completed_followup ~ "Completed follow-up (\u22654 visits and \u226590 days)")) |>
+        completed_followup ~ "Completed follow-up (\u22654 visits and \u226590 days)")) |> # nolint: line_length_linter.
     gtsummary::add_overall(last = FALSE, col_label = "**Overall**") |>
     gtsummary::modify_header(label ~ "**Characteristic**") |>
     gtsummary::bold_labels() |>
-    gtsummary::modify_spanning_header(gtsummary::all_stat_cols() ~ NA_character_) |>
-    gtsummary::modify_header(stat_0 ~ paste0("**Overall (N = ", nrow(tab1_dat), ")**"))
+    gtsummary::modify_spanning_header(gtsummary::all_stat_cols() ~ NA_character_) |> # nolint: line_length_linter.
+    gtsummary::modify_header(stat_0 ~ paste0("**Overall (N = ", nrow(tab1_dat), ")**")) # nolint: line_length_linter.
 
   tab1_gts |>
     gtsummary::as_flex_table() |>
@@ -46,10 +46,10 @@ table1_study_population <- function(tab1_dat) {
     flextable::fontsize(size = 7, part = "all") |>
     flextable::fontsize(size = 8, part = "header") |>
     flextable::set_table_properties(layout = "autofit", width = 1) |>
-    flextable::set_caption("Characteristics of the longitudinal Shigella cohort.") |>
+    flextable::set_caption("Characteristics of the longitudinal Shigella cohort.") |> # nolint: line_length_linter.
     flextable::add_footer_lines(values = c(
-      "Continuous variables: median (Q1\u2013Q3) except hospital stay and follow-up: median (min\u2013max).",
-      "Follow-up duration (days) computed as max(Actual day) + 2 to account for enrollment on day 2 after presentation.",
-      "\"Other\" serotypes include S. boydii (n=2), S. dysenteriae (n=1), S. flexneri 1c (n=1), untypeable S. flexneri (n=2), and RLDT-positive Shigella without culture confirmation (n=1).",
-      "Not all 48 participants completed full follow-up; the \"Other\" group had shorter median follow-up (32 days) due to loss to follow-up."))
+      "Continuous variables: median (Q1\u2013Q3) except hospital stay and follow-up: median (min\u2013max).", # nolint: line_length_linter.
+      "Follow-up duration (days) computed as max(Actual day) + 2 to account for enrollment on day 2 after presentation.", # nolint: line_length_linter.
+      "\"Other\" serotypes include S. boydii (n=2), S. dysenteriae (n=1), S. flexneri 1c (n=1), untypeable S. flexneri (n=2), and RLDT-positive Shigella without culture confirmation (n=1).", # nolint: line_length_linter.
+      "Not all 48 participants completed full follow-up; the \"Other\" group had shorter median follow-up (32 days) due to loss to follow-up.")) # nolint: line_length_linter.
 }

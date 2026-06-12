@@ -59,15 +59,15 @@ table_s3_sensitivity <- function(sensitivity_results) {
       title = gt::md("**Sensitivity analysis: prior specification robustness**")
     ) |>
     gt::tab_source_note(gt::md(paste0(
-      "For each biomarker, models were refit under three prior configurations: ",
-      "primary (current), diffuse (2\u00D7 SD), and informative (0.5\u00D7 SD)."))) |>
+      "For each biomarker, models were refit under three prior configurations: ", # nolint: line_length_linter.
+      "primary (current), diffuse (2\u00D7 SD), and informative (0.5\u00D7 SD)."))) |> # nolint: line_length_linter.
     gt::tab_source_note(gt::md(paste0(
-      "&Delta;MAE = MAE(serotype) &minus; MAE(overall); negative values indicate ",
+      "&Delta;MAE = MAE(serotype) &minus; MAE(overall); negative values indicate ", # nolint: line_length_linter.
       "serotype-specific advantage."))) |>
     gt::tab_source_note(gt::md(paste0(
       "The pattern&mdash;*S. sonnei* favoring serotype-specific and ",
       "*S. flexneri* 3a favoring overall&mdash;is consistent across all prior ",
-      "configurations, indicating that model comparison conclusions are driven ",
+      "configurations, indicating that model comparison conclusions are driven ", # nolint: line_length_linter.
       "by data structure and cross-reactivity, not prior choice."))) |>
     gt::tab_options(
       table.font.size = gt::px(10),

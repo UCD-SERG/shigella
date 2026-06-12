@@ -24,3 +24,5 @@ _commit.sh
 .gitconfig_tmp
 .gitignore_temp
 .claude/
+.git-user-config
+commit-lint-fixes.sh

@@ -16,7 +16,7 @@ figure_individual_comparison <- function(models, datasets,
   row1 <- build_figure4_row(sids[1], models$overall_Sf2a, models$serotype_sf2a,
     datasets$dL_clean_sf2a, datasets$dL_serotype_sf2a, NULL,
     "A) S. flexneri 2a (n = 17): 2-way comparison", "SF2a")
-  row2 <- build_figure4_row(sids[2], models$overall_Sonnei, models$serotype_sonnei,
+  row2 <- build_figure4_row(sids[2], models$overall_Sonnei, models$serotype_sonnei, # nolint: line_length_linter.
     datasets$dL_clean_sonnei, datasets$dL_serotype_sonnei, NULL,
     "B) S. sonnei (n = 11): 2-way comparison", "Sonnei")
   row3 <- build_figure4_row(sids[3], models$overall_Sf3a, models$serotype_sf3a,

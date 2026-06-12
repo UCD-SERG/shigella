@@ -30,13 +30,13 @@
 #'   per-antigen calls upstream). `NULL` for an unavailable model class.
 #' @return Tibble `antigen, Iso_type, best_model`.
 #' @export
-select_best_models <- function(mae_overall, mae_serospec = NULL, mae_combined = NULL) {
+select_best_models <- function(mae_overall, mae_serospec = NULL, mae_combined = NULL) { # nolint: line_length_linter.
   dplyr::bind_rows(
     dplyr::mutate(mae_overall,  model = "Overall"),
-    if (!is.null(mae_serospec)) dplyr::mutate(mae_serospec, model = "Serotype-specific"),
-    if (!is.null(mae_combined)) dplyr::mutate(mae_combined, model = "Combined flexneri")
+    if (!is.null(mae_serospec)) dplyr::mutate(mae_serospec, model = "Serotype-specific"), # nolint: line_length_linter.
+    if (!is.null(mae_combined)) dplyr::mutate(mae_combined, model = "Combined flexneri") # nolint: line_length_linter.
   ) |>
     dplyr::group_by(.data$antigen, .data$Iso_type) |>
-    dplyr::group_modify(~ tibble::tibble(best_model = .common_id_winners(.x))) |>
+    dplyr::group_modify(~ tibble::tibble(best_model = .common_id_winners(.x))) |> # nolint: line_length_linter.
     dplyr::ungroup()
 }

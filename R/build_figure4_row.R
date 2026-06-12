@@ -16,13 +16,13 @@
   p <- ggplot2::ggplot() +
     ggplot2::geom_ribbon(data = pred_ovr,
       ggplot2::aes(x = .data$t, ymin = .data$lo, ymax = .data$hi),
-      fill = .model_colours[["Overall"]], alpha = 0.12) + # nolint: object_usage_linter
+      fill = .model_colours[["Overall"]], alpha = 0.12) + # nolint: object_usage_linter, line_length_linter.
     ggplot2::geom_line(data = pred_ovr,
       ggplot2::aes(x = .data$t, y = .data$med,
                    color = "Overall", linetype = "Overall"), linewidth = 0.9) +
     ggplot2::geom_ribbon(data = pred_sero,
       ggplot2::aes(x = .data$t, ymin = .data$lo, ymax = .data$hi),
-      fill = .model_colours[["Serotype-specific"]], alpha = 0.12) + # nolint: object_usage_linter
+      fill = .model_colours[["Serotype-specific"]], alpha = 0.12) + # nolint: object_usage_linter, line_length_linter.
     ggplot2::geom_line(data = pred_sero,
       ggplot2::aes(x = .data$t, y = .data$med,
                    color = "Serotype-specific", linetype = "Serotype-specific"),
@@ -34,10 +34,10 @@
       p <- p +
         ggplot2::geom_ribbon(data = pred_cmb,
           ggplot2::aes(x = .data$t, ymin = .data$lo, ymax = .data$hi),
-          fill = .model_colours[["Combined flexneri"]], alpha = 0.10) + # nolint: object_usage_linter
+          fill = .model_colours[["Combined flexneri"]], alpha = 0.10) + # nolint: object_usage_linter, line_length_linter.
         ggplot2::geom_line(data = pred_cmb,
           ggplot2::aes(x = .data$t, y = .data$med,
-                       color = "Combined flexneri", linetype = "Combined flexneri"),
+                       color = "Combined flexneri", linetype = "Combined flexneri"), # nolint: line_length_linter.
           linewidth = 0.9)
     }
   }
@@ -49,17 +49,17 @@
   }
 
   p +
-    ggplot2::scale_color_manual(name = "Model", values = .model_colours, # nolint: object_usage_linter
-                                breaks = names(.model_colours)) + # nolint: object_usage_linter
-    ggplot2::scale_linetype_manual(name = "Model", values = .model_linetypes, # nolint: object_usage_linter
-                                   breaks = names(.model_linetypes)) + # nolint: object_usage_linter
+    ggplot2::scale_color_manual(name = "Model", values = .model_colours, # nolint: object_usage_linter, line_length_linter.
+                                breaks = names(.model_colours)) + # nolint: object_usage_linter, line_length_linter.
+    ggplot2::scale_linetype_manual(name = "Model", values = .model_linetypes, # nolint: object_usage_linter, line_length_linter.
+                                   breaks = names(.model_linetypes)) + # nolint: object_usage_linter, line_length_linter.
     ggplot2::scale_y_log10(labels = scales::label_comma()) +
     ggplot2::coord_cartesian(xlim = xlim) +
     ggplot2::labs(x = "Days since symptom onset", y = "MFI (log scale)",
                   title = paste0(antigen_label, " - ", iso, " - ", sid)) +
     ggplot2::theme_minimal(base_size = 10) +
     ggplot2::theme(
-      plot.title       = ggplot2::element_text(face = "bold", size = 10, hjust = 0.5),
+      plot.title       = ggplot2::element_text(face = "bold", size = 10, hjust = 0.5), # nolint: line_length_linter.
       panel.grid.minor = ggplot2::element_blank(),
       strip.background = ggplot2::element_rect(fill = "grey20"),
       strip.text       = ggplot2::element_text(colour = "white", face = "bold"),
@@ -97,5 +97,5 @@ build_figure4_row <- function(sid, model_overall, model_sero,
     patchwork::plot_annotation(
       title = row_label,
       theme = ggplot2::theme(
-        plot.title = ggplot2::element_text(face = "bold", size = 12, hjust = 0)))
+        plot.title = ggplot2::element_text(face = "bold", size = 12, hjust = 0))) # nolint: line_length_linter.
 }
