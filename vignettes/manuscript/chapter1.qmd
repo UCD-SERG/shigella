@@ -238,73 +238,30 @@ model, seroincidence, cross-reactivity
 
 # Introduction
 
-*Shigella* remains a leading cause of diarrheal morbidity and mortality
-worldwide, particularly among children under five years of age in low- and
-middle-income countries (LMICs) [@gbd2021diarrhoeal]. The genus comprises four
-species—*S. dysenteriae*, *S. flexneri*, *S. boydii*, and *S. sonnei*—and
-causes an estimated 200 million episodes of shigellosis annually
-[@kotloff2013gems; @troeger2018gbd]. Infection presents as acute diarrhea, often
-with blood and mucus, though a substantial proportion of infections are
-subclinical [@kotloff2013gems; @livio2014shigella]. Accurate incidence
-measurement is hindered by brief pathogen shedding and limited availability of
-culture- or PCR-based diagnostics in endemic settings. Serological assays offer
-a complementary surveillance strategy because antibody responses persist longer
-than the pathogen itself and can detect infections missed by stool-based methods.
+*Shigella* remains a leading cause of diarrheal morbidity and mortality worldwide, particularly among children under five years of age in low- and middle-income countries (LMICs) [@gbd2021diarrhoeal].
+The genus comprises four species—*S. dysenteriae*, *S. flexneri*, *S. boydii*, and *S. sonnei*—and causes an estimated 200 million episodes of shigellosis annually [@kotloff2013gems; @troeger2018gbd].
+Infection presents as acute diarrhea, often with blood and mucus, though a substantial proportion of infections are subclinical [@kotloff2013gems; @livio2014shigella].
+Accurate incidence measurement is hindered by brief pathogen shedding and limited availability of culture- or PCR-based diagnostics in endemic settings.
+Serological assays offer a complementary surveillance strategy because antibody responses persist longer than the pathogen itself and can detect infections missed by stool-based methods.
 
 Serological assays for *Shigella* commonly target two classes of antigen.
-Invasion plasmid antigen B (IpaB) is a conserved virulence factor shared across
-all *Shigella* species [@levine2007clinical; @bernshtein2024determinants].
-O-specific polysaccharides (OSP) define serotype identity and elicit
-serotype-associated responses [@sadredinamin2023shigella; @micoli2022gmma].
-Among circulating serotypes, *S. flexneri* 2a, 3a, and 6 and *S. sonnei*
-together account for the majority of global *Shigella* infections
-[@kotloff2013gems; @livio2014shigella; @khanam2024efgh; @maled2014study].
-Critically for serological interpretation, *S. flexneri* 2a and 3a share a
-common O-antigen backbone and elicit cross-reactive antibody responses
-[@sadredinamin2023shigella; @vandeverg1996antibody; @citiulo2021rationalizing],
-whereas *S. flexneri* 6 and *S. sonnei* have structurally distinct O-antigens
-with no expected cross-reactivity [@sadredinamin2023shigella; @micoli2022gmma].
-All *S. flexneri* serotypes except serotype 6 share a conserved O-antigen
-tetrasaccharide backbone; serotype diversity arises from glucosyl and O-acetyl
-modifications [@sadredinamin2023shigella].
+Invasion plasmid antigen B (IpaB) is a conserved virulence factor shared across all *Shigella* species [@levine2007clinical; @bernshtein2024determinants].
+O-specific polysaccharides (OSP) define serotype identity and elicit serotype-associated responses [@sadredinamin2023shigella; @micoli2022gmma].
+Among circulating serotypes, *S. flexneri* 2a, 3a, and 6 and *S. sonnei* together account for the majority of global *Shigella* infections [@kotloff2013gems; @livio2014shigella; @khanam2024efgh; @maled2014study].
+Critically for serological interpretation, *S. flexneri* 2a and 3a share a common O-antigen backbone and elicit cross-reactive antibody responses [@sadredinamin2023shigella; @vandeverg1996antibody; @citiulo2021rationalizing], whereas *S. flexneri* 6 and *S. sonnei* have structurally distinct O-antigens with no expected cross-reactivity [@sadredinamin2023shigella; @micoli2022gmma].
+All *S. flexneri* serotypes except serotype 6 share a conserved O-antigen tetrasaccharide backbone; serotype diversity arises from glucosyl and O-acetyl modifications [@sadredinamin2023shigella].
 
-Characterizing how antibody concentrations change after infection is valuable
-for both seroepidemiology and diagnostic interpretation [@hay2024serodynamics].
-One such approach is a two-phase within-host model describing the antibody
-response as a mechanistic rise-peak-decay process: exponential growth driven by
-antigenic stimulation followed by power-law decay reflecting heterogeneous
-plasma-cell lifespans [@degraaf2014twophase; @teunis2016linking]. When fitted
-within a Bayesian hierarchical structure, individual-level parameters are
-stabilized by borrowing information across participants, and the resulting
-kinetic estimates link within-host antibody dynamics to population-level
-estimates of infection [@simonsen2009estimation]. This framework has been
-applied to enteric fever [@aiemjoy2022typhoid], scrub typhus
-[@aiemjoy2024scrubtyphus], and pertussis
-[@degraaf2014twophase; @teunis2016linking]. However, this framework has not been
-applied to *Shigella*, which presents two methodological challenges absent in
-single-species pathogens. First, the antigenic diversity of the genus means a
-single serological panel must capture responses to both a conserved
-species-level marker (IpaB) and serotype-specific O-antigens. Second, structural
-cross-reactivity between *S. flexneri* 2a and 3a creates ambiguity in
-interpreting O-antigen responses. Together, these features raise the question of
-whether kinetic estimation should pool participants across all infecting
-serotypes—gaining sample size at the cost of biological homogeneity—or stratify
-by infecting serotype. We hypothesized that pooling would be acceptable for the
-conserved antigen IpaB, where all participants contribute informative signal,
-but problematic for serotype-specific OSP responses, where most participants in
-a pooled cohort were infected by a different serotype. To address this question,
-we analyzed longitudinal antibody data from 48 individuals with culture- or
-PCR-confirmed *Shigella* infection enrolled in the Study of Shigella Antibody
-Responses (SOSAR), a prospective longitudinal cohort study at the International
-Centre for Diarrhoeal Disease Research, Bangladesh (icddr,b) in Dhaka, and
-followed for up to 200 days. In this retrospective analysis of archived sera, we
-aimed to: (1) characterize antigen- and isotype-specific IgG and IgA antibody
-kinetics using hierarchical two-phase models; (2) assess whether kinetic
-estimation is robust to choice of analytic strategy when antigen
-cross-reactivity is present—comparing pooled, serotype-specific, and
-cross-reactivity-aware models; and (3) generate population-level kinetic
-parameters to support development of serological surveillance and seroincidence
-estimation tools in endemic settings.
+Characterizing how antibody concentrations change after infection is valuable for both seroepidemiology and diagnostic interpretation [@hay2024serodynamics].
+One such approach is a two-phase within-host model describing the antibody response as a mechanistic rise-peak-decay process: exponential growth driven by antigenic stimulation followed by power-law decay reflecting heterogeneous plasma-cell lifespans [@degraaf2014twophase; @teunis2016linking].
+When fitted within a Bayesian hierarchical structure, individual-level parameters are stabilized by borrowing information across participants, and the resulting kinetic estimates link within-host antibody dynamics to population-level estimates of infection [@simonsen2009estimation].
+This framework has been applied to enteric fever [@aiemjoy2022typhoid], scrub typhus [@aiemjoy2024scrubtyphus], and pertussis [@degraaf2014twophase; @teunis2016linking].
+However, this framework has not been applied to *Shigella*, which presents two methodological challenges absent in single-species pathogens.
+First, the antigenic diversity of the genus means a single serological panel must capture responses to both a conserved species-level marker (IpaB) and serotype-specific O-antigens.
+Second, structural cross-reactivity between *S. flexneri* 2a and 3a creates ambiguity in interpreting O-antigen responses.
+Together, these features raise the question of whether kinetic estimation should pool participants across all infecting serotypes—gaining sample size at the cost of biological homogeneity—or stratify by infecting serotype.
+We hypothesized that pooling would be acceptable for the conserved antigen IpaB, where all participants contribute informative signal, but problematic for serotype-specific OSP responses, where most participants in a pooled cohort were infected by a different serotype.
+To address this question, we analyzed longitudinal antibody data from 48 individuals with culture- or PCR-confirmed *Shigella* infection enrolled in the Study of Shigella Antibody Responses (SOSAR), a prospective longitudinal cohort study at the International Centre for Diarrhoeal Disease Research, Bangladesh (icddr,b) in Dhaka, and followed for up to 200 days.
+In this retrospective analysis of archived sera, we aimed to: (1) characterize antigen- and isotype-specific IgG and IgA antibody kinetics using hierarchical two-phase models; (2) assess whether kinetic estimation is robust to choice of analytic strategy when antigen cross-reactivity is present—comparing pooled, serotype-specific, and cross-reactivity-aware models; and (3) generate population-level kinetic parameters to support development of serological surveillance and seroincidence estimation tools in endemic settings.
 
 # Methods
 
