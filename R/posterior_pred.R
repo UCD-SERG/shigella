@@ -11,7 +11,8 @@
     dplyr::select("Iteration", "Chain", "value", "Iso_type", "Stratification") |> # nolint: line_length_linter.
     dplyr::rename(prec_logy = "value")
 
-  # TODO: replace with exported serodynamics API once use_att_names() / ab() are exported (tracked separately). # nolint: line_length_linter.
+  # TODO: replace with exported serodynamics API once use_att_names() /
+  # ab() are exported (tracked separately).
   obs_dat <- raw_dat |>
     serodynamics:::use_att_names() |>
     dplyr::select("Subject", "Iso_type", "t", "result")

@@ -5,7 +5,8 @@
 #' that preceded hospital presentation, moving `t = 0` closer to the true onset
 #' of infection.
 #'
-#' The transformation (validated against `dL_clean_sf2a` vs `dL_clean_sf2a_new`):
+#' The transformation (validated against `dL_clean_sf2a` vs
+#'   `dL_clean_sf2a_new`):
 #' \enumerate{
 #'   \item merge `DurDia_hours` onto the case data by participant id (constant
 #'         per participant);

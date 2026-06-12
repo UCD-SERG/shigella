@@ -9,7 +9,8 @@
 #' @param antigen_label Optional antigen label added as an `antigen` column,
 #'   used when stacking several antigens before summarising.
 #' @return A tibble with columns `Iteration`, `Chain`, `Iso_type`,
-#'   `y0`, `y1`, `t1`, `alpha`, `shape` (and `antigen` if `antigen_label` given).
+#'   `y0`, `y1`, `t1`, `alpha`, `shape` (and `antigen` if
+#'   `antigen_label` given).
 #' @export
 extract_mu_draws <- function(fit_object, antigen_label = NULL) {
   w <- attr(fit_object, "population_params") |>

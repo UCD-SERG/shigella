@@ -98,8 +98,8 @@
 
 #' S4 Fig: per-individual MAE across modeling approaches (slopegraph)
 #'
-#' Composes `.mae_slope_long()` -> `.mae_slope_shared()` -> `.mae_slope_flagged()`
-#' -> `.mae_slope_plot()`.
+#' Composes `.mae_slope_long()` -> `.mae_slope_shared()` ->
+#' `.mae_slope_flagged()` -> `.mae_slope_plot()`.
 #'
 #' @param mae_overall,mae_serospec,mae_combined `get_mae()` tibbles
 #'   (`sid, antigen, Iso_type, mae`) per model class.

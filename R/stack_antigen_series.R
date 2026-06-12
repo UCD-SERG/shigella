@@ -3,7 +3,8 @@
 #' @param case_list Named list of single-antigen case-data objects (carrying
 #'   `cohort_name`), names giving the antigen labels
 #'   (`IpaB`, `Sf2a`, `Sf3a`, `Sf6`, `Sonnei`).
-#' @return A tibble with `antigen`, `isotype_name`, `infecting_serotype` factors.
+#' @return A tibble with `antigen`, `isotype_name`, `infecting_serotype`
+#'   factors.
 #' @export
 stack_antigen_series <- function(case_list) {
   purrr::imap(case_list, ~ dplyr::mutate(.x, antigen = .y)) |>

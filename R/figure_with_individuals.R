@@ -3,8 +3,8 @@
 #' @param model_obj Fitted `sr_model`.
 #' @param raw_dataset Case data for the grey individual lines.
 #' @param antigen_label Panel title.
-#' @param t_grid,line_color,ribbon_alpha,individual_alpha,individual_color,log_y,xlim
-#'   Styling controls.
+#' @param t_grid,line_color,ribbon_alpha,individual_alpha Styling controls.
+#' @param individual_color,log_y,xlim Styling controls.
 #' @return A ggplot.
 #' @export
 figure_with_individuals <- function(model_obj, raw_dataset, antigen_label,

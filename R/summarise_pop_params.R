@@ -2,7 +2,8 @@
 #'
 #' @param df Output of [add_natural_scale()].
 #' @param group_vars Character vector of grouping columns
-#'   (e.g. `c("antigen", "Iso_type")`, or `c("age_group", "antigen", "Iso_type")`).
+#'   (e.g. `c("antigen", "Iso_type")`, or
+#'   `c("age_group", "antigen", "Iso_type")`).
 #' @return One row per group with `{y0,y1,t1,alpha,rho}_{med,lo,hi}` columns.
 #'   (`alpha_*` follow the unit chosen in [add_natural_scale()].)
 #' @export

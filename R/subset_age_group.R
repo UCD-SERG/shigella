@@ -3,7 +3,8 @@
 #' @param case_data Case data carrying an `age` column.
 #' @param group `"under5"` keeps `age < 5`; `"plus5"` keeps `age > 5`.
 #'   **Both groups exclude `age == 5`** (children aged exactly 5 are in neither
-#'   stratum), matching how the shipped `_under5` / `_plus5` datasets were built.
+#'   stratum), matching how the shipped `_under5` / `_plus5`
+#'   datasets were built.
 #' @return Subset case data with attributes preserved.
 #' @export
 subset_age_group <- function(case_data, group = c("under5", "plus5")) {

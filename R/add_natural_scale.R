@@ -3,9 +3,11 @@
 #' Applies the manuscript back-transformation to each draw:
 #' \itemize{
 #'   \item `y0_natural    = exp(y0)`
-#'   \item `y1_natural    = exp(y1) + exp(y0)`  (the `y1` column is `log(y1 - y0)`)
+#'   \item `y1_natural    = exp(y1) + exp(y0)` (the `y1` column is
+#'     `log(y1 - y0)`)
 #'   \item `t1_natural    = exp(t1)`
-#'   \item `alpha_natural = exp(alpha) * k`     (k = 365 for per-year, 1 for per-day)
+#'   \item `alpha_natural = exp(alpha) * k`
+#'     (k = 365 for per-year, 1 for per-day)
 #'   \item `rho_natural   = exp(shape) + 1`
 #' }
 #'

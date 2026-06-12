@@ -4,7 +4,8 @@
 #'   `overall_Sonnei`, `serotype_sonnei`, `overall_Sf3a`, `serotype_sf3a`,
 #'   `combined_sf3a` fitted models.
 #' @param datasets Named list with `dL_clean_sf2a`, `dL_serotype_sf2a`,
-#'   `dL_clean_sonnei`, `dL_serotype_sonnei`, `dL_clean_sf3a`, `dL_serotype_sf3a`,
+#'   `dL_clean_sonnei`, `dL_serotype_sonnei`, `dL_clean_sf3a`,
+#'   `dL_serotype_sf3a`,
 #'   `dL_combined_sf3a` case data.
 #' @param sids Length-3 character vector of representative subject ids
 #'   (Sf2a, Sonnei, Sf3a). Defaults match the manuscript.

@@ -26,8 +26,9 @@
 
 #' Pick the best-performing model per antigen-isotype (lowest per-individual MAE)
 #'
-#' @param mae_overall,mae_serospec,mae_combined `get_mae()` tibbles (combine the
-#'   per-antigen calls upstream). `NULL` for an unavailable model class.
+#' @param mae_overall,mae_serospec,mae_combined `get_mae()` tibbles
+#'   (combine the per-antigen calls upstream). `NULL` for an unavailable
+#'   model class.
 #' @return Tibble `antigen, Iso_type, best_model`.
 #' @export
 select_best_models <- function(mae_overall, mae_serospec = NULL, mae_combined = NULL) { # nolint: line_length_linter.

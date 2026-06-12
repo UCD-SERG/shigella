@@ -20,8 +20,8 @@
 #'
 #' **cohort_name / age.** The original bare object `dL_clean_sf2a` did not carry
 #' these two columns, so the base (non-`_new`) datasets built here are a harmless
-#' superset of the originals (two extra metadata columns). This is cosmetic: the
-#' model fit (`prep_data_new()` uses only `id`/`antigen_iso`/`timeindays`/
+#' superset of the originals (two extra metadata columns). This is cosmetic:
+#' the model fit (`prep_data_new()` uses only `id`/`antigen_iso`/`timeindays`/
 #' `result`) and the figures are unaffected, and keeping the columns is what
 #' makes the serotype / age subsets reproducible from one function.
 #'
@@ -32,7 +32,8 @@
 #' @param antigen <[`data-masking`][dplyr::dplyr_data_masking]> The antigen MFI
 #'   column to extract, e.g. `n_ipab_MFI`.
 #' @param study_filter Study to keep (default `"SOSAR"`, the Dhaka cohort).
-#' @param as_case If `TRUE` (default) return a `serocalculator` case-data object;
+#' @param as_case If `TRUE` (default) return a `serocalculator`
+#'   case-data object;
 #'   if `FALSE` return a plain tibble (useful for testing the reshape alone).
 #'
 #' @return Long case data with columns `id`, `antigen_iso`, `visit`,

@@ -81,8 +81,10 @@
 #' @param sum_overall,sum_serospec,sum_combined Parameter summaries
 #'   ([pop_param_summary()] output) for each model class.
 #' @param models_overall Named list `antigen = sr_model` for the overall models.
-#' @param models_serospec Named list `antigen = sr_model` for the serotype-specific models.
-#' @param models_combined Named list `antigen = sr_model` for the combined-flexneri models.
+#' @param models_serospec Named list `antigen = sr_model` for the
+#'   serotype-specific models.
+#' @param models_combined Named list `antigen = sr_model` for the
+#'   combined-flexneri models.
 #' @return A flextable.
 #' @export
 table2_kinetic_params <- function(best_lookup, sum_overall, sum_serospec, sum_combined, # nolint: line_length_linter.
