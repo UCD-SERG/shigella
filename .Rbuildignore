@@ -22,3 +22,4 @@
 ^shigella\.Rcheck$
 ^shigella.*\.tar\.gz$
 ^shigella.*\.tgz$
+^commit\.sh$
