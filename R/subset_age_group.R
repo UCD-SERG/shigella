@@ -16,6 +16,14 @@ subset_age_group <- function(case_data, group = c("under5", "plus5")) {
        compiled sheet)."
     )
   }
+  n_boundary <- dplyr::n_distinct(
+    dplyr::filter(case_data, .data$age == 5)$id
+  )
+  if (n_boundary > 0) {
+    cli::cli_inform(
+      "{n_boundary} participant{?s} with age == 5 excluded from both age strata."
+    )
+  }
   out <- if (group == "under5") {
     dplyr::filter(case_data, .data$age < 5)
   } else {
