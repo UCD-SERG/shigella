@@ -41,7 +41,7 @@ age-stratified datasets directly -- no separate metadata join is needed.
 \code{ids_varname = "index_id"}. The shipped case-data objects (\code{dL_clean_sf2a}
 etc.) and the current working data instead carry an \code{id} column, identical in
 value to \code{sid}. To reproduce those objects exactly, this function
-standardises the id column to \code{id} via \code{serocalculator::as_case_data()}
+standardises the id column to \code{id} via \code{serodynamics::as_case_data()}
 (\code{id_var = "id"}), rather than relying on any internal renaming. If a
 downstream step needs \code{index_id}, change \code{id_var} here -- but the shipped
 \code{.rda} inputs and the manuscript figures use \code{id}.
