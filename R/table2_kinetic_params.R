@@ -29,10 +29,12 @@
     model_display <- sprintf("Overall (n=%d)", n_overall[[antigen_val]])
   } else if (model_val == "Serotype-specific") {
     src <- sum_serospec
-    model_display <- sprintf("Serotype-specific (n=%d)", n_serospec[[antigen_val]])
+    model_display <- sprintf("Serotype-specific (n=%d)",
+                             n_serospec[[antigen_val]])
   } else {
     src <- sum_combined
-    model_display <- sprintf("Combined flexneri (n=%d)", n_combined[[antigen_val]])
+    model_display <- sprintf("Combined flexneri (n=%d)",
+                             n_combined[[antigen_val]])
   }
   src |>
     dplyr::filter(.data$antigen == antigen_val, .data$Iso_type == iso_val) |>

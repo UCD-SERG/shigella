@@ -9,8 +9,8 @@
   if (is.null(df) || nrow(df) == 0) return(NULL)
   df <- tibble::as_tibble(df)
   miss <- setdiff(required_cols, names(df))
-  if (length(miss) > 0) stop("Input '", model_name, "' missing: ",
-                             paste(miss, collapse = ", "))
+  if (length(miss) > 0) cli::cli_abort(paste0(
+    "Input '", model_name, "' missing: ", paste(miss, collapse = ", ")))
   dplyr::transmute(df, sid = as.character(.data$sid),
                    antigen = as.character(.data$antigen),
                    Iso_type = as.character(.data$Iso_type),

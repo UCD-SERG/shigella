@@ -15,12 +15,14 @@ get_observed <- function(dataset, sid, iso) {
 
   iso_col <- if ("antigen_iso"  %in% names(dataset)) "antigen_iso" else
              if ("isotype_name" %in% names(dataset)) "isotype_name" else
-             if ("Iso_type"     %in% names(dataset)) "Iso_type" else NA_character_
+             if ("Iso_type"     %in% names(dataset)) "Iso_type" else
+             NA_character_
   if (is.na(iso_col)) cli::cli_abort("Dataset has no isotype column.")
 
   time_col <- if ("timeindays" %in% names(dataset)) "timeindays" else
               if ("Actual day" %in% names(dataset)) "Actual day" else
-              if ("timepoint"  %in% names(dataset)) "timepoint" else NA_character_
+              if ("timepoint"  %in% names(dataset)) "timepoint" else
+              NA_character_
   if (is.na(time_col)) cli::cli_abort("Dataset has no time column.")
 
   val_col <- if ("result" %in% names(dataset)) {
