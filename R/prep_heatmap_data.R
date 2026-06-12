@@ -18,8 +18,10 @@ prep_heatmap_data <- function(compiled) {
 
   data.table::setnames(
     shigella,
-    old = c("sampleID", "n_ipab_MFI", "n_sf3aospbsa_MFI",
-            "n_sf2aospbsa_MFI", "n_sf6ospbsa_MFI", "n_sonneiospbsa_MFI"),
+    old = c(
+      "sampleID", "n_ipab_MFI", "n_sf3aospbsa_MFI",
+      "n_sf2aospbsa_MFI", "n_sf6ospbsa_MFI", "n_sonneiospbsa_MFI"
+    ),
     new = c("pid", "ipab", "sf3a_osp", "sf2a_osp", "sf6_osp", "sonnei_osp")
   )
 
@@ -30,8 +32,10 @@ prep_heatmap_data <- function(compiled) {
 
   shig <- data.table::melt(
     shigella,
-    id.vars = c("pid", "sid", "study_name", "cohort", "cohort_name", "site",
-                "site_name", "age", "treatment", "timepoint", "isotype"),
+    id.vars = c(
+      "pid", "sid", "study_name", "cohort", "cohort_name", "site",
+      "site_name", "age", "treatment", "timepoint", "isotype"
+    ),
     measure = c("ipab", "sf3a_osp", "sf2a_osp", "sf6_osp", "sonnei_osp"),
     value.name = "result"
   )
@@ -47,7 +51,8 @@ prep_heatmap_data <- function(compiled) {
     default = "Other"
   )]
   shig_bg[, serotype := factor(serotype,
-                               levels = c("Sf2a", "Sf3a", "Sf6", "sonnei", "Other"))] # nolint: line_length_linter.
+    levels = c("Sf2a", "Sf3a", "Sf6", "sonnei", "Other")
+  )] # nolint: line_length_linter.
 
   participants <- shig_bg[!duplicated(pid), .(pid, serotype, age, cohort_name)]
   data.table::setorder(participants, serotype, age, pid)
@@ -58,7 +63,8 @@ prep_heatmap_data <- function(compiled) {
   )]
 
   shig_bg <- merge(shig_bg, participants[, .(pid, row_id, display_label)],
-                   by = "pid", all.x = TRUE)
+    by = "pid", all.x = TRUE
+  )
 
   shig_bg[, antigen_clean := data.table::fcase(
     antigen == "ipab",       "IpaB",
@@ -68,7 +74,8 @@ prep_heatmap_data <- function(compiled) {
     antigen == "sonnei_osp", "sonnei"
   )]
   shig_bg[, antigen_clean := factor(antigen_clean,
-                                    levels = c("IpaB", "Sf2a", "Sf3a", "Sf6", "sonnei"))] # nolint: line_length_linter.
+    levels = c("IpaB", "Sf2a", "Sf3a", "Sf6", "sonnei")
+  )] # nolint: line_length_linter.
   shig_bg[, timepoint_label := factor(timepoint, levels = sort(unique(timepoint)))] # nolint: line_length_linter.
 
   attr(shig_bg, "y_label_lookup") <-

@@ -47,7 +47,7 @@ library(dplyr)
 ## isotype_name, cohort_name (J), age (M), and the antigen MFI columns.
 compiled <- readxl::read_excel(raw_files$compiled, sheet = raw_sheets$compiled)
 
-## --- DurDia (diarrhea duration prior to presentation) ---  
+## --- DurDia (diarrhea duration prior to presentation) ---
 ## Sheet "Duration of symptoms"; columns CaseID + DurDia_hours; 48 participants.
 ## Verified against dL_clean_sf2a_new: DurDia_days = DurDia_hours/24 and
 ## timeindays_new = (Actual day) + DurDia_days  (e.g. 3h -> +0.125 d).
@@ -71,10 +71,12 @@ antigen_map <- c(
 # helper: save an object under a chosen name into manuscript_data_dir
 save_named <- function(obj, name) {
   assign(name, obj)
-  save(list = name,
-       file = file.path(manuscript_data_dir, paste0(name, ".rda")),
-       compress = "xz",
-       envir = environment())
+  save(
+    list = name,
+    file = file.path(manuscript_data_dir, paste0(name, ".rda")),
+    compress = "xz",
+    envir = environment()
+  )
   message("saved: ", name)
   invisible(obj)
 }
@@ -105,7 +107,7 @@ build_new <- function(ag) {
 # -----------------------------------------------------------------------------
 for (ag in names(antigen_map)) {
   save_named(build_base(ag), paste0("dL_clean_", ag))
-  save_named(build_new(ag),  paste0("dL_clean_", ag, "_new"))
+  save_named(build_new(ag), paste0("dL_clean_", ag, "_new"))
 }
 
 # -----------------------------------------------------------------------------
@@ -115,7 +117,7 @@ for (ag in names(antigen_map)) {
 #                              manuscript5/05 serotype_data)
 #     dL_serotype_{ag}_new  ADJUSTED times + cohort filter  (supplement loads)
 # -----------------------------------------------------------------------------
-serotype_match <- c(sf2a = "Sf2a", sf3a = "Sf3a", sonnei = "sonnei")  # cohort_name value
+serotype_match <- c(sf2a = "Sf2a", sf3a = "Sf3a", sonnei = "sonnei") # cohort_name value
 for (ag in names(serotype_match)) {
   save_named(
     build_base(ag) |> subset_infecting_serotype(serotype_match[[ag]]),
@@ -146,8 +148,10 @@ for (ag in c("sf2a", "sf3a")) {
 for (ag in names(antigen_map)) {
   new <- build_new(ag)
   save_named(subset_age_group(new, "under5"), paste0("dL_clean_", ag, "_new_under5"))
-  save_named(subset_age_group(new, "plus5"),  paste0("dL_clean_", ag, "_new_plus5"))
+  save_named(subset_age_group(new, "plus5"), paste0("dL_clean_", ag, "_new_plus5"))
 }
 
-message("\n00_build_case_data.R complete - all dL_* objects written to ",
-        manuscript_data_dir)
+message(
+  "\n00_build_case_data.R complete - all dL_* objects written to ",
+  manuscript_data_dir
+)

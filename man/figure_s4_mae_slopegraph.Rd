@@ -14,6 +14,6 @@ figure_s4_mae_slopegraph(mae_overall, mae_serospec, mae_combined)
 A ggplot.
 }
 \description{
-Composes \code{.mae_slope_long()} -> \code{.mae_slope_shared()} -> \code{.mae_slope_flagged()}
--> \code{.mae_slope_plot()}.
+Composes \code{.mae_slope_long()} -> \code{.mae_slope_shared()} ->
+\code{.mae_slope_flagged()} -> \code{.mae_slope_plot()}.
 }

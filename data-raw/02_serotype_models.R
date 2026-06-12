@@ -23,14 +23,16 @@ load_inputs(c(
   "dL_serotype_sonnei"
 ))
 
-set.seed(6)   # preserved from manuscript2.qmd (see reproducibility note in _config.R)
+set.seed(6) # preserved from manuscript2.qmd (see reproducibility note in _config.R)
 
 start_time <- Sys.time()
 
 ## Order matches manuscript2.qmd: sf2a -> sf3a -> sonnei
-fit_and_save(dL_serotype_sf2a,   "serotype_sf2a_3",   settings = mcmc_main)
-fit_and_save(dL_serotype_sf3a,   "serotype_sf3a_3",   settings = mcmc_main)
+fit_and_save(dL_serotype_sf2a, "serotype_sf2a_3", settings = mcmc_main)
+fit_and_save(dL_serotype_sf3a, "serotype_sf3a_3", settings = mcmc_main)
 fit_and_save(dL_serotype_sonnei, "serotype_sonnei_3", settings = mcmc_main)
 
-message("02_serotype_models.R runtime: ",
-        format(round(Sys.time() - start_time, 2)))
+message(
+  "02_serotype_models.R runtime: ",
+  format(round(Sys.time() - start_time, 2))
+)

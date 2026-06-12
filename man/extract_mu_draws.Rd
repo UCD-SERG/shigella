@@ -14,7 +14,8 @@ used when stacking several antigens before summarising.}
 }
 \value{
 A tibble with columns \code{Iteration}, \code{Chain}, \code{Iso_type},
-\code{y0}, \code{y1}, \code{t1}, \code{alpha}, \code{shape} (and \code{antigen} if \code{antigen_label} given).
+\code{y0}, \code{y1}, \code{t1}, \code{alpha}, \code{shape} (and \code{antigen} if
+\code{antigen_label} given).
 }
 \description{
 Pulls the \code{mu.par} rows from a fitted model's \code{population_params} attribute

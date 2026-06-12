@@ -11,8 +11,10 @@
 #' @return A `summarise_pop_params()` table over all supplied antigens.
 #' @export
 pop_param_summary <- function(model_list,
-                              antigen_levels = c("IpaB", "Sf2a", "Sf3a",
-                                                 "Sf6", "Sonnei"),
+                              antigen_levels = c(
+                                "IpaB", "Sf2a", "Sf3a",
+                                "Sf6", "Sonnei"
+                              ),
                               alpha_unit = "per_year") {
   purrr::imap(model_list, ~ extract_mu_draws(.x, antigen_label = .y)) |>
     dplyr::bind_rows() |>

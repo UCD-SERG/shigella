@@ -19,13 +19,16 @@
   fitted_dat <- data |>
     tidyr::pivot_wider(names_from = "Parameter", values_from = "value") |>
     dplyr::right_join(obs_dat, by = c("Subject", "Iso_type")) |>
-    dplyr::mutate(mu_hat = serodynamics:::ab(.data$t, .data$y0, .data$y1,
-                                             .data$t1, .data$alpha, .data$shape)) # nolint: line_length_linter.
+    dplyr::mutate(mu_hat = serodynamics:::ab(
+      .data$t, .data$y0, .data$y1,
+      .data$t1, .data$alpha, .data$shape
+    )) # nolint: line_length_linter.
 
   sim_tab <- purrr::map_dfr(seq_len(n_sim), function(j) {
     dplyr::slice_sample(fitted_dat, by = c("Subject", "Iso_type", "t")) |>
       dplyr::left_join(mod_prec_logy,
-                       by = c("Iteration", "Chain", "Iso_type", "Stratification")) |> # nolint: line_length_linter.
+        by = c("Iteration", "Chain", "Iso_type", "Stratification")
+      ) |> # nolint: line_length_linter.
       dplyr::mutate(sd = 1 / sqrt(.data$prec_logy)) |>
       dplyr::rowwise() |>
       dplyr::mutate(value = exp(stats::rnorm(1, mean = log(.data$mu_hat), sd = .data$sd))) |> # nolint: line_length_linter.
@@ -54,8 +57,11 @@
   p <- ggplot2::ggplot() +
     ggplot2::geom_density(
       data = tab,
-      ggplot2::aes(x = .data$value, color = .data$estimate, group = .data$simulation, # nolint: line_length_linter.
-                   linewidth = .data$estimate, alpha = .data$estimate), fill = NA) + # nolint: line_length_linter.
+      ggplot2::aes(
+        x = .data$value, color = .data$estimate, group = .data$simulation, # nolint: line_length_linter.
+        linewidth = .data$estimate, alpha = .data$estimate
+      ), fill = NA
+    ) + # nolint: line_length_linter.
     ggplot2::scale_color_manual(values = c(observed = "black", simulated = "dodgerblue")) + # nolint: line_length_linter.
     ggplot2::scale_linewidth_manual(values = c(observed = 0.7, simulated = 0.3)) + # nolint: line_length_linter.
     ggplot2::scale_alpha_manual(values = c(observed = 0.7, simulated = 0.4)) +
@@ -63,7 +69,7 @@
     ggplot2::theme(legend.title = ggplot2::element_blank()) +
     ggplot2::scale_x_log10() +
     ggplot2::labs(title = title, x = "Assay value")
-  if (by_antigen) p <- p + ggplot2::facet_wrap(~ Iso_type)
+  if (by_antigen) p <- p + ggplot2::facet_wrap(~Iso_type)
   p
 }
 

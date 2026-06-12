@@ -13,10 +13,11 @@
 
   dplyr::bind_rows(overall_for_supp, sero_for_supp, comb_for_supp) |>
     dplyr::mutate(
-      antigen  = factor(.data$antigen, levels = c("Sf2a", "Sonnei", "Sf3a")),
+      antigen = factor(.data$antigen, levels = c("Sf2a", "Sonnei", "Sf3a")),
       Iso_type = factor(.data$Iso_type, levels = c("IgG", "IgA")),
-      model    = factor(.data$model,
-                        levels = c("Overall", "Serotype-specific", "Combined flexneri")) # nolint: line_length_linter.
+      model = factor(.data$model,
+        levels = c("Overall", "Serotype-specific", "Combined flexneri")
+      ) # nolint: line_length_linter.
     ) |>
     dplyr::arrange(.data$antigen, .data$Iso_type, .data$model)
 }
@@ -28,24 +29,24 @@
   supp_all |>
     dplyr::mutate(
       n = dplyr::case_when(
-        .data$antigen == "Sf2a"   & .data$model == "Overall"            ~ 48L,
-        .data$antigen == "Sf2a"   & .data$model == "Serotype-specific"  ~ 17L,
-        .data$antigen == "Sf2a"   & .data$model == "Combined flexneri"  ~ 25L,
-        .data$antigen == "Sonnei" & .data$model == "Overall"            ~ 48L,
-        .data$antigen == "Sonnei" & .data$model == "Serotype-specific"  ~ 11L,
-        .data$antigen == "Sf3a"   & .data$model == "Overall"            ~ 48L,
-        .data$antigen == "Sf3a"   & .data$model == "Serotype-specific"  ~ 8L,
-        .data$antigen == "Sf3a"   & .data$model == "Combined flexneri"  ~ 25L,
+        .data$antigen == "Sf2a" & .data$model == "Overall" ~ 48L,
+        .data$antigen == "Sf2a" & .data$model == "Serotype-specific" ~ 17L,
+        .data$antigen == "Sf2a" & .data$model == "Combined flexneri" ~ 25L,
+        .data$antigen == "Sonnei" & .data$model == "Overall" ~ 48L,
+        .data$antigen == "Sonnei" & .data$model == "Serotype-specific" ~ 11L,
+        .data$antigen == "Sf3a" & .data$model == "Overall" ~ 48L,
+        .data$antigen == "Sf3a" & .data$model == "Serotype-specific" ~ 8L,
+        .data$antigen == "Sf3a" & .data$model == "Combined flexneri" ~ 25L,
         TRUE ~ NA_integer_
       )
     ) |>
     dplyr::transmute(
       Antigen = .data$antigen, Isotype = .data$Iso_type, Model = .data$model, n = .data$n, # nolint: line_length_linter.
       `y0 (baseline)` = fmt_mci(.data$y0_med, .data$y0_lo, .data$y0_hi, digits = 1), # nolint: line_length_linter.
-      `y1 (peak)`     = fmt_mci(.data$y1_med, .data$y1_lo, .data$y1_hi, digits = 0), # nolint: line_length_linter.
-      `t1 (days)`     = fmt_mci(.data$t1_med, .data$t1_lo, .data$t1_hi, digits = 1), # nolint: line_length_linter.
+      `y1 (peak)` = fmt_mci(.data$y1_med, .data$y1_lo, .data$y1_hi, digits = 0), # nolint: line_length_linter.
+      `t1 (days)` = fmt_mci(.data$t1_med, .data$t1_lo, .data$t1_hi, digits = 1), # nolint: line_length_linter.
       `alpha (decay)` = fmt_mci(.data$alpha_med, .data$alpha_lo, .data$alpha_hi, digits = 2), # nolint: line_length_linter.
-      `rho (shape)`   = fmt_mci(.data$rho_med, .data$rho_lo, .data$rho_hi, digits = 2) # nolint: line_length_linter.
+      `rho (shape)` = fmt_mci(.data$rho_med, .data$rho_lo, .data$rho_hi, digits = 2) # nolint: line_length_linter.
     )
 }
 
@@ -75,10 +76,10 @@ table_s4_all_models <- function(sum_overall, sum_serospec, sum_combined) {
     gt::cols_label(
       Antigen = "Antigen", Isotype = "Isotype", Model = "Model", n = "n",
       `y0 (baseline)` = gt::md("y<sub>0</sub> (baseline)"),
-      `y1 (peak)`     = gt::md("y<sub>1</sub> (peak)"),
-      `t1 (days)`     = gt::md("t<sub>1</sub> (days)"),
+      `y1 (peak)` = gt::md("y<sub>1</sub> (peak)"),
+      `t1 (days)` = gt::md("t<sub>1</sub> (days)"),
       `alpha (decay)` = gt::md("&alpha; (decay)"),
-      `rho (shape)`   = gt::md("&rho; (shape)")
+      `rho (shape)` = gt::md("&rho; (shape)")
     ) |>
     gt::tab_source_note(gt::md("Values are posterior medians (95% credible intervals).")) |> # nolint: line_length_linter.
     gt::tab_source_note(gt::md("The combined flexneri model pools *S. flexneri* 2a- and 3a-infected individuals (*n* = 25).")) |> # nolint: line_length_linter.

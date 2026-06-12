@@ -10,14 +10,16 @@
 #' @return Tibble `t, med, lo, hi`.
 #' @export
 get_prediction_summary <- function(model_output, sid, iso,
-                                    times = seq(0, 200, by = 1)) {
+                                   times = seq(0, 200, by = 1)) {
   sub <- model_output |>
     dplyr::filter(.data$Subject == sid, .data$Iso_type == iso)
 
   if (nrow(sub) == 0) {
     cli::cli_warn("No data for {.val {sid}} {iso}")
-    return(tibble::tibble(t = numeric(), med = numeric(),
-                          lo = numeric(), hi = numeric()))
+    return(tibble::tibble(
+      t = numeric(), med = numeric(),
+      lo = numeric(), hi = numeric()
+    ))
   }
 
   wide <- sub |>
@@ -27,8 +29,12 @@ get_prediction_summary <- function(model_output, sid, iso,
   # TODO(serodynamics export): see REPRODUCIBILITY.md "Known tech debt: serodynamics internal calls".
   pred_mat <- vapply(
     times,
-    function(tt) serodynamics:::ab(tt, wide$y0, wide$y1, wide$t1,
-                                   wide$alpha, wide$shape),
+    function(tt) {
+      serodynamics:::ab(
+        tt, wide$y0, wide$y1, wide$t1,
+        wide$alpha, wide$shape
+      )
+    },
     numeric(nrow(wide))
   )
 

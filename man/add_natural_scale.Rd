@@ -19,9 +19,11 @@ decay rate by 365; \code{"per_day"} leaves it in day^-1.}
 Applies the manuscript back-transformation to each draw:
 \itemize{
 \item \code{y0_natural    = exp(y0)}
-\item \code{y1_natural    = exp(y1) + exp(y0)}  (the \code{y1} column is \code{log(y1 - y0)})
+\item \code{y1_natural    = exp(y1) + exp(y0)} (the \code{y1} column is
+\code{log(y1 - y0)})
 \item \code{t1_natural    = exp(t1)}
-\item \code{alpha_natural = exp(alpha) * k}     (k = 365 for per-year, 1 for per-day)
+\item \code{alpha_natural = exp(alpha) * k}
+(k = 365 for per-year, 1 for per-day)
 \item \code{rho_natural   = exp(shape) + 1}
 }
 }

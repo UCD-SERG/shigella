@@ -6,7 +6,7 @@
 #' @noRd
 .observed_long <- function(dataset, ids, antigen_iso) {
   # TODO(serodynamics export): see REPRODUCIBILITY.md "Known tech debt: serodynamics internal calls". # nolint: line_length_linter.
-  time_var  <- dataset |> serodynamics:::get_timeindays_var()
+  time_var <- dataset |> serodynamics:::get_timeindays_var()
   value_var <- dataset |> serocalculator::get_values_var()
 
   observed_data <- dataset |>
@@ -37,7 +37,7 @@
   ) |>
     dplyr::summarise(
       .by = dplyr::all_of(c("id", "t")),
-      pred_med   = stats::median(.data$res, na.rm = TRUE),
+      pred_med = stats::median(.data$res, na.rm = TRUE),
       pred_lower = stats::quantile(.data$res, 0.025, na.rm = TRUE),
       pred_upper = stats::quantile(.data$res, 0.975, na.rm = TRUE)
     ) |>
@@ -88,9 +88,11 @@
 #' @return Tibble of residual metrics at the requested level (MAE, RMSE, ...).
 #' @export
 compute_residual_metrics <- function(model, dataset, ids, antigen_iso,
-                                      scale = c("original", "log"),
-                                      summary_level = c("id_antigen", "pointwise", # nolint: line_length_linter.
-                                                        "antigen", "overall")) {
+                                     scale = c("original", "log"),
+                                     summary_level = c(
+                                       "id_antigen", "pointwise", # nolint: line_length_linter.
+                                       "antigen", "overall"
+                                     )) {
   scale <- match.arg(scale)
   summary_level <- match.arg(summary_level)
 
@@ -105,16 +107,17 @@ compute_residual_metrics <- function(model, dataset, ids, antigen_iso,
   }
 
   group <- switch(summary_level,
-                  id_antigen = c("id", "antigen_iso"),
-                  antigen    = "antigen_iso",
-                  overall    = character(0))
+    id_antigen = c("id", "antigen_iso"),
+    antigen    = "antigen_iso",
+    overall    = character(0)
+  )
 
   residual_data |>
     dplyr::summarise(
       .by = dplyr::all_of(group),
-      MAE   = mean(.data$abs_residual, na.rm = TRUE),
-      RMSE  = sqrt(mean(.data$sq_residual, na.rm = TRUE)),
-      SSE   = sum(.data$sq_residual, na.rm = TRUE),
+      MAE = mean(.data$abs_residual, na.rm = TRUE),
+      RMSE = sqrt(mean(.data$sq_residual, na.rm = TRUE)),
+      SSE = sum(.data$sq_residual, na.rm = TRUE),
       n_obs = dplyr::n()
     )
 }

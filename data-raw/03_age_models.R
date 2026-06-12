@@ -18,8 +18,10 @@ source("data-raw/_config.R")
 library(serodynamics)
 
 antigens <- c("Ipab", "sf2a", "sf3a", "sf6", "sonnei")
-out_stem <- c(Ipab = "IpaB", sf2a = "Sf2a", sf3a = "Sf3a",
-              sf6 = "Sf6", sonnei = "Sonnei")          # output capitalization
+out_stem <- c(
+  Ipab = "IpaB", sf2a = "Sf2a", sf3a = "Sf3a",
+  sf6 = "Sf6", sonnei = "Sonnei"
+) # output capitalization
 
 load_inputs(as.vector(outer(
   paste0("dL_clean_", antigens, "_new"),
@@ -27,7 +29,7 @@ load_inputs(as.vector(outer(
   paste0
 )))
 
-set.seed(8)   # preserved from manuscript3.qmd
+set.seed(8) # preserved from manuscript3.qmd
 
 start_time <- Sys.time()
 
@@ -45,5 +47,7 @@ for (ag in antigens) {
   )
 }
 
-message("03_age_models.R runtime: ",
-        format(round(Sys.time() - start_time, 2)))
+message(
+  "03_age_models.R runtime: ",
+  format(round(Sys.time() - start_time, 2))
+)

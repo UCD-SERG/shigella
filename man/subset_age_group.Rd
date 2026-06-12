@@ -11,7 +11,8 @@ subset_age_group(case_data, group = c("under5", "plus5"))
 
 \item{group}{\code{"under5"} keeps \code{age < 5}; \code{"plus5"} keeps \code{age > 5}.
 \strong{Both groups exclude \code{age == 5}} (children aged exactly 5 are in neither
-stratum), matching how the shipped \verb{_under5} / \verb{_plus5} datasets were built.}
+stratum), matching how the shipped \verb{_under5} / \verb{_plus5}
+datasets were built.}
 }
 \value{
 Subset case data with attributes preserved.

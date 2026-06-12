@@ -18,7 +18,7 @@ load_inputs(c(
   "dL_combined_flexneri_sf3a_case"
 ))
 
-set.seed(9)   # preserved from manuscript4.qmd
+set.seed(9) # preserved from manuscript4.qmd
 
 start_time <- Sys.time()
 
@@ -26,5 +26,7 @@ start_time <- Sys.time()
 fit_and_save(dL_combined_flexneri_sf2a_case, "combined_flexneri_sf2a", settings = mcmc_main)
 fit_and_save(dL_combined_flexneri_sf3a_case, "combined_flexneri_sf3a", settings = mcmc_main)
 
-message("04_combined_flexneri_models.R runtime: ",
-        format(round(Sys.time() - start_time, 2)))
+message(
+  "04_combined_flexneri_models.R runtime: ",
+  format(round(Sys.time() - start_time, 2))
+)

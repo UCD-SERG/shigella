@@ -7,8 +7,11 @@
 #' @export
 fmt_mci <- function(med, lo, hi, digits = 2, sci = FALSE) {
   f <- function(x) {
-    if (sci) formatC(x, format = "e", digits = digits)
-    else     formatC(x, format = "f", digits = digits)
+    if (sci) {
+      formatC(x, format = "e", digits = digits)
+    } else {
+      formatC(x, format = "f", digits = digits)
+    }
   }
   sprintf("%s (%s\u2013%s)", f(med), f(lo), f(hi))
 }

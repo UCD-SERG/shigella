@@ -9,7 +9,8 @@ table1_study_population <- function(tab1_dat) {
       "infecting_serotype", "age", "age_group", "sex",
       "diarrhea_blood_mucus", "watery_diarrhea", "fever", "muac_cm",
       "hospital_stay_hours", "durdia_hours", "n_visits", "followup_days",
-      "completed_followup") |>
+      "completed_followup"
+    ) |>
     gtsummary::tbl_summary(
       by = "infecting_serotype",
       type = list(sex ~ "dichotomous"),
@@ -18,7 +19,8 @@ table1_study_population <- function(tab1_dat) {
         gtsummary::all_continuous() ~ "{median} ({p25}\u2013{p75})",
         hospital_stay_hours ~ "{median} ({min}\u2013{max})",
         followup_days ~ "{median} ({min}\u2013{max})",
-        gtsummary::all_categorical() ~ "{n} ({p}%)"),
+        gtsummary::all_categorical() ~ "{n} ({p}%)"
+      ),
       digits = gtsummary::all_continuous() ~ 1,
       missing = "no",
       label = list(
@@ -33,7 +35,9 @@ table1_study_population <- function(tab1_dat) {
         durdia_hours ~ "Diarrhea duration prior to presentation (hours)",
         n_visits ~ "Samples per participant",
         followup_days ~ "Follow-up duration, days",
-        completed_followup ~ "Completed follow-up (\u22654 visits and \u226590 days)")) |> # nolint: line_length_linter.
+        completed_followup ~ "Completed follow-up (\u22654 visits and \u226590 days)"
+      )
+    ) |> # nolint: line_length_linter.
     gtsummary::add_overall(last = FALSE, col_label = "**Overall**") |>
     gtsummary::modify_header(label ~ "**Characteristic**") |>
     gtsummary::bold_labels() |>
@@ -51,5 +55,6 @@ table1_study_population <- function(tab1_dat) {
       "Continuous variables: median (Q1\u2013Q3) except hospital stay and follow-up: median (min\u2013max).", # nolint: line_length_linter.
       "Follow-up duration (days) computed as max(Actual day) + 2 to account for enrollment on day 2 after presentation.", # nolint: line_length_linter.
       "\"Other\" serotypes include S. boydii (n=2), S. dysenteriae (n=1), S. flexneri 1c (n=1), untypeable S. flexneri (n=2), and RLDT-positive Shigella without culture confirmation (n=1).", # nolint: line_length_linter.
-      "Not all 48 participants completed full follow-up; the \"Other\" group had shorter median follow-up (32 days) due to loss to follow-up.")) # nolint: line_length_linter.
+      "Not all 48 participants completed full follow-up; the \"Other\" group had shorter median follow-up (32 days) due to loss to follow-up."
+    )) # nolint: line_length_linter.
 }

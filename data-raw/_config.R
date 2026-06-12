@@ -8,14 +8,16 @@
 
 ## ====================== EDIT THESE AFTER DOWNLOADING DATA ====================
 ## (Ezra: point these at the raw files from SharePoint and a writable output dir.)
-raw_data_dir        <- ""   # folder containing the raw Shigella Excel files
-manuscript_data_dir <- ""   # output folder for fitted-model .rda files
+raw_data_dir <- "" # folder containing the raw Shigella Excel files
+manuscript_data_dir <- "" # output folder for fitted-model .rda files
 ## =============================================================================
 
-if (!nzchar(raw_data_dir))
+if (!nzchar(raw_data_dir)) {
   cli::cli_abort("Set {.code raw_data_dir} in {.file data-raw/_config.R}")
-if (!nzchar(manuscript_data_dir))
+}
+if (!nzchar(manuscript_data_dir)) {
   cli::cli_abort("Set {.code manuscript_data_dir} in {.file data-raw/_config.R}")
+}
 if (!dir.exists(manuscript_data_dir)) {
   dir.create(manuscript_data_dir, recursive = TRUE)
 }
@@ -30,15 +32,19 @@ if (!dir.exists(manuscript_data_dir)) {
 ##   * durdia   : DurDia_hours per CaseID -> the "_new" time shift.
 raw_files <- list(
   compiled = file.path(raw_data_dir, "3.8.2024 Compiled Shigella datav2.xlsx"),
-  metadata = file.path(raw_data_dir,
-                       "Additional metadata for Luminex sample set 10.28.2024.xlsx"),
-  durdia   = file.path(raw_data_dir,
-                       "Duration of diarrhea prior to presentation.xlsx")
+  metadata = file.path(
+    raw_data_dir,
+    "Additional metadata for Luminex sample set 10.28.2024.xlsx"
+  ),
+  durdia = file.path(
+    raw_data_dir,
+    "Duration of diarrhea prior to presentation.xlsx"
+  )
 )
 raw_sheets <- list(
-  compiled = "Compiled",              # confirm against the workbook
-  metadata = "Metadata",              # confirm (Table 1 only)
-  durdia   = "Duration of symptoms"   # [CONFIRMED] cols: CaseID + DurDia_hours (n=48)
+  compiled = "Compiled", # confirm against the workbook
+  metadata = "Metadata", # confirm (Table 1 only)
+  durdia   = "Duration of symptoms" # [CONFIRMED] cols: CaseID + DurDia_hours (n=48)
 )
 
 ## ---- MCMC settings ----------------------------------------------------------
@@ -73,11 +79,15 @@ prior_settings <- list(
 ## diffuse = prec/4 (wider), informative = prec*4 (tighter).
 define_prior_configs <- function(base = prior_settings) {
   list(
-    primary     = utils::modifyList(base, list(label = "Primary")),
-    diffuse     = utils::modifyList(base, list(label = "Diffuse",
-                                               prec_hyp_param = base$prec_hyp_param / 4)),
-    informative = utils::modifyList(base, list(label = "Informative",
-                                               prec_hyp_param = base$prec_hyp_param * 4))
+    primary = utils::modifyList(base, list(label = "Primary")),
+    diffuse = utils::modifyList(base, list(
+      label = "Diffuse",
+      prec_hyp_param = base$prec_hyp_param / 4
+    )),
+    informative = utils::modifyList(base, list(
+      label = "Informative",
+      prec_hyp_param = base$prec_hyp_param * 4
+    ))
   )
 }
 
@@ -103,32 +113,33 @@ define_prior_configs <- function(base = prior_settings) {
 fit_and_save <- function(data,
                          name,
                          object_name = name,
-                         settings    = mcmc_main,
-                         priors      = prior_settings,
-                         dir         = manuscript_data_dir,
-                         with_post   = TRUE) {
-
+                         settings = mcmc_main,
+                         priors = prior_settings,
+                         dir = manuscript_data_dir,
+                         with_post = TRUE) {
   obj <- run_mod_pop(
-    data     = data,
+    data = data,
     file_mod = serodynamics_example("model.jags"),
-    nchain   = settings$nchain,
-    nadapt   = settings$nadapt,
-    nburn    = settings$nburn,
-    nmc      = settings$nmc,
-    niter    = settings$niter,
-    mu_hyp_param        = priors$mu_hyp_param,
-    prec_hyp_param      = priors$prec_hyp_param,
-    omega_param         = priors$omega_param,
-    wishdf_param        = priors$wishdf_param,
+    nchain = settings$nchain,
+    nadapt = settings$nadapt,
+    nburn = settings$nburn,
+    nmc = settings$nmc,
+    niter = settings$niter,
+    mu_hyp_param = priors$mu_hyp_param,
+    prec_hyp_param = priors$prec_hyp_param,
+    omega_param = priors$omega_param,
+    wishdf_param = priors$wishdf_param,
     prec_logy_hyp_param = priors$prec_logy_hyp_param,
     with_post = with_post
   )
 
   assign(object_name, obj)
-  save(list = object_name,
-       file = file.path(dir, paste0(name, ".rda")),
-       compress = "xz",
-       envir = environment())
+  save(
+    list = object_name,
+    file = file.path(dir, paste0(name, ".rda")),
+    compress = "xz",
+    envir = environment()
+  )
   cli::cli_inform("saved: {.file {file.path(dir, paste0(name, '.rda'))}}")
   invisible(obj)
 }
@@ -137,12 +148,13 @@ fit_and_save <- function(data,
 ## Each <stem>.rda (written by 00_build_case_data.R) contains one object named
 ## <stem>; this loads them into the caller's environment.
 load_inputs <- function(stems, dir = manuscript_data_dir,
-                         envir = parent.frame()) {
+                        envir = parent.frame()) {
   for (s in stems) {
     f <- file.path(dir, paste0(s, ".rda"))
     if (!file.exists(f)) {
       cli::cli_abort(c("Missing input: {.file {f}}",
-                       "i" = "Run {.file data-raw/00_build_case_data.R} first."))
+        "i" = "Run {.file data-raw/00_build_case_data.R} first."
+      ))
     }
     load(f, envir = envir)
   }

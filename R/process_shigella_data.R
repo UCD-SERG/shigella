@@ -46,7 +46,6 @@ process_shigella_data <- function(data,
                                   antigen,
                                   study_filter = "SOSAR",
                                   as_case = TRUE) {
-
   antigen_col <- rlang::ensym(antigen)
 
   out <- data |>

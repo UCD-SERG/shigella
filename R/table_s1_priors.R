@@ -9,14 +9,14 @@
 #' @export
 table_s1_priors <- function() {
   table_s1 <- tibble::tribble(
-    ~Level,            ~Parameter,       ~Distribution,        ~Hyperparameters,               ~Interpretation, # nolint: line_length_linter.
-    "Population mean", "\u03BC(log y\u2080)",     "Normal(m, \u03C4\u207B\u00B9)", "m = 8, \u03C4 = 0.25",         "Baseline MFI ~3000 (exp(8))", # nolint: line_length_linter.
-    "Population mean", "\u03BC(log y\u2081)",     "Normal(m, \u03C4\u207B\u00B9)", "m = 10, \u03C4 = 1\u00D710\u207B\u2074", "Peak MFI ~22000 (exp(10))", # nolint: line_length_linter.
-    "Population mean", "\u03BC(log t\u2081)",     "Normal(m, \u03C4\u207B\u00B9)", "m = 0.5, \u03C4 = 0.5",        "Time to peak ~1.6 days (exp(0.5))", # nolint: line_length_linter.
-    "Population mean", "\u03BC(log \u03B1)",      "Normal(m, \u03C4\u207B\u00B9)", "m = -4, \u03C4 = 0.001",       "Decay rate ~0.018 yr\u207B\u00B9 (exp(-4))", # nolint: line_length_linter.
-    "Population mean", "\u03BC(log(\u03C1-1))",   "Normal(m, \u03C4\u207B\u00B9)", "m = -1, \u03C4 = 0.25",        "Decay shape ~1.37 (1+exp(-1))", # nolint: line_length_linter.
-    "Covariance",      "\u03A3\u2C7C\u207B\u00B9", "Wishart(\u03A9, \u03BD)",     "\u03A9 = diag(1,1,1,1,1), \u03BD = 8", "5\u00D75 precision; weakly informative", # nolint: line_length_linter.
-    "Measurement",     "\u03C4\u2C7C (precision)", "Gamma(a, b)",                "a = 1, b = 1",                 "Observation noise; weakly informative" # nolint: line_length_linter.
+    ~Level, ~Parameter, ~Distribution, ~Hyperparameters, ~Interpretation, # nolint: line_length_linter.
+    "Population mean", "\u03BC(log y\u2080)", "Normal(m, \u03C4\u207B\u00B9)", "m = 8, \u03C4 = 0.25", "Baseline MFI ~3000 (exp(8))", # nolint: line_length_linter.
+    "Population mean", "\u03BC(log y\u2081)", "Normal(m, \u03C4\u207B\u00B9)", "m = 10, \u03C4 = 1\u00D710\u207B\u2074", "Peak MFI ~22000 (exp(10))", # nolint: line_length_linter.
+    "Population mean", "\u03BC(log t\u2081)", "Normal(m, \u03C4\u207B\u00B9)", "m = 0.5, \u03C4 = 0.5", "Time to peak ~1.6 days (exp(0.5))", # nolint: line_length_linter.
+    "Population mean", "\u03BC(log \u03B1)", "Normal(m, \u03C4\u207B\u00B9)", "m = -4, \u03C4 = 0.001", "Decay rate ~0.018 yr\u207B\u00B9 (exp(-4))", # nolint: line_length_linter.
+    "Population mean", "\u03BC(log(\u03C1-1))", "Normal(m, \u03C4\u207B\u00B9)", "m = -1, \u03C4 = 0.25", "Decay shape ~1.37 (1+exp(-1))", # nolint: line_length_linter.
+    "Covariance", "\u03A3\u2C7C\u207B\u00B9", "Wishart(\u03A9, \u03BD)", "\u03A9 = diag(1,1,1,1,1), \u03BD = 8", "5\u00D75 precision; weakly informative", # nolint: line_length_linter.
+    "Measurement", "\u03C4\u2C7C (precision)", "Gamma(a, b)", "a = 1, b = 1", "Observation noise; weakly informative" # nolint: line_length_linter.
   )
 
   table_s1 |>

@@ -14,17 +14,24 @@
 get_mae <- function(model, dataset, antigen_label, iso, scale = "log") {
   all_ids <- unique(as.character(dataset$id))
 
-  tryCatch({
-    compute_residual_metrics(
-      model = model, dataset = dataset, ids = all_ids,
-      antigen_iso = iso, scale = scale, summary_level = "id_antigen"
-    ) |>
-      dplyr::mutate(sid = as.character(.data$id),
-                    antigen = antigen_label, Iso_type = iso, mae = .data$MAE) |>
-      dplyr::select("sid", "antigen", "Iso_type", "mae")
-  }, error = function(e) {
-    cli::cli_inform("Skipped: {antigen_label} {iso} - {e$message}")
-    tibble::tibble(sid = character(), antigen = character(),
-                   Iso_type = character(), mae = numeric())
-  })
+  tryCatch(
+    {
+      compute_residual_metrics(
+        model = model, dataset = dataset, ids = all_ids,
+        antigen_iso = iso, scale = scale, summary_level = "id_antigen"
+      ) |>
+        dplyr::mutate(
+          sid = as.character(.data$id),
+          antigen = antigen_label, Iso_type = iso, mae = .data$MAE
+        ) |>
+        dplyr::select("sid", "antigen", "Iso_type", "mae")
+    },
+    error = function(e) {
+      cli::cli_inform("Skipped: {antigen_label} {iso} - {e$message}")
+      tibble::tibble(
+        sid = character(), antigen = character(),
+        Iso_type = character(), mae = numeric()
+      )
+    }
+  )
 }

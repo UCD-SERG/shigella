@@ -13,16 +13,26 @@ get_observed <- function(dataset, sid, iso) {
   id_col <- if ("id" %in% names(dataset)) "id" else if ("sid" %in% names(dataset)) "sid" else NA_character_ # nolint: line_length_linter.
   if (is.na(id_col)) cli::cli_abort("Dataset has no {.code id} or {.code sid} column.") # nolint: line_length_linter.
 
-  iso_col <- if ("antigen_iso"  %in% names(dataset)) "antigen_iso" else
-             if ("isotype_name" %in% names(dataset)) "isotype_name" else
-             if ("Iso_type"     %in% names(dataset)) "Iso_type" else
-             NA_character_
+  iso_col <- if ("antigen_iso" %in% names(dataset)) {
+    "antigen_iso"
+  } else if ("isotype_name" %in% names(dataset)) {
+    "isotype_name"
+  } else if ("Iso_type" %in% names(dataset)) {
+    "Iso_type"
+  } else {
+    NA_character_
+  }
   if (is.na(iso_col)) cli::cli_abort("Dataset has no isotype column.")
 
-  time_col <- if ("timeindays" %in% names(dataset)) "timeindays" else
-              if ("Actual day" %in% names(dataset)) "Actual day" else
-              if ("timepoint"  %in% names(dataset)) "timepoint" else
-              NA_character_
+  time_col <- if ("timeindays" %in% names(dataset)) {
+    "timeindays"
+  } else if ("Actual day" %in% names(dataset)) {
+    "Actual day"
+  } else if ("timepoint" %in% names(dataset)) {
+    "timepoint"
+  } else {
+    NA_character_
+  }
   if (is.na(time_col)) cli::cli_abort("Dataset has no time column.")
 
   val_col <- if ("result" %in% names(dataset)) {

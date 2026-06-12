@@ -16,7 +16,8 @@ figure_individual_comparison(
 \code{combined_sf3a} fitted models.}
 
 \item{datasets}{Named list with \code{dL_clean_sf2a}, \code{dL_serotype_sf2a},
-\code{dL_clean_sonnei}, \code{dL_serotype_sonnei}, \code{dL_clean_sf3a}, \code{dL_serotype_sf3a},
+\code{dL_clean_sonnei}, \code{dL_serotype_sonnei}, \code{dL_clean_sf3a},
+\code{dL_serotype_sf3a},
 \code{dL_combined_sf3a} case data.}
 
 \item{sids}{Length-3 character vector of representative subject ids
@@ -27,4 +28,7 @@ A patchwork figure.
 }
 \description{
 Main-text individual model-comparison figure (Sf2a / Sonnei / Sf3a)
+}
+\note{
+The default sids are fixed representative subjects from the Dhaka cohort.
 }

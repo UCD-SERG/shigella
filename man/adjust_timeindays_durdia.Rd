@@ -40,7 +40,8 @@ that preceded hospital presentation, moving \code{t = 0} closer to the true onse
 of infection.
 }
 \details{
-The transformation (validated against \code{dL_clean_sf2a} vs \code{dL_clean_sf2a_new}):
+The transformation (validated against \code{dL_clean_sf2a} vs
+\code{dL_clean_sf2a_new}):
 \enumerate{
 \item merge \code{DurDia_hours} onto the case data by participant id (constant
 per participant);

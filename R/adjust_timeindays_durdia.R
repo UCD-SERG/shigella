@@ -35,7 +35,6 @@ adjust_timeindays_durdia <- function(case_data,
                                      id_col = "id",
                                      durdia_id_col = "CaseID",
                                      hours_col = "DurDia_hours") {
-
   durdia_small <- durdia |>
     dplyr::transmute(
       !!id_col := .data[[durdia_id_col]],

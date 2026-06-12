@@ -7,8 +7,9 @@
 select_best_models(mae_overall, mae_serospec = NULL, mae_combined = NULL)
 }
 \arguments{
-\item{mae_overall, mae_serospec, mae_combined}{\code{get_mae()} tibbles (combine the
-per-antigen calls upstream). \code{NULL} for an unavailable model class.}
+\item{mae_overall, mae_serospec, mae_combined}{\code{get_mae()} tibbles
+(combine the per-antigen calls upstream). \code{NULL} for an unavailable
+model class.}
 }
 \value{
 Tibble \verb{antigen, Iso_type, best_model}.

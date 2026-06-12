@@ -6,7 +6,7 @@
 table3_age_stratified <- function(model_under5, model_plus5) {
   age_summary <- dplyr::bind_rows(
     dplyr::mutate(extract_mu_draws(model_under5, "IpaB"), age_group = "<5"),
-    dplyr::mutate(extract_mu_draws(model_plus5,  "IpaB"), age_group = "\u22655")
+    dplyr::mutate(extract_mu_draws(model_plus5, "IpaB"), age_group = "\u22655")
   ) |>
     dplyr::mutate(Iso_type = factor(.data$Iso_type, levels = c("IgG", "IgA"))) |> # nolint: line_length_linter.
     add_natural_scale(alpha_unit = "per_year") |>
@@ -17,11 +17,12 @@ table3_age_stratified <- function(model_under5, model_plus5) {
     dplyr::arrange(.data$Iso_type, .data$age_group) |>
     dplyr::mutate(
       `Age group` = .data$age_group,
-      y0    = fmt_mci(.data$y0_med, .data$y0_lo, .data$y0_hi, digits = 2),
-      y1    = fmt_mci(.data$y1_med, .data$y1_lo, .data$y1_hi, digits = 2),
-      t1    = fmt_mci(.data$t1_med, .data$t1_lo, .data$t1_hi, digits = 1),
+      y0 = fmt_mci(.data$y0_med, .data$y0_lo, .data$y0_hi, digits = 2),
+      y1 = fmt_mci(.data$y1_med, .data$y1_lo, .data$y1_hi, digits = 2),
+      t1 = fmt_mci(.data$t1_med, .data$t1_lo, .data$t1_hi, digits = 1),
       alpha = fmt_mci(.data$alpha_med, .data$alpha_lo, .data$alpha_hi, digits = 8), # nolint: line_length_linter.
-      rho   = fmt_mci(.data$rho_med, .data$rho_lo, .data$rho_hi, digits = 2)) |>
+      rho = fmt_mci(.data$rho_med, .data$rho_lo, .data$rho_hi, digits = 2)
+    ) |>
     dplyr::select("Biomarker", "Age group", "y0", "y1", "t1", "alpha", "rho")
 
   ft <- age_print |>
@@ -36,10 +37,12 @@ table3_age_stratified <- function(model_under5, model_plus5) {
     flextable::set_table_properties(layout = "autofit", width = 1) |>
     flextable::set_caption(paste0(
       "Age-stratified population-level antibody kinetic parameters for IpaB ",
-      "from the overall hierarchical model.")) |>
+      "from the overall hierarchical model."
+    )) |>
     flextable::add_footer_lines(values = c(
       "Values are posterior medians (95% credible intervals) for population mean (mu.par) draws.", # nolint: line_length_linter.
-      "Age stratification shown only for IpaB (conserved antigen); O-antigen responses require serotype conditioning, producing subgroups too small for stable estimation.")) |> # nolint: line_length_linter.
+      "Age stratification shown only for IpaB (conserved antigen); O-antigen responses require serotype conditioning, producing subgroups too small for stable estimation."
+    )) |> # nolint: line_length_linter.
     flextable::fontsize(size = 6, part = "footer") |>
     flextable::italic(part = "footer") |>
     flextable::color(color = "gray40", part = "footer")

@@ -22,9 +22,11 @@ table2_kinetic_params(
 
 \item{models_overall}{Named list \code{antigen = sr_model} for the overall models.}
 
-\item{models_serospec}{Named list \code{antigen = sr_model} for the serotype-specific models.}
+\item{models_serospec}{Named list \code{antigen = sr_model} for the
+serotype-specific models.}
 
-\item{models_combined}{Named list \code{antigen = sr_model} for the combined-flexneri models.}
+\item{models_combined}{Named list \code{antigen = sr_model} for the
+combined-flexneri models.}
 }
 \value{
 A flextable.

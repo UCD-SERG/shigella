@@ -14,8 +14,10 @@ predict_posterior_at_times <- function(model, ids, antigen_iso, times) {
     dplyr::filter(.data$Subject %in% ids, .data$Iso_type == antigen_iso)
 
   param_medians_wide <- sr_model_sub |>
-    dplyr::select(dplyr::all_of(c("Chain", "Iteration", "Iso_type",
-                                  "Parameter", "value", "Subject"))) |>
+    dplyr::select(dplyr::all_of(c(
+      "Chain", "Iteration", "Iso_type",
+      "Parameter", "value", "Subject"
+    ))) |>
     tidyr::pivot_wider(names_from = "Parameter", values_from = "value") |>
     dplyr::arrange(.data$Chain, .data$Iteration) |>
     dplyr::mutate(
@@ -27,19 +29,24 @@ predict_posterior_at_times <- function(model, ids, antigen_iso, times) {
 
   if (!"sample_id" %in% names(param_medians_wide)) {
     param_medians_wide <- dplyr::mutate(param_medians_wide,
-                                        sample_id = dplyr::row_number())
+      sample_id = dplyr::row_number()
+    )
   }
 
   dt1 <- data.frame(t = times) |>
     dplyr::mutate(idx = dplyr::row_number()) |>
-    tidyr::pivot_wider(names_from = "idx", values_from = "t",
-                       names_prefix = "time") |>
+    tidyr::pivot_wider(
+      names_from = "idx", values_from = "t",
+      names_prefix = "time"
+    ) |>
     dplyr::slice(rep(seq_len(dplyr::n()), each = nrow(param_medians_wide)))
 
   cbind(param_medians_wide, dt1) |>
     tidyr::pivot_longer(cols = dplyr::starts_with("time"), values_to = "t") |>
     dplyr::select(-dplyr::all_of("name")) |>
     # TODO(serodynamics export): see REPRODUCIBILITY.md "Known tech debt: serodynamics internal calls".
-    dplyr::mutate(res = serodynamics:::ab(.data$t, .data$y0, .data$y1,
-                                          .data$t1, .data$alpha, .data$shape))
+    dplyr::mutate(res = serodynamics:::ab(
+      .data$t, .data$y0, .data$y1,
+      .data$t1, .data$alpha, .data$shape
+    ))
 }

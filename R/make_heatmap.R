@@ -8,18 +8,28 @@
 #' @export
 make_heatmap <- function(data, iso_name, show_y_axis = TRUE,
                          y_label_lookup = attr(data, "y_label_lookup")) {
-  ggplot2::ggplot(data,
-    ggplot2::aes(x = .data$timepoint_label, y = .data$row_id,
-                 fill = .data$result + 0.01)) +
+  ggplot2::ggplot(
+    data,
+    ggplot2::aes(
+      x = .data$timepoint_label, y = .data$row_id,
+      fill = .data$result + 0.01
+    )
+  ) +
     ggplot2::geom_tile(color = "white", linewidth = 0.05) +
-    ggplot2::facet_grid(serotype ~ antigen_clean, scales = "free_y",
-                        space = "free_y", switch = "y") +
-    ggplot2::scale_fill_viridis_c(option = "plasma",
-                                  name = paste0(iso_name, "\nMFI"),
-                                  labels = scales::label_number()) +
+    ggplot2::facet_grid(serotype ~ antigen_clean,
+      scales = "free_y",
+      space = "free_y", switch = "y"
+    ) +
+    ggplot2::scale_fill_viridis_c(
+      option = "plasma",
+      name = paste0(iso_name, "\nMFI"),
+      labels = scales::label_number()
+    ) +
     ggplot2::scale_y_discrete(labels = y_label_lookup) +
-    ggplot2::labs(title = iso_name, x = "Timepoint",
-                  y = if (show_y_axis) "Participants (age)" else NULL) +
+    ggplot2::labs(
+      title = iso_name, x = "Timepoint",
+      y = if (show_y_axis) "Participants (age)" else NULL
+    ) +
     ggplot2::theme_bw(base_size = 10) +
     ggplot2::theme(
       plot.title         = ggplot2::element_text(size = 14, face = "bold", hjust = 0.5), # nolint: line_length_linter.

@@ -24,7 +24,9 @@ figure_with_individuals(
 
 \item{antigen_label}{Panel title.}
 
-\item{t_grid, line_color, ribbon_alpha, individual_alpha, individual_color, log_y, xlim}{Styling controls.}
+\item{t_grid, line_color, ribbon_alpha, individual_alpha}{Styling controls.}
+
+\item{individual_color, log_y, xlim}{Styling controls.}
 }
 \value{
 A ggplot.

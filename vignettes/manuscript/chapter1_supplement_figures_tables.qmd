@@ -31,7 +31,7 @@ HOW TO RUN
 #| message: false
 
 ## ---- EDIT THIS -----------------------------------------------------------
-rda_dir <- "~/Data/Manuscript"   # *.rda objects + sensitivity_*.rda live here
+rda_dir <- "~/Data/Manuscript" # *.rda objects + sensitivity_*.rda live here
 ## --------------------------------------------------------------------------
 ```
 
@@ -52,12 +52,12 @@ library(shigella)
 supp_rda <- c(
   # overall + serotype + combined fits (sum_* , mae_* , S5 PPC, S6 forest, S3)
   "overall_IpaB_pop_6", "overall_Sf2a_pop_6", "overall_Sf3a_pop_6",
-  "overall_Sf6_pop_6",  "overall_Sonnei_pop_6",
+  "overall_Sf6_pop_6", "overall_Sonnei_pop_6",
   "serotype_sf2a_3", "serotype_sf3a_3", "serotype_sonnei_3",
   "combined_flexneri_sf2a", "combined_flexneri_sf3a",
   # case data, DurDia-adjusted (S5 PPC raw_dat + MAE overall + S3 overall data)
   "dL_clean_Ipab_new", "dL_clean_sf2a_new", "dL_clean_sf3a_new",
-  "dL_clean_sf6_new",  "dL_clean_sonnei_new",
+  "dL_clean_sf6_new", "dL_clean_sonnei_new",
   # case data, base/original times (S3 Fig observed points)
   "dL_clean_Ipab", "dL_clean_sf2a", "dL_clean_sf3a", "dL_clean_sf6", "dL_clean_sonnei",
   # serotype case data (MAE serospec + S3 table serotype data + S3 Fig)
@@ -66,9 +66,9 @@ supp_rda <- c(
   "dL_combined_flexneri_sf2a_case", "dL_combined_flexneri_sf3a_case",
   # age-stratified case data, adjusted (S1 / S2 Fig spaghetti)
   "dL_clean_Ipab_new_under5", "dL_clean_sf2a_new_under5", "dL_clean_sf3a_new_under5",
-  "dL_clean_sf6_new_under5",  "dL_clean_sonnei_new_under5",
-  "dL_clean_Ipab_new_plus5",  "dL_clean_sf2a_new_plus5",  "dL_clean_sf3a_new_plus5",
-  "dL_clean_sf6_new_plus5",   "dL_clean_sonnei_new_plus5"
+  "dL_clean_sf6_new_under5", "dL_clean_sonnei_new_under5",
+  "dL_clean_Ipab_new_plus5", "dL_clean_sf2a_new_plus5", "dL_clean_sf3a_new_plus5",
+  "dL_clean_sf6_new_plus5", "dL_clean_sonnei_new_plus5"
 )
 
 for (nm in supp_rda) {
@@ -83,29 +83,38 @@ for (nm in supp_rda) {
 
 sum_overall <- pop_param_summary(list(
   IpaB = overall_IpaB_pop_6, Sf2a = overall_Sf2a_pop_6, Sf3a = overall_Sf3a_pop_6,
-  Sf6  = overall_Sf6_pop_6,  Sonnei = overall_Sonnei_pop_6))
+  Sf6 = overall_Sf6_pop_6, Sonnei = overall_Sonnei_pop_6
+))
 sum_serospec <- pop_param_summary(list(
-  Sf2a = serotype_sf2a_3, Sf3a = serotype_sf3a_3, Sonnei = serotype_sonnei_3))
+  Sf2a = serotype_sf2a_3, Sf3a = serotype_sf3a_3, Sonnei = serotype_sonnei_3
+))
 sum_combined <- pop_param_summary(list(
-  Sf2a = combined_flexneri_sf2a, Sf3a = combined_flexneri_sf3a))
+  Sf2a = combined_flexneri_sf2a, Sf3a = combined_flexneri_sf3a
+))
 
 isos <- c("IgG", "IgA")
-mae_overall <- dplyr::bind_rows(lapply(isos, function(io) dplyr::bind_rows(
-  get_mae(overall_IpaB_pop_6,   dL_clean_Ipab_new,   "IpaB",   io),
-  get_mae(overall_Sf2a_pop_6,   dL_clean_sf2a_new,   "Sf2a",   io),
-  get_mae(overall_Sf3a_pop_6,   dL_clean_sf3a_new,   "Sf3a",   io),
-  get_mae(overall_Sf6_pop_6,    dL_clean_sf6_new,    "Sf6",    io),
-  get_mae(overall_Sonnei_pop_6, dL_clean_sonnei_new, "Sonnei", io)
-)))
-mae_serospec <- dplyr::bind_rows(lapply(isos, function(io) dplyr::bind_rows(
-  get_mae(serotype_sf2a_3,   dL_serotype_sf2a,   "Sf2a",   io),
-  get_mae(serotype_sf3a_3,   dL_serotype_sf3a,   "Sf3a",   io),
-  get_mae(serotype_sonnei_3, dL_serotype_sonnei, "Sonnei", io)
-)))
-mae_combined <- dplyr::bind_rows(lapply(isos, function(io) dplyr::bind_rows(
-  get_mae(combined_flexneri_sf2a, dL_combined_flexneri_sf2a_case, "Sf2a", io),
-  get_mae(combined_flexneri_sf3a, dL_combined_flexneri_sf3a_case, "Sf3a", io)
-)))
+mae_overall <- dplyr::bind_rows(lapply(isos, function(io) {
+  dplyr::bind_rows(
+    get_mae(overall_IpaB_pop_6, dL_clean_Ipab_new, "IpaB", io),
+    get_mae(overall_Sf2a_pop_6, dL_clean_sf2a_new, "Sf2a", io),
+    get_mae(overall_Sf3a_pop_6, dL_clean_sf3a_new, "Sf3a", io),
+    get_mae(overall_Sf6_pop_6, dL_clean_sf6_new, "Sf6", io),
+    get_mae(overall_Sonnei_pop_6, dL_clean_sonnei_new, "Sonnei", io)
+  )
+}))
+mae_serospec <- dplyr::bind_rows(lapply(isos, function(io) {
+  dplyr::bind_rows(
+    get_mae(serotype_sf2a_3, dL_serotype_sf2a, "Sf2a", io),
+    get_mae(serotype_sf3a_3, dL_serotype_sf3a, "Sf3a", io),
+    get_mae(serotype_sonnei_3, dL_serotype_sonnei, "Sonnei", io)
+  )
+}))
+mae_combined <- dplyr::bind_rows(lapply(isos, function(io) {
+  dplyr::bind_rows(
+    get_mae(combined_flexneri_sf2a, dL_combined_flexneri_sf2a_case, "Sf2a", io),
+    get_mae(combined_flexneri_sf3a, dL_combined_flexneri_sf3a_case, "Sf3a", io)
+  )
+}))
 ```
 
 # S1 Table — Prior distributions
@@ -240,7 +249,7 @@ figure_s4_mae_slopegraph(mae_overall, mae_serospec, mae_combined)
 #| fig-height: 4.5
 #| message: false
 #| warning: false
-posterior_pred(overall_IpaB_pop_6,   dL_clean_Ipab_new,   by_antigen = TRUE, n_sim = 25, antigen_name = "IpaB")
+posterior_pred(overall_IpaB_pop_6, dL_clean_Ipab_new, by_antigen = TRUE, n_sim = 25, antigen_name = "IpaB")
 ```
 
 ```{r}
@@ -249,7 +258,7 @@ posterior_pred(overall_IpaB_pop_6,   dL_clean_Ipab_new,   by_antigen = TRUE, n_s
 #| fig-height: 4.5
 #| message: false
 #| warning: false
-posterior_pred(overall_Sf2a_pop_6,   dL_clean_sf2a_new,   by_antigen = TRUE, n_sim = 25, antigen_name = "Sf2a")
+posterior_pred(overall_Sf2a_pop_6, dL_clean_sf2a_new, by_antigen = TRUE, n_sim = 25, antigen_name = "Sf2a")
 ```
 
 ```{r}
@@ -258,7 +267,7 @@ posterior_pred(overall_Sf2a_pop_6,   dL_clean_sf2a_new,   by_antigen = TRUE, n_s
 #| fig-height: 4.5
 #| message: false
 #| warning: false
-posterior_pred(overall_Sf3a_pop_6,   dL_clean_sf3a_new,   by_antigen = TRUE, n_sim = 25, antigen_name = "Sf3a")
+posterior_pred(overall_Sf3a_pop_6, dL_clean_sf3a_new, by_antigen = TRUE, n_sim = 25, antigen_name = "Sf3a")
 ```
 
 ```{r}
@@ -267,7 +276,7 @@ posterior_pred(overall_Sf3a_pop_6,   dL_clean_sf3a_new,   by_antigen = TRUE, n_s
 #| fig-height: 4.5
 #| message: false
 #| warning: false
-posterior_pred(overall_Sf6_pop_6,    dL_clean_sf6_new,    by_antigen = TRUE, n_sim = 25, antigen_name = "Sf6")
+posterior_pred(overall_Sf6_pop_6, dL_clean_sf6_new, by_antigen = TRUE, n_sim = 25, antigen_name = "Sf6")
 ```
 
 ```{r}

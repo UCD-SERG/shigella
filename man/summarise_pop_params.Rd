@@ -10,7 +10,8 @@ summarise_pop_params(df, group_vars = c("antigen", "Iso_type"))
 \item{df}{Output of \code{\link[=add_natural_scale]{add_natural_scale()}}.}
 
 \item{group_vars}{Character vector of grouping columns
-(e.g. \code{c("antigen", "Iso_type")}, or \code{c("age_group", "antigen", "Iso_type")}).}
+(e.g. \code{c("antigen", "Iso_type")}, or
+\code{c("age_group", "antigen", "Iso_type")}).}
 }
 \value{
 One row per group with \verb{\{y0,y1,t1,alpha,rho\}_\{med,lo,hi\}} columns.

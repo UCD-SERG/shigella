@@ -32,11 +32,13 @@ set.seed(7)
 start_time <- Sys.time()
 
 ## Order matches manuscript.qmd: IpaB -> Sf2a -> Sonnei -> Sf6 -> Sf3a
-fit_and_save(dL_clean_Ipab_new,   "overall_IpaB_pop_6",   settings = mcmc_main)
-fit_and_save(dL_clean_sf2a_new,   "overall_Sf2a_pop_6",   settings = mcmc_main)
+fit_and_save(dL_clean_Ipab_new, "overall_IpaB_pop_6", settings = mcmc_main)
+fit_and_save(dL_clean_sf2a_new, "overall_Sf2a_pop_6", settings = mcmc_main)
 fit_and_save(dL_clean_sonnei_new, "overall_Sonnei_pop_6", settings = mcmc_main)
-fit_and_save(dL_clean_sf6_new,    "overall_Sf6_pop_6",    settings = mcmc_main)
-fit_and_save(dL_clean_sf3a_new,   "overall_Sf3a_pop_6",   settings = mcmc_main)
+fit_and_save(dL_clean_sf6_new, "overall_Sf6_pop_6", settings = mcmc_main)
+fit_and_save(dL_clean_sf3a_new, "overall_Sf3a_pop_6", settings = mcmc_main)
 
-message("01_overall_models.R runtime: ",
-        format(round(Sys.time() - start_time, 2)))
+message(
+  "01_overall_models.R runtime: ",
+  format(round(Sys.time() - start_time, 2))
+)

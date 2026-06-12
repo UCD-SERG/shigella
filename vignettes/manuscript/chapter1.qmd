@@ -93,12 +93,15 @@ format:
 #| message: false
 
 ## ---- EDIT THESE ----------------------------------------------------------
-rda_dir <- "~/Data/Manuscript"   # folder holding the regenerated *.rda
+rda_dir <- "~/Data/Manuscript" # folder holding the regenerated *.rda
 
 ## (Table 1 + Figure 1 only) raw Excel inputs. Leave as-is to skip those two.
-raw_compiled <- "~/path/to/3.8.2024 Compiled Shigella datav2.xlsx";  sheet_compiled <- "Compiled"
-raw_metadata <- "~/path/to/Additional metadata for Luminex sample set 10.28.2024.xlsx";  sheet_metadata <- "Metadata"
-raw_durdia   <- "~/path/to/Duration of diarrhea prior to presentation.xlsx";     sheet_durdia   <- "Duration of symptoms"
+raw_compiled <- "~/path/to/3.8.2024 Compiled Shigella datav2.xlsx"
+sheet_compiled <- "Compiled"
+raw_metadata <- "~/path/to/Additional metadata for Luminex sample set 10.28.2024.xlsx"
+sheet_metadata <- "Metadata"
+raw_durdia <- "~/path/to/Duration of diarrhea prior to presentation.xlsx"
+sheet_durdia <- "Duration of symptoms"
 ## --------------------------------------------------------------------------
 ```
 
@@ -122,7 +125,7 @@ library(shigella)
 main_rda <- c(
   # overall fits
   "overall_IpaB_pop_6", "overall_Sf2a_pop_6", "overall_Sf3a_pop_6",
-  "overall_Sf6_pop_6",  "overall_Sonnei_pop_6",
+  "overall_Sf6_pop_6", "overall_Sonnei_pop_6",
   # serotype-specific fits
   "serotype_sf2a_3", "serotype_sf3a_3", "serotype_sonnei_3",
   # combined flexneri fits
@@ -131,7 +134,7 @@ main_rda <- c(
   "overall_IpaB_pop_under5", "overall_IpaB_pop_plus5",
   # case data, DurDia-adjusted (Fig 2 spaghetti carries cohort_name; MAE overall)
   "dL_clean_Ipab_new", "dL_clean_sf2a_new", "dL_clean_sf3a_new",
-  "dL_clean_sf6_new",  "dL_clean_sonnei_new",
+  "dL_clean_sf6_new", "dL_clean_sonnei_new",
   # case data, base/original times (observed points in Fig 4 / Fig 5)
   "dL_clean_Ipab", "dL_clean_sf2a", "dL_clean_sf3a", "dL_clean_sf6", "dL_clean_sonnei",
   # serotype case data (original times; MAE serospec + observed points)
@@ -145,7 +148,7 @@ for (nm in main_rda) {
 }
 
 # raw-Excel availability flags (gate Table 1 + Figure 1 only)
-have_compiled   <- file.exists(path.expand(raw_compiled))
+have_compiled <- file.exists(path.expand(raw_compiled))
 have_table1_raw <- have_compiled &&
   file.exists(path.expand(raw_metadata)) && file.exists(path.expand(raw_durdia))
 if (have_compiled) {
@@ -161,35 +164,44 @@ if (have_compiled) {
 # Population kinetic-parameter summaries (== pop_table_sum / 2 / 3 in your .qmd)
 sum_overall <- pop_param_summary(list(
   IpaB = overall_IpaB_pop_6, Sf2a = overall_Sf2a_pop_6, Sf3a = overall_Sf3a_pop_6,
-  Sf6  = overall_Sf6_pop_6,  Sonnei = overall_Sonnei_pop_6))
+  Sf6 = overall_Sf6_pop_6, Sonnei = overall_Sonnei_pop_6
+))
 
 sum_serospec <- pop_param_summary(list(
-  Sf2a = serotype_sf2a_3, Sf3a = serotype_sf3a_3, Sonnei = serotype_sonnei_3))
+  Sf2a = serotype_sf2a_3, Sf3a = serotype_sf3a_3, Sonnei = serotype_sonnei_3
+))
 
 sum_combined <- pop_param_summary(list(
-  Sf2a = combined_flexneri_sf2a, Sf3a = combined_flexneri_sf3a))
+  Sf2a = combined_flexneri_sf2a, Sf3a = combined_flexneri_sf3a
+))
 
 # Per-individual MAE for each model class (drives Table 2 best-model pick + Table 4)
 isos <- c("IgG", "IgA")
 
-mae_overall <- dplyr::bind_rows(lapply(isos, function(io) dplyr::bind_rows(
-  get_mae(overall_IpaB_pop_6,   dL_clean_Ipab_new,   "IpaB",   io),
-  get_mae(overall_Sf2a_pop_6,   dL_clean_sf2a_new,   "Sf2a",   io),
-  get_mae(overall_Sf3a_pop_6,   dL_clean_sf3a_new,   "Sf3a",   io),
-  get_mae(overall_Sf6_pop_6,    dL_clean_sf6_new,    "Sf6",    io),
-  get_mae(overall_Sonnei_pop_6, dL_clean_sonnei_new, "Sonnei", io)
-)))
+mae_overall <- dplyr::bind_rows(lapply(isos, function(io) {
+  dplyr::bind_rows(
+    get_mae(overall_IpaB_pop_6, dL_clean_Ipab_new, "IpaB", io),
+    get_mae(overall_Sf2a_pop_6, dL_clean_sf2a_new, "Sf2a", io),
+    get_mae(overall_Sf3a_pop_6, dL_clean_sf3a_new, "Sf3a", io),
+    get_mae(overall_Sf6_pop_6, dL_clean_sf6_new, "Sf6", io),
+    get_mae(overall_Sonnei_pop_6, dL_clean_sonnei_new, "Sonnei", io)
+  )
+}))
 
-mae_serospec <- dplyr::bind_rows(lapply(isos, function(io) dplyr::bind_rows(
-  get_mae(serotype_sf2a_3,   dL_serotype_sf2a,   "Sf2a",   io),
-  get_mae(serotype_sf3a_3,   dL_serotype_sf3a,   "Sf3a",   io),
-  get_mae(serotype_sonnei_3, dL_serotype_sonnei, "Sonnei", io)
-)))
+mae_serospec <- dplyr::bind_rows(lapply(isos, function(io) {
+  dplyr::bind_rows(
+    get_mae(serotype_sf2a_3, dL_serotype_sf2a, "Sf2a", io),
+    get_mae(serotype_sf3a_3, dL_serotype_sf3a, "Sf3a", io),
+    get_mae(serotype_sonnei_3, dL_serotype_sonnei, "Sonnei", io)
+  )
+}))
 
-mae_combined <- dplyr::bind_rows(lapply(isos, function(io) dplyr::bind_rows(
-  get_mae(combined_flexneri_sf2a, dL_combined_flexneri_sf2a_case, "Sf2a", io),
-  get_mae(combined_flexneri_sf3a, dL_combined_flexneri_sf3a_case, "Sf3a", io)
-)))
+mae_combined <- dplyr::bind_rows(lapply(isos, function(io) {
+  dplyr::bind_rows(
+    get_mae(combined_flexneri_sf2a, dL_combined_flexneri_sf2a_case, "Sf2a", io),
+    get_mae(combined_flexneri_sf3a, dL_combined_flexneri_sf3a_case, "Sf3a", io)
+  )
+}))
 ```
 
 # Abstract {.unnumbered}
@@ -576,13 +588,14 @@ typically completed long-term follow-up (median $\ge$ 95 days; @tbl-cohort).
 #| label: tbl-cohort
 #| tbl-cap: "**Characteristics of the longitudinal *Shigella* cohort.** Participant demographics and longitudinal sampling characteristics are shown overall and stratified by infecting serotype. Values summarize age at enrollment, number of samples per participant, and follow-up duration. Continuous variables: median (Q1–Q3) except hospital stay and follow-up: median (min–max). Follow-up duration (days) is measured from symptom onset. Participants were screened at presentation (day 0) and the baseline sample was collected at the day-2 enrollment visit; because symptom duration prior to presentation is included, time since symptom onset is computed as max(Actual day) + 2. \"Other\" serotypes include *S. boydii* (n=2), *S. dysenteriae* (n=1), *S. flexneri* 1c (n=1), untypeable *S. flexneri* (n=2), and RLDT-positive *Shigella* without culture confirmation (n=1)."
 
-if (!have_table1_raw)
+if (!have_table1_raw) {
   cli::cli_abort(c(
     "Table 1 requires all three raw Excel files.",
     "i" = "Set {.code raw_compiled}, {.code raw_metadata}, and {.code raw_durdia} in the CONFIG chunk."
   ))
+}
 metadata <- readxl::read_excel(path.expand(raw_metadata), sheet = sheet_metadata)
-durdia   <- readxl::read_excel(path.expand(raw_durdia),   sheet = sheet_durdia)
+durdia <- readxl::read_excel(path.expand(raw_durdia), sheet = sheet_durdia)
 
 table1_study_population(build_table1_data(compiled, metadata, durdia))
 ```
@@ -607,11 +620,12 @@ beads, visible at multiple time points and for both IgG and IgA
 #| fig-width: 18
 #| fig-height: 22
 
-if (!have_compiled)
+if (!have_compiled) {
   cli::cli_abort(c(
     "Figure 1 requires the raw compiled Excel file.",
     "i" = "Set {.code raw_compiled} in the CONFIG chunk."
   ))
+}
 figure_crossreactivity_heatmap(compiled)
 ```
 

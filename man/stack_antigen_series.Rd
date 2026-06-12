@@ -12,7 +12,8 @@ stack_antigen_series(case_list)
 (\code{IpaB}, \code{Sf2a}, \code{Sf3a}, \code{Sf6}, \code{Sonnei}).}
 }
 \value{
-A tibble with \code{antigen}, \code{isotype_name}, \code{infecting_serotype} factors.
+A tibble with \code{antigen}, \code{isotype_name}, \code{infecting_serotype}
+factors.
 }
 \description{
 Stack single-antigen case data into one long frame for spaghetti plots
