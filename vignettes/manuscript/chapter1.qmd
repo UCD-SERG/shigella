@@ -212,56 +212,25 @@ mae_combined <- dplyr::bind_rows(lapply(isos, function(io) {
 
 # Abstract {.unnumbered}
 
-**Background:** *Shigella* bacteria cause an estimated 200 million infections
-annually, disproportionately affecting children in low- and middle-income
-countries. Accurate incidence measurement is hindered by short pathogen
-shedding and limited diagnostic availability. Serological approaches can detect
-infections missed by clinical surveillance, but require well-characterized
-post-infection antibody kinetics. *Shigella* remains a leading cause of
-diarrheal morbidity and mortality among children in low- and middle-income
-countries. Serological surveillance can complement culture- and PCR-based
-diagnostics, but interpreting cross-sectional antibody data requires
-quantitative models of post-infection antibody kinetics that remain
-insufficiently characterized for *Shigella*—particularly given the genus's
-antigenic diversity and cross-reactivity within *S. flexneri*.
+**Background:** *Shigella* bacteria cause an estimated 200 million infections annually, disproportionately affecting children in low- and middle-income countries.
+Accurate incidence measurement is hindered by short pathogen shedding and limited diagnostic availability.
+Serological approaches can detect infections missed by clinical surveillance, but require well-characterized post-infection antibody kinetics.
+*Shigella* remains a leading cause of diarrheal morbidity and mortality among children in low- and middle-income countries.
+Serological surveillance can complement culture- and PCR-based diagnostics, but interpreting cross-sectional antibody data requires quantitative models of post-infection antibody kinetics that remain insufficiently characterized for *Shigella*—particularly given the genus's antigenic diversity and cross-reactivity within *S. flexneri*.
 
-**Methods/Principal findings:** To support development of a seroepidemiologic
-tool, we conducted a retrospective analysis of archived sera from the Study of
-Shigella Antibody Responses (SOSAR), a prospective longitudinal cohort study of
-48 individuals with culture- or PCR-confirmed *Shigella* infection enrolled at
-the International Centre for Diarrhoeal Disease Research, Bangladesh (icddr,b)
-in Dhaka, Bangladesh, between March 2021 and 2022. We remeasured IgG and IgA
-antibody responses to five *Shigella* antigens (IpaB, *S. flexneri* 2a, 3a, and
-6 O-specific polysaccharide [OSP], and *S. sonnei* OSP) at baseline (acute
-presentation) and approximately 7, 30, 90, and 180 days following infection.
-Responses were quantified by multiplex bead-based immunoassay (Luminex) and
-modeled using a two-phase rise-peak-decay framework within a Bayesian
-hierarchical structure. We compared three modeling approaches: a pooled model
-across all serotypes, serotype-specific models, and a combined *S. flexneri*
-model leveraging known 2a-3a cross-reactivity. IgA responses rose rapidly and
-declined toward baseline within 2-3 months across all five antigens, whereas
-IgG responses remained elevated above pre-infection baseline throughout the
-200-day follow-up. Children under five years showed lower baseline antibody
-levels and more dynamic trajectories consistent with primary infection, whereas
-older children exhibited higher baseline values reflecting prior exposure.
-Responses to the conserved antigen IpaB were elevated across all infecting
-serotypes, while O-antigen responses were restricted to serotype-matched
-infections—with notable cross-reactivity between *S. flexneri* 2a and 3a.
-Pooled modeling across serotypes produced convergence failures for antigenically
-distinct serotypes (*S. sonnei*), while serotype-specific models recovered
-biologically plausible decay dynamics.
+**Methods/Principal findings:** To support development of a seroepidemiologic tool, we conducted a retrospective analysis of archived sera from the Study of Shigella Antibody Responses (SOSAR), a prospective longitudinal cohort study of 48 individuals with culture- or PCR-confirmed *Shigella* infection enrolled at the International Centre for Diarrhoeal Disease Research, Bangladesh (icddr,b) in Dhaka, Bangladesh, between March 2021 and 2022.
+We remeasured IgG and IgA antibody responses to five *Shigella* antigens (IpaB, *S. flexneri* 2a, 3a, and 6 O-specific polysaccharide [OSP], and *S. sonnei* OSP) at baseline (acute presentation) and approximately 7, 30, 90, and 180 days following infection.
+Responses were quantified by multiplex bead-based immunoassay (Luminex) and modeled using a two-phase rise-peak-decay framework within a Bayesian hierarchical structure.
+We compared three modeling approaches: a pooled model across all serotypes, serotype-specific models, and a combined *S. flexneri* model leveraging known 2a-3a cross-reactivity.
+IgA responses rose rapidly and declined toward baseline within 2-3 months across all five antigens, whereas IgG responses remained elevated above pre-infection baseline throughout the 200-day follow-up.
+Children under five years showed lower baseline antibody levels and more dynamic trajectories consistent with primary infection, whereas older children exhibited higher baseline values reflecting prior exposure.
+Responses to the conserved antigen IpaB were elevated across all infecting serotypes, while O-antigen responses were restricted to serotype-matched infections—with notable cross-reactivity between *S. flexneri* 2a and 3a.
+Pooled modeling across serotypes produced convergence failures for antigenically distinct serotypes (*S. sonnei*), while serotype-specific models recovered biologically plausible decay dynamics.
 
-**Conclusions/Significance:** *Shigella* antibody kinetics are isotype-,
-antigen-, and age-dependent, with important implications for serological
-surveillance. IgA may serve as a marker of recent infection, while IgG reflects
-longer-term exposure. The choice of modeling approach materially affects
-parameter estimation: pooled modeling produces misleading estimates for
-antigenically distinct serotypes, while serotype-specific or
-cross-reactivity-informed models recover biologically plausible decay dynamics.
-The kinetic parameters reported here provide foundational longitudinal inputs
-for the development of seroepidemiologic tools and seroincidence estimation in
-*Shigella*-endemic settings, and clarify which antigen-isotype combinations are
-most informative for surveillance panel design.
+**Conclusions/Significance:** *Shigella* antibody kinetics are isotype-, antigen-, and age-dependent, with important implications for serological surveillance.
+IgA may serve as a marker of recent infection, while IgG reflects longer-term exposure.
+The choice of modeling approach materially affects parameter estimation: pooled modeling produces misleading estimates for antigenically distinct serotypes, while serotype-specific or cross-reactivity-informed models recover biologically plausible decay dynamics.
+The kinetic parameters reported here provide foundational longitudinal inputs for the development of seroepidemiologic tools and seroincidence estimation in *Shigella*-endemic settings, and clarify which antigen-isotype combinations are most informative for surveillance panel design.
 
 **Keywords:** *Shigella*, antibody kinetics, serodynamics, Bayesian hierarchical
 model, seroincidence, cross-reactivity
