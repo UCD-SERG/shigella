@@ -24,8 +24,7 @@ get_prediction_summary <- function(model_output, sid, iso,
     dplyr::select("Iteration", "Chain", "Parameter", "value") |>
     tidyr::pivot_wider(names_from = "Parameter", values_from = "value")
 
-  # TODO: replace with exported serodynamics API once ab() is exported
-  # (tracked separately).
+  # TODO(serodynamics export): see REPRODUCIBILITY.md "Known tech debt: serodynamics internal calls".
   pred_mat <- vapply(
     times,
     function(tt) serodynamics:::ab(tt, wide$y0, wide$y1, wide$t1,

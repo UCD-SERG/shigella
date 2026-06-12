@@ -5,7 +5,7 @@
 #' @keywords internal
 #' @noRd
 .observed_long <- function(dataset, ids, antigen_iso) {
-  # TODO: replace with exported serodynamics API once get_timeindays_var() is exported (tracked separately). # nolint: line_length_linter.
+  # TODO(serodynamics export): see REPRODUCIBILITY.md "Known tech debt: serodynamics internal calls". # nolint: line_length_linter.
   time_var  <- dataset |> serodynamics:::get_timeindays_var()
   value_var <- dataset |> serocalculator::get_values_var()
 
