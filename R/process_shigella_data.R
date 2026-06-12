@@ -13,7 +13,7 @@
 #' `ids_varname = "index_id"`. The shipped case-data objects (`dL_clean_sf2a`
 #' etc.) and the current working data instead carry an `id` column, identical in
 #' value to `sid`. To reproduce those objects exactly, this function
-#' standardises the id column to `id` via [serocalculator::as_case_data()]
+#' standardises the id column to `id` via `serocalculator::as_case_data()`
 #' (`id_var = "id"`), rather than relying on any internal renaming. If a
 #' downstream step needs `index_id`, change `id_var` here -- but the shipped
 #' `.rda` inputs and the manuscript figures use `id`.
@@ -71,7 +71,8 @@ process_shigella_data <- function(data,
     return(out)
   }
 
-  serocalculator::as_case_data(
+  # TODO: use exported serocalculator::as_case_data once available
+  serocalculator:::as_case_data(
     out,
     id_var        = "id",
     biomarker_var = "antigen_iso",
