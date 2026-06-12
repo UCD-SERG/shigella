@@ -80,11 +80,10 @@
 #' @param by_antigen If `TRUE`, facet by isotype.
 #' @param n_sim Number of simulated datasets (supplement uses 25).
 #' @param antigen_name Optional antigen label for the title.
-#' @param ... Unused (kept for call compatibility).
 #' @return A ggplot.
 #' @export
 posterior_pred <- function(data = NULL, raw_dat = NULL, by_antigen = FALSE,
-                           n_sim = 4, antigen_name = NULL, ...) {
+                           n_sim = 4, antigen_name = NULL) {
   if (is.null(data)) cli::cli_abort("{.arg data} must be supplied.")
   if (is.null(raw_dat)) cli::cli_abort("{.arg raw_dat} must be supplied.")
   .ppc_simulate(data, raw_dat, n_sim) |>

@@ -9,8 +9,7 @@ posterior_pred(
   raw_dat = NULL,
   by_antigen = FALSE,
   n_sim = 4,
-  antigen_name = NULL,
-  ...
+  antigen_name = NULL
 )
 }
 \arguments{
@@ -24,8 +23,6 @@ attribute), e.g. \code{overall_IpaB_pop_6}.}
 \item{n_sim}{Number of simulated datasets (supplement uses 25).}
 
 \item{antigen_name}{Optional antigen label for the title.}
-
-\item{...}{Unused (kept for call compatibility).}
 }
 \value{
 A ggplot.
