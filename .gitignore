@@ -21,6 +21,7 @@ shigella*.tgz
 do_commit.py
 _commit.py
 _commit.sh
+_do_commit.sh
 .gitconfig_tmp
 .gitignore_temp
 .claude/

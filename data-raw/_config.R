@@ -12,10 +12,10 @@ raw_data_dir        <- ""   # folder containing the raw Shigella Excel files
 manuscript_data_dir <- ""   # output folder for fitted-model .rda files
 ## =============================================================================
 
-stopifnot(
-  "Set raw_data_dir in data-raw/_config.R"        = nzchar(raw_data_dir),
-  "Set manuscript_data_dir in data-raw/_config.R" = nzchar(manuscript_data_dir)
-)
+if (!nzchar(raw_data_dir))
+  cli::cli_abort("Set {.code raw_data_dir} in {.file data-raw/_config.R}")
+if (!nzchar(manuscript_data_dir))
+  cli::cli_abort("Set {.code manuscript_data_dir} in {.file data-raw/_config.R}")
 if (!dir.exists(manuscript_data_dir)) {
   dir.create(manuscript_data_dir, recursive = TRUE)
 }
@@ -129,7 +129,7 @@ fit_and_save <- function(data,
        file = file.path(dir, paste0(name, ".rda")),
        compress = "xz",
        envir = environment())
-  message("saved: ", file.path(dir, paste0(name, ".rda")))
+  cli::cli_inform("saved: {.file {file.path(dir, paste0(name, '.rda'))}}")
   invisible(obj)
 }
 
@@ -141,7 +141,8 @@ load_inputs <- function(stems, dir = manuscript_data_dir,
   for (s in stems) {
     f <- file.path(dir, paste0(s, ".rda"))
     if (!file.exists(f)) {
-      stop("Missing input: ", f, "\n  -> run data-raw/00_build_case_data.R first.")
+      cli::cli_abort(c("Missing input: {.file {f}}",
+                       "i" = "Run {.file data-raw/00_build_case_data.R} first."))
     }
     load(f, envir = envir)
   }

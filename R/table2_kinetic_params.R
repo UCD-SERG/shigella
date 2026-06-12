@@ -18,20 +18,21 @@
 }
 
 # Pull the parameter-summary row for one biomarker from whichever model won,
-# adding a display label with that model's n.
+# adding a display label with that model's n (derived from the model objects).
 #' @keywords internal
 #' @noRd
 .params_for_best_row <- function(antigen_val, iso_val, model_val,
-                                 sum_overall, sum_serospec, sum_combined) {
+                                 sum_overall, sum_serospec, sum_combined,
+                                 n_overall, n_serospec, n_combined) {
   if (model_val == "Overall") {
-    src <- sum_overall; model_display <- "Overall (n=48)"
+    src <- sum_overall
+    model_display <- sprintf("Overall (n=%d)", n_overall[[antigen_val]])
   } else if (model_val == "Serotype-specific") {
     src <- sum_serospec
-    n_val <- dplyr::case_when(antigen_val == "Sf2a" ~ 17L, antigen_val == "Sf3a" ~ 8L, # nolint: line_length_linter.
-                              antigen_val == "Sonnei" ~ 11L, TRUE ~ NA_integer_)
-    model_display <- sprintf("Serotype-specific (n=%d)", n_val)
+    model_display <- sprintf("Serotype-specific (n=%d)", n_serospec[[antigen_val]])
   } else {
-    src <- sum_combined; model_display <- "Combined flexneri (n=25)"
+    src <- sum_combined
+    model_display <- sprintf("Combined flexneri (n=%d)", n_combined[[antigen_val]])
   }
   src |>
     dplyr::filter(.data$antigen == antigen_val, .data$Iso_type == iso_val) |>
@@ -71,16 +72,28 @@
 #'
 #' For each biomarker the winning model's parameter row is pulled by
 #' `.params_for_best_row()`, formatted, then styled by `.table2_flextable()`.
+#' The `n` for each model-class label is derived from the supplied model objects
+#' at call time so the table stays correct if the input data changes.
 #'
 #' @param best_lookup Output of [select_best_models()].
 #' @param sum_overall,sum_serospec,sum_combined Parameter summaries
 #'   ([pop_param_summary()] output) for each model class.
+#' @param models_overall Named list `antigen = sr_model` for the overall models.
+#' @param models_serospec Named list `antigen = sr_model` for the serotype-specific models.
+#' @param models_combined Named list `antigen = sr_model` for the combined-flexneri models.
 #' @return A flextable.
 #' @export
-table2_kinetic_params <- function(best_lookup, sum_overall, sum_serospec, sum_combined) { # nolint: line_length_linter.
+table2_kinetic_params <- function(best_lookup, sum_overall, sum_serospec, sum_combined, # nolint: line_length_linter.
+                                   models_overall, models_serospec, models_combined) { # nolint: line_length_linter.
+  .n <- function(m) dplyr::n_distinct(m[["Subject"]])
+  n_overall  <- purrr::map_int(models_overall,  .n)
+  n_serospec <- purrr::map_int(models_serospec, .n)
+  n_combined <- purrr::map_int(models_combined, .n)
+
   best_data <- purrr::pmap_dfr(best_lookup, function(antigen, Iso_type, best_model) # nolint: line_length_linter.
     .params_for_best_row(antigen, Iso_type, best_model,
-                         sum_overall, sum_serospec, sum_combined))
+                         sum_overall, sum_serospec, sum_combined,
+                         n_overall, n_serospec, n_combined))
 
   best_print <- .format_kinetic_rows(best_data, extra_cols = "Model")
   .add_kinetic_headers(.table2_flextable(best_print)) # nolint: object_usage_linter, line_length_linter.

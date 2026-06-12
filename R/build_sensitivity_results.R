@@ -43,6 +43,12 @@ build_sensitivity_results <- function(files, datasets, scale = "log") {
     }
   )
 
+  n_files   <- nrow(file_info)
+  n_skipped <- n_files - nrow(results)
+  if (n_skipped > 0) {
+    cli::cli_warn("Skipped {n_skipped}/{n_files} sensitivity files (no dataset mapping or empty MAE).") # nolint: line_length_linter.
+  }
+
   results |>
     dplyr::mutate(
       biomarker = factor(.data$biomarker,

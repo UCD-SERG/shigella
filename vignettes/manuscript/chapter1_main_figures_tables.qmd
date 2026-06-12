@@ -80,7 +80,7 @@ main_rda <- c(
 )
 
 for (nm in main_rda) {
-  load(file.path(path.expand(rda_dir), paste0(nm, ".rda")), envir = globalenv())
+  load(file.path(path.expand(rda_dir), paste0(nm, ".rda")))
 }
 
 # raw-Excel availability flags (gate Table 1 + Figure 1 only)
@@ -181,7 +181,25 @@ figure_raw_spaghetti(
 #| warning: false
 
 best_lookup <- select_best_models(mae_overall, mae_serospec, mae_combined)
-table2_kinetic_params(best_lookup, sum_overall, sum_serospec, sum_combined)
+table2_kinetic_params(
+  best_lookup, sum_overall, sum_serospec, sum_combined,
+  models_overall = list(
+    IpaB   = overall_IpaB_pop_6,
+    Sf2a   = overall_Sf2a_pop_6,
+    Sf3a   = overall_Sf3a_pop_6,
+    Sf6    = overall_Sf6_pop_6,
+    Sonnei = overall_Sonnei_pop_6
+  ),
+  models_serospec = list(
+    Sf2a   = serotype_sf2a_3,
+    Sf3a   = serotype_sf3a_3,
+    Sonnei = serotype_sonnei_3
+  ),
+  models_combined = list(
+    Sf2a = combined_flexneri_sf2a,
+    Sf3a = combined_flexneri_sf3a
+  )
+)
 ```
 
 # Figure 4 — Individual-level model comparison

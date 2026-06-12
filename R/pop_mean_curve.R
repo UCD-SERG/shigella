@@ -26,6 +26,7 @@ pop_mean_curve <- function(model_obj, t_grid = seq(0, 210, by = 5)) {
       ) |>
       # each retained draw × each grid point; ~2000 draws × length(t_grid) rows per isotype # nolint: line_length_linter.
       tidyr::crossing(t = t_grid) |>
+      # TODO: replace with exported serodynamics API once ab() is exported (tracked separately).
       dplyr::mutate(res = serodynamics:::ab(.data$t, .data$y0_nat, .data$y1_nat,
                                             .data$t1_nat, .data$alpha_nat,
                                             .data$shape_nat)) |>

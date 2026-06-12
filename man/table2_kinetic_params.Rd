@@ -4,13 +4,27 @@
 \alias{table2_kinetic_params}
 \title{Table 2: kinetic parameters from the best-performing model per biomarker}
 \usage{
-table2_kinetic_params(best_lookup, sum_overall, sum_serospec, sum_combined)
+table2_kinetic_params(
+  best_lookup,
+  sum_overall,
+  sum_serospec,
+  sum_combined,
+  models_overall,
+  models_serospec,
+  models_combined
+)
 }
 \arguments{
 \item{best_lookup}{Output of \code{\link[=select_best_models]{select_best_models()}}.}
 
 \item{sum_overall, sum_serospec, sum_combined}{Parameter summaries
 (\code{\link[=pop_param_summary]{pop_param_summary()}} output) for each model class.}
+
+\item{models_overall}{Named list \code{antigen = sr_model} for the overall models.}
+
+\item{models_serospec}{Named list \code{antigen = sr_model} for the serotype-specific models.}
+
+\item{models_combined}{Named list \code{antigen = sr_model} for the combined-flexneri models.}
 }
 \value{
 A flextable.
@@ -18,4 +32,6 @@ A flextable.
 \description{
 For each biomarker the winning model's parameter row is pulled by
 \code{.params_for_best_row()}, formatted, then styled by \code{.table2_flextable()}.
+The \code{n} for each model-class label is derived from the supplied model objects
+at call time so the table stays correct if the input data changes.
 }

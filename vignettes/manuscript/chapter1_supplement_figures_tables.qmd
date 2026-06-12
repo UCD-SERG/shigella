@@ -72,7 +72,7 @@ supp_rda <- c(
 )
 
 for (nm in supp_rda) {
-  load(file.path(path.expand(rda_dir), paste0(nm, ".rda")), envir = globalenv())
+  load(file.path(path.expand(rda_dir), paste0(nm, ".rda")))
 }
 ```
 
