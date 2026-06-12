@@ -1,4 +1,4 @@
-# ── Internal helpers ────────────────────────────────
+# Internal helpers
 
 # Step 1: stack the three MAE tables into one long frame (biomarker + model).
 #' @keywords internal
@@ -94,7 +94,7 @@
       axis.text.x = ggplot2::element_text(angle = 20, hjust = 1))
 }
 
-# ── Main function ─────────────────────────────────
+# Main function
 
 #' S4 Fig: per-individual MAE across modeling approaches (slopegraph)
 #'

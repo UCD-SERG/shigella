@@ -1,4 +1,4 @@
-# ── Internal helpers ────────────────────────────────
+# Internal helpers
 
 # One isotype panel for a Figure-4 comparison row: the subject's observed points
 # plus overall / sero-specific / (optional) combined posterior-median bands.
@@ -66,7 +66,7 @@
       legend.position  = "none")
 }
 
-# ── Main function ─────────────────────────────────
+# Main function
 
 #' One IgG|IgA model-comparison row for a single subject
 #'

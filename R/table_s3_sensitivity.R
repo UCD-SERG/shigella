@@ -1,4 +1,4 @@
-# ── Internal helpers ────────────────────────────────
+# Internal helpers
 
 # Wide display frame for S3: one row per biomarker x prior, with delta-MAE and a
 # Serotype/Overall/Similar conclusion + a markdown group label.
@@ -31,7 +31,7 @@
     )
 }
 
-# ── Main function ─────────────────────────────────
+# Main function
 
 #' S3 Table: prior-specification robustness (overall vs serotype MAE)
 #'

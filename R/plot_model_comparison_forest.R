@@ -1,4 +1,4 @@
-# ── Internal helpers ────────────────────────────────
+# Internal helpers
 
 # Reshape one model's wide parameter summary into long (one row per parameter).
 #' @keywords internal
@@ -74,7 +74,7 @@
   p
 }
 
-# ── Main function ─────────────────────────────────
+# Main function
 
 #' S6 Fig: population kinetic-parameter forest plot (model comparison)
 #'

@@ -1,4 +1,4 @@
-# ── Internal helpers ────────────────────────────────
+# Internal helpers
 
 # Internal: among models sharing individuals, which wins most per-individual?
 #' @keywords internal
@@ -22,7 +22,7 @@
     dplyr::pull(.data$model)
 }
 
-# ── Main function ─────────────────────────────────
+# Main function
 
 #' Pick the best-performing model per antigen-isotype (lowest per-individual MAE)
 #'

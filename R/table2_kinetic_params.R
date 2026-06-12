@@ -1,4 +1,4 @@
-# ── Internal helpers ────────────────────────────────
+# Internal helpers
 
 # Format a kinetic-parameter summary (one row per Biomarker) for display.
 #' @keywords internal
@@ -66,7 +66,7 @@
     flextable::color(color = "gray40", part = "footer")
 }
 
-# ── Main function ─────────────────────────────────
+# Main function
 
 #' Table 2: kinetic parameters from the best-performing model per biomarker
 #'

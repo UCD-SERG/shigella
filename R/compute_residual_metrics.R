@@ -1,4 +1,4 @@
-# ── Internal helpers ────────────────────────────────
+# Internal helpers
 
 # Observed (id, t, obs, antigen_iso) for the requested ids + isotype; aborts if
 # the filter leaves nothing.
@@ -70,7 +70,7 @@
   }
 }
 
-# ── Main function ─────────────────────────────────
+# Main function
 
 #' Per-observation / per-individual residual metrics on the log scale
 #'

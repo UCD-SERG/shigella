@@ -1,4 +1,4 @@
-# ── Internal helpers ────────────────────────────────
+# Internal helpers
 
 # Table 1 clinical variables (from the metadata workbook): sex + symptom flags.
 #' @keywords internal
@@ -61,7 +61,7 @@
                                       levels = c("<4", "\u22654")))
 }
 
-# ── Main function ─────────────────────────────────
+# Main function
 
 #' Assemble the participant-level data frame underlying Table 1
 #'

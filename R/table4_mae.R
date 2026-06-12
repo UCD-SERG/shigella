@@ -1,4 +1,4 @@
-# ── Internal helpers ────────────────────────────────
+# Internal helpers
 
 # Coerce one get_mae() tibble to a uniform sid/antigen/Iso_type/mae/model frame
 # (NULL passes through; missing required columns abort with a clear message).
@@ -124,7 +124,7 @@
       "individuals shared across compared models."))
 }
 
-# ── Main function ─────────────────────────────────
+# Main function
 
 #' Table 4: per-individual prediction accuracy (MAE) across modeling approaches
 #'

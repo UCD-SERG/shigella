@@ -1,4 +1,4 @@
-# ── Internal helpers ────────────────────────────────
+# Internal helpers
 
 # Stack the three model summaries (overall Sf2a/Sf3a/Sonnei rows + serotype +
 # combined flexneri) into one factor-ordered frame.
@@ -49,7 +49,7 @@
     )
 }
 
-# ── Main function ─────────────────────────────────
+# Main function
 
 #' S4 Table: population kinetic parameters across all modeling approaches
 #'

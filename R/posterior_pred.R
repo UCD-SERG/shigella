@@ -1,4 +1,4 @@
-# ── Internal helpers ────────────────────────────────
+# Internal helpers
 
 # Simulate `n_sim` replicate datasets from the joint posterior and return a long
 # frame of simulated + observed assay values. For each retained draw the fitted
@@ -67,7 +67,7 @@
   p
 }
 
-# ── Main function ─────────────────────────────────
+# Main function
 
 #' S5 Fig: posterior predictive check for one fitted model
 #'
