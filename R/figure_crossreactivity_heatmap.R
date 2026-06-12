@@ -1,3 +1,4 @@
+# Needed for data.table-style subset shig_bg[isotype == "IgG"] used in the plotting helper below.
 utils::globalVariables("isotype")
 
 #' Cross-reactivity heatmap (IgG | IgA, independent colour scales)
