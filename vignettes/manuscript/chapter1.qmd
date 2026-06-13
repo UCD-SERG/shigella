@@ -267,230 +267,126 @@ In this retrospective analysis of archived sera, we aimed to: (1) characterize a
 
 ## Study design and participants
 
-The Study of Shigella Antibody Responses (SOSAR) was a prospective longitudinal
-cohort study designed to evaluate immune responses following natural *Shigella*
-infection. The present analysis is a retrospective analysis of samples collected
-as part of SOSAR, in which archived sera were re-tested to measure IgG and IgA
-antibody responses specifically to support development of a seroepidemiologic
-tool.
+The Study of Shigella Antibody Responses (SOSAR) was a prospective longitudinal cohort study designed to evaluate immune responses following natural *Shigella* infection.
+The present analysis is a retrospective analysis of samples collected as part of SOSAR, in which archived sera were re-tested to measure IgG and IgA antibody responses specifically to support development of a seroepidemiologic tool.
 
-Cases were enrolled from pediatric and adult patients presenting to the icddr,b
-hospital or its Mirpur Health Centre with acute diarrhea in Dhaka, Bangladesh,
-between March 2021 and 2022. Inclusion criteria were acute diarrhea
-(duration $\le$ 72 hours) and frequent bowel movements ($\ge$ 3 in 24 hours);
-individuals aged $\ge$ 1 year were eligible for enrollment. Patients were
-screened using a molecular rapid *Shigella* diagnostic assay (RLDT) targeting
-the *ipaH* gene in stool [@chakraborty2022development; @chowdhury2024rldt]. Study
-enrollees had microbiologic isolation of *Shigella* from stool, which was plated
-on MacConkey agar and Salmonella-Shigella (SS) agar. Serotype was confirmed by
-anti-sera agglutination test (MAST Assure, UK). A total of 48 individuals with
-confirmed *Shigella* infection by culture were included in this analysis. Serum
-or plasma samples were collected at baseline (acute presentation, day 2) and
-approximately 7, 30, 90, and 180 days following infection and stored at
-$-80^\circ$C until analysis.
+Cases were enrolled from pediatric and adult patients presenting to the icddr,b hospital or its Mirpur Health Centre with acute diarrhea in Dhaka, Bangladesh, between March 2021 and 2022.
+Inclusion criteria were acute diarrhea (duration $\le$ 72 hours) and frequent bowel movements ($\ge$ 3 in 24 hours); individuals aged $\ge$ 1 year were eligible for enrollment.
+Patients were screened using a molecular rapid *Shigella* diagnostic assay (RLDT) targeting the *ipaH* gene in stool [@chakraborty2022development; @chowdhury2024rldt].
+Study enrollees had microbiologic isolation of *Shigella* from stool, which was plated on MacConkey agar and Salmonella-Shigella (SS) agar.
+Serotype was confirmed by anti-sera agglutination test (MAST Assure, UK).
+A total of 48 individuals with confirmed *Shigella* infection by culture were included in this analysis.
+Serum or plasma samples were collected at baseline (acute presentation, day 2) and approximately 7, 30, 90, and 180 days following infection and stored at $-80^\circ$C until analysis.
 
 ## Laboratory measurements
 
 ### Assay execution
 
-IgG and IgA antibody responses to five antigens—invasion plasmid antigen B
-(IpaB) and O-specific polysaccharides (OSP) from four circulating
-serotypes—*S. sonnei*, *S. flexneri* 2a, *S. flexneri* 3a, and *S. flexneri*
-6, each conjugated to bovine serum albumin (BSA)—were measured by multiplex
-bead-based immunoassay (Luminex). Antigens were prepared as previously described
-[@bernshtein2024determinants]. Plasma or serum samples were diluted 1:1000 and
-run in singlet. Tetanus toxin heavy chain (TTHc) and bovine serum albumin (BSA)
-were conjugated to beads and included on every plate alongside the *Shigella*
-antigens, serving as positive- and negative-antigen control beads, respectively.
-At the sample level, a pooled serum sample served as the positive control and a
-separate, non-pooled healthy North American serum sample as the negative
-control; both plate-level controls were run in duplicate on every plate. During
-initial assay optimization, inter-plate reproducibility was established with
-acceptable coefficient-of-variation values between sample replicates, supporting
-the use of singlet measurements for study samples. Bead counts were monitored
-for each analyte region, with a minimum threshold of 30 beads per region
-required for inclusion.
+IgG and IgA antibody responses to five antigens—invasion plasmid antigen B (IpaB) and O-specific polysaccharides (OSP) from four circulating serotypes—*S. sonnei*, *S. flexneri* 2a, *S. flexneri* 3a, and *S. flexneri* 6, each conjugated to bovine serum albumin (BSA)—were measured by multiplex bead-based immunoassay (Luminex).
+Antigens were prepared as previously described [@bernshtein2024determinants].
+Plasma or serum samples were diluted 1:1000 and run in singlet.
+Tetanus toxin heavy chain (TTHc) and bovine serum albumin (BSA) were conjugated to beads and included on every plate alongside the *Shigella* antigens, serving as positive- and negative-antigen control beads, respectively.
+At the sample level, a pooled serum sample served as the positive control and a separate, non-pooled healthy North American serum sample as the negative control; both plate-level controls were run in duplicate on every plate.
+During initial assay optimization, inter-plate reproducibility was established with acceptable coefficient-of-variation values between sample replicates, supporting the use of singlet measurements for study samples.
+Bead counts were monitored for each analyte region, with a minimum threshold of 30 beads per region required for inclusion.
 
 ### Data processing and normalization
 
-Median fluorescence intensity (MFI) values were background-corrected by
-subtracting, for each antigen, the signal from blank (assay buffer) wells run on
-the same plate, and normalized to a pooled positive-control serum at 1:1000
-dilution to enable cross-plate comparability (see S1 Methods for scaling factors
-and outlier-handling criteria). The pooled serum control standard curve from
-each run was compared against the cumulative reference curve from all previous
-runs; samples on plates whose control curve fell outside acceptable bounds were
-repeated.
+Median fluorescence intensity (MFI) values were background-corrected by subtracting, for each antigen, the signal from blank (assay buffer) wells run on the same plate, and normalized to a pooled positive-control serum at 1:1000 dilution to enable cross-plate comparability (see S1 Methods for scaling factors and outlier-handling criteria).
+The pooled serum control standard curve from each run was compared against the cumulative reference curve from all previous runs; samples on plates whose control curve fell outside acceptable bounds were repeated.
 
 ## Antibody kinetics model
 
-Longitudinal antibody responses were modeled using a two-phase within-host
-framework consisting of a rapid rise phase followed by a slower decay phase
-[@degraaf2014twophase; @teunis2016linking]. The model captures five key
-parameters per individual: baseline antibody level ($y_0$), peak antibody level
-($y_1$), time to peak ($t_1$), decay rate ($\alpha$), and decay shape ($\rho$).
-The full mathematical specification is given in S1 Methods (rise-decay ODE) and
-S2 Methods (closed-form solutions). The power-law decay formulation (governed by
-$\alpha$ and $\rho$) replaces simple exponential waning with a formulation
-capturing the continuous distribution of plasma-cell lifespans
-[@degraaf2014twophase; @teunis2016linking; @teunis2012biomarker].
+Longitudinal antibody responses were modeled using a two-phase within-host framework consisting of a rapid rise phase followed by a slower decay phase [@degraaf2014twophase; @teunis2016linking].
+The model captures five key parameters per individual: baseline antibody level ($y_0$), peak antibody level ($y_1$), time to peak ($t_1$), decay rate ($\alpha$), and decay shape ($\rho$).
+The full mathematical specification is given in S1 Methods (rise-decay ODE) and S2 Methods (closed-form solutions).
+The power-law decay formulation (governed by $\alpha$ and $\rho$) replaces simple exponential waning with a formulation capturing the continuous distribution of plasma-cell lifespans [@degraaf2014twophase; @teunis2016linking; @teunis2012biomarker].
 
 ## Hierarchical model structure
 
-Individual-level kinetic parameters were modeled hierarchically using a
-multivariate log-normal population distribution. For each individual $i$ and
-antigen-isotype combination $j$, the vector of log-transformed kinetic
-parameters $\theta_{ij}$ was assumed to follow
-$\theta_{ij} \sim N(\mu_j, \Sigma_j)$, where $\mu_j$ is the population-level mean
-vector and $\Sigma_j$ is a biomarker-specific covariance matrix. This partial
-pooling approach stabilizes inference for individuals with sparse measurements
-while preserving meaningful inter-individual variability (see S3 Methods for full
-parameterization). Separate models were fit for each antigen-isotype combination.
+Individual-level kinetic parameters were modeled hierarchically using a multivariate log-normal population distribution.
+For each individual $i$ and antigen-isotype combination $j$, the vector of log-transformed kinetic parameters $\theta_{ij}$ was assumed to follow $\theta_{ij} \sim N(\mu_j, \Sigma_j)$, where $\mu_j$ is the population-level mean vector and $\Sigma_j$ is a biomarker-specific covariance matrix.
+This partial pooling approach stabilizes inference for individuals with sparse measurements while preserving meaningful inter-individual variability (see S3 Methods for full parameterization).
+Separate models were fit for each antigen-isotype combination.
 
 ## Observation model
 
-Observed antibody measurements were modeled on the log scale as the underlying
-two-phase antibody trajectory plus measurement error. For individual $i$ and
-antigen-isotype $j$ measured at time $t_{ij}$, the observed log-MFI was assumed
-to follow a normal distribution centered on the model-predicted trajectory with
-standard deviation representing measurement noise:
+Observed antibody measurements were modeled on the log scale as the underlying two-phase antibody trajectory plus measurement error.
+For individual $i$ and antigen-isotype $j$ measured at time $t_{ij}$, the observed log-MFI was assumed to follow a normal distribution centered on the model-predicted trajectory with standard deviation representing measurement noise:
 
 $$
 \log y_{ij}^{\mathrm{obs}} \sim
 N\!\left(\log y_{ij}\!\left(t_{ij}; \theta_{ij}\right),\ \tau_j^{-1}\right)
 $$
 
-where $\tau_j$ is the measurement precision specific to biomarker $j$ (see S4
-Methods).
+where $\tau_j$ is the measurement precision specific to biomarker $j$ (see S4 Methods).
 
 ## Modeling approaches
 
-Because *Shigella* O-antigens vary in their antigenic structure and
-cross-reactivity, and because the cohort's serotype distribution was unbalanced,
-we compared three modeling approaches that differed in which participants were
-included when estimating population-level kinetic parameters for each O-antigen.
+Because *Shigella* O-antigens vary in their antigenic structure and cross-reactivity, and because the cohort's serotype distribution was unbalanced, we compared three modeling approaches that differed in which participants were included when estimating population-level kinetic parameters for each O-antigen.
 
-The **overall model** included all participants regardless of infecting
-serotype. This approach maximized sample size but assumed that antibody kinetics
-to a given antigen are similar across participants regardless of whether their
-infecting serotype matched the measured antigen. This is appropriate for IpaB,
-which is conserved, but potentially problematic for O-antigens that are
-serotype-specific.
+The **overall model** included all participants regardless of infecting serotype.
+This approach maximized sample size but assumed that antibody kinetics to a given antigen are similar across participants regardless of whether their infecting serotype matched the measured antigen.
+This is appropriate for IpaB, which is conserved, but potentially problematic for O-antigens that are serotype-specific.
 
-The **serotype-specific model** included only participants whose infecting
-serotype matched the measured O-antigen. Serotypes that did not meet the
-eligibility criteria described below were excluded from serotype-specific
-modeling.
+The **serotype-specific model** included only participants whose infecting serotype matched the measured O-antigen.
+Serotypes that did not meet the eligibility criteria described below were excluded from serotype-specific modeling.
 
-The **combined *S. flexneri* model** pooled participants infected with
-*S. flexneri* 2a and 3a when modeling either Sf2a or Sf3a OSP responses. This
-approach leveraged known O-antigen cross-reactivity between these serotypes to
-increase effective sample size while excluding antigenically unrelated
-serotypes. This model was not applicable to *S. sonnei* or *S. flexneri* 6.
+The **combined *S. flexneri* model** pooled participants infected with *S. flexneri* 2a and 3a when modeling either Sf2a or Sf3a OSP responses.
+This approach leveraged known O-antigen cross-reactivity between these serotypes to increase effective sample size while excluding antigenically unrelated serotypes.
+This model was not applicable to *S. sonnei* or *S. flexneri* 6.
 
-Serotype-specific models were fitted only for serotypes meeting both an
-*a priori* sample-size threshold and post hoc convergence diagnostics. We
-pre-specified a minimum of $n \ge 8$ participants per serotype, reflecting
-methodological guidance that variance components in multilevel hierarchical
-models can be unstable when the number of level-2 units is small
-[@mcneish2017unnecessary]. Although a threshold closer to 10 level-2 units is
-often recommended, we used $n \ge 8$ as a pragmatic relaxation given the rarity
-of culture-confirmed *Shigella* infection within individual serotypes and the
-potential for information sharing across related *S. flexneri* O-antigen
-responses. Under this criterion, *S. flexneri* 2a ($n = 17$), *S. flexneri* 3a
-($n = 8$), and *S. sonnei* ($n = 11$) were evaluated using serotype-specific
-models. Model convergence was assessed using chain-specific trace plots and
-rank-normalized $\hat{R}$ values for population-level mean parameters.
-*S. flexneri* 2a and *S. sonnei* showed stable mixing and $\hat{R}$ values near
-1.0 across monitored population-level parameters, supporting serotype-specific
-estimation. In contrast, *S. flexneri* 3a had limited sample size and showed
-weaker convergence for selected parameters; therefore, its serotype-specific
-estimates were interpreted cautiously and reported primarily as supporting
-analyses. *S. flexneri* 6 ($n = 5$) and the heterogeneous "Other" group
-($n = 7$) did not meet the pre-specified sample-size threshold and were included
-only in the overall pooled model.
+Serotype-specific models were fitted only for serotypes meeting both an *a priori* sample-size threshold and post hoc convergence diagnostics.
+We pre-specified a minimum of $n \ge 8$ participants per serotype, reflecting methodological guidance that variance components in multilevel hierarchical models can be unstable when the number of level-2 units is small [@mcneish2017unnecessary].
+Although a threshold closer to 10 level-2 units is often recommended, we used $n \ge 8$ as a pragmatic relaxation given the rarity of culture-confirmed *Shigella* infection within individual serotypes and the potential for information sharing across related *S. flexneri* O-antigen responses.
+Under this criterion, *S. flexneri* 2a ($n = 17$), *S. flexneri* 3a ($n = 8$), and *S. sonnei* ($n = 11$) were evaluated using serotype-specific models.
+Model convergence was assessed using chain-specific trace plots and rank-normalized $\hat{R}$ values for population-level mean parameters.
+*S. flexneri* 2a and *S. sonnei* showed stable mixing and $\hat{R}$ values near 1.0 across monitored population-level parameters, supporting serotype-specific estimation.
+In contrast, *S. flexneri* 3a had limited sample size and showed weaker convergence for selected parameters; therefore, its serotype-specific estimates were interpreted cautiously and reported primarily as supporting analyses.
+*S. flexneri* 6 ($n = 5$) and the heterogeneous "Other" group ($n = 7$) did not meet the pre-specified sample-size threshold and were included only in the overall pooled model.
 
 ## Model comparison
 
-Per-individual prediction accuracy was assessed using median absolute error
-(MAE) on the log-MFI scale, computed as the absolute difference between each
-observed measurement and the corresponding posterior median predicted value for
-that individual at that time point. For antigen-isotype combinations with
-multiple candidates, the best-performing model was determined using only
-individuals shared across models to ensure comparability.
+Per-individual prediction accuracy was assessed using median absolute error (MAE) on the log-MFI scale, computed as the absolute difference between each observed measurement and the corresponding posterior median predicted value for that individual at that time point.
+For antigen-isotype combinations with multiple candidates, the best-performing model was determined using only individuals shared across models to ensure comparability.
 
 ## Prior specification and computation
 
-Weakly informative priors were assigned to all population-level parameters,
-scaled to observed assay limits of detection (S1 Table). Priors on
-population-level means ($\mu_j$) were specified on logarithmic scales using
-normal distributions. A Wishart prior was placed on the precision matrix
-$\Sigma_j^{-1}$, and a Gamma prior on measurement precision $\tau_j$ (see S5
-Methods).
+Weakly informative priors were assigned to all population-level parameters, scaled to observed assay limits of detection (S1 Table).
+Priors on population-level means ($\mu_j$) were specified on logarithmic scales using normal distributions.
+A Wishart prior was placed on the precision matrix $\Sigma_j^{-1}$, and a Gamma prior on measurement precision $\tau_j$ (see S5 Methods).
 
-Models were fit using Markov chain Monte Carlo (MCMC) implemented in JAGS 4.3.4,
-interfaced with R 4.4.3 via the serodynamics package [@serodynamics]. Four
-independent chains were run with overdispersed initial values sampled from the
-prior distribution for each model [@gelman2020workflow]. Each chain underwent
-25,000 adaptation iterations to tune the sampler, followed by 50,000 burn-in
-iterations that were discarded. After burn-in, 15,000 samples were retained per
-chain, yielding 60,000 total posterior draws per model. These settings were
-selected based on preliminary runs that showed adequate mixing and convergence
-for the five-parameter kinetic model; the serotype-specific models with smaller
-sample sizes ($n = 8$–11) required the full iteration count to achieve stable
-posterior estimates, while the overall model ($n = 48$) converged more rapidly.
-Convergence was assessed using visual inspection of trace plots and the
-potential scale reduction factor ($\hat{R} < 1.05$) for all monitored parameters
-[@vehtari2021ranknormalization]. Detailed MCMC settings are reported in S2 Table.
+Models were fit using Markov chain Monte Carlo (MCMC) implemented in JAGS 4.3.4, interfaced with R 4.4.3 via the serodynamics package [@serodynamics].
+Four independent chains were run with overdispersed initial values sampled from the prior distribution for each model [@gelman2020workflow].
+Each chain underwent 25,000 adaptation iterations to tune the sampler, followed by 50,000 burn-in iterations that were discarded.
+After burn-in, 15,000 samples were retained per chain, yielding 60,000 total posterior draws per model.
+These settings were selected based on preliminary runs that showed adequate mixing and convergence for the five-parameter kinetic model; the serotype-specific models with smaller sample sizes ($n = 8$–11) required the full iteration count to achieve stable posterior estimates, while the overall model ($n = 48$) converged more rapidly.
+Convergence was assessed using visual inspection of trace plots and the potential scale reduction factor ($\hat{R} < 1.05$) for all monitored parameters [@vehtari2021ranknormalization].
+Detailed MCMC settings are reported in S2 Table.
 
 ## Model diagnostics
 
-Posterior predictive checks compared simulated antibody distributions to
-observed data to assess model adequacy (S5 Fig). Convergence was additionally
-assessed by visual inspection of trace plots for all population-level mean
-parameters across four independent MCMC chains. Well-mixed chains were observed
-for IpaB and *S. flexneri* 2a under the overall model and for all
-serotype-specific models except *S. flexneri* 3a ($n = 8$), where chain
-separation for $y_1$ and $\alpha$ reflected insufficient sample size. Under the
-overall model, chain separation was observed for *S. sonnei* $y_1$ and $\alpha$,
-consistent with the convergence difficulties described in Results. Trace plots
-are not shown but are available from the corresponding author upon request.
+Posterior predictive checks compared simulated antibody distributions to observed data to assess model adequacy (S5 Fig).
+Convergence was additionally assessed by visual inspection of trace plots for all population-level mean parameters across four independent MCMC chains.
+Well-mixed chains were observed for IpaB and *S. flexneri* 2a under the overall model and for all serotype-specific models except *S. flexneri* 3a ($n = 8$), where chain separation for $y_1$ and $\alpha$ reflected insufficient sample size.
+Under the overall model, chain separation was observed for *S. sonnei* $y_1$ and $\alpha$, consistent with the convergence difficulties described in Results.
+Trace plots are not shown but are available from the corresponding author upon request.
 
 ## Sensitivity analyses
 
-To assess robustness of model comparison conclusions to prior specification, we
-refit models for the four biomarkers showing the largest divergence between
-overall and serotype-specific approaches (*S. sonnei* IgG, *S. sonnei* IgA,
-*S. flexneri* 3a IgG, *S. flexneri* 3a IgA) under three prior configurations:
-the primary specification (S1 Table), a diffuse alternative ($2\times$ standard
-deviation on all hyperparameters), and an informative alternative ($0.5\times$
-standard deviation). For each biomarker and prior configuration, both overall
-and serotype-specific models were fit, and per-individual MAE was compared across
-prior configurations (S3 Table). Age-stratified analyses were conducted for
-IpaB, the only antigen for which age stratification was meaningful given the
-serotype-specific nature of O-antigen responses and the resulting small subgroup
-sizes when age and serotype are jointly conditioned (@tbl-age-ipab; S1 Fig,
-S2 Fig).
+To assess robustness of model comparison conclusions to prior specification, we refit models for the four biomarkers showing the largest divergence between overall and serotype-specific approaches (*S. sonnei* IgG, *S. sonnei* IgA, *S. flexneri* 3a IgG, *S. flexneri* 3a IgA) under three prior configurations: the primary specification (S1 Table), a diffuse alternative ($2\times$ standard deviation on all hyperparameters), and an informative alternative ($0.5\times$ standard deviation).
+For each biomarker and prior configuration, both overall and serotype-specific models were fit, and per-individual MAE was compared across prior configurations (S3 Table).
+Age-stratified analyses were conducted for IpaB, the only antigen for which age stratification was meaningful given the serotype-specific nature of O-antigen responses and the resulting small subgroup sizes when age and serotype are jointly conditioned (@tbl-age-ipab; S1 Fig, S2 Fig).
 
-All data preprocessing, model fitting, and post-processing were conducted using
-reproducible workflows implemented in the serodynamics R package [@serodynamics].
+All data preprocessing, model fitting, and post-processing were conducted using reproducible workflows implemented in the serodynamics R package [@serodynamics].
 
-All participants were included in the analysis, regardless of the number of
-longitudinal measurements, as the hierarchical framework borrows strength across
-individuals and does not require complete data at all scheduled time points. No
-imputation was performed; the likelihood was evaluated only at observed time
-points for each individual.
+All participants were included in the analysis, regardless of the number of longitudinal measurements, as the hierarchical framework borrows strength across individuals and does not require complete data at all scheduled time points.
+No imputation was performed; the likelihood was evaluated only at observed time points for each individual.
 
-**Ethical Approval.** This study was approved by the Institutional Review Board
-of the International Centre for Diarrhoeal Disease Research, Bangladesh and the
-Massachusetts General Hospital's Institutional Review Board. Written informed
-consent was obtained from all adult participants and from guardians of
-participating children at the time of original SOSAR enrollment, and participants
-consented to future use of archived samples. This secondary analysis used those
-archived serum samples; the original SOSAR consent covered secondary use of
-stored samples, and no additional consent or waiver was required. All primary
-data collection was approved by the Institutional Review Boards of icddr,b and
-Massachusetts General Hospital.
+**Ethical Approval.** This study was approved by the Institutional Review Board of the International Centre for Diarrhoeal Disease Research, Bangladesh and the Massachusetts General Hospital's Institutional Review Board.
+Written informed consent was obtained from all adult participants and from guardians of participating children at the time of original SOSAR enrollment, and participants consented to future use of archived samples.
+This secondary analysis used those archived serum samples; the original SOSAR consent covered secondary use of stored samples, and no additional consent or waiver was required.
+All primary data collection was approved by the Institutional Review Boards of icddr,b and Massachusetts General Hospital.
 
 
 # Results
