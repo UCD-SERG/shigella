@@ -704,186 +704,66 @@ These patterns were stable across primary, diffuse, and informative prior specif
 
 # Discussion
 
-In this retrospective analysis of archived sera from the SOSAR cohort, we
-characterized antibody kinetics following culture-confirmed *Shigella* infection
-in 48 individuals in Dhaka, Bangladesh, and identified three patterns relevant to
-serological surveillance. First, kinetics were isotype-specific: across all five
-antigens, IgA responses rose rapidly and returned toward pre-infection baseline
-within two to three months, whereas IgG responses remained elevated throughout
-the observation period. Children under five years showed lower baseline antibody
-levels and more dynamic rise-peak-decay trajectories, consistent with primary or
-early repeat infections, whereas older children exhibited higher baseline levels
-that partially masked peak responses—likely reflecting accumulated prior exposure
-in this endemic setting. Second, responses were antigen-specific: the conserved
-antigen IpaB was elevated regardless of infecting serotype, whereas O-antigen
-(OSP) responses were largely restricted to serotype-matched infections, with
-cross-reactivity between *S. flexneri* 2a and 3a reflecting their shared O-antigen
-backbone. Third, the choice of modeling approach materially affected parameter
-estimation. Together, these antigen- and isotype-specific parameters provide the
-longitudinal inputs needed to translate cross-sectional antibody measurements
-into *Shigella* incidence estimates.
+In this retrospective analysis of archived sera from the SOSAR cohort, we characterized antibody kinetics following culture-confirmed *Shigella* infection in 48 individuals in Dhaka, Bangladesh, and identified three patterns relevant to serological surveillance.
+First, kinetics were isotype-specific: across all five antigens, IgA responses rose rapidly and returned toward pre-infection baseline within two to three months, whereas IgG responses remained elevated throughout the observation period.
+Children under five years showed lower baseline antibody levels and more dynamic rise-peak-decay trajectories, consistent with primary or early repeat infections, whereas older children exhibited higher baseline levels that partially masked peak responses—likely reflecting accumulated prior exposure in this endemic setting.
+Second, responses were antigen-specific: the conserved antigen IpaB was elevated regardless of infecting serotype, whereas O-antigen (OSP) responses were largely restricted to serotype-matched infections, with cross-reactivity between *S. flexneri* 2a and 3a reflecting their shared O-antigen backbone.
+Third, the choice of modeling approach materially affected parameter estimation.
+Together, these antigen- and isotype-specific parameters provide the longitudinal inputs needed to translate cross-sectional antibody measurements into *Shigella* incidence estimates.
 
-**IpaB as a pan-*Shigella* surveillance marker.** The conserved virulence factor
-IpaB elicited robust antibody responses across all five infecting serotype
-groups. IgG responses rose rapidly and remained elevated throughout the
-observation period, while IgA responses peaked early and declined more rapidly
-toward baseline. Because this profile is independent of the infecting
-serotype—consistent with the conservation of IpaB across *Shigella* species
-[@levine2007clinical; @bernshtein2024determinants; @sadredinamin2023shigella]—
-IpaB-based seroepidemiology may be feasible as a single-antigen pan-*Shigella*
-surveillance marker, particularly where typing capacity is limited or the
-circulating serotype distribution is unknown. The two isotypes carry
-complementary information: the longer-persisting IgG provides a species-level,
-cumulative-exposure signal suited to cross-sectional seroprevalence studies,
-whereas IgA carries species-level information on recent infection. The functional
-relevance of these responses is supported by a controlled human infection model,
-in which Bernshtein et al. identified pre-existing IpaB-specific functional
-antibodies as humoral correlates of less severe disease [@bernshtein2022systems],
-indicating that the kinetics characterized here reflect immunologically relevant
-responses rather than incidental markers. Importantly, however, our assays
-measure binding, not functional, antibodies, and the relationship between the
-binding levels modeled here and protective function remains to be established.
-Finally, IpaB-based assays cannot distinguish between *Shigella* species or
-serotypes. They therefore complement, rather than replace, serotype-specific
-OSP-based assays in applications such as vaccine-impact evaluation, where
-serotype-specific incidence is required.
+**IpaB as a pan-*Shigella* surveillance marker.** The conserved virulence factor IpaB elicited robust antibody responses across all five infecting serotype groups.
+IgG responses rose rapidly and remained elevated throughout the observation period, while IgA responses peaked early and declined more rapidly toward baseline.
+Because this profile is independent of the infecting serotype—consistent with the conservation of IpaB across *Shigella* species [@levine2007clinical; @bernshtein2024determinants; @sadredinamin2023shigella]— IpaB-based seroepidemiology may be feasible as a single-antigen pan-*Shigella* surveillance marker, particularly where typing capacity is limited or the circulating serotype distribution is unknown.
+The two isotypes carry complementary information: the longer-persisting IgG provides a species-level, cumulative-exposure signal suited to cross-sectional seroprevalence studies, whereas IgA carries species-level information on recent infection.
+The functional relevance of these responses is supported by a controlled human infection model, in which Bernshtein et al. identified pre-existing IpaB-specific functional antibodies as humoral correlates of less severe disease [@bernshtein2022systems], indicating that the kinetics characterized here reflect immunologically relevant responses rather than incidental markers.
+Importantly, however, our assays measure binding, not functional, antibodies, and the relationship between the binding levels modeled here and protective function remains to be established.
+Finally, IpaB-based assays cannot distinguish between *Shigella* species or serotypes.
+They therefore complement, rather than replace, serotype-specific OSP-based assays in applications such as vaccine-impact evaluation, where serotype-specific incidence is required.
 
-**Serotype specificity and O-antigen cross-reactivity.** The OSP responses
-observed here align with the known antigenic structure of *Shigella*
-O-polysaccharides. Responses to *S. sonnei* and *S. flexneri* 6 OSP were largely
-restricted to infections with the corresponding serotype, consistent with the
-structural distinctiveness of these O-antigens
-[@micoli2022gmma; @citiulo2021rationalizing]. By contrast, responses to
-*S. flexneri* 2a and 3a OSP were cross-reactive—detectable at multiple time
-points and for both isotypes—consistent with their shared tetrasaccharide
-backbone [@sadredinamin2023shigella; @vandeverg1996antibody]. As a further
-nuance, Farzam et al. have reported cross-reactivity extending from
-*S. flexneri* 2a to *S. flexneri* 6 [@farzam2017vaccination], indicating that
-O-antigen relationships are not strictly serotype-confined even among otherwise
-distinct antigens. This cross-reactivity structure has a direct methodological
-consequence: a model that pools participants across antigenically unrelated
-serotypes risks combining informative responses (from matched serotype) with
-non-informative responses (from unmatched serotypes that mount no expected OSP
-antibody) in a single estimation pool. This consideration motivated the
-comparison of pooled, serotype-specific, and combined-*S. flexneri* modeling
-approaches presented next.
+**Serotype specificity and O-antigen cross-reactivity.** The OSP responses observed here align with the known antigenic structure of *Shigella* O-polysaccharides.
+Responses to *S. sonnei* and *S. flexneri* 6 OSP were largely restricted to infections with the corresponding serotype, consistent with the structural distinctiveness of these O-antigens [@micoli2022gmma; @citiulo2021rationalizing].
+By contrast, responses to *S. flexneri* 2a and 3a OSP were cross-reactive—detectable at multiple time points and for both isotypes—consistent with their shared tetrasaccharide backbone [@sadredinamin2023shigella; @vandeverg1996antibody].
+As a further nuance, Farzam et al. have reported cross-reactivity extending from *S. flexneri* 2a to *S. flexneri* 6 [@farzam2017vaccination], indicating that O-antigen relationships are not strictly serotype-confined even among otherwise distinct antigens.
+This cross-reactivity structure has a direct methodological consequence: a model that pools participants across antigenically unrelated serotypes risks combining informative responses (from matched serotype) with non-informative responses (from unmatched serotypes that mount no expected OSP antibody) in a single estimation pool.
+This consideration motivated the comparison of pooled, serotype-specific, and combined-*S. flexneri* modeling approaches presented next.
 
-**Modeling approach and parameter estimation.** The modeling framework was a
-substantive choice rather than a statistical convenience, because it determined
-whether estimated parameters were biologically interpretable; three findings
-illustrate this. First, pooling across antigenically distinct serotypes failed
-for *S. sonnei*: only 11 of 48 participants were infected by the matching
-serotype, so most data informing the pooled model came from individuals who
-mounted minimal *S. sonnei* OSP response. The resulting chains could not converge
-on plausible decay parameters and estimated the *S. sonnei* IgG decay rate as
-effectively zero, whereas the serotype-specific model recovered measurable decay
-with well-mixed chains. Second, full serotype stratification failed for
-*S. flexneri* 3a: with only eight matched participants, the serotype-specific
-model was unstable and predicted individual trajectories worse than the
-alternatives. Third, a combined *S. flexneri* 2a/3a model ($n=25$), leveraging
-the cross-reactivity described above, provided a practical middle path—
-outperforming the pooled model for most *S. flexneri* 3a participants while
-avoiding dilution from antigenically unrelated serotypes, and recovering
-plausible kinetics without sacrificing serotype interpretability. The overall
-model remained appropriate where most participants contributed informative
-signal, namely IpaB (conserved across serotypes) and *S. flexneri* 2a (the
-dominant infecting serotype). Sensitivity analyses confirmed that these
-comparisons were driven by data structure and cross-reactivity rather than by
-prior choice (S3 Table). The resulting serotype-specific and combined-*S.
-flexneri* parameters are directly compatible with established seroincidence
-tools, supplying the antigen- and isotype-specific decay estimates those tools
-require.
+**Modeling approach and parameter estimation.** The modeling framework was a substantive choice rather than a statistical convenience, because it determined whether estimated parameters were biologically interpretable; three findings illustrate this.
+First, pooling across antigenically distinct serotypes failed for *S. sonnei*: only 11 of 48 participants were infected by the matching serotype, so most data informing the pooled model came from individuals who mounted minimal *S. sonnei* OSP response.
+The resulting chains could not converge on plausible decay parameters and estimated the *S. sonnei* IgG decay rate as effectively zero, whereas the serotype-specific model recovered measurable decay with well-mixed chains.
+Second, full serotype stratification failed for *S. flexneri* 3a: with only eight matched participants, the serotype-specific model was unstable and predicted individual trajectories worse than the alternatives.
+Third, a combined *S. flexneri* 2a/3a model ($n=25$), leveraging the cross-reactivity described above, provided a practical middle path— outperforming the pooled model for most *S. flexneri* 3a participants while avoiding dilution from antigenically unrelated serotypes, and recovering plausible kinetics without sacrificing serotype interpretability.
+The overall model remained appropriate where most participants contributed informative signal, namely IpaB (conserved across serotypes) and *S. flexneri* 2a (the dominant infecting serotype).
+Sensitivity analyses confirmed that these comparisons were driven by data structure and cross-reactivity rather than by prior choice (S3 Table).
+The resulting serotype-specific and combined-*S. flexneri* parameters are directly compatible with established seroincidence tools, supplying the antigen- and isotype-specific decay estimates those tools require.
 
-**Age-dependent kinetics and truncation of the ascending phase.** Two features
-of the data shaped the kinetic estimates, particularly for IgA. First, age
-modified the observable response: children under five years had lower baselines
-and more dynamic rise-peak-decay trajectories (consistent with primary or early
-repeat infection), whereas older children had higher baselines that partially
-masked peak responses, likely reflecting accumulated prior exposure in this
-endemic setting. This pattern is consistent with characterizations of early-life
-*Shigella* immunity—Ndungo et al. identified a window of vulnerability at
-12–17 months as maternal antibody wanes [@ndungo2025shigella], and Chisenga et
-al. documented the transition to naturally acquired antibodies in infancy
-[@chisenga2021shigella]. Age stratification of OSP responses was not feasible,
-because conditioning jointly on age and serotype produced subgroups too small for
-stable estimation. Second, the ascending phase was largely unobserved: the model
-estimated very early time-to-peak for several antigen-isotype combinations, yet
-the earliest samples were drawn after hospital presentation, so many participants
-had likely reached or passed their peak before first measurement—a left
-truncation that limits separation of peak magnitude from baseline. Finally, these
-are serum measurements and should not be equated with mucosal IgA; the serum and
-secretory compartments differ, and the rapid serum-IgA kinetics seen here need
-not mirror mucosal responses.
+**Age-dependent kinetics and truncation of the ascending phase.** Two features of the data shaped the kinetic estimates, particularly for IgA.
+First, age modified the observable response: children under five years had lower baselines and more dynamic rise-peak-decay trajectories (consistent with primary or early repeat infection), whereas older children had higher baselines that partially masked peak responses, likely reflecting accumulated prior exposure in this endemic setting.
+This pattern is consistent with characterizations of early-life *Shigella* immunity—Ndungo et al. identified a window of vulnerability at 12–17 months as maternal antibody wanes [@ndungo2025shigella], and Chisenga et al. documented the transition to naturally acquired antibodies in infancy [@chisenga2021shigella].
+Age stratification of OSP responses was not feasible, because conditioning jointly on age and serotype produced subgroups too small for stable estimation.
+Second, the ascending phase was largely unobserved: the model estimated very early time-to-peak for several antigen-isotype combinations, yet the earliest samples were drawn after hospital presentation, so many participants had likely reached or passed their peak before first measurement—a left truncation that limits separation of peak magnitude from baseline.
+Finally, these are serum measurements and should not be equated with mucosal IgA; the serum and secretory compartments differ, and the rapid serum-IgA kinetics seen here need not mirror mucosal responses.
 
-**Consistency with enteric fever serology.** The two-phase Bayesian hierarchical
-framework applied here was previously used by Aiemjoy et al. to characterize
-antibody kinetics following confirmed enteric fever caused by *Salmonella* Typhi
-and Paratyphi A in a substantially larger four-country cohort ($n=1{,}420$),
-where the larger sample enabled age-stratified estimation that was not feasible
-for most antigen-serotype combinations in our smaller dataset [@aiemjoy2022typhoid].
-The qualitative consistency of isotype-specific kinetic patterns across these
-enteric pathogens—short-lived IgA and persistent IgG—supports the framework's
-generalizability, while the serotype-specific challenges identified here for
-*Shigella* highlight the additional complexity introduced by O-antigen diversity
-that is absent in single-serovar pathogens [@sadredinamin2023shigella].
+**Consistency with enteric fever serology.** The two-phase Bayesian hierarchical framework applied here was previously used by Aiemjoy et al. to characterize antibody kinetics following confirmed enteric fever caused by *Salmonella* Typhi and Paratyphi A in a substantially larger four-country cohort ($n=1{,}420$), where the larger sample enabled age-stratified estimation that was not feasible for most antigen-serotype combinations in our smaller dataset [@aiemjoy2022typhoid].
+The qualitative consistency of isotype-specific kinetic patterns across these enteric pathogens—short-lived IgA and persistent IgG—supports the framework's generalizability, while the serotype-specific challenges identified here for *Shigella* highlight the additional complexity introduced by O-antigen diversity that is absent in single-serovar pathogens [@sadredinamin2023shigella].
 
-**Implications for surveillance and vaccine evaluation.** IgA marks recent
-infection on a timescale of weeks to a few months, whereas IgG reflects
-cumulative exposure over a much longer horizon, so the two isotypes serve
-different objectives—IgA for outbreak investigation and recency, IgG for
-seroprevalence and long-term surveillance. The conserved antigen IpaB IgG
-provides a pan-*Shigella* exposure history that does not require knowing the
-circulating serotype, whereas OSP responses give serotype-specific signal but
-with shorter IgA windows and serotype-restricted detectability. Which marker to
-choose therefore depends on local serotype knowledge: where the dominant serotype
-is known, serotype-matched OSP responses are most specific, but where it is
-unknown and only cross-sectional data are available—the common situation in
-endemic settings—IpaB is the recommended marker (IgG for cumulative exposure and
-seroprevalence, IgA when recency is the target). This follows from our modeling
-results: the pooled model is valid for the conserved IpaB regardless of serotype,
-whereas reliable OSP estimation requires serotype-specific or combined-*S.
-flexneri* models that presuppose knowing the circulating serotype. For
-*S. flexneri* surveillance, a single combined 2a/3a antigen may suffice where
-*S. flexneri* predominates, while *S. flexneri* 6 and *S. sonnei* require
-dedicated assays. Operationally, these parameters feed established seroincidence
-tools such as serocalculator, which converts cross-sectional measurements into
-force-of-infection estimates without longitudinal follow-up [@lai2025serocalculator].
-Such surveillance is increasingly relevant as vaccine development advances,
-including O-antigen-specific conjugate vaccines
-[@cohen2021safety; @cohen2022detoxified] and multivalent GMMA-based candidates
-[@micoli2022gmma]. One caveat for application is that these parameters derive
-from a severe, dysenteric, hospital-presenting cohort; panels built on them will
-require validation in community settings, where subclinical and mild infections
-predominate.
+**Implications for surveillance and vaccine evaluation.** IgA marks recent infection on a timescale of weeks to a few months, whereas IgG reflects cumulative exposure over a much longer horizon, so the two isotypes serve different objectives—IgA for outbreak investigation and recency, IgG for seroprevalence and long-term surveillance.
+The conserved antigen IpaB IgG provides a pan-*Shigella* exposure history that does not require knowing the circulating serotype, whereas OSP responses give serotype-specific signal but with shorter IgA windows and serotype-restricted detectability.
+Which marker to choose therefore depends on local serotype knowledge: where the dominant serotype is known, serotype-matched OSP responses are most specific, but where it is unknown and only cross-sectional data are available—the common situation in endemic settings—IpaB is the recommended marker (IgG for cumulative exposure and seroprevalence, IgA when recency is the target).
+This follows from our modeling results: the pooled model is valid for the conserved IpaB regardless of serotype, whereas reliable OSP estimation requires serotype-specific or combined-*S. flexneri* models that presuppose knowing the circulating serotype.
+For *S. flexneri* surveillance, a single combined 2a/3a antigen may suffice where *S. flexneri* predominates, while *S. flexneri* 6 and *S. sonnei* require dedicated assays.
+Operationally, these parameters feed established seroincidence tools such as serocalculator, which converts cross-sectional measurements into force-of-infection estimates without longitudinal follow-up [@lai2025serocalculator].
+Such surveillance is increasingly relevant as vaccine development advances, including O-antigen-specific conjugate vaccines [@cohen2021safety; @cohen2022detoxified] and multivalent GMMA-based candidates [@micoli2022gmma].
+One caveat for application is that these parameters derive from a severe, dysenteric, hospital-presenting cohort; panels built on them will require validation in community settings, where subclinical and mild infections predominate.
 
-**Limitations.** Several limitations follow from the retrospective design. The
-original SOSAR sampling schedule (baseline and approximately days 7, 30, 90, 180)
-was set to characterize immune responses rather than to optimize kinetic
-identifiability; sparse late-phase sampling leaves long-term decay rates poorly
-constrained, and, as noted above, the ascending phase was largely unobserved for
-several antigen-isotype combinations. The cohort was also predominantly pediatric
-(median age 10.5 years) and almost entirely dysenteric illness (98%) at one Dhaka
-site, limiting generalizability to milder presentations, other ages, and
-different transmission settings. We measured serum binding antibodies only,
-without secretory IgA or functional assays. Two further issues may bias the
-kinetic estimates: the two-phase model assumes a single infection, so undetected
-reinfection in this endemic setting could artifactually slow estimated decay
-[@teunis2020estimation]; and parameters from severe, hospital-presenting cases
-may not reflect subclinical or mild infections, which constitute most *Shigella*
-exposures and would dominate population serosurvey data
-[@teunis2012biomarker; @arnold2019enteropathogen].
+**Limitations.** Several limitations follow from the retrospective design.
+The original SOSAR sampling schedule (baseline and approximately days 7, 30, 90, 180) was set to characterize immune responses rather than to optimize kinetic identifiability; sparse late-phase sampling leaves long-term decay rates poorly constrained, and, as noted above, the ascending phase was largely unobserved for several antigen-isotype combinations.
+The cohort was also predominantly pediatric (median age 10.5 years) and almost entirely dysenteric illness (98%) at one Dhaka site, limiting generalizability to milder presentations, other ages, and different transmission settings.
+We measured serum binding antibodies only, without secretory IgA or functional assays.
+Two further issues may bias the kinetic estimates: the two-phase model assumes a single infection, so undetected reinfection in this endemic setting could artifactually slow estimated decay [@teunis2020estimation]; and parameters from severe, hospital-presenting cases may not reflect subclinical or mild infections, which constitute most *Shigella* exposures and would dominate population serosurvey data [@teunis2012biomarker; @arnold2019enteropathogen].
 
-For *Shigella*, the choice of modeling framework is a substantive decision that
-determines whether kinetic parameters are biologically interpretable: pooling
-across antigenically distinct serotypes can produce convergence failures and
-implausible decay, whereas serotype-specific and combined-*S. flexneri* models
-recover plausible dynamics. The antigen-, isotype-, and model-specific parameters
-reported here provide the inputs required to translate cross-sectional serology
-into *Shigella* incidence estimates and are directly compatible with existing
-seroincidence tools [@lai2025serocalculator]. As vaccine development advances
-toward licensure, extending these estimates to larger, community-based cohorts
-that capture subclinical infection and a broader age range will be an important
-next step.
+For *Shigella*, the choice of modeling framework is a substantive decision that determines whether kinetic parameters are biologically interpretable: pooling across antigenically distinct serotypes can produce convergence failures and implausible decay, whereas serotype-specific and combined-*S. flexneri* models recover plausible dynamics.
+The antigen-, isotype-, and model-specific parameters reported here provide the inputs required to translate cross-sectional serology into *Shigella* incidence estimates and are directly compatible with existing seroincidence tools [@lai2025serocalculator].
+As vaccine development advances toward licensure, extending these estimates to larger, community-based cohorts that capture subclinical infection and a broader age range will be an important next step.
 
 # Acknowledgments {.unnumbered}
 
