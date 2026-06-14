@@ -22,8 +22,8 @@
       ), levels = c("No", "Yes")),
       muac_cm = suppressWarnings(as.numeric(.data$MUAC)),
       hospital_stay_hours = suppressWarnings(as.numeric(.data$HosDur)) |>
-        dplyr::na_if(88) |>
-        tidyr::replace_na(0)
+        dplyr::na_if(88) # 88 = "unknown" sentinel in the metadata workbook; kept as NA so
+        # gtsummary excludes it from the median/min–max summary rather than counting it as 0 hours
     ) |>
     dplyr::mutate(sex = factor(.data$sex,
       levels = c("Male", "Female", "Transgender")
