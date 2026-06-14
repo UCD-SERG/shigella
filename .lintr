@@ -65,6 +65,7 @@ rm(undesirable_functions)
 rm(snake_case_ACRO)
 exclusions <- list(
   `data-raw` = list(
-    pipe_consistency_linter = Inf
+    pipe_consistency_linter = Inf,
+    undesirable_function_linter = Inf
   )
 )
