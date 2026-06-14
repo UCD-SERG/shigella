@@ -35,8 +35,7 @@ table1_study_population <- function(tab1_dat) {
         durdia_hours ~ "Diarrhea duration prior to presentation (hours)",
         n_visits ~ "Samples per participant",
         followup_days ~ "Follow-up duration, days",
-        completed_followup ~ "Completed follow-up (\u22654 visits and \u226590 
-        days)"
+        completed_followup ~ "Completed follow-up (\u22654 visits and \u226590 days)"
       )
     ) |> # nolint: line_length_linter.
     gtsummary::add_overall(last = FALSE, col_label = "**Overall**") |>

@@ -98,8 +98,7 @@ rda_dir <- "~/Data/Manuscript" # folder holding the regenerated *.rda
 ## (Table 1 + Figure 1 only) raw Excel inputs. Leave as-is to skip those two.
 raw_compiled <- "~/path/to/3.8.2024 Compiled Shigella datav2.xlsx"
 sheet_compiled <- "Compiled"
-raw_metadata <- "~/path/to/
-Additional metadata for Luminex sample set 10.28.2024.xlsx"
+raw_metadata <- "~/path/to/Additional metadata for Luminex sample set 10.28.2024.xlsx"
 sheet_metadata <- "Metadata"
 raw_durdia <- "~/path/to/Duration of diarrhea prior to presentation.xlsx"
 sheet_durdia <- "Duration of symptoms"
