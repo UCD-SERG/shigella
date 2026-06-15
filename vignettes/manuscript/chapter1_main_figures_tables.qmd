@@ -61,6 +61,12 @@ library(shigella)
 #| message: false
 
 # Every object the main-text figures/tables need, loaded from rda_dir.
+if (!dir.exists(path.expand(rda_dir))) {
+  cli::cli_abort(c(
+    "{.var rda_dir} ({.path {rda_dir}}) does not exist.",
+    "i" = "Set it to the folder containing the fitted .rda files in the CONFIG chunk."
+  ))
+}
 main_rda <- c(
   # overall fits
   "overall_IpaB_pop_6", "overall_Sf2a_pop_6", "overall_Sf3a_pop_6",
