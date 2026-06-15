@@ -4,17 +4,33 @@
 \alias{table_s4_all_models}
 \title{S4 Table: population kinetic parameters across all modeling approaches}
 \usage{
-table_s4_all_models(sum_overall, sum_serospec, sum_combined)
+table_s4_all_models(
+  sum_overall,
+  sum_serospec,
+  sum_combined,
+  models_overall,
+  models_serospec,
+  models_combined
+)
 }
 \arguments{
 \item{sum_overall}{\code{pop_param_summary()} table for the overall model
 (all five antigens; only Sf2a/Sf3a/Sonnei rows are used here).}
 
 \item{sum_serospec}{\code{pop_param_summary()} table for the serotype-specific
-models (Sf2a n=17, Sf3a n=8, Sonnei n=11).}
+models.}
 
 \item{sum_combined}{\code{pop_param_summary()} table for the combined flexneri
-model (Sf2a/Sf3a, n=25).}
+model (Sf2a/Sf3a).}
+
+\item{models_overall}{Named list \code{antigen = sr_model} for the overall models;
+used to derive per-antigen sample sizes.}
+
+\item{models_serospec}{Named list \code{antigen = sr_model} for the
+serotype-specific models; used to derive per-antigen sample sizes.}
+
+\item{models_combined}{Named list \code{antigen = sr_model} for the
+combined-flexneri models; used to derive per-antigen sample sizes.}
 }
 \value{
 A \code{gt_tbl}.

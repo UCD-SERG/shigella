@@ -4,7 +4,7 @@
 \alias{build_table1_data}
 \title{Assemble the participant-level data frame underlying Table 1}
 \usage{
-build_table1_data(compiled, metadata, durdia)
+build_table1_data(compiled, metadata, durdia, onset_offset = 2L)
 }
 \arguments{
 \item{compiled}{\code{Compiled} sheet (MFI + \code{cohort_name} + \code{age}).}
@@ -12,6 +12,10 @@ build_table1_data(compiled, metadata, durdia)
 \item{metadata}{\code{Metadata} sheet (sex, clinical signs, MUAC, hospital stay).}
 
 \item{durdia}{Diarrhea-duration sheet (\code{CaseID}, \code{DurDia_hours}).}
+
+\item{onset_offset}{Integer. Days from symptom onset to the day-0 (enrollment)
+blood draw. Added to the maximum \verb{Actual day} to compute \code{followup_days}.
+Defaults to \code{2L} (study-wide constant; see \verb{data-raw/_config.R}).}
 }
 \value{
 A participant-level tibble ready for \code{\link[=table1_study_population]{table1_study_population()}}.
