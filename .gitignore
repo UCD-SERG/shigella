@@ -23,7 +23,12 @@ _commit.py
 _commit.sh
 _do_commit.sh
 .gitconfig_tmp
+.gitconfig_temp
 .gitignore_temp
+commit.sh
+do_commit.sh
+.do_commit.sh
+.gitident
 .claude/
 .git-user-config
 commit-lint-fixes.sh
