@@ -20,7 +20,7 @@
         .data$Fev == 1 ~ "Yes", .data$Fev == 2 ~ "No",
         TRUE ~ NA_character_
       ), levels = c("No", "Yes")),
-      muac_cm = suppressWarnings(as.numeric(.data$MUAC)),
+      muac_cm = suppressWarnings(as.numeric(.data$MUAC)), # non-numeric entries (e.g., coded/missing values in the workbook) coerce silently to NA
       hospital_stay_hours = suppressWarnings(as.numeric(.data$HosDur)) |>
         dplyr::na_if(88) # 88 = "unknown" sentinel in the metadata workbook; kept as NA so
         # gtsummary excludes it from the median/min–max summary rather than counting it as 0 hours
