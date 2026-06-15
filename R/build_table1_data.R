@@ -60,13 +60,13 @@
 # Per-subject follow-up: visit count, follow-up days, >=4-visit flag.
 #' @keywords internal
 #' @noRd
-.table1_followup <- function(df_sosar) {
+.table1_followup <- function(df_sosar, onset_offset = 2L) {
   df_sosar |>
     dplyr::distinct(.data$sid, .data$timepoint, .keep_all = TRUE) |>
     dplyr::group_by(.data$sid) |>
     dplyr::summarise(
       n_visits = dplyr::n(),
-      followup_days = max(.data[["Actual day"]], na.rm = TRUE) + 2, # +2: days since symptom onset to day-0 blood draw # nolint: line_length_linter.
+      followup_days = max(.data[["Actual day"]], na.rm = TRUE) + onset_offset, # nolint: line_length_linter.
       .groups = "drop"
     ) |>
     dplyr::mutate(ge4_visits = factor(dplyr::if_else(.data$n_visits >= 4, "\u22654", "<4"), # nolint: line_length_linter.
@@ -85,9 +85,12 @@
 #' @param compiled `Compiled` sheet (MFI + `cohort_name` + `age`).
 #' @param metadata `Metadata` sheet (sex, clinical signs, MUAC, hospital stay).
 #' @param durdia Diarrhea-duration sheet (`CaseID`, `DurDia_hours`).
+#' @param onset_offset Integer. Days from symptom onset to the day-0 (enrollment)
+#'   blood draw. Added to the maximum `Actual day` to compute `followup_days`.
+#'   Defaults to `2L` (study-wide constant; see `data-raw/_config.R`).
 #' @return A participant-level tibble ready for [table1_study_population()].
 #' @export
-build_table1_data <- function(compiled, metadata, durdia) {
+build_table1_data <- function(compiled, metadata, durdia, onset_offset = 2L) {
   df_sosar <- dplyr::filter(compiled, .data$study_name == "SOSAR")
 
   df_durdia <- durdia |>
@@ -97,7 +100,7 @@ build_table1_data <- function(compiled, metadata, durdia) {
     ) # nolint: line_length_linter.
 
   .table1_ids(df_sosar) |>
-    dplyr::left_join(.table1_followup(df_sosar), by = "sid") |>
+    dplyr::left_join(.table1_followup(df_sosar, onset_offset = onset_offset), by = "sid") |>
     dplyr::left_join(.table1_clinical(metadata), by = "sid") |>
     dplyr::left_join(df_durdia, by = "sid") |>
     dplyr::mutate(

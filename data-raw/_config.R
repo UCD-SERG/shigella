@@ -47,6 +47,10 @@ raw_sheets <- list(
   durdia   = "Duration of symptoms" # [CONFIRMED] cols: CaseID + DurDia_hours (n=48)
 )
 
+## ---- Study-wide constants ---------------------------------------------------
+## Days from symptom onset to the day-0 (enrollment) blood draw.
+symptom_onset_offset_days <- 2L
+
 ## ---- MCMC settings ----------------------------------------------------------
 ## Main models (manuscript .qmd 1-4): 10,000,000 iterations.
 mcmc_main <- list(
