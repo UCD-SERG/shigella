@@ -1,7 +1,3 @@
-# Needed for data.table-style subset shig_bg[isotype == "IgG"] used in the 
-# plotting helper below.
-utils::globalVariables("isotype")
-
 #' Cross-reactivity heatmap (IgG | IgA, independent colour scales)
 #'
 #' @param compiled The `Compiled` sheet of the raw Shigella Excel.
@@ -11,8 +7,8 @@ figure_crossreactivity_heatmap <- function(compiled) {
   shig_bg <- prep_heatmap_data(compiled)
   lut <- attr(shig_bg, "y_label_lookup")
 
-  p_igg <- make_heatmap(shig_bg[isotype == "IgG"], "IgG", TRUE, lut)
-  p_iga <- make_heatmap(shig_bg[isotype == "IgA"], "IgA", FALSE, lut)
+  p_igg <- make_heatmap(dplyr::filter(shig_bg, .data$isotype == "IgG"), "IgG", TRUE, lut)
+  p_iga <- make_heatmap(dplyr::filter(shig_bg, .data$isotype == "IgA"), "IgA", FALSE, lut)
 
   p_igg + p_iga +
     patchwork::plot_layout(widths = c(1.1, 1)) +

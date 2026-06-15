@@ -16,13 +16,13 @@ stack_antigen_series <- function(case_list) {
       isotype_name = factor(.data$isotype_name, levels = c("IgG", "IgA")),
       infecting_serotype = dplyr::case_when(
         .data$cohort_name == "Sf2a" ~ "Sf2a",
-        .data$cohort_name == "sonnei" ~ "sonnei",
+        .data$cohort_name == "sonnei" ~ "Sonnei",
         .data$cohort_name == "Sf3a" ~ "Sf3a",
         .data$cohort_name == "Sf6" ~ "Sf6",
         TRUE ~ "Other"
       ),
       infecting_serotype = factor(.data$infecting_serotype,
-        levels = c("Sf2a", "sonnei", "Sf3a", "Sf6", "Other")
+        levels = c("Sf2a", "Sonnei", "Sf3a", "Sf6", "Other")
       ) # nolint: line_length_linter.
     )
 }

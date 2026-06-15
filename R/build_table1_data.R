@@ -40,12 +40,12 @@
       infecting_serotype = factor(
         dplyr::case_when(
           .data$cohort_name == "Sf2a" ~ "Sf2a",
-          .data$cohort_name == "sonnei" ~ "sonnei",
+          .data$cohort_name == "sonnei" ~ "Sonnei",
           .data$cohort_name == "Sf3a" ~ "Sf3a",
           .data$cohort_name == "Sf6" ~ "Sf6",
           TRUE ~ "Other"
         ),
-        levels = c("Sf2a", "sonnei", "Sf3a", "Sf6", "Other")
+        levels = c("Sf2a", "Sonnei", "Sf3a", "Sf6", "Other")
       ),
       age_group = factor(dplyr::case_when(
         .data$age < 5 ~ "<5", .data$age >= 5 ~ "\u22655",
