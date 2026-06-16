@@ -13,8 +13,9 @@ build_table1_data(compiled, metadata, durdia, onset_offset = 2L)
 
 \item{durdia}{Diarrhea-duration sheet (\code{CaseID}, \code{DurDia_hours}).}
 
-\item{onset_offset}{Integer. Days from symptom onset to the day-0 (enrollment)
-blood draw. Added to the maximum \verb{Actual day} to compute \code{followup_days}.
+\item{onset_offset}{Integer. Days from symptom onset to the
+day-0 (enrollment) blood draw. Added to the maximum \verb{Actual day} to
+compute \code{followup_days}.
 Defaults to \code{2L} (study-wide constant; see \verb{data-raw/_config.R}).}
 }
 \value{
