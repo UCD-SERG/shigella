@@ -18,20 +18,24 @@ figure_individual_comparison <- function(models, datasets,
                                            "SOSAR-22008", "SOSAR-12005",
                                            "SOSAR-22007"
                                          )) {
+  n_sf2a <- dplyr::n_distinct(datasets$dL_clean_sf2a[["id"]])
+  n_sonnei <- dplyr::n_distinct(datasets$dL_clean_sonnei[["id"]])
+  n_sf3a <- dplyr::n_distinct(datasets$dL_clean_sf3a[["id"]])
+  n_combined <- dplyr::n_distinct(datasets$dL_combined_sf3a[["id"]])
   row1 <- build_figure4_row(
     sids[1], models$overall_Sf2a, models$serotype_sf2a,
     datasets$dL_clean_sf2a, datasets$dL_serotype_sf2a, NULL,
-    "A) S. flexneri 2a (n = 17): 2-way comparison", "SF2a"
+    sprintf("A) S. flexneri 2a (n = %d): 2-way comparison", n_sf2a), "SF2a"
   )
   row2 <- build_figure4_row(
     sids[2], models$overall_Sonnei, models$serotype_sonnei, # nolint: line_length_linter.
     datasets$dL_clean_sonnei, datasets$dL_serotype_sonnei, NULL,
-    "B) S. sonnei (n = 11): 2-way comparison", "Sonnei"
+    sprintf("B) S. sonnei (n = %d): 2-way comparison", n_sonnei), "Sonnei"
   )
   row3 <- build_figure4_row(
     sids[3], models$overall_Sf3a, models$serotype_sf3a,
     datasets$dL_clean_sf3a, datasets$dL_serotype_sf3a, models$combined_sf3a,
-    "C) S. flexneri 3a (n = 8; combined n = 25): 3-way comparison", "SF3a"
+    sprintf("C) S. flexneri 3a (n = %d; combined n = %d): 3-way comparison", n_sf3a, n_combined), "SF3a" # nolint: line_length_linter.
   )
   assemble_comparison_rows(list(row1, row2, row3))
 }
