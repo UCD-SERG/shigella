@@ -18,8 +18,6 @@ README_files
 shigella.Rcheck/
 shigella*.tar.gz
 shigella*.tgz
-gitconfig_temp
-do_commit.sh
 do_commit.py
 _commit.py
 _commit.sh
