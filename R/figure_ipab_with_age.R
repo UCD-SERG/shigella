@@ -3,33 +3,27 @@
 # Population mean curves for overall + the two age strata, factor-ordered.
 #' @keywords internal
 #' @noRd
-.age_stratified_curves <- function(model_overall, model_under5, model_plus5, t_grid) { # nolint: line_length_linter.
+.age_stratified_curves <- function(model_overall, model_under5, model_plus5, t_grid, overall_lab) { # nolint: line_length_linter.
   dplyr::bind_rows(
-    dplyr::mutate(pop_mean_curve(model_overall, t_grid), group = "Overall (n=48)"), # nolint: line_length_linter.
+    dplyr::mutate(pop_mean_curve(model_overall, t_grid), group = overall_lab),
     dplyr::mutate(pop_mean_curve(model_under5, t_grid), group = "<5 years"),
     dplyr::mutate(pop_mean_curve(model_plus5, t_grid), group = ">=5 years") # nolint: line_length_linter.
   ) |>
     dplyr::mutate(group = factor(.data$group,
-      levels = c("<5 years", ">=5 years", "Overall (n=48)")
+      levels = c("<5 years", ">=5 years", overall_lab)
     ))
 }
 
 # The Fig 5A panel: grey individual lines + age-group ribbons and median curves.
 #' @keywords internal
 #' @noRd
-.fig5_age_plot <- function(all_curves, indiv_data, antigen_label, log_y, xlim) {
-  color_vals <- c(
-    "<5 years" = "#E64A19", ">=5 years" = "#2E7D32",
-    "Overall (n=48)" = "#1f77b4"
-  )
-  lt_vals <- c(
-    "<5 years" = "dashed", ">=5 years" = "dashed",
-    "Overall (n=48)" = "solid"
-  )
-  alpha_vals <- c(
-    "<5 years" = 0.10, ">=5 years" = 0.10,
-    "Overall (n=48)" = 0.08
-  )
+.fig5_age_plot <- function(all_curves, indiv_data, antigen_label, log_y, xlim, overall_lab) { # nolint: line_length_linter.
+  color_vals <- c("<5 years" = "#E64A19", ">=5 years" = "#2E7D32")
+  color_vals[overall_lab] <- "#1f77b4"
+  lt_vals <- c("<5 years" = "dashed", ">=5 years" = "dashed")
+  lt_vals[overall_lab] <- "solid"
+  alpha_vals <- c("<5 years" = 0.10, ">=5 years" = 0.10)
+  alpha_vals[overall_lab] <- 0.08
 
   p <- ggplot2::ggplot() +
     ggplot2::geom_line(
@@ -101,7 +95,9 @@ figure_ipab_with_age <- function(model_overall, model_under5, model_plus5,
                                  antigen_label = "A) IpaB (Overall + age-stratified)", # nolint: line_length_linter.
                                  t_grid = seq(0, 210, by = 5),
                                  log_y = TRUE, xlim = c(0, 210)) {
-  all_curves <- .age_stratified_curves(model_overall, model_under5, model_plus5, t_grid) # nolint: line_length_linter.
+  n_overall <- dplyr::n_distinct(raw_overall[["id"]])
+  overall_lab <- sprintf("Overall (n=%d)", n_overall)
+  all_curves <- .age_stratified_curves(model_overall, model_under5, model_plus5, t_grid, overall_lab) # nolint: line_length_linter.
   indiv_data <- extract_individual_obs(raw_overall)
-  .fig5_age_plot(all_curves, indiv_data, antigen_label, log_y, xlim)
+  .fig5_age_plot(all_curves, indiv_data, antigen_label, log_y, xlim, overall_lab) # nolint: line_length_linter.
 }
