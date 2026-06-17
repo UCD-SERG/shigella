@@ -67,8 +67,7 @@
     flextable::add_footer_lines(values = c(
       paste0(
         "Values are posterior medians (95% credible intervals) for the ",
-        "population mean (mu.par) of each parameter under the best-performing 
-        model."
+        "population mean (mu.par) of each parameter under the best-performing model."
       ), # nolint: line_length_linter.
       paste0(
         "Best model was determined by per-individual MAE comparisons on shared ", # nolint: line_length_linter.
