@@ -138,12 +138,12 @@ main_rda <- c(
   "combined_flexneri_sf2a", "combined_flexneri_sf3a",
   # IpaB age fits (Table 3 + Fig 5A)
   "overall_IpaB_pop_under5", "overall_IpaB_pop_plus5",
-  # case data, DurDia-adjusted (Fig 2 spaghetti carries cohort_name; 
+  # case data, DurDia-adjusted (Fig 2 spaghetti carries cohort_name;
   # MAE overall)
   "dL_clean_Ipab_new", "dL_clean_sf2a_new", "dL_clean_sf3a_new",
   "dL_clean_sf6_new", "dL_clean_sonnei_new",
   # case data, base/original times (observed points in Fig 4 / Fig 5)
-  "dL_clean_Ipab", "dL_clean_sf2a", "dL_clean_sf3a", "dL_clean_sf6", 
+  "dL_clean_Ipab", "dL_clean_sf2a", "dL_clean_sf3a", "dL_clean_sf6",
   "dL_clean_sonnei",
   # serotype case data (original times; MAE serospec + observed points)
   "dL_serotype_sf2a", "dL_serotype_sf3a", "dL_serotype_sonnei",
@@ -160,8 +160,9 @@ have_compiled <- file.exists(path.expand(raw_compiled))
 have_table1_raw <- have_compiled &&
   file.exists(path.expand(raw_metadata)) && file.exists(path.expand(raw_durdia))
 if (have_compiled) {
-  compiled <- readxl::read_excel(path.expand(raw_compiled), 
-                                 sheet = sheet_compiled)
+  compiled <- readxl::read_excel(path.expand(raw_compiled),
+    sheet = sheet_compiled
+  )
 }
 ```
 
@@ -172,7 +173,7 @@ if (have_compiled) {
 
 # Population kinetic-parameter summaries (== pop_table_sum / 2 / 3 in your .qmd)
 sum_overall <- pop_param_summary(list(
-  IpaB = overall_IpaB_pop_6, Sf2a = overall_Sf2a_pop_6, 
+  IpaB = overall_IpaB_pop_6, Sf2a = overall_Sf2a_pop_6,
   Sf3a = overall_Sf3a_pop_6,
   Sf6 = overall_Sf6_pop_6, Sonnei = overall_Sonnei_pop_6
 ))
@@ -185,7 +186,7 @@ sum_combined <- pop_param_summary(list(
   Sf2a = combined_flexneri_sf2a, Sf3a = combined_flexneri_sf3a
 ))
 
-# Per-individual MAE for each model class (drives Table 2 best-model pick + 
+# Per-individual MAE for each model class (drives Table 2 best-model pick +
 # Table 4)
 isos <- c("IgG", "IgA")
 
@@ -408,29 +409,30 @@ Forty participants (80%) completed full follow-up (defined as $\ge$ 4 visits and
 
 ```{r}
 #| label: tbl-cohort
-#| tbl-cap: "**Characteristics of the longitudinal *Shigella* cohort.** 
-#| Participant demographics and longitudinal sampling characteristics are shown 
-#| overall and stratified by infecting serotype. Values summarize age at 
-#| enrollment, number of samples per participant, and follow-up duration. 
-#| Continuous variables: median (Q1–Q3) except hospital stay and follow-up: 
-#| median (min–max). Follow-up duration (days) is measured from symptom onset. 
-#| Participants were screened at presentation (day 0) and the baseline sample 
-#| was collected at the day-2 enrollment visit; because symptom duration prior 
-#| to presentation is included, time since symptom onset is computed as 
-#| max(Actual day) + 2. \"Other\" serotypes include *S. boydii* (n=2), 
-#| *S. dysenteriae* (n=1), *S. flexneri* 1c (n=1), untypeable 
-#| *S. flexneri* (n=2), and RLDT-positive *Shigella* without culture 
+#| tbl-cap: "**Characteristics of the longitudinal *Shigella* cohort.**
+#| Participant demographics and longitudinal sampling characteristics are shown
+#| overall and stratified by infecting serotype. Values summarize age at
+#| enrollment, number of samples per participant, and follow-up duration.
+#| Continuous variables: median (Q1–Q3) except hospital stay and follow-up:
+#| median (min–max). Follow-up duration (days) is measured from symptom onset.
+#| Participants were screened at presentation (day 0) and the baseline sample
+#| was collected at the day-2 enrollment visit; because symptom duration prior
+#| to presentation is included, time since symptom onset is computed as
+#| max(Actual day) + 2. \"Other\" serotypes include *S. boydii* (n=2),
+#| *S. dysenteriae* (n=1), *S. flexneri* 1c (n=1), untypeable
+#| *S. flexneri* (n=2), and RLDT-positive *Shigella* without culture
 #| confirmation (n=1)."
 
 if (!have_table1_raw) {
   cli::cli_abort(c(
     "Table 1 requires all three raw Excel files.",
-    "i" = "Set {.code raw_compiled}, {.code raw_metadata}, and 
+    "i" = "Set {.code raw_compiled}, {.code raw_metadata}, and
     {.code raw_durdia} in the CONFIG chunk."
   ))
 }
-metadata <- readxl::read_excel(path.expand(raw_metadata), 
-                               sheet = sheet_metadata)
+metadata <- readxl::read_excel(path.expand(raw_metadata),
+  sheet = sheet_metadata
+)
 durdia <- readxl::read_excel(path.expand(raw_durdia), sheet = sheet_durdia)
 
 table1_study_population(build_table1_data(compiled, metadata, durdia))
@@ -445,15 +447,15 @@ The most prominent cross-reactive pattern involved *S. flexneri* 2a and 3a OSP: 
 
 ```{r}
 #| label: fig-crossreactivity
-#| fig-cap: "**Longitudinal IgG and IgA antibody responses to five *Shigella* 
-#| antigens in the Bangladesh cohort, stratified by infecting serotype.** 
-#| IgG (left panel) and IgA (right panel) are shown separately with independent 
-#| color scales to accommodate the markedly different dynamic ranges of the two 
-#| isotypes. Within each panel, columns represent antigens (IpaB, 
-#| *S. flexneri* 2a OSP, *S. flexneri* 3a OSP, *S. flexneri* 6 OSP, and 
-#| *S. sonnei* OSP), and rows represent individual participants grouped by 
-#| infecting serotype (Sf2a, Sf3a, Sf6, sonnei, and a heterogeneous \"Other\" 
-#| group). Within each serotype facet, participants are sorted by age (oldest 
+#| fig-cap: "**Longitudinal IgG and IgA antibody responses to five *Shigella*
+#| antigens in the Bangladesh cohort, stratified by infecting serotype.**
+#| IgG (left panel) and IgA (right panel) are shown separately with independent
+#| color scales to accommodate the markedly different dynamic ranges of the two
+#| isotypes. Within each panel, columns represent antigens (IpaB,
+#| *S. flexneri* 2a OSP, *S. flexneri* 3a OSP, *S. flexneri* 6 OSP, and
+#| *S. sonnei* OSP), and rows represent individual participants grouped by
+#| infecting serotype (Sf2a, Sf3a, Sf6, sonnei, and a heterogeneous \"Other\"
+#| group). Within each serotype facet, participants are sorted by age (oldest
 #| at top). Tile color indicates antibody MFI at each sampled time point."
 #| fig-width: 18
 #| fig-height: 22
@@ -480,11 +482,11 @@ Third, the degree of serotype separation on OSP beads varied.
 
 ```{r}
 #| label: fig-rawtraj
-#| fig-cap: "**Raw longitudinal IgG and IgA antibody responses to five 
-#| *Shigella* antigens, colored by infecting serotype.** Each line represents 
-#| an individual participant; points mark individual sample collections. Panels 
-#| are arranged by antigen (rows) and isotype (columns). Antibody levels are 
-#| shown on a logarithmic scale, while time since symptom onset is shown on a 
+#| fig-cap: "**Raw longitudinal IgG and IgA antibody responses to five
+#| *Shigella* antigens, colored by infecting serotype.** Each line represents
+#| an individual participant; points mark individual sample collections. Panels
+#| are arranged by antigen (rows) and isotype (columns). Antibody levels are
+#| shown on a logarithmic scale, while time since symptom onset is shown on a
 #| linear scale. Line color indicates infecting serotype."
 #| fig-width: 10
 #| fig-height: 12
@@ -519,13 +521,13 @@ Estimated decay rates ($\alpha$) were uniformly small with credible intervals sp
 
 ```{r}
 #| label: tbl-kinetics
-#| tbl-cap: "**Antibody kinetic parameters from the best-performing model for 
-#| each antigen-isotype combination.** Posterior medians and 95% credible 
-#| intervals are shown for the population mean (mu.par) of baseline antibody 
-#| level ($y_0$), peak level ($y_1$), time to peak ($t_1$), decay rate 
-#| ($\\alpha$), and decay shape ($\\rho$). The \"Model\" column shows the 
-#| modeling approach (overall, serotype-specific, or combined *S. flexneri*) 
-#| that produced the best per-individual prediction accuracy for each 
+#| tbl-cap: "**Antibody kinetic parameters from the best-performing model for
+#| each antigen-isotype combination.** Posterior medians and 95% credible
+#| intervals are shown for the population mean (mu.par) of baseline antibody
+#| level ($y_0$), peak level ($y_1$), time to peak ($t_1$), decay rate
+#| ($\\alpha$), and decay shape ($\\rho$). The \"Model\" column shows the
+#| modeling approach (overall, serotype-specific, or combined *S. flexneri*)
+#| that produced the best per-individual prediction accuracy for each
 #| biomarker, together with the effective sample size used by that model."
 
 best_lookup <- select_best_models(mae_overall, mae_serospec, mae_combined)
@@ -561,11 +563,11 @@ Age stratification was not feasible for O-antigen-specific responses because joi
 
 ```{r}
 #| label: tbl-age-ipab
-#| tbl-cap: "**Age-stratified population-level antibody kinetic parameters for 
-#| IpaB from the overall hierarchical model.** Posterior medians and 95% 
-#| credible intervals are shown for children aged <5 years (n=21) and $\\ge$5 
-#| years (n=27). Age stratification is presented only for IpaB because 
-#| O-antigen responses are serotype-specific, and conditioning on both age 
+#| tbl-cap: "**Age-stratified population-level antibody kinetic parameters for
+#| IpaB from the overall hierarchical model.** Posterior medians and 95%
+#| credible intervals are shown for children aged <5 years (n=21) and $\\ge$5
+#| years (n=27). Age stratification is presented only for IpaB because
+#| O-antigen responses are serotype-specific, and conditioning on both age
 #| and serotype produces subgroups too small for stable estimation."
 
 table3_age_stratified(overall_IpaB_pop_under5, overall_IpaB_pop_plus5)
@@ -602,11 +604,11 @@ For *S. flexneri* 3a (SOSAR-22007), the serotype-specific model showed wide cred
 
 ```{r}
 #| label: tbl-mae
-#| tbl-cap: "**Per-individual prediction accuracy (MAE) across modeling 
-#| approaches.** Values are median MAE (IQR) on the log-MFI scale. 
-#| The \"Best model\" column identifies the modeling approach with the lowest 
-#| median MAE among individuals shared across the compared models. 
-#| Per-individual winner counts (number of shared individuals best-fit by each 
+#| tbl-cap: "**Per-individual prediction accuracy (MAE) across modeling
+#| approaches.** Values are median MAE (IQR) on the log-MFI scale.
+#| The \"Best model\" column identifies the modeling approach with the lowest
+#| median MAE among individuals shared across the compared models.
+#| Per-individual winner counts (number of shared individuals best-fit by each
 #| approach) are reported in the Results text and S5 Table."
 
 t4 <- table4_mae(mae_overall, mae_serospec, mae_combined)
@@ -615,18 +617,18 @@ t4$flextable
 
 ```{r}
 #| label: fig-indtraj
-#| fig-cap: "**Individual-level antibody trajectory predictions under 
-#| alternative modeling approaches.** Each row shows one representative 
-#| participant; each panel shows one antigen–isotype combination. Blue solid 
-#| line = overall model ($n=48$); red dashed = serotype-specific model; 
-#| green dotted = combined *S. flexneri* model ($n=25$; Row C only). Shaded 
-#| ribbons = 95% credible intervals. Open circles = observed MFI values for the 
-#| selected individual. **(A)** *S. flexneri* 2a, ID SOSAR-22008 
-#| ($n_{sero}=17$); **(B)** *S. sonnei*, ID SOSAR-12005 ($n_{sero}=11$): the 
-#| overall model fails to capture antibody dynamics ($\\alpha \\approx 0$), 
-#| while the serotype-specific model recovers the expected rise–peak–decay 
-#| pattern; **(C)** *S. flexneri* 3a, ID SOSAR-22007 
-#| ($n_{sero}=8$; $n_{combined}=25$). MCMC: 4 chains $\\times$ 
+#| fig-cap: "**Individual-level antibody trajectory predictions under
+#| alternative modeling approaches.** Each row shows one representative
+#| participant; each panel shows one antigen–isotype combination. Blue solid
+#| line = overall model ($n=48$); red dashed = serotype-specific model;
+#| green dotted = combined *S. flexneri* model ($n=25$; Row C only). Shaded
+#| ribbons = 95% credible intervals. Open circles = observed MFI values for the
+#| selected individual. **(A)** *S. flexneri* 2a, ID SOSAR-22008
+#| ($n_{sero}=17$); **(B)** *S. sonnei*, ID SOSAR-12005 ($n_{sero}=11$): the
+#| overall model fails to capture antibody dynamics ($\\alpha \\approx 0$),
+#| while the serotype-specific model recovers the expected rise–peak–decay
+#| pattern; **(C)** *S. flexneri* 3a, ID SOSAR-22007
+#| ($n_{sero}=8$; $n_{combined}=25$). MCMC: 4 chains $\\times$
 #| 100,000 iterations, 20,000 burn-in, $\\hat{R}<1.05$."
 
 cmp_models <- list(
@@ -665,17 +667,17 @@ The overall model (gray dashed) tracked between the two age-specific curves, con
 
 ```{r}
 #| label: fig-poptraj
-#| fig-cap: "**Population-level antibody kinetic trajectories from the 
-#| best-performing model for each antigen.** Blue curves show posterior median 
-#| trajectories; gray ribbons indicate 95% credible intervals derived from the 
-#| population mean parameters. Thin gray lines represent observed individual 
-#| antibody trajectories. Panels correspond to IgG (left) and IgA (right) 
-#| responses for each antigen. **(A)** IpaB, overall model (n = 48, blue solid) 
-#| with age-stratified curves: children <5 years (orange dashed) and children 
-#| $\\ge$5 years (green dashed). **(B)** *S. sonnei* OSP, serotype-specific 
-#| model (n = 11). **(C)** *S. flexneri* 2a OSP, serotype-specific 
-#| model (n = 17). **(D)** *S. flexneri* 3a OSP, combined *S. flexneri* model 
-#| (n = 25). **(E)** *S. flexneri* 6 OSP, overall model (n = 48). The y-axis 
+#| fig-cap: "**Population-level antibody kinetic trajectories from the
+#| best-performing model for each antigen.** Blue curves show posterior median
+#| trajectories; gray ribbons indicate 95% credible intervals derived from the
+#| population mean parameters. Thin gray lines represent observed individual
+#| antibody trajectories. Panels correspond to IgG (left) and IgA (right)
+#| responses for each antigen. **(A)** IpaB, overall model (n = 48, blue solid)
+#| with age-stratified curves: children <5 years (orange dashed) and children
+#| $\\ge$5 years (green dashed). **(B)** *S. sonnei* OSP, serotype-specific
+#| model (n = 11). **(C)** *S. flexneri* 2a OSP, serotype-specific
+#| model (n = 17). **(D)** *S. flexneri* 3a OSP, combined *S. flexneri* model
+#| (n = 25). **(E)** *S. flexneri* 6 OSP, overall model (n = 48). The y-axis
 #| is displayed on a log scale."
 #| fig-width: 8.5
 #| fig-height: 18

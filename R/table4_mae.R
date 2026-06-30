@@ -79,8 +79,10 @@
     dplyr::summarise(ids = list(sort(unique(.data$sid))), .groups = "drop")
   common <- Reduce(intersect, ids_by$ids)
   if (length(common) == 0) {
-    return(tibble::tibble(best_display = "N/A", wins = NA_integer_, 
-                          n_shared = NA_integer_))
+    return(tibble::tibble(
+      best_display = "N/A", wins = NA_integer_,
+      n_shared = NA_integer_
+    ))
   } # nolint: line_length_linter.
   winners <- dat |>
     dplyr::filter(.data$sid %in% common) |>
@@ -103,7 +105,7 @@
     dplyr::filter(!is.na(.data$wins)) |>
     dplyr::transmute(label = sprintf(
       "%s-%s: %s best for %d/%d",
-      .data$antigen, .data$Iso_type, .data$best_display, .data$wins, 
+      .data$antigen, .data$Iso_type, .data$best_display, .data$wins,
       .data$n_shared
     )) |> # nolint: line_length_linter.
     dplyr::pull(.data$label) |>

@@ -11,8 +11,14 @@ extract_individual_obs <- function(raw_dataset) {
     if (length(mfi) == 1) mfi else "result"
   }
   id_col <- if ("sid" %in% names(raw_dataset)) "sid" else "id"
-  iso_col <- if ("isotype_name" %in% names(raw_dataset)) "isotype_name" else if 
-  ("Iso_type" %in% names(raw_dataset)) "Iso_type" else "antigen_iso"
+  iso_col <- if ("isotype_name" %in% names(raw_dataset)) {
+    "isotype_name"
+  } else if
+  ("Iso_type" %in% names(raw_dataset)) {
+    "Iso_type"
+  } else {
+    "antigen_iso"
+  }
 
   raw_dataset |>
     dplyr::transmute(

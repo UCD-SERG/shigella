@@ -20,12 +20,12 @@
         .data$Fev == 1 ~ "Yes", .data$Fev == 2 ~ "No",
         TRUE ~ NA_character_
       ), levels = c("No", "Yes")),
-      muac_cm = suppressWarnings(as.numeric(.data$MUAC)), # non-numeric entries 
-      #(e.g., coded/missing values in the workbook) coerce silently to NA
+      muac_cm = suppressWarnings(as.numeric(.data$MUAC)), # non-numeric entries
+      # (e.g., coded/missing values in the workbook) coerce silently to NA
       hospital_stay_hours = suppressWarnings(as.numeric(.data$HosDur)) |>
-        dplyr::na_if(88) # 88 = "unknown" sentinel in the metadata workbook; 
-      # kept as NA so gtsummary excludes it from the 
-      # median/min–max summary rather than counting 
+        dplyr::na_if(88) # 88 = "unknown" sentinel in the metadata workbook;
+      # kept as NA so gtsummary excludes it from the
+      # median/min–max summary rather than counting
       # it as 0 hours
     ) |>
     dplyr::mutate(sex = factor(.data$sex,
@@ -85,8 +85,8 @@
 #' @param compiled `Compiled` sheet (MFI + `cohort_name` + `age`).
 #' @param metadata `Metadata` sheet (sex, clinical signs, MUAC, hospital stay).
 #' @param durdia Diarrhea-duration sheet (`CaseID`, `DurDia_hours`).
-#' @param onset_offset Integer. Days from symptom onset to the 
-#'   day-0 (enrollment) blood draw. Added to the maximum `Actual day` to 
+#' @param onset_offset Integer. Days from symptom onset to the
+#'   day-0 (enrollment) blood draw. Added to the maximum `Actual day` to
 #'   compute `followup_days`.
 #'   Defaults to `2L` (study-wide constant; see `data-raw/_config.R`).
 #' @return A participant-level tibble ready for [table1_study_population()].
@@ -101,8 +101,9 @@ build_table1_data <- function(compiled, metadata, durdia, onset_offset = 2L) {
     ) # nolint: line_length_linter.
 
   .table1_ids(df_sosar) |>
-    dplyr::left_join(.table1_followup(df_sosar, onset_offset = onset_offset), 
-                     by = "sid") |>
+    dplyr::left_join(.table1_followup(df_sosar, onset_offset = onset_offset),
+      by = "sid"
+    ) |>
     dplyr::left_join(.table1_clinical(metadata), by = "sid") |>
     dplyr::left_join(df_durdia, by = "sid") |>
     dplyr::mutate(

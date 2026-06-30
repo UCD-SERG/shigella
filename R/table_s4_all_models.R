@@ -28,13 +28,13 @@
 #' @keywords internal
 #' @noRd
 .s4_display <- function(supp_all, n_overall, n_serospec, n_combined) {
-  ag     <- as.character(supp_all$antigen)
-  md     <- as.character(supp_all$model)
+  ag <- as.character(supp_all$antigen)
+  md <- as.character(supp_all$model)
   n_vals <- unname(dplyr::case_when(
-    md == "Overall"           ~ n_overall[ag],
+    md == "Overall" ~ n_overall[ag],
     md == "Serotype-specific" ~ n_serospec[ag],
     md == "Combined flexneri" ~ n_combined[ag],
-    TRUE                      ~ NA_integer_
+    TRUE ~ NA_integer_
   ))
   supp_all |>
     dplyr::mutate(n = n_vals) |>
@@ -73,7 +73,7 @@
 table_s4_all_models <- function(sum_overall, sum_serospec, sum_combined,
                                 models_overall, models_serospec, models_combined) { # nolint: line_length_linter.
   .n <- function(m) dplyr::n_distinct(m[["Subject"]])
-  n_overall  <- purrr::map_int(models_overall, .n)
+  n_overall <- purrr::map_int(models_overall, .n)
   n_serospec <- purrr::map_int(models_serospec, .n)
   n_combined <- purrr::map_int(models_combined, .n)
 

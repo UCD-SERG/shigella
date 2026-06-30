@@ -23,12 +23,12 @@ pop_mean_curve <- function(model_obj, t_grid = seq(0, 210, by = 5)) {
         y0_nat    = exp(.data$y0),
         y1_nat    = exp(.data$y0) + exp(.data$y1),
         t1_nat    = exp(.data$t1),
-        alpha_nat = exp(.data$alpha), 
+        alpha_nat = exp(.data$alpha),
         shape_nat = exp(.data$shape) + 1
       ) |>
       # each retained draw x each grid point; ~2000 draws x length(t_grid) rows per isotype # nolint: line_length_linter.
       tidyr::crossing(t = t_grid) |>
-      # TODO(serodynamics export): see REPRODUCIBILITY.md "Known tech debt: 
+      # TODO(serodynamics export): see REPRODUCIBILITY.md "Known tech debt:
       # serodynamics internal calls".
       dplyr::mutate(res = serodynamics:::ab(
         .data$t, .data$y0_nat, .data$y1_nat,

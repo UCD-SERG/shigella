@@ -9,7 +9,7 @@
 #'   `dL_combined_sf3a` case data.
 #' @param sids Length-3 character vector of representative subject ids
 #'   (Sf2a, Sonnei, Sf3a). Defaults match the manuscript.
-#' @note The default sids are fixed representative subjects from the Dhaka 
+#' @note The default sids are fixed representative subjects from the Dhaka
 #' cohort.
 #' @return A patchwork figure.
 #' @export

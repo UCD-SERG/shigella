@@ -19,11 +19,11 @@
 #' `.rda` inputs and the manuscript figures use `id`.
 #'
 #' **cohort_name / age.** The original bare object `dL_clean_sf2a` did not carry
-#' these two columns, so the base (non-`_new`) datasets built here are a 
-#' harmless superset of the originals (two extra metadata columns). This is 
-#' cosmetic: the model fit (`prep_data_new()` uses only 
-#' `id`/`antigen_iso`/`timeindays`/`result`) and the figures are unaffected, 
-#' and keeping the columns is what makes the serotype / age subsets 
+#' these two columns, so the base (non-`_new`) datasets built here are a
+#' harmless superset of the originals (two extra metadata columns). This is
+#' cosmetic: the model fit (`prep_data_new()` uses only
+#' `id`/`antigen_iso`/`timeindays`/`result`) and the figures are unaffected,
+#' and keeping the columns is what makes the serotype / age subsets
 #' reproducible from one function.
 #'
 #' @param data Compiled MFI table (the `Compiled` sheet): one row per

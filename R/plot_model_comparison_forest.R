@@ -55,7 +55,7 @@
     ggplot2::geom_linerange(
       ggplot2::aes(xmin = .data$lo, xmax = .data$hi),
       linewidth = line_width,
-      position = ggplot2::position_dodge(width = dodge_width), 
+      position = ggplot2::position_dodge(width = dodge_width),
       show.legend = FALSE
     ) + # nolint: line_length_linter.
     ggplot2::geom_point(
@@ -70,8 +70,10 @@
       panel.grid.major.y = ggplot2::element_blank(),
       panel.grid.minor = ggplot2::element_blank(),
       strip.background = ggplot2::element_rect(fill = "grey20"),
-      strip.text = ggplot2::element_text(colour = "white", face = "bold", 
-                                         size = 12), # nolint: line_length_linter.
+      strip.text = ggplot2::element_text(
+        colour = "white", face = "bold",
+        size = 12
+      ), # nolint: line_length_linter.
       axis.text.y = ggplot2::element_text(face = "bold", size = 10),
       legend.position = "none",
       plot.margin = ggplot2::margin(4, 8, 4, 4)
@@ -79,8 +81,10 @@
   if (use_log) {
     p <- p + ggplot2::scale_x_log10(labels = function(x) {
       ifelse(x >= 1,
-        formatC(x, format = "g", digits = 3), formatC(x, format = "e", 
-                                                      digits = 0)
+        formatC(x, format = "g", digits = 3), formatC(x,
+          format = "e",
+          digits = 0
+        )
       )
     }) # nolint: line_length_linter.
   }
@@ -144,10 +148,12 @@ plot_model_comparison_forest <- function(pop_overall, pop_serospec,
         "MCMC: 10,000,000 iterations, 50,000 burn-in, 4 chains per model."
       ),
       theme = ggplot2::theme(
-        plot.title    = ggplot2::element_text(face = "bold", size = 15, hjust = 0.5), # nolint: line_length_linter.
+        plot.title = ggplot2::element_text(face = "bold", size = 15, hjust = 0.5), # nolint: line_length_linter.
         plot.subtitle = ggplot2::element_text(size = 9, hjust = 0.5, colour = "grey40"), # nolint: line_length_linter.
-        plot.caption  = ggplot2::element_text(size = 10, colour = "grey50", 
-                                              hjust = 0.5)
+        plot.caption = ggplot2::element_text(
+          size = 10, colour = "grey50",
+          hjust = 0.5
+        )
       )
     ) # nolint: line_length_linter.
 }

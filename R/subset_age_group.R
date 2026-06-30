@@ -21,7 +21,7 @@ subset_age_group <- function(case_data, group = c("under5", "plus5")) {
   )
   if (n_boundary > 0) {
     cli::cli_inform(
-      "{n_boundary} participant{?s} with age == 5 excluded from both age 
+      "{n_boundary} participant{?s} with age == 5 excluded from both age
       strata."
     )
   }
