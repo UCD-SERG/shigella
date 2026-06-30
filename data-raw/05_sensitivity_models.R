@@ -16,13 +16,13 @@
 
 source("data-raw/_config.R")
 
-# devtools::load_all()
+devtools::load_all() # loads shigella R/ functions (fit_and_save, load_inputs, define_prior_configs, ...)
 library(serodynamics)
 
 load_inputs(c(
   "dL_clean_sonnei_new", "dL_serotype_sonnei",
   "dL_clean_sf3a_new",   "dL_serotype_sf3a"
-))
+), dir = manuscript_data_dir)
 
 set.seed(11) # preserved from manuscript5.qmd
 
@@ -35,7 +35,7 @@ biomarker_map <- list(
   list(biomarker = "Sf3a IgA", overall = dL_clean_sf3a_new, serotype = dL_serotype_sf3a)
 )
 
-prior_configs <- define_prior_configs() # primary / diffuse / informative
+prior_configs <- define_prior_configs(prior_settings) # primary / diffuse / informative
 
 start_time <- Sys.time()
 
@@ -52,7 +52,8 @@ for (bm in biomarker_map) {
         name        = paste0("sensitivity_", fit_name),
         object_name = "fit_obj", # S3-table loader contract
         settings    = mcmc_sensitivity,
-        priors      = prior_configs[[prior_name]]
+        priors      = prior_configs[[prior_name]],
+        dir         = manuscript_data_dir
       )
     }
   }

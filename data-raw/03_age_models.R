@@ -14,7 +14,7 @@
 
 source("data-raw/_config.R")
 
-# devtools::load_all()
+devtools::load_all() # loads shigella R/ functions (fit_and_save, load_inputs, ...)
 library(serodynamics)
 
 antigens <- c("Ipab", "sf2a", "sf3a", "sf6", "sonnei")
@@ -27,7 +27,7 @@ load_inputs(as.vector(outer(
   paste0("dL_clean_", antigens, "_new"),
   c("_under5", "_plus5"),
   paste0
-)))
+)), dir = manuscript_data_dir)
 
 set.seed(8) # preserved from manuscript3.qmd
 
@@ -38,12 +38,16 @@ for (ag in antigens) {
   fit_and_save(
     get(paste0("dL_clean_", ag, "_new_under5")),
     paste0("overall_", out_stem[[ag]], "_pop_under5"),
-    settings = mcmc_main
+    settings = mcmc_main,
+    priors = prior_settings,
+    dir = manuscript_data_dir
   )
   fit_and_save(
     get(paste0("dL_clean_", ag, "_new_plus5")),
     paste0("overall_", out_stem[[ag]], "_pop_plus5"),
-    settings = mcmc_main
+    settings = mcmc_main,
+    priors = prior_settings,
+    dir = manuscript_data_dir
   )
 }
 

@@ -14,23 +14,23 @@
 
 source("data-raw/_config.R")
 
-# devtools::load_all()
+devtools::load_all() # loads shigella R/ functions (fit_and_save, load_inputs, ...)
 library(serodynamics)
 
 load_inputs(c(
   "dL_serotype_sf2a",
   "dL_serotype_sf3a",
   "dL_serotype_sonnei"
-))
+), dir = manuscript_data_dir)
 
 set.seed(6) # preserved from manuscript2.qmd (see reproducibility note in _config.R)
 
 start_time <- Sys.time()
 
 ## Order matches manuscript2.qmd: sf2a -> sf3a -> sonnei
-fit_and_save(dL_serotype_sf2a, "serotype_sf2a_3", settings = mcmc_main)
-fit_and_save(dL_serotype_sf3a, "serotype_sf3a_3", settings = mcmc_main)
-fit_and_save(dL_serotype_sonnei, "serotype_sonnei_3", settings = mcmc_main)
+fit_and_save(dL_serotype_sf2a, "serotype_sf2a_3", settings = mcmc_main, priors = prior_settings, dir = manuscript_data_dir)
+fit_and_save(dL_serotype_sf3a, "serotype_sf3a_3", settings = mcmc_main, priors = prior_settings, dir = manuscript_data_dir)
+fit_and_save(dL_serotype_sonnei, "serotype_sonnei_3", settings = mcmc_main, priors = prior_settings, dir = manuscript_data_dir)
 
 message(
   "02_serotype_models.R runtime: ",

@@ -3,7 +3,10 @@
 ##  Shared settings for every model-generation script (01..05).
 ##  Source this at the top of each script:  source("data-raw/_config.R")
 ##
-##  NOTHING here has side effects except defining objects + one helper.
+##  This file defines settings objects only (paths, MCMC parameters, priors,
+##  sheet names).  Function definitions (define_prior_configs, fit_and_save,
+##  load_inputs) live in R/ and are loaded via devtools::load_all() or
+##  library(shigella) in each script.
 ## =============================================================================
 
 ## ====================== EDIT THESE AFTER DOWNLOADING DATA ====================
@@ -81,86 +84,4 @@ prior_settings <- list(
 
 ## Alternative prior configurations for the sensitivity analysis.
 ## diffuse = prec/4 (wider), informative = prec*4 (tighter).
-define_prior_configs <- function(base = prior_settings) {
-  list(
-    primary = utils::modifyList(base, list(label = "Primary")),
-    diffuse = utils::modifyList(base, list(
-      label = "Diffuse",
-      prec_hyp_param = base$prec_hyp_param / 4
-    )),
-    informative = utils::modifyList(base, list(
-      label = "Informative",
-      prec_hyp_param = base$prec_hyp_param * 4
-    ))
-  )
-}
-
-## ---- Fit one model and save it ----------------------------------------------
-## Reproduces the original `obj <- run_mod_pop(...); save(obj, file = ...)` idiom.
-##
-##  - `name`        : the .rda file stem (file is <name>.rda in `dir`).
-##  - `object_name` : the variable name the fit is stored UNDER inside the .rda.
-##                    Defaults to `name`, so scripts 01-04 produce
-##                    overall_IpaB_pop_6.rda containing `overall_IpaB_pop_6`,
-##                    matching the manuscript `load()` calls.
-##                    Script 05 (sensitivity) passes object_name = "fit_obj"
-##                    because the S3-table loader (tables_supp.R) expects every
-##                    sensitivity_*.rda to contain an object literally called
-##                    `fit_obj`.
-##
-##  Reproducibility note: serodynamics::initsfunction() assigns FIXED per-chain
-##  RNG seeds (1-4) and named generators, so the JAGS draws are reproducible from
-##  identical input data alone. The per-script set.seed() calls are preserved for
-##  fidelity but do not themselves drive the JAGS output.
-##
-##  Requires `serodynamics` to be attached (see decision D1 in REPRODUCIBILITY_PLAN).
-fit_and_save <- function(data,
-                         name,
-                         object_name = name,
-                         settings = mcmc_main,
-                         priors = prior_settings,
-                         dir = manuscript_data_dir,
-                         with_post = TRUE) {
-  obj <- run_mod_pop(
-    data = data,
-    file_mod = serodynamics_example("model.jags"),
-    nchain = settings$nchain,
-    nadapt = settings$nadapt,
-    nburn = settings$nburn,
-    nmc = settings$nmc,
-    niter = settings$niter,
-    mu_hyp_param = priors$mu_hyp_param,
-    prec_hyp_param = priors$prec_hyp_param,
-    omega_param = priors$omega_param,
-    wishdf_param = priors$wishdf_param,
-    prec_logy_hyp_param = priors$prec_logy_hyp_param,
-    with_post = with_post
-  )
-
-  assign(object_name, obj)
-  save(
-    list = object_name,
-    file = file.path(dir, paste0(name, ".rda")),
-    compress = "xz",
-    envir = environment()
-  )
-  cli::cli_inform("saved: {.file {file.path(dir, paste0(name, '.rda'))}}")
-  invisible(obj)
-}
-
-## ---- Load a set of dL_* inputs by stem from manuscript_data_dir -------------
-## Each <stem>.rda (written by 00_build_case_data.R) contains one object named
-## <stem>; this loads them into the caller's environment.
-load_inputs <- function(stems, dir = manuscript_data_dir,
-                        envir = parent.frame()) {
-  for (s in stems) {
-    f <- file.path(dir, paste0(s, ".rda"))
-    if (!file.exists(f)) {
-      cli::cli_abort(c("Missing input: {.file {f}}",
-        "i" = "Run {.file data-raw/00_build_case_data.R} first."
-      ))
-    }
-    load(f, envir = envir)
-  }
-  invisible(stems)
-}
+## Function define_prior_configs() is defined in R/define_prior_configs.R.

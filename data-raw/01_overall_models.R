@@ -12,7 +12,7 @@
 
 source("data-raw/_config.R")
 
-# devtools::load_all()   # serodynamics + R/ helpers (run_mod_pop, fit_and_save, ...)
+devtools::load_all() # loads shigella R/ functions (fit_and_save, load_inputs, ...)
 library(serodynamics)
 
 ## ---- Load DurDia-adjusted ("_new") overall case data ------------------------
@@ -22,7 +22,7 @@ load_inputs(c(
   "dL_clean_sonnei_new",
   "dL_clean_sf6_new",
   "dL_clean_sf3a_new"
-))
+), dir = manuscript_data_dir)
 
 ## ---- Fit ---------------------------------------------------------------------
 ## set.seed() preserved from manuscript.qmd for fidelity (reproducibility is
@@ -32,11 +32,11 @@ set.seed(7)
 start_time <- Sys.time()
 
 ## Order matches manuscript.qmd: IpaB -> Sf2a -> Sonnei -> Sf6 -> Sf3a
-fit_and_save(dL_clean_Ipab_new, "overall_IpaB_pop_6", settings = mcmc_main)
-fit_and_save(dL_clean_sf2a_new, "overall_Sf2a_pop_6", settings = mcmc_main)
-fit_and_save(dL_clean_sonnei_new, "overall_Sonnei_pop_6", settings = mcmc_main)
-fit_and_save(dL_clean_sf6_new, "overall_Sf6_pop_6", settings = mcmc_main)
-fit_and_save(dL_clean_sf3a_new, "overall_Sf3a_pop_6", settings = mcmc_main)
+fit_and_save(dL_clean_Ipab_new, "overall_IpaB_pop_6", settings = mcmc_main, priors = prior_settings, dir = manuscript_data_dir)
+fit_and_save(dL_clean_sf2a_new, "overall_Sf2a_pop_6", settings = mcmc_main, priors = prior_settings, dir = manuscript_data_dir)
+fit_and_save(dL_clean_sonnei_new, "overall_Sonnei_pop_6", settings = mcmc_main, priors = prior_settings, dir = manuscript_data_dir)
+fit_and_save(dL_clean_sf6_new, "overall_Sf6_pop_6", settings = mcmc_main, priors = prior_settings, dir = manuscript_data_dir)
+fit_and_save(dL_clean_sf3a_new, "overall_Sf3a_pop_6", settings = mcmc_main, priors = prior_settings, dir = manuscript_data_dir)
 
 message(
   "01_overall_models.R runtime: ",
