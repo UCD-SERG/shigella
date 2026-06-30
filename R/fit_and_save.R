@@ -9,7 +9,8 @@
 #'   Defaults to `name`. Script 05 passes `"fit_obj"` to match the S3-table
 #'   loader contract in `R/tables_supp.R`.
 #' @param settings Named list of MCMC settings with elements `nchain`, `nadapt`,
-#'   `nburn`, `nmc`, `niter`. Required; no default to avoid dependency on globals.
+#'   `nburn`, `nmc`, `niter`. Required; no default to avoid dependency on 
+#'   globals.
 #' @param priors Named list of prior hyperparameters with elements
 #'   `mu_hyp_param`, `prec_hyp_param`, `omega_param`, `wishdf_param`,
 #'   `prec_logy_hyp_param`. Required; no default to avoid dependency on globals.
