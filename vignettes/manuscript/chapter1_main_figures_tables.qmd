@@ -1,0 +1,318 @@
+---
+title: "Chapter 1 — Main-text Figures & Tables"
+subtitle: "Reproduces every main-text table & figure from library(shigella) + the regenerated .rda"
+format:
+  html:
+    embed-resources: true
+    toc: true
+    toc-depth: 2
+    toc-location: right
+editor: visual
+---
+
+```{=html}
+<!--
+PURPOSE
+  GitHub / package-phase reproducibility document. With the shigella package
+  installed (devtools::install() or devtools::load_all()), this renders every
+  main-text table and figure straight from library(shigella) — no source() of R/.
+
+HOW TO RUN
+  1. Regenerate the fitted .rda once: run data-raw/00_build_case_data.R, then
+     data-raw/01..05_*.R (these write the .rda into your manuscript_data_dir).
+  2. Edit the CONFIG chunk: point `rda_dir` at that folder.
+  3. (Table 1 + Figure 1 only) set the three raw-Excel paths; leave them unset to
+     skip those two chunks — every other item builds from .rda alone.
+  4. Render (Quarto) or run chunk-by-chunk.
+-->
+```
+
+```{r}
+#| label: config
+#| message: false
+
+## ---- EDIT THESE ----------------------------------------------------------
+rda_dir <- "~/Data/Manuscript" # folder holding the regenerated *.rda
+
+## (Table 1 + Figure 1 only) raw Excel inputs. Leave as-is to skip those two.
+raw_compiled <- "~/path/to/3.8.2024 Compiled Shigella datav2.xlsx"
+sheet_compiled <- "Compiled"
+raw_metadata <- "~/path/to/Additional metadata for Luminex sample set 10.28.2024.xlsx"
+sheet_metadata <- "Metadata"
+raw_durdia <- "~/path/to/Duration of diarrhea prior to presentation.xlsx"
+sheet_durdia <- "Duration of symptoms"
+## --------------------------------------------------------------------------
+```
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+
+# Everything comes from the installed package: shigella's Imports (dplyr, tidyr,
+# purrr, ggplot2, patchwork, scales, flextable, gt, cowplot, serocalculator,
+# serodynamics, ...) load with it, and the flextable/gt knit_print methods
+# register on load. No source() of R/ is needed.
+library(shigella)
+```
+
+```{r}
+#| label: load-rda
+#| message: false
+
+# Every object the main-text figures/tables need, loaded from rda_dir.
+if (!dir.exists(path.expand(rda_dir))) {
+  cli::cli_abort(c(
+    "{.var rda_dir} ({.path {rda_dir}}) does not exist.",
+    "i" = "Set it to the folder containing the fitted .rda files in the CONFIG chunk."
+  ))
+}
+main_rda <- c(
+  # overall fits
+  "overall_IpaB_pop_6", "overall_Sf2a_pop_6", "overall_Sf3a_pop_6",
+  "overall_Sf6_pop_6", "overall_Sonnei_pop_6",
+  # serotype-specific fits
+  "serotype_sf2a_3", "serotype_sf3a_3", "serotype_sonnei_3",
+  # combined flexneri fits
+  "combined_flexneri_sf2a", "combined_flexneri_sf3a",
+  # IpaB age fits (Table 3 + Fig 5A)
+  "overall_IpaB_pop_under5", "overall_IpaB_pop_plus5",
+  # case data, DurDia-adjusted (Fig 2 spaghetti carries cohort_name;
+  # MAE overall)
+  "dL_clean_Ipab_new", "dL_clean_sf2a_new", "dL_clean_sf3a_new",
+  "dL_clean_sf6_new", "dL_clean_sonnei_new",
+  # case data, base/original times (observed points in Fig 4 / Fig 5)
+  "dL_clean_Ipab", "dL_clean_sf2a", "dL_clean_sf3a", "dL_clean_sf6",
+  "dL_clean_sonnei",
+  # serotype case data (original times; MAE serospec + observed points)
+  "dL_serotype_sf2a", "dL_serotype_sf3a", "dL_serotype_sonnei",
+  # combined case data (MAE combined + Fig 5 panel D)
+  "dL_combined_flexneri_sf2a_case", "dL_combined_flexneri_sf3a_case"
+)
+
+for (nm in main_rda) {
+  load(file.path(path.expand(rda_dir), paste0(nm, ".rda")))
+}
+
+# raw-Excel availability flags (gate Table 1 + Figure 1 only)
+have_compiled <- file.exists(path.expand(raw_compiled))
+have_table1_raw <- have_compiled &&
+  file.exists(path.expand(raw_metadata)) && file.exists(path.expand(raw_durdia))
+if (have_compiled) {
+  compiled <- readxl::read_excel(path.expand(raw_compiled),
+    sheet = sheet_compiled
+  )
+}
+```
+
+```{r}
+#| label: shared-params-mae
+#| message: false
+#| warning: false
+
+# Population kinetic-parameter summaries (== pop_table_sum / 2 / 3 in your .qmd)
+sum_overall <- pop_param_summary(list(
+  IpaB = overall_IpaB_pop_6, Sf2a = overall_Sf2a_pop_6,
+  Sf3a = overall_Sf3a_pop_6,
+  Sf6 = overall_Sf6_pop_6, Sonnei = overall_Sonnei_pop_6
+))
+
+sum_serospec <- pop_param_summary(list(
+  Sf2a = serotype_sf2a_3, Sf3a = serotype_sf3a_3, Sonnei = serotype_sonnei_3
+))
+
+sum_combined <- pop_param_summary(list(
+  Sf2a = combined_flexneri_sf2a, Sf3a = combined_flexneri_sf3a
+))
+
+# Per-individual MAE for each model class (drives Table 2 best-model pick +
+# Table 4)
+isos <- c("IgG", "IgA")
+
+mae_overall <- dplyr::bind_rows(lapply(isos, function(io) {
+  dplyr::bind_rows(
+    get_mae(overall_IpaB_pop_6, dL_clean_Ipab_new, "IpaB", io),
+    get_mae(overall_Sf2a_pop_6, dL_clean_sf2a_new, "Sf2a", io),
+    get_mae(overall_Sf3a_pop_6, dL_clean_sf3a_new, "Sf3a", io),
+    get_mae(overall_Sf6_pop_6, dL_clean_sf6_new, "Sf6", io),
+    get_mae(overall_Sonnei_pop_6, dL_clean_sonnei_new, "Sonnei", io)
+  )
+}))
+
+mae_serospec <- dplyr::bind_rows(lapply(isos, function(io) {
+  dplyr::bind_rows(
+    get_mae(serotype_sf2a_3, dL_serotype_sf2a, "Sf2a", io),
+    get_mae(serotype_sf3a_3, dL_serotype_sf3a, "Sf3a", io),
+    get_mae(serotype_sonnei_3, dL_serotype_sonnei, "Sonnei", io)
+  )
+}))
+
+mae_combined <- dplyr::bind_rows(lapply(isos, function(io) {
+  dplyr::bind_rows(
+    get_mae(combined_flexneri_sf2a, dL_combined_flexneri_sf2a_case, "Sf2a", io),
+    get_mae(combined_flexneri_sf3a, dL_combined_flexneri_sf3a_case, "Sf3a", io)
+  )
+}))
+```
+
+# Table 1 — Study population
+
+> Needs the raw Excel (compiled + metadata + DurDia). Set the three paths in CONFIG to enable; otherwise this chunk is skipped.
+
+```{r tbl1, eval=have_table1_raw, message=FALSE, warning=FALSE}
+metadata <- readxl::read_excel(path.expand(raw_metadata),
+  sheet = sheet_metadata
+)
+durdia <- readxl::read_excel(path.expand(raw_durdia), sheet = sheet_durdia)
+
+table1_study_population(build_table1_data(compiled, metadata, durdia))
+```
+
+# Figure 1 — Cross-reactivity heatmap
+
+> Needs the raw compiled Excel (set `raw_compiled` in CONFIG); skipped otherwise.
+
+```{r fig1, eval=have_compiled, fig.width=9, fig.height=6.5, message=FALSE, warning=FALSE}
+figure_crossreactivity_heatmap(compiled)
+```
+
+# Figure 2 — Raw longitudinal IgG/IgA trajectories
+
+```{r}
+#| label: fig2-spaghetti
+#| fig-width: 10
+#| fig-height: 12
+#| message: false
+#| warning: false
+
+# Uses the DurDia-adjusted objects because they carry `cohort_name`
+# (infecting serotype) for the colour mapping.
+figure_raw_spaghetti(
+  case_list = list(
+    IpaB   = dL_clean_Ipab_new,
+    Sf2a   = dL_clean_sf2a_new,
+    Sf3a   = dL_clean_sf3a_new,
+    Sf6    = dL_clean_sf6_new,
+    Sonnei = dL_clean_sonnei_new
+  ),
+  numeric_y = TRUE
+)
+```
+
+# Table 2 — Kinetic parameters (best model per biomarker)
+
+```{r}
+#| label: tbl2
+#| message: false
+#| warning: false
+
+best_lookup <- select_best_models(mae_overall, mae_serospec, mae_combined)
+table2_kinetic_params(
+  best_lookup, sum_overall, sum_serospec, sum_combined,
+  models_overall = list(
+    IpaB   = overall_IpaB_pop_6,
+    Sf2a   = overall_Sf2a_pop_6,
+    Sf3a   = overall_Sf3a_pop_6,
+    Sf6    = overall_Sf6_pop_6,
+    Sonnei = overall_Sonnei_pop_6
+  ),
+  models_serospec = list(
+    Sf2a   = serotype_sf2a_3,
+    Sf3a   = serotype_sf3a_3,
+    Sonnei = serotype_sonnei_3
+  ),
+  models_combined = list(
+    Sf2a = combined_flexneri_sf2a,
+    Sf3a = combined_flexneri_sf3a
+  )
+)
+```
+
+# Figure 4 — Individual-level model comparison
+
+```{r}
+#| label: fig4-comparison
+#| fig-width: 10
+#| fig-height: 13
+#| message: false
+#| warning: false
+
+cmp_models <- list(
+  overall_Sf2a    = overall_Sf2a_pop_6,
+  serotype_sf2a   = serotype_sf2a_3,
+  overall_Sonnei  = overall_Sonnei_pop_6,
+  serotype_sonnei = serotype_sonnei_3,
+  overall_Sf3a    = overall_Sf3a_pop_6,
+  serotype_sf3a   = serotype_sf3a_3,
+  combined_sf3a   = combined_flexneri_sf3a
+)
+cmp_datasets <- list(
+  dL_clean_sf2a      = dL_clean_sf2a,
+  dL_serotype_sf2a   = dL_serotype_sf2a,
+  dL_clean_sonnei    = dL_clean_sonnei,
+  dL_serotype_sonnei = dL_serotype_sonnei,
+  dL_clean_sf3a      = dL_clean_sf3a,
+  dL_serotype_sf3a   = dL_serotype_sf3a
+)
+
+# default sids = c("SOSAR-22008", "SOSAR-12005", "SOSAR-22007")
+figure_individual_comparison(cmp_models, cmp_datasets)
+```
+
+# Table 3 — Age-stratified IpaB kinetic parameters
+
+```{r}
+#| label: tbl3
+#| message: false
+#| warning: false
+
+table3_age_stratified(overall_IpaB_pop_under5, overall_IpaB_pop_plus5)
+```
+
+# Figure 5 — Population-level trajectories (panels A–E)
+
+```{r}
+#| label: fig5-trajectories
+#| fig-width: 9
+#| fig-height: 16
+#| message: false
+#| warning: false
+
+traj_models <- list(
+  IpaB            = overall_IpaB_pop_6,
+  IpaB_under5     = overall_IpaB_pop_under5,
+  IpaB_plus5      = overall_IpaB_pop_plus5,
+  serotype_sonnei = serotype_sonnei_3,
+  serotype_sf2a   = serotype_sf2a_3,
+  combined_sf3a   = combined_flexneri_sf3a,
+  overall_Sf6     = overall_Sf6_pop_6
+)
+traj_datasets <- list(
+  dL_clean_Ipab      = dL_clean_Ipab,
+  dL_serotype_sonnei = dL_serotype_sonnei,
+  dL_serotype_sf2a   = dL_serotype_sf2a,
+  dL_combined_sf3a   = dL_combined_flexneri_sf3a_case,
+  dL_clean_sf6       = dL_clean_sf6
+)
+
+figure_population_trajectories(traj_models, traj_datasets)
+```
+
+# Table 4 — Per-individual MAE across modeling approaches
+
+```{r}
+#| label: tbl4
+#| message: false
+#| warning: false
+
+t4 <- table4_mae(mae_overall, mae_serospec, mae_combined)
+t4$flextable
+```
+
+```{r}
+#| label: tbl4-footnote
+#| echo: true
+
+# The per-row "best for k/N" string (for the Results text / S-table):
+cat(t4$winner_footnote, sep = "\n")
+```

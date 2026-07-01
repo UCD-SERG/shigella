@@ -11,12 +11,15 @@
 ^data-raw$
 ^README\.Rmd$
 ^\.lintr\.R$
+^\.lintr$
 ^_quarto\.yml$
 ^.*\.qmd$
 ^.*\.png$
 ^Vary.*\.r$
 ^sim_.*\.r$
 ^simulation.*\.qmd$
+^vignettes/manuscript$
 ^shigella\.Rcheck$
 ^shigella.*\.tar\.gz$
 ^shigella.*\.tgz$
+^commit\.sh$
