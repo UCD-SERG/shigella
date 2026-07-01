@@ -32,3 +32,5 @@ do_commit.sh
 .claude/
 .git-user-config
 commit-lint-fixes.sh
+gitconfig_temp
+do_commit_revert.sh
