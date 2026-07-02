@@ -158,8 +158,7 @@ recreate that pattern).
   package**. Use
   [`library(shigella)`](https://ucd-serg.github.io/shigella/) for
   end-user contexts (vignettes, examples, scripts) or
-  [`devtools::load_all()`](https://devtools.r-lib.org/reference/load_all.html)
-  for developer workflows.
+  `devtools::load_all()` for developer workflows.
 - **No `<<-`** (global assignment).
 - **User-facing messages** use
   [`cli::cli_inform()`](https://cli.r-lib.org/reference/cli_abort.html),
@@ -273,9 +272,8 @@ The following workflows run on every PR. **All must pass** for merge:
 2.  **lint-changed-files.yaml** — Lints PR-changed files with the custom
     `.lintr.R` config. Fails on any lint.
 3.  **check-spelling.yaml** — Spell check.
-4.  **R-check-docs.yml** — Verifies
-    [`roxygen2::roxygenise()`](https://roxygen2.r-lib.org/reference/roxygenize.html)
-    output matches committed `man/` and `NAMESPACE`.
+4.  **R-check-docs.yml** — Verifies `roxygen2::roxygenise()` output
+    matches committed `man/` and `NAMESPACE`.
 5.  **pkgdown.yaml** — Builds the pkgdown site.
 
 ## Things Not to Flag
@@ -300,18 +298,11 @@ When making changes:
 1.  **ALWAYS** keep all function definitions inside `R/`, one per file.
 2.  **ALWAYS** preserve numerical/statistical logic (priors, parameter
     names, simulation semantics) unless there is a clear bug.
-3.  **ALWAYS** run
-    [`lintr::lint_package()`](https://lintr.r-lib.org/reference/lint.html)
-    and fix every issue in the same commit. Never push a commit that
-    introduces or leaves a lint.
-4.  **ALWAYS** run
-    [`devtools::document()`](https://devtools.r-lib.org/reference/document.html)
-    after modifying roxygen2.
-5.  **ALWAYS** run
-    [`devtools::check()`](https://devtools.r-lib.org/reference/check.html)
-    and
-    [`devtools::test()`](https://devtools.r-lib.org/reference/test.html)
-    locally before requesting review.
+3.  **ALWAYS** run `lintr::lint_package()` and fix every issue in the
+    same commit. Never push a commit that introduces or leaves a lint.
+4.  **ALWAYS** run `devtools::document()` after modifying roxygen2.
+5.  **ALWAYS** run `devtools::check()` and `devtools::test()` locally
+    before requesting review.
 6.  **NEVER** add a [`source()`](https://rdrr.io/r/base/source.html)
     call or define a function inside `scripts/` or `vignettes/`.
 7.  **NEVER** commit real Shigella data or files matching

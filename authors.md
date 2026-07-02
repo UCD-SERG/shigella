@@ -10,13 +10,13 @@
 ## Citation
 
 Lee K, Morrison D (2026). *shigella: What the Package Does (One Line,
-Title Case)*. R package version 0.0.0.9008,
+Title Case)*. R package version 0.0.0.9009,
 <https://ucd-serg.github.io/shigella/>.
 
     @Manual{,
       title = {shigella: What the Package Does (One Line, Title Case)},
       author = {Kwan Ho Lee and Douglas Ezra Morrison},
       year = {2026},
-      note = {R package version 0.0.0.9008},
+      note = {R package version 0.0.0.9009},
       url = {https://ucd-serg.github.io/shigella/},
     }
