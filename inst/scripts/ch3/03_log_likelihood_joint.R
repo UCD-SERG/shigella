@@ -97,7 +97,9 @@ stopifnot(LIK_FORM %in% c("product", "sharedtau", "joint"))
   # nodes and weights on (0,1)
   k <- seq_len(n - 1)
   b <- k / sqrt(4 * k^2 - 1)
-  J <- diag(0, n); J[cbind(k, k + 1)] <- b; J[cbind(k + 1, k)] <- b
+  J <- diag(0, n)
+  J[cbind(k, k + 1)] <- b
+  J[cbind(k + 1, k)] <- b
   e <- eigen(J, symmetric = TRUE)
   list(x = (rev(e$values) + 1) / 2, w = 2 * rev(e$vectors[1, ])^2 / 2)
 })
@@ -123,7 +125,7 @@ stopifnot(LIK_FORM %in% c("product", "sharedtau", "joint"))
   z <- seq(0, log1p(a), length.out = n_tau)
   h <- z[2] - z[1]
   w <- c(1, rep(c(4, 2), length.out = n_tau - 2), 1) * h / 3
-  list(t = expm1(z), w = w * exp(z))          # exp(z) is dt/dz
+  list(t = expm1(z), w = w * exp(z)) # exp(z) is dt/dz
 }
 
 # =====================================================================
@@ -132,30 +134,37 @@ stopifnot(LIK_FORM %in% c("product", "sharedtau", "joint"))
 log_likelihood_joint <- function(lambda, pop_data, curve_params, noise_params,
                                  antigen_isos = NULL, n_tau = 400L,
                                  verbose = FALSE) {
-
   # antigen_iso arrives as a factor from some sources and a character from
   # others; comparing two factors with different level sets raises an error
   # rather than returning FALSE, so everything is coerced on entry.
-  pop_data     <- as.data.frame(pop_data)
+  pop_data <- as.data.frame(pop_data)
   curve_params <- as.data.frame(curve_params)
   noise_params <- as.data.frame(noise_params)
-  pop_data$antigen_iso     <- as.character(pop_data$antigen_iso)
+  pop_data$antigen_iso <- as.character(pop_data$antigen_iso)
   curve_params$antigen_iso <- as.character(curve_params$antigen_iso)
   noise_params$antigen_iso <- as.character(noise_params$antigen_iso)
   antigen_isos <- as.character(
-    if (is.null(antigen_isos)) unique(pop_data$antigen_iso) else antigen_isos)
+    if (is.null(antigen_isos)) unique(pop_data$antigen_iso) else antigen_isos
+  )
   K <- length(antigen_isos)
 
   if (!"iter" %in% names(curve_params)) {
     warning("curve_params has no `iter` column; the draws cannot be paired, ",
-            "so this reduces to the product form.", call. = FALSE)
+      "so this reduces to the product form.",
+      call. = FALSE
+    )
     curve_params$iter <- ave(seq_len(nrow(curve_params)),
-                             curve_params$antigen_iso, FUN = seq_along)
+      curve_params$antigen_iso,
+      FUN = seq_along
+    )
   }
 
-  iters <- Reduce(intersect,
-                  lapply(antigen_isos, function(a)
-                    curve_params$iter[curve_params$antigen_iso == a]))
+  iters <- Reduce(
+    intersect,
+    lapply(antigen_isos, function(a) {
+      curve_params$iter[curve_params$antigen_iso == a]
+    })
+  )
   # UNITS. The banks store alpha per DAY, which is how Chapter 2 estimates it,
   # while `age` is in YEARS and the quadrature grid runs from 0 to age. The
   # package handles this in log_likelihood.R line 124 with
@@ -171,8 +180,12 @@ log_likelihood_joint <- function(lambda, pop_data, curve_params, noise_params,
   })
   noise <- lapply(antigen_isos, function(a) {
     n <- noise_params[noise_params$antigen_iso == a, ]
-    if (nrow(n) != 1) stop("need exactly one noise row for ", a, " (got ",
-                           nrow(n), "); subset by Country first", call. = FALSE)
+    if (nrow(n) != 1) {
+      stop("need exactly one noise row for ", a, " (got ",
+        nrow(n), "); subset by Country first",
+        call. = FALSE
+      )
+    }
     as.list(n)
   })
   M <- length(iters)
@@ -192,15 +205,18 @@ log_likelihood_joint <- function(lambda, pop_data, curve_params, noise_params,
   # participant. Computing it per person meant running a 24-node quadrature over
   # a 1000 x 401 matrix for every censored observation, which is why Nepal (53%
   # censored) ran four times slower than Bangladesh (1.6%).
-  cache  <- new.env(parent = emptyenv())
+  cache <- new.env(parent = emptyenv())
   ccache <- new.env(parent = emptyenv())
 
   get_yf <- function(a) {
     key <- sprintf("%.2f", a)
-    if (!is.null(cache[[key]])) return(cache[[key]])
-    g  <- .grid(a, n_tau)
-    yf <- lapply(seq_len(K), function(k)
-      .curve_mat(g$t, par_list[[k]]$y1, par_list[[k]]$alpha, par_list[[k]]$r))
+    if (!is.null(cache[[key]])) {
+      return(cache[[key]])
+    }
+    g <- .grid(a, n_tau)
+    yf <- lapply(seq_len(K), function(k) {
+      .curve_mat(g$t, par_list[[k]]$y1, par_list[[k]]$alpha, par_list[[k]]$r)
+    })
     val <- list(g = g, yf = yf, key = key)
     assign(key, val, envir = cache)
     val
@@ -209,7 +225,9 @@ log_likelihood_joint <- function(lambda, pop_data, curve_params, noise_params,
   get_cens <- function(cc, k) {
     key <- paste0(cc$key, "|", k)
     v <- ccache[[key]]
-    if (!is.null(v)) return(v)
+    if (!is.null(v)) {
+      return(v)
+    }
     nk <- noise[[k]]
     v <- .prob_below(nk$y.low, cc$yf[[k]], nk$nu, nk$eps)
     assign(key, v, envir = ccache)
@@ -217,20 +235,20 @@ log_likelihood_joint <- function(lambda, pop_data, curve_params, noise_params,
   }
 
   ids <- unique(pop_data$id)
-  ll  <- 0
+  ll <- 0
   for (i in ids) {
     d <- pop_data[pop_data$id == i, ]
     y <- d$value[match(antigen_isos, d$antigen_iso)]
     if (anyNA(y)) next
-    a  <- round(d$age[1] / AGE_BIN) * AGE_BIN
-    a  <- max(a, AGE_BIN)                    # never zero: the grid needs a > 0
+    a <- round(d$age[1] / AGE_BIN) * AGE_BIN
+    a <- max(a, AGE_BIN) # never zero: the grid needs a > 0
     cc <- get_yf(a)
 
     q <- vector("list", K)
     for (k in seq_len(K)) {
       nk <- noise[[k]]
       q[[k]] <- if (y[k] <= nk$y.low) {
-        get_cens(cc, k)                                    # left censored
+        get_cens(cc, k) # left censored
       } else {
         .dens(y[k], cc$yf[[k]], nk$nu, nk$eps)
       }
@@ -238,10 +256,11 @@ log_likelihood_joint <- function(lambda, pop_data, curve_params, noise_params,
     # --- never-infected term: per biomarker, and as a product ----------
     never_k <- vapply(seq_len(K), function(k) {
       nk <- noise[[k]]
-      if (y[k] <= nk$y.low)
+      if (y[k] <= nk$y.low) {
         .prob_below(nk$y.low, matrix(0, 1, 1), nk$nu, nk$eps)[1, 1]
-      else
+      } else {
         .dens(y[k], 0, nk$nu, nk$eps)
+      }
     }, numeric(1))
     never <- prod(never_k)
 
@@ -251,12 +270,11 @@ log_likelihood_joint <- function(lambda, pop_data, curve_params, noise_params,
     #   u  integrates to one over (0, a)
     Pa <- 1 - exp(-lambda * a)
     Qa <- exp(-lambda * a)
-    u  <- lambda * exp(-lambda * cc$g$t) + exp(-lambda * a) / a
+    u <- lambda * exp(-lambda * cc$g$t) + exp(-lambda * a) / a
     wu <- cc$g$w * u
 
     # --- and here, and ONLY here, the three forms differ ----------------
-    f <- switch(
-      LIK_FORM,
+    f <- switch(LIK_FORM,
 
       # C: integrate the paired product for each draw, then average
       joint = mean(Pa * as.vector(Reduce(`*`, q) %*% wu)) + Qa * never,
@@ -264,16 +282,19 @@ log_likelihood_joint <- function(lambda, pop_data, curve_params, noise_params,
       # B: average each biomarker over draws first, multiply, integrate.
       #    One tau is still shared; only the pairing is gone.
       sharedtau = Pa * sum(Reduce(`*`, lapply(q, colMeans)) * wu) +
-                  Qa * never,
+        Qa * never,
 
       # A: each biomarker gets a complete single-marker density of its
       #    own -- its own tau, its own draws, its own mixture -- and the
       #    two are multiplied.  This is what summing log-likelihoods does.
-      product = prod(vapply(seq_len(K), function(k)
-                 Pa * sum(colMeans(q[[k]]) * wu) + Qa * never_k[k],
-                 numeric(1))),
-
-      stop("LIK_FORM must be product, sharedtau or joint", call. = FALSE))
+      product = prod(vapply(
+        seq_len(K), function(k) {
+          Pa * sum(colMeans(q[[k]]) * wu) + Qa * never_k[k]
+        },
+        numeric(1)
+      )),
+      stop("LIK_FORM must be product, sharedtau or joint", call. = FALSE)
+    )
     ll <- ll + log(max(f, .Machine$double.xmin))
   }
   ll
@@ -287,31 +308,39 @@ validate_joint_likelihood <- function(pop_data, pop_pkg, curve_params,
                                       lambdas = c(0.02, 0.1, 0.5),
                                       n_tau = 400L, tol = 1e-3) {
   cat("\n  one biomarker: joint must equal serocalculator's log_likelihood\n\n")
-  pop_data     <- as.data.frame(pop_data)
+  pop_data <- as.data.frame(pop_data)
   curve_params <- as.data.frame(curve_params)
   noise_params <- as.data.frame(noise_params)
   for (nm in c("pop_data", "curve_params", "noise_params")) {
-    d <- get(nm); d$antigen_iso <- as.character(d$antigen_iso); assign(nm, d)
+    d <- get(nm)
+    d$antigen_iso <- as.character(d$antigen_iso)
+    assign(nm, d)
   }
   antigen_isos <- as.character(antigen_isos)
 
   res <- list()
   for (a in antigen_isos) {
-    pd  <- pop_data[pop_data$antigen_iso == a, ]
+    pd <- pop_data[pop_data$antigen_iso == a, ]
     pdk <- pop_pkg[as.character(pop_pkg$antigen_iso) == a, ]
-    cp  <- curve_params[curve_params$antigen_iso == a, ]
-    np  <- noise_params[noise_params$antigen_iso == a, ]
+    cp <- curve_params[curve_params$antigen_iso == a, ]
+    np <- noise_params[noise_params$antigen_iso == a, ]
     for (lam in lambdas) {
       pkg <- serocalculator::log_likelihood(
-        lam, pdk, serocalculator::as_sr_params(cp), np, antigen_isos = a)
+        lam, pdk, serocalculator::as_sr_params(cp), np,
+        antigen_isos = a
+      )
       own <- log_likelihood_joint(lam, pd, cp, np, antigen_isos = a, n_tau = n_tau)
-      d   <- abs(pkg - own)
+      d <- abs(pkg - own)
       pass <- is.finite(d) && d < tol * max(1, abs(pkg))
-      cat(sprintf("    %-10s lambda %5.3f   package %14.4f   joint %14.4f   diff %9.2e  %s\n",
-                  a, lam, pkg, own, d, if (pass) "ok" else "FAIL"))
-      res[[length(res) + 1]] <- data.frame(antigen_iso = a, lambda = lam,
-                                           package = pkg, joint = own,
-                                           diff = d, pass = pass)
+      cat(sprintf(
+        "    %-10s lambda %5.3f   package %14.4f   joint %14.4f   diff %9.2e  %s\n",
+        a, lam, pkg, own, d, if (pass) "ok" else "FAIL"
+      ))
+      res[[length(res) + 1]] <- data.frame(
+        antigen_iso = a, lambda = lam,
+        package = pkg, joint = own,
+        diff = d, pass = pass
+      )
     }
   }
   out <- do.call(rbind, res)

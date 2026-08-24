@@ -11,6 +11,7 @@
 * Moved helper functions into `R/` subdirectory (#1)
 * simplified spell-check GitHub Action (#3)
 * Migrated the Claude Code and NEWS-changelog workflows to `d-morrison/gha` reusable workflows, and removed the obsolete upstream-fix watcher (#29)
+* Added dissertation and standalone chapter manuscript source files with automated DOCX rendering (#31)
 
 # shigella 0.0.0
 

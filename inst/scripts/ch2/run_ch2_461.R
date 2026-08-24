@@ -40,33 +40,41 @@
 #   EXEC_DIR     compile dir; MUST differ between concurrently launched arms
 # =====================================================================
 
-ge <- function(k, d) { v <- Sys.getenv(k); if (nzchar(v)) v else d }
+ge <- function(k, d) {
+  v <- Sys.getenv(k)
+  if (nzchar(v)) v else d
+}
 gn <- function(k, d) as.numeric(ge(k, as.character(d)))
 
-ARM        <- ge("ARM", "R")
+ARM <- ge("ARM", "R")
 ESTIMATE_C <- as.integer(gn("ESTIMATE_C", 1))
-DATA       <- ge("DATA",  "sees_subset_v2.rds")
-MODEL      <- ge("MODEL", "model_ch2_v5.stan")
-FUNCS      <- ge("FUNCS", "stan_ch2_functions.R")
-NCHAIN     <- as.integer(gn("NCHAIN", 40))
-NADAPT     <- as.integer(gn("NADAPT", 3000))
-NITER      <- as.integer(gn("NITER",  1000))
-ADAPT_D    <- gn("ADAPT_DELTA", 0.9)
-MAX_TD     <- as.integer(gn("MAX_TD", 12))
-INIT       <- gn("INIT", 0.1)
-C_SD       <- gn("C_PRIOR_SD", 1)
-SEED       <- as.integer(gn("SEED", 1))
+DATA <- ge("DATA", "sees_subset_v2.rds")
+MODEL <- ge("MODEL", "model_ch2_v5.stan")
+FUNCS <- ge("FUNCS", "stan_ch2_functions.R")
+NCHAIN <- as.integer(gn("NCHAIN", 40))
+NADAPT <- as.integer(gn("NADAPT", 3000))
+NITER <- as.integer(gn("NITER", 1000))
+ADAPT_D <- gn("ADAPT_DELTA", 0.9)
+MAX_TD <- as.integer(gn("MAX_TD", 12))
+INIT <- gn("INIT", 0.1)
+C_SD <- gn("C_PRIOR_SD", 1)
+SEED <- as.integer(gn("SEED", 1))
 
-say <- function(...) { cat(sprintf("[ch2_%s] ", ARM), ..., "\n", sep = ""); flush.console() }
+say <- function(...) {
+  cat(sprintf("[ch2_%s] ", ARM), ..., "\n", sep = "")
+  flush.console()
+}
 
-for (f in c(DATA, MODEL, FUNCS))
+for (f in c(DATA, MODEL, FUNCS)) {
   if (!file.exists(f)) stop("missing: ", f, call. = FALSE)
+}
 
 # Each concurrently running arm needs its own compile directory. Without this
 # the two arms race to copy and build the same executable and one of them picks
 # up a half-written binary.
-if (!nzchar(Sys.getenv("CMDSTAN_EXEC_DIR")))
+if (!nzchar(Sys.getenv("CMDSTAN_EXEC_DIR"))) {
   Sys.setenv(CMDSTAN_EXEC_DIR = file.path(tempdir(), paste0("ch2_exe_", ARM)))
+}
 say("exec dir ", Sys.getenv("CMDSTAN_EXEC_DIR"))
 
 source(FUNCS)
@@ -84,44 +92,66 @@ say("data ", DATA, ": ", nrow(dat), " rows")
 # The subset stores the biomarkers with a space; the old runner renamed them and
 # this one has to as well. Check the rest here rather than find out in an hour.
 .cols <- .ch2_cols(dat)
-say("columns resolved: id=", .cols$id, " time=", .cols$time,
-    " value=", .cols$value, " biomarker=", .cols$bio)
+say(
+  "columns resolved: id=", .cols$id, " time=", .cols$time,
+  " value=", .cols$value, " biomarker=", .cols$bio
+)
 .absent <- setdiff(unlist(.cols), names(dat))
-if (length(.absent))
+if (length(.absent)) {
   stop("resolved column name(s) not present in the data: ",
-       paste(.absent, collapse = ", "),
-       "\n  available columns: ", paste(names(dat), collapse = ", "), call. = FALSE)
+    paste(.absent, collapse = ", "),
+    "\n  available columns: ", paste(names(dat), collapse = ", "),
+    call. = FALSE
+  )
+}
 
-say("biomarkers as stored: ",
-    paste(sort(unique(as.character(dat[[.cols$bio]]))), collapse = ", "))
+say(
+  "biomarkers as stored: ",
+  paste(sort(unique(as.character(dat[[.cols$bio]]))), collapse = ", ")
+)
 dat[[.cols$bio]] <- gsub(" ", "_", as.character(dat[[.cols$bio]]))
-say("biomarkers passed on: ",
-    paste(sort(unique(dat[[.cols$bio]])), collapse = ", "))
-if (!all(c("HlyE_IgG", "HlyE_IgA") %in% unique(dat[[.cols$bio]])))
+say(
+  "biomarkers passed on: ",
+  paste(sort(unique(dat[[.cols$bio]])), collapse = ", ")
+)
+if (!all(c("HlyE_IgG", "HlyE_IgA") %in% unique(dat[[.cols$bio]]))) {
   stop("after normalisation the data still lacks HlyE_IgG and/or HlyE_IgA",
-       call. = FALSE)
+    call. = FALSE
+  )
+}
 
 # Dry-run the filter so an empty result stops here with a readable message.
 .chk <- prep_ch2_standata(dat, min_visits = 2L)
-say("subjects reaching the model: ", .chk$nsubj,
-    " | max visits per subject: ", .chk$max_nsmpl)
+say(
+  "subjects reaching the model: ", .chk$nsubj,
+  " | max visits per subject: ", .chk$max_nsmpl
+)
 # NOTE the slot order. prep_ch2_standata defaults to isos = c("HlyE_IgG",
 # "HlyE_IgA"), which is what model_ch2_v4.stan requires, so slot 1 is IgG here.
 # Chapter 1 goes through prep_data_stan(), which sorts the isotypes and gives
 # slot 1 = IgA. mu_par[1, ] therefore means DIFFERENT isotypes in the two
 # chapters -- do not line them up by index when comparing.
-say("slot 1 = ", .chk$.isos[1], " | slot 2 = ", .chk$.isos[2],
-    "   (Chapter 1 is the other way round: slot 1 = IgA)")
-if (.chk$nsubj < 100)
+say(
+  "slot 1 = ", .chk$.isos[1], " | slot 2 = ", .chk$.isos[2],
+  "   (Chapter 1 is the other way round: slot 1 = IgA)"
+)
+if (.chk$nsubj < 100) {
   stop("only ", .chk$nsubj, " subjects survived the paired-visit filter",
-       call. = FALSE)
+    call. = FALSE
+  )
+}
 rm(.chk)
 
-say("model ", MODEL, " | estimate_c = ", ESTIMATE_C,
-    if (ESTIMATE_C == 1) "  (Chapter 2, all five free)"
-    else if (ESTIMATE_C == 0) "  (null: C = 0)" else "  (baseline held at zero)")
-say(NCHAIN, " chains | warmup ", NADAPT, " | sampling ", NITER,
-    " | adapt_delta ", ADAPT_D, " | max_td ", MAX_TD)
+say(
+  "model ", MODEL, " | estimate_c = ", ESTIMATE_C,
+  if (ESTIMATE_C == 1) {
+    "  (Chapter 2, all five free)"
+  } else if (ESTIMATE_C == 0) "  (null: C = 0)" else "  (baseline held at zero)"
+)
+say(
+  NCHAIN, " chains | warmup ", NADAPT, " | sampling ", NITER,
+  " | adapt_delta ", ADAPT_D, " | max_td ", MAX_TD
+)
 say("init ", INIT, " | c_prior_sd ", C_SD, " | seed ", SEED)
 
 t0 <- Sys.time()
@@ -154,36 +184,48 @@ fit$save_object(sprintf("fit_ch2_461_%s.rds", ARM))
 say("[saved] fit_ch2_461_", ARM, ".rds")
 
 # ---- diagnostics ------------------------------------------------------------
-dg  <- fit$diagnostic_summary()
+dg <- fit$diagnostic_summary()
 tot <- NCHAIN * NITER
 say("")
 say("=== diagnostics ===")
-say(sprintf("  divergent %d (%.3f%%) | treedepth %d (%.1f%%)",
-            sum(dg$num_divergent), 100 * sum(dg$num_divergent) / tot,
-            sum(dg$num_max_treedepth), 100 * sum(dg$num_max_treedepth) / tot))
-say(sprintf("  E-BFMI: %d of %d chains below 0.3 (min %.3f)",
-            sum(dg$ebfmi < 0.3), length(dg$ebfmi), min(dg$ebfmi)))
+say(sprintf(
+  "  divergent %d (%.3f%%) | treedepth %d (%.1f%%)",
+  sum(dg$num_divergent), 100 * sum(dg$num_divergent) / tot,
+  sum(dg$num_max_treedepth), 100 * sum(dg$num_max_treedepth) / tot
+))
+say(sprintf(
+  "  E-BFMI: %d of %d chains below 0.3 (min %.3f)",
+  sum(dg$ebfmi < 0.3), length(dg$ebfmi), min(dg$ebfmi)
+))
 
 vars <- c("mu_par", "prec_logy", "sd_G", "sd_A", "cross_corr", "cross_cov")
-ss   <- fit$summary(vars)
-say(sprintf("  max R-hat %.3f | min bulk ESS %.0f",
-            max(ss$rhat, na.rm = TRUE), min(ss$ess_bulk, na.rm = TRUE)))
+ss <- fit$summary(vars)
+say(sprintf(
+  "  max R-hat %.3f | min bulk ESS %.0f",
+  max(ss$rhat, na.rm = TRUE), min(ss$ess_bulk, na.rm = TRUE)
+))
 saveRDS(as.data.frame(ss), sprintf("summ_ch2_461_%s.rds", ARM))
 
 # ---- cross-biomarker correlations -------------------------------------------
 if (ESTIMATE_C != 0) {
   cc <- fit$summary("cross_corr", "median",
-                    q = ~quantile(.x, c(0.05, 0.95)), "rhat", "ess_bulk")
+    q = ~ quantile(.x, c(0.05, 0.95)), "rhat", "ess_bulk"
+  )
   lab <- c("baseline", "peak", "peak-time", "decay-rate", "decay-shape")
   say("")
   say("=== cross-biomarker correlations ===")
-  cat(sprintf("\n  %-13s %8s   %-18s %8s %8s %7s\n",
-              "parameter", "median", "90% interval", "R-hat", "ESS", "excl 0"))
+  cat(sprintf(
+    "\n  %-13s %8s   %-18s %8s %8s %7s\n",
+    "parameter", "median", "90% interval", "R-hat", "ESS", "excl 0"
+  ))
   for (i in seq_len(nrow(cc))) {
-    lo <- cc[[3]][i]; hi <- cc[[4]][i]
-    cat(sprintf("  %-13s %+8.3f   [%+.3f, %+.3f] %8.3f %8.0f %7s\n",
-                lab[i], cc$median[i], lo, hi, cc$rhat[i], cc$ess_bulk[i],
-                if (lo > 0 || hi < 0) "yes" else "no"))
+    lo <- cc[[3]][i]
+    hi <- cc[[4]][i]
+    cat(sprintf(
+      "  %-13s %+8.3f   [%+.3f, %+.3f] %8.3f %8.0f %7s\n",
+      lab[i], cc$median[i], lo, hi, cc$rhat[i], cc$ess_bulk[i],
+      if (lo > 0 || hi < 0) "yes" else "no"
+    ))
   }
   # Per-chain baseline correlation: this is what exposed the two-mode problem in
   # arms E, F and H (8 of 72 chains sat at about -0.24 while the rest sat at
@@ -194,13 +236,21 @@ if (ESTIMATE_C != 0) {
   say("")
   say("=== baseline correlation by chain ===")
   cat("  ", paste(sprintf("%+.2f", bych), collapse = " "), "\n", sep = "")
-  say(sprintf("  spread %.3f -- %s", diff(range(bych)),
-              if (diff(range(bych)) < 0.1) "the chains agree"
-              else "SOME CHAINS SIT IN THE OTHER MODE; do not read the interval yet"))
+  say(sprintf(
+    "  spread %.3f -- %s", diff(range(bych)),
+    if (diff(range(bych)) < 0.1) {
+      "the chains agree"
+    } else {
+      "SOME CHAINS SIT IN THE OTHER MODE; do not read the interval yet"
+    }
+  ))
 }
 
 pn <- try(fit$summary("par_new"), silent = TRUE)
 say("")
-say("par_new present: ", if (inherits(pn, "try-error")) "NO" else
-      paste0("yes, ", nrow(pn), " components"))
+say("par_new present: ", if (inherits(pn, "try-error")) {
+  "NO"
+} else {
+  paste0("yes, ", nrow(pn), " components")
+})
 say("done")
