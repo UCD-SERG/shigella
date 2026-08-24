@@ -60,9 +60,9 @@ jobs:
       # table to the next page instead of splitting it.
       - name: Keep tables whole
         run: |
-          python fix_table_breaks.py thesis_ch1_ch2_ch3.docx
-          python fix_table_breaks.py chapter2/chapter2.docx
-          python fix_table_breaks.py chapter3/chapter3.docx
+          python3 fix_table_breaks.py thesis_ch1_ch2_ch3.docx
+          python3 fix_table_breaks.py chapter2/chapter2.docx
+          python3 fix_table_breaks.py chapter3/chapter3.docx
 
       - name: Upload dissertation
         uses: actions/upload-artifact@v4
