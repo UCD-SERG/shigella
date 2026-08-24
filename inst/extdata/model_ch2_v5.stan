@@ -121,10 +121,9 @@ model {
   }
   sd_G ~ lognormal(sigma_meanlog[1], sigma_sdlog[1]);  Lcorr_G ~ lkj_corr_cholesky(eta[1]);
   sd_A ~ lognormal(sigma_meanlog[2], sigma_sdlog[2]);  Lcorr_A ~ lkj_corr_cholesky(eta[2]);
-  // Truncated to (-1, 1) by the declaration. With c_prior_sd = 1 this is close
-  // to uniform over the admissible range; a smaller value shrinks toward zero
-  // and can be used for a sensitivity arm. The data field is reused so that
-  // prep_ch2_standata() needs no change.
+  // Unbounded by declaration in v5. With c_prior_sd = 1 this is a weakly informative prior;
+  // smaller values shrink rho_c toward 0 for sensitivity analyses. (cross_corr in generated
+  // quantities remains the reported correlation.)
   rho_c ~ normal(0, c_prior_sd);
   to_vector(z) ~ std_normal();
   // likelihood (loop only up to nsmpl[subj]; padded entries ignored)
