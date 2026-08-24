@@ -17,7 +17,7 @@ on:
     branches: [thesis-draft]
     paths:
       - 'vignettes/articles/thesis/**'
-      - '.github/workflows/render-thesis.yaml'
+      - '.github/workflows/render-thesis-vignettes.yaml'
   pull_request:
     paths:
       - 'vignettes/articles/thesis/**'
