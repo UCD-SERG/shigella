@@ -31,8 +31,10 @@ NIAID
 Ndungo
 ORCID
 OSP
+PHI
 PLOS
 Paratyphi
+Postprocess
 Pre
 RLDT
 SOSAR
@@ -63,6 +65,7 @@ comparator
 computable
 de
 dec
+df
 diag
 diarrheal
 dichotomization
@@ -83,6 +86,8 @@ frac
 funders
 ge
 generalizability
+ggplot
+gha
 glucosyl
 hemolysin
 heterologous
@@ -103,6 +108,7 @@ interpretability
 io
 iok
 ipaH
+ipab
 isolable
 isotype
 isotype's
@@ -137,9 +143,11 @@ presentational
 qquad
 quadrivalent
 reparameterization
+repo
 reweight
 reweighting
 reweights
+roxygen
 rvert
 scalable
 sera

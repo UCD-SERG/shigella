@@ -1,0 +1,19 @@
+# Audits GitHub Actions workflows and composite actions with actionlint
+# (syntax/semantics) and zizmor (security).
+#
+# Warn-only for now: this repo carries a pre-existing backlog of workflow
+# findings, and a blocking check would go red on unrelated PRs. Flip
+# `fail: true` once that backlog is cleared (tracked in #32).
+name: Lint Workflows
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    uses: Morrison-Lab/gha/.github/workflows/lint-workflows.yml@v2
+    with:
+      fail: false

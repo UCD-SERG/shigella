@@ -1,0 +1,16 @@
+# Diff-scoped spellcheck of the files spellcheck.yml cannot see: Quarto pages,
+# CONTRIBUTING.md-class Markdown, YAML, and code comments. Uses crate-ci/typos,
+# a corrections-list checker, so it needs no curated wordlist.
+#
+# pull_request only, deliberately. The workflow diffs against the PR base, and
+# a push run has no base to diff against -- gha skips it and reports success,
+# which would put a green check on main that examined nothing. Pass
+# `base-ref: all` and re-add a push trigger once the existing tree is clean.
+name: Check typos
+
+on:
+  pull_request:
+
+jobs:
+  check:
+    uses: Morrison-Lab/gha/.github/workflows/check-typos.yml@v2
