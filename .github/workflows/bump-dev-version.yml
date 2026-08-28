@@ -1,0 +1,24 @@
+# Calls Morrison-Lab/gha's bump-dev-version workflow: bumps DESCRIPTION's
+# dev-version counter after every merge to main and auto-merges the one-line
+# PR that carries it. Pairs with version-check.yml, which fails a PR that
+# touches Version: itself.
+#
+# The repo already has both settings this needs: Settings -> Actions ->
+# General -> "Allow GitHub Actions to create and approve pull requests", and
+# Settings -> General -> "Allow auto-merge". No WORKFLOW_TOKEN is needed
+# because main has no required status checks -- add one if that changes.
+name: Bump dev version
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  bump:
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: Morrison-Lab/gha/.github/workflows/bump-dev-version.yml@v2
+    with:
+      # Keeps news.yaml from demanding a NEWS.md entry on the automation PR.
+      pr-labels: 'no changelog'

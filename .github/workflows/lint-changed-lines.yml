@@ -1,0 +1,17 @@
+# Calls Morrison-Lab/gha's lint-changed-lines workflow. Replaces the
+# hand-maintained lint-changed-files.yaml, which linted whole changed files;
+# this lints only the lines a PR adds or modifies, so lint rules can be
+# tightened incrementally without a whole-repo cleanup first.
+#
+# The old workflow's `R CMD INSTALL .` step is the workflow's own
+# `install-package` default, so no inputs are needed here.
+#
+# Must be triggered by pull_request -- the changed-line set comes from the PR.
+name: lint-changed-lines
+
+on:
+  pull_request:
+
+jobs:
+  lint:
+    uses: Morrison-Lab/gha/.github/workflows/lint-changed-lines.yml@v2

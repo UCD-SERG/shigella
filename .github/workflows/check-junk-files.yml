@@ -1,0 +1,14 @@
+# Fails when the repository tracks OS or editor detritus (.DS_Store,
+# AppleDouble ._*, .Rhistory, .RData, Thumbs.db). The tree is clean of these
+# today; this keeps it that way.
+name: Check Junk Files
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    uses: Morrison-Lab/gha/.github/workflows/check-junk-files.yml@v2
