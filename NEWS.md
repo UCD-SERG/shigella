@@ -24,6 +24,12 @@
 * Recorded the roxygen2 version in `Config/roxygen2/version`, which roxygen2
   8.1.0 uses in place of `RoxygenNote` (#32)
 
+* Added `AGENTS.md` and `CLAUDE.md`, short orientation files for AI coding
+  agents that defer to `.github/copilot-instructions.md` as the source of
+  truth, plus a `.claude/settings.json` permissions allowlist. Corrected that
+  file's now-stale CI section and recorded the inverted version convention and
+  the two separate spelling accept-lists (#35)
+
 # shigella 0.0.0
 
 Started development.
