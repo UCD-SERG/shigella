@@ -37,15 +37,23 @@ recreate that pattern).
   file. File name must match function name (dotted internal helpers like
   `.helper_fn()` go in `R/helper_fn.R` — drop the leading dot in the
   filename only).
-- **`inst/stan/`**: Stan model files (`model_1.stan`, `model_2.stan`).
+
+- **`inst/extdata/`**: Model files (JAGS today, plus the Stan models
+  that the chapter branches carry).
+
 - **`inst/examples/`**: One example script per exported function, named
   `<function_name>-examples.R`.
+
 - **`tests/testthat/`**: Unit tests, named `test-<function_name>.R`.
+
 - **`vignettes/`**: Quarto vignettes (`.qmd`). Chapter 2
   manuscript-style documentation goes here.
+
 - **`scripts/`**: Shiva HPC orchestration scripts (Phase 0/1 diagnostic
   runs). Listed in `.Rbuildignore` — **not** part of the package build.
+
 - **`slurm/`**: SLURM sbatch files for Shiva. Also in `.Rbuildignore`.
+
 - **`man/`**: Auto-generated documentation from roxygen2 — **do not edit
   directly**.
 
@@ -54,23 +62,37 @@ recreate that pattern).
 - **`DESCRIPTION`**: Package metadata. Keep `Imports` minimal (currently
   cli, dplyr, MASS, tibble). Optional functionality belongs in
   `Suggests`.
+
 - **`NAMESPACE`**: Auto-generated — **do not edit**.
+
 - **`.lintr`** and **`.lintr.R`**: Custom lintr configuration.
+
 - **`.Rbuildignore`**: Must exclude `^scripts$`, `^slurm$`, and
   `^chapter2$` (last for historical safety).
+
+- **`_typos.toml`**: Where accepted terms for crate-ci/typos go, at the
+  repo root, created on demand.
+
+- **`AGENTS.md`** and **`CLAUDE.md`**: Short orientation files for AI
+  coding agents, both deferring to this file as the source of truth.
+  Record a repository convention here and let them point at it.
 
 ## Review Priorities — What Copilot Should Flag
 
 ### 1. R Package Structure
 
 - All R functions live directly in `R/`. **No subdirectories**.
+
 - Every exported function has:
+
   - `@title`, `@description`, `@param` for every argument, `@return`,
     `@export`, and either `@examples` inline or
     `@example inst/examples/<fn>-examples.R`.
+
 - One function per file. File name matches function name. Internal
   helpers are dotted (`.helper_fn()`) and live in `R/helper_fn.R`.
-- Stan model files belong in `inst/stan/`, never in a nested folder.
+
+- Stan model files belong in `inst/extdata/`, never in a nested folder.
 
 ### 2. Examples That Actually Run
 
@@ -104,7 +126,7 @@ recreate that pattern).
 
 ### 5. Stan Model Files
 
-- Stan files (`.stan`) belong in `inst/stan/`.
+- Stan files (`.stan`) belong in `inst/extdata/`.
 - Compiled Stan binaries (no extension, or `.exe`/`.hpp`) belong in
   `.gitignore`.
 - When a Stan model file is modified, verify:
@@ -262,19 +284,97 @@ summary.
 spelling::spell_check_package()
 ```
 
-Custom words live in `inst/WORDLIST`.
+Custom words live in `inst/WORDLIST`. A second, separate accept-list
+lives in `_typos.toml` — see “Two Accept-Lists” below.
 
 ## Continuous Integration
 
-The following workflows run on every PR. **All must pass** for merge:
+Most workflows under `.github/workflows/` are thin callers of reusable
+workflows in [`Morrison-Lab/gha`](https://github.com/Morrison-Lab/gha),
+pinned to `@v2`. Read the callee at its pinned tag before changing a
+caller’s `with:` or `secrets:` block: a caller passing a secret the
+pinned tag does not declare is rejected before any job starts, and that
+failure produces no logs, no annotations, and no check run.
+
+Hand-maintained here, because `gha` models no equivalent:
 
 1.  **R-CMD-check.yaml** — Runs `R CMD check` on multiple platforms.
-2.  **lint-changed-files.yaml** — Lints PR-changed files with the custom
-    `.lintr.R` config. Fails on any lint.
-3.  **check-spelling.yaml** — Spell check.
-4.  **R-check-docs.yml** — Verifies `roxygen2::roxygenise()` output
-    matches committed `man/` and `NAMESPACE`.
-5.  **pkgdown.yaml** — Builds the pkgdown site.
+2.  **R-check-docs.yml** — Verifies
+    [`roxygen2::roxygenise()`](https://roxygen2.r-lib.org/reference/roxygenize.html)
+    output matches committed `man/` and `NAMESPACE`.
+3.  **check-readme.yaml** — Renders `README.Rmd`.
+4.  **pkgdown.yaml** — Builds the pkgdown site.
+5.  **test-coverage.yaml** — Coverage, uploaded to Codecov.
+6.  **pr-commands.yaml** — `/document` and `/style` PR commands.
+7.  **copilot-setup-steps.yml**, **phase0-debug.yaml** — Copilot agent
+    environment setup, and a manual Phase 0 diagnostic run.
+
+Called from `gha`:
+
+- **spellcheck.yml** —
+  [`{spelling}`](https://docs.ropensci.org/spelling/) over package
+  prose, accepting `inst/WORDLIST`.
+- **check-typos.yml** — crate-ci/typos over the lines a PR adds,
+  accepting `_typos.toml`.
+- **lint-changed-lines.yml** — lintr over the lines a PR adds or
+  modifies, rather than whole changed files.
+- **version-check.yml** and **bump-dev-version.yml** — the version pair
+  described under “Versioning” below.
+- **news.yaml** — requires a `NEWS.md` entry, bypassed with the
+  `no changelog` label.
+- **check-junk-files.yml**, **check-secrets.yml**, **check-phi.yml**,
+  **check-links.yml**, **check-new-line-breaks.yml** — hygiene and
+  safety checks.
+- **lint-workflows.yml**, **lint-yaml.yml**, **lint-markdown.yml** —
+  currently warn-only, while a pre-existing backlog is worked down.
+- **claude.yml** and **claude-code-review.yml** — the `@claude` agent
+  and its reviewer, which are a pair. `claude.yml` dispatches the
+  reviewer by filename, so keep both names and keep their pins in step.
+
+`main` is a thin package skeleton: the chapter analysis code, the Stan
+models, and the dissertation sources live on long-running feature
+branches. Check what is present with `git ls-files` before asserting a
+layout, rather than reading it from this file or from another branch’s
+tree.
+
+On the branches that carry `inst/scripts/`, `lint-changed-lines` reports
+a large pre-existing backlog. It is not something a given PR introduced,
+and clearing it is not in scope for unrelated work.
+
+## Versioning
+
+**Do not change `DESCRIPTION`’s `Version:` in a pull request.** It must
+match `main`’s exactly, and `version-check` fails a PR that changes it.
+`bump-dev-version` bumps the dev counter after every merge to `main`, so
+a PR never needs to.
+
+This inverted on 2026-08-27. The older convention required every PR to
+increment the version, so older branches and older habits point the
+wrong way. Apply the `no version increment` label when a deliberate
+version change is genuinely needed, such as a release.
+
+**This departs from the lab manual deliberately.** Its
+[quality-assurance
+checklist](https://ucd-serg.github.io/lab-manual/coding-practices.html)
+still lists “Version number has been incremented” as a pre-PR step,
+which predates `bump-dev-version`. Here the automation owns the bump, so
+following that item fails `version-check`. The manual remains
+authoritative on everything else.
+
+## Two Accept-Lists
+
+Adding a word to the wrong one silently fails.
+
+- **`inst/WORDLIST`** — read by
+  [`spelling::spell_check_package()`](https://docs.ropensci.org/spelling//reference/spell_check_package.html),
+  covering `DESCRIPTION`, `man/*.Rd`, vignette sources, and root
+  Markdown. Sorted by codepoint, so uppercase entries precede lowercase
+  ones.
+
+- **`_typos.toml`**, at the repo root — read by crate-ci/typos, covering
+  everything the R spellchecker cannot see. Put a domain abbreviation in
+  `[default.extend-words]`, and prefer fixing a real typo in the source
+  over listing it here.
 
 ## Things Not to Flag
 
@@ -296,19 +396,29 @@ The following workflows run on every PR. **All must pass** for merge:
 When making changes:
 
 1.  **ALWAYS** keep all function definitions inside `R/`, one per file.
+
 2.  **ALWAYS** preserve numerical/statistical logic (priors, parameter
     names, simulation semantics) unless there is a clear bug.
+
 3.  **ALWAYS** run `lintr::lint_package()` and fix every issue in the
     same commit. Never push a commit that introduces or leaves a lint.
+
 4.  **ALWAYS** run `devtools::document()` after modifying roxygen2.
+
 5.  **ALWAYS** run `devtools::check()` and `devtools::test()` locally
     before requesting review.
+
 6.  **NEVER** add a [`source()`](https://rdrr.io/r/base/source.html)
     call or define a function inside `scripts/` or `vignettes/`.
+
 7.  **NEVER** commit real Shigella data or files matching
     `dL_clean_*.rda` or patient data spreadsheets.
-8.  **NEVER** modify `inst/stan/*.stan` files for stylistic reasons —
+
+8.  **NEVER** modify `inst/extdata/*.stan` files for stylistic reasons —
     only for clearly documented bug fixes.
+
+9.  **NEVER** change `DESCRIPTION`’s `Version:` in a pull request,
+    because `bump-dev-version` owns it — see “Versioning” above.
 
 Only search for additional information if these instructions are
 incomplete or incorrect for your specific task.

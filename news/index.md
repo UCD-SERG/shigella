@@ -41,6 +41,15 @@
   every run. Setting it in the caller records that intent and keeps it
   from changing if the `@v2` default ever moves.
 
+- Added `AGENTS.md` and `CLAUDE.md`, short orientation files for AI
+  coding agents that defer to `.github/copilot-instructions.md` as the
+  source of truth, plus a `.claude/settings.json` permissions allowlist
+  (#35)
+
+- Corrected `.github/copilot-instructions.md`, whose CI section was
+  stale, and recorded the inverted version convention and the two
+  separate spelling accept-lists there (#35)
+
 ## shigella 0.0.0
 
 Started development.

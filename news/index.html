@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">shigella</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9010</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9011</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,6 +50,8 @@
 <li><p>Moved the Claude, Claude-review, and NEWS callers from <code>@v1</code> to <code>@v2</code>, fixing the startup failure every Claude Code run hit because <code>@v1</code> does not declare the <code>ANTHROPIC_API_KEY</code> secret the callers pass (#32)</p></li>
 <li><p>Recorded the roxygen2 version in <code>Config/roxygen2/version</code>, which roxygen2 8.1.0 uses in place of <code>RoxygenNote</code> (#32)</p></li>
 <li><p>Pinned <code>use-ai-config: true</code> explicitly on the Claude and Claude-review <code>Morrison-Lab/gha@v2</code> callers (#36). The reusable workflows already default that input to true, so the bot and the reviewer were already installing the shared <code>ai-config</code> plugin on every run. Setting it in the caller records that intent and keeps it from changing if the <code>@v2</code> default ever moves.</p></li>
+<li><p>Added <code>AGENTS.md</code> and <code>CLAUDE.md</code>, short orientation files for AI coding agents that defer to <code>.github/copilot-instructions.md</code> as the source of truth, plus a <code>.claude/settings.json</code> permissions allowlist (#35)</p></li>
+<li><p>Corrected <code>.github/copilot-instructions.md</code>, whose CI section was stale, and recorded the inverted version convention and the two separate spelling accept-lists there (#35)</p></li>
 </ul></div>
 </div>
     <div class="section level2">
