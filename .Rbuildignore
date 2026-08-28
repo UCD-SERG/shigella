@@ -12,6 +12,9 @@
 ^README\.Rmd$
 ^\.lintr\.R$
 ^_quarto\.yml$
+^AGENTS\.md$
+^CLAUDE\.md$
+^\.claude$
 ^.*\.qmd$
 ^.*\.png$
 ^Vary.*\.r$
