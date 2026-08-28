@@ -2,7 +2,8 @@
 
 Project guidance for AI coding agents working in `shigella` --- Codex, Cursor,
 Gemini, opencode, and anything else that reads `AGENTS.md`.
-Claude Code reads [`CLAUDE.md`](CLAUDE.md), which says the same things.
+Claude Code reads [`CLAUDE.md`](CLAUDE.md), which points back here for these
+conventions and adds only what is specific to Claude Code.
 
 [`.github/copilot-instructions.md`](.github/copilot-instructions.md) is the
 **source of truth** for repository-specific structure, style, and workflow.
