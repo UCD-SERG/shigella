@@ -37,8 +37,17 @@ jobs:
       # Wires the workflow_dispatch input through so claude.yml can re-dispatch
       # a review on Claude's commits; empty (and ignored) for pull_request runs.
       pr-number: ${{ inputs.pr_number }}
+      # Install the shared Morrison-Lab/ai-config plugin, so the reviewer
+      # applies the lab's shared review conventions rather than only this
+      # repo's own prose. The callee already defaults this to true at @v2, so
+      # it is on today; pinning it in the caller keeps it on if that default
+      # ever moves, and makes the choice visible here rather than implicit in
+      # the callee (#36).
+      use-ai-config: true
     # with:
     #   checkout-submodules: true   # SUBMODULES_TOKEN secret only for private submodules
+    #   plugin-marketplaces: https://github.com/<owner>/<repo>.git  # extra marketplaces on top of ai-config
+    #   plugins: <plugin>@<marketplace-name>  # extra plugins installed alongside ai-config
     #   allowed-bots: 'github-actions[bot],claude'   # accept more bot actors (default: github-actions[bot])
     #   prompt-addendum: |
     #     Repo-specific review guidance (e.g. Quarto/R conventions to enforce).
