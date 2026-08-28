@@ -34,6 +34,13 @@
 - Recorded the roxygen2 version in `Config/roxygen2/version`, which
   roxygen2 8.1.0 uses in place of `RoxygenNote` (#32)
 
+- Pinned `use-ai-config: true` explicitly on the Claude and
+  Claude-review `Morrison-Lab/gha@v2` callers (#36). The reusable
+  workflows already default that input to true, so the bot and the
+  reviewer were already installing the shared `ai-config` plugin on
+  every run. Setting it in the caller records that intent and keeps it
+  from changing if the `@v2` default ever moves.
+
 ## shigella 0.0.0
 
 Started development.
