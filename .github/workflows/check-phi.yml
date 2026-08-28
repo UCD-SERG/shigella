@@ -1,0 +1,21 @@
+# Scans for content that looks like Protected Health Information -- SSNs,
+# medical record numbers, dates of birth, study/participant identifier
+# literals, PHI column headers in data files. On PRs only the added lines are
+# scanned; on push the whole tree is.
+#
+# Worth having here specifically: this repo carries Shigella serology data and
+# grows chapter-level analysis code on long-lived branches.
+#
+# Suppress a synthetic-data false positive with a `phi-allow` comment on the
+# line, or a regex in .github/phi-allowlist.txt.
+name: Check for PHI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    uses: Morrison-Lab/gha/.github/workflows/check-phi.yml@v2

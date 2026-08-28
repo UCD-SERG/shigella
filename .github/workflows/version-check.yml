@@ -1,0 +1,20 @@
+# Calls Morrison-Lab/gha's version-check workflow. Replaces the
+# hand-maintained version-check.yaml, and INVERTS its convention: a PR must
+# now leave DESCRIPTION's Version: alone, rather than increment it. The bump
+# moves to bump-dev-version.yml, which runs after each merge to main -- two
+# PRs both required to bump the same line are guaranteed to collide.
+#
+# Bypass on a PR that genuinely must set a version (a release) with the
+# 'no version increment' label.
+name: Version check
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  version-check:
+    permissions:
+      pull-requests: read
+      contents: read
+    uses: Morrison-Lab/gha/.github/workflows/version-check.yml@v2

@@ -1,0 +1,21 @@
+# lychee link check, with a weekly cron to catch link rot and an auto-filed
+# issue when links break on main.
+name: Check Links
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+  schedule:
+    # Weekly, Mondays at 9:00 UTC.
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  check:
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: read
+    uses: Morrison-Lab/gha/.github/workflows/check-links.yml@v2

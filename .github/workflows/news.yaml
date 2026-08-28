@@ -9,6 +9,6 @@ on:
 
 jobs:
   check:
-    uses: Morrison-Lab/gha/.github/workflows/check-news.yml@v1
+    uses: Morrison-Lab/gha/.github/workflows/check-news.yml@v2
     # with:
     #   changelog: NEWS.md

@@ -1,0 +1,14 @@
+# Diff-scoped check: flags newly-added Markdown lines packing more than one
+# sentence or clause onto a single source line, so new prose lands with
+# semantic line breaks.
+name: Check new markdown lines for missing semantic breaks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    uses: Morrison-Lab/gha/.github/workflows/check-new-line-breaks.yml@v2
