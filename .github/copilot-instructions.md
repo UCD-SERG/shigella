@@ -43,7 +43,8 @@ recreate that pattern).
     file. File name must match function name (dotted internal helpers
     like `.helper_fn()` go in `R/helper_fn.R` — drop the leading dot in
     the filename only).
--   **`inst/stan/`**: Stan model files (`model_1.stan`, `model_2.stan`).
+
+-   **`inst/extdata/`**: Model files (JAGS today, plus the Stan models that the chapter branches carry).
 -   **`inst/examples/`**: One example script per exported function,
     named `<function_name>-examples.R`.
 -   **`tests/testthat/`**: Unit tests, named `test-<function_name>.R`.
@@ -81,7 +82,8 @@ recreate that pattern).
         `@example inst/examples/<fn>-examples.R`.
 -   One function per file. File name matches function name. Internal
     helpers are dotted (`.helper_fn()`) and live in `R/helper_fn.R`.
--   Stan model files belong in `inst/stan/`, never in a nested folder.
+
+-   Stan model files belong in `inst/extdata/`, never in a nested folder.
 
 ### 2. Examples That Actually Run
 
@@ -114,7 +116,7 @@ recreate that pattern).
 
 ### 5. Stan Model Files
 
--   Stan files (`.stan`) belong in `inst/stan/`.
+-   Stan files (`.stan`) belong in `inst/extdata/`.
 -   Compiled Stan binaries (no extension, or `.exe`/`.hpp`) belong in
     `.gitignore`.
 -   When a Stan model file is modified, verify:
@@ -281,7 +283,7 @@ Hand-maintained here, because `gha` models no equivalent:
 
 Called from `gha`:
 
--   **spellcheck.yml** — {spelling} over package prose, accepting `inst/WORDLIST`.
+-   **spellcheck.yml** — [`{spelling}`](https://docs.ropensci.org/spelling/) over package prose, accepting `inst/WORDLIST`.
 -   **check-typos.yml** — crate-ci/typos over the lines a PR adds, accepting `_typos.toml`.
 -   **lint-changed-lines.yml** — lintr over the lines a PR adds or modifies, rather than whole changed files.
 -   **version-check.yml** and **bump-dev-version.yml** — the version pair described under "Versioning" below.
@@ -291,9 +293,11 @@ Called from `gha`:
 -   **claude.yml** and **claude-code-review.yml** — the `@claude` agent and its reviewer, which are a pair.
     `claude.yml` dispatches the reviewer by filename, so keep both names and keep their pins in step.
 
-**`lint-changed-lines` currently fails** on a pre-existing backlog in `inst/scripts/`, carried in from the dissertation branches.
-It is not something a given PR introduced.
-Do not treat clearing it as in scope for unrelated work.
+`main` is a thin package skeleton: the chapter analysis code, the Stan models, and the dissertation sources live on long-running feature branches.
+Check what is present with `git ls-files` before asserting a layout, rather than reading it from this file or from another branch's tree.
+
+On the branches that carry `inst/scripts/`, `lint-changed-lines` reports a large pre-existing backlog.
+It is not something a given PR introduced, and clearing it is not in scope for unrelated work.
 
 ## Versioning
 
@@ -304,6 +308,11 @@ It must match `main`'s exactly, and `version-check` fails a PR that changes it.
 This inverted on 2026-08-27.
 The older convention required every PR to increment the version, so older branches and older habits point the wrong way.
 Apply the `no version increment` label when a deliberate version change is genuinely needed, such as a release.
+
+**This departs from the lab manual deliberately.**
+Its [quality-assurance checklist](https://ucd-serg.github.io/lab-manual/coding-practices.html) still lists "Version number has been incremented" as a pre-PR step, which predates `bump-dev-version`.
+Here the automation owns the bump, so following that item fails `version-check`.
+The manual remains authoritative on everything else.
 
 ## Two Accept-Lists
 
@@ -347,7 +356,8 @@ When making changes:
     `scripts/` or `vignettes/`.
 7.  **NEVER** commit real Shigella data or files matching
     `dL_clean_*.rda` or patient data spreadsheets.
-8.  **NEVER** modify `inst/stan/*.stan` files for stylistic reasons —
+
+8.  **NEVER** modify `inst/extdata/*.stan` files for stylistic reasons —
     only for clearly documented bug fixes.
 
 9.  **NEVER** change `DESCRIPTION`'s `Version:` in a pull request, because `bump-dev-version` owns it — see "Versioning" above.

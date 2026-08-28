@@ -28,13 +28,18 @@ When reviewing a PR in this repository, judge it against
 
 Two review notes specific to this repository:
 
-- `inst/scripts/` holds chapter analysis code rather than package code.
-  It is held to a looser standard than `R/`, and it carries a known lint
-  backlog.
+- `main` carries a thin package skeleton, and the chapter analysis code and
+  model files arrive with the long-running feature branches.
+  Derive the layout from `git ls-files` on the branch in front of you rather
+  than from prose.
 
-- Stan and JAGS files under `inst/extdata/` are not lintable as R, and their
-  numerical content --- priors, parameter names, simulation semantics --- is
-  not to be changed for style.
+- Where a branch carries `inst/scripts/`, that is analysis code rather than
+  package code, held to a looser standard than `R/`, and it carries a large
+  pre-existing lint backlog that no single PR introduced.
+
+- Model files under `inst/extdata/` are not lintable as R, and their numerical
+  content --- priors, parameter names, simulation semantics --- is not to be
+  changed for style.
 
 ## Editing workflows
 

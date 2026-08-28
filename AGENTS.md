@@ -24,11 +24,10 @@ It is maintained by UCD-SERG (Aiemjoy and Morrison labs).
 ## Repository layout
 
 - `R/`, `man/`, `NAMESPACE`, `DESCRIPTION` --- package source and generated docs
-- `inst/extdata/` --- Stan and JAGS model files
-- `inst/scripts/` --- chapter analysis scripts, not package code
+- `inst/extdata/` --- model files (JAGS today; Stan models arrive with the chapter branches)
 - `tests/` --- test suite
 - `vignettes/articles/` --- Quarto manuscripts and the dissertation source
-- `inst/WORDLIST` --- accepted spellings for {spelling}
+- `inst/WORDLIST` --- accepted spellings for [`{spelling}`](https://docs.ropensci.org/spelling/)
 - `_typos.toml` --- where accepted terms for crate-ci/typos go, at the repo root
 - `.github/workflows/` --- CI, mostly thin callers of `Morrison-Lab/gha`
 
@@ -48,6 +47,15 @@ The older convention required every PR to increment the version, so older
 branches, older instructions, and habit all point the wrong way.
 If a deliberate version change is genuinely needed --- a release --- apply the
 `no version increment` label.
+
+**This deliberately departs from the lab manual**, whose
+[quality-assurance checklist](https://ucd-serg.github.io/lab-manual/coding-practices.html)
+still lists "Version number has been incremented" as a pre-PR step.
+That checklist predates `bump-dev-version`, which did not exist when it was
+written.
+Here the automation owns the bump, so following the checklist item fails
+`version-check`.
+The manual remains authoritative on everything else.
 
 ### Two accept-lists, with different owners
 
@@ -105,10 +113,17 @@ Write Markdown with semantic line breaks --- one sentence per line.
 `check-new-line-breaks` scans the lines a PR adds and fails on lines packing
 more than one sentence together.
 
-## Known-failing checks
+## Branches carry more than `main` does
 
-`lint-changed-lines` currently reports a backlog in `inst/scripts/`, carried in
-from the dissertation branches.
-It is pre-existing rather than something a given PR introduced.
-Do not treat clearing it as in scope for unrelated work, and do not suppress it
-per line either; the disposition is tracked separately.
+`main` is a thin package skeleton.
+The chapter analysis code, the Stan models, and the dissertation sources live
+on long-running feature branches and reach `main` only as those merge.
+
+So check what is actually present before asserting a layout, rather than
+reading it from this file or from another branch's working tree.
+`git ls-files inst` settles it in one command.
+
+One consequence worth knowing: `lint-changed-lines` passes on `main` and
+reports a large pre-existing backlog on the branches that carry
+`inst/scripts/`.
+A failure there is not something that PR introduced.
