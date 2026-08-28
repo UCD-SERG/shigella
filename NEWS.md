@@ -16,9 +16,13 @@
   counterparts, added the `bump-dev-version` companion, and added checks for
   workflow, YAML, and Markdown lint, junk files, typos, committed secrets,
   PHI, broken links, and semantic line breaks (#32)
+
 * Moved the Claude, Claude-review, and NEWS callers from `@v1` to `@v2`,
   fixing the startup failure every Claude Code run hit because `@v1` does
   not declare the `ANTHROPIC_API_KEY` secret the callers pass (#32)
+
+* Recorded the roxygen2 version in `Config/roxygen2/version`, which roxygen2
+  8.1.0 uses in place of `RoxygenNote` (#32)
 
 # shigella 0.0.0
 
