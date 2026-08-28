@@ -65,11 +65,10 @@ recreate that pattern).
 -   **`.lintr`** and **`.lintr.R`**: Custom lintr configuration.
 -   **`.Rbuildignore`**: Must exclude `^scripts$`, `^slurm$`, and
     `^chapter2$` (last for historical safety).
--   **`_typos.toml`**: Where accepted terms for crate-ci/typos go, at
-    the repo root. Created on demand; typos discovers it automatically.
--   **`AGENTS.md`** and **`CLAUDE.md`**: Short orientation files for AI
-    coding agents. Both defer to this file as the source of truth, so record
-    a repository convention here and let them point at it.
+
+-   **`_typos.toml`**: Where accepted terms for crate-ci/typos go, at the repo root, created on demand.
+-   **`AGENTS.md`** and **`CLAUDE.md`**: Short orientation files for AI coding agents, both deferring to this file as the source of truth.
+    Record a repository convention here and let them point at it.
 
 ## Review Priorities — What Copilot Should Flag
 
@@ -257,8 +256,8 @@ summary.
 spelling::spell_check_package()
 ```
 
-Custom words live in `inst/WORDLIST`. A second, separate
-accept-list lives in `_typos.toml` — see "Two Accept-Lists" below.
+Custom words live in `inst/WORDLIST`.
+A second, separate accept-list lives in `_typos.toml` — see "Two Accept-Lists" below.
 
 ## Continuous Integration
 
@@ -273,64 +272,48 @@ annotations, and no check run.
 Hand-maintained here, because `gha` models no equivalent:
 
 1.  **R-CMD-check.yaml** — Runs `R CMD check` on multiple platforms.
-2.  **R-check-docs.yml** — Verifies `roxygen2::roxygenise()` output
-    matches committed `man/` and `NAMESPACE`.
+2.  **R-check-docs.yml** — Verifies `roxygen2::roxygenise()` output matches committed `man/` and `NAMESPACE`.
 3.  **check-readme.yaml** — Renders `README.Rmd`.
 4.  **pkgdown.yaml** — Builds the pkgdown site.
 5.  **test-coverage.yaml** — Coverage, uploaded to Codecov.
 6.  **pr-commands.yaml** — `/document` and `/style` PR commands.
-7.  **copilot-setup-steps.yml**, **phase0-debug.yaml** — Environment
-    setup for the Copilot agent, and a manual Phase 0 diagnostic run.
+7.  **copilot-setup-steps.yml**, **phase0-debug.yaml** — Copilot agent environment setup, and a manual Phase 0 diagnostic run.
 
 Called from `gha`:
 
--   **spellcheck.yml** — {spelling} over package prose, accepting
-    `inst/WORDLIST`.
--   **check-typos.yml** — crate-ci/typos over the lines a PR adds,
-    accepting `_typos.toml`.
--   **lint-changed-lines.yml** — lintr over the lines a PR adds or
-    modifies, rather than whole changed files.
--   **version-check.yml** and **bump-dev-version.yml** — the version
-    pair described under "Versioning" below.
--   **news.yaml** — requires a `NEWS.md` entry, bypassed with the
-    `no changelog` label.
--   **check-junk-files.yml**, **check-secrets.yml**, **check-phi.yml**,
-    **check-links.yml**, **check-new-line-breaks.yml** — hygiene and
-    safety checks.
--   **lint-workflows.yml**, **lint-yaml.yml**, **lint-markdown.yml** —
-    currently warn-only, while a pre-existing backlog is worked down.
--   **claude.yml** and **claude-code-review.yml** — the `@claude` agent
-    and its reviewer. These are a pair: `claude.yml` dispatches the reviewer
-    by filename, so keep both names and keep their pins in step.
+-   **spellcheck.yml** — {spelling} over package prose, accepting `inst/WORDLIST`.
+-   **check-typos.yml** — crate-ci/typos over the lines a PR adds, accepting `_typos.toml`.
+-   **lint-changed-lines.yml** — lintr over the lines a PR adds or modifies, rather than whole changed files.
+-   **version-check.yml** and **bump-dev-version.yml** — the version pair described under "Versioning" below.
+-   **news.yaml** — requires a `NEWS.md` entry, bypassed with the `no changelog` label.
+-   **check-junk-files.yml**, **check-secrets.yml**, **check-phi.yml**, **check-links.yml**, **check-new-line-breaks.yml** — hygiene and safety checks.
+-   **lint-workflows.yml**, **lint-yaml.yml**, **lint-markdown.yml** — currently warn-only, while a pre-existing backlog is worked down.
+-   **claude.yml** and **claude-code-review.yml** — the `@claude` agent and its reviewer, which are a pair.
+    `claude.yml` dispatches the reviewer by filename, so keep both names and keep their pins in step.
 
-**`lint-changed-lines` currently fails** on a pre-existing backlog in
-`inst/scripts/`, carried in from the dissertation branches. It is not
-something a given PR introduced; do not treat clearing it as in scope for
-unrelated work.
+**`lint-changed-lines` currently fails** on a pre-existing backlog in `inst/scripts/`, carried in from the dissertation branches.
+It is not something a given PR introduced.
+Do not treat clearing it as in scope for unrelated work.
 
 ## Versioning
 
-**Do not change `DESCRIPTION`'s `Version:` in a pull request.** It must match
-`main`'s exactly, and `version-check` fails a PR that changes it.
-`bump-dev-version` bumps the dev counter after every merge to `main`, so a PR
-never needs to.
+**Do not change `DESCRIPTION`'s `Version:` in a pull request.**
+It must match `main`'s exactly, and `version-check` fails a PR that changes it.
+`bump-dev-version` bumps the dev counter after every merge to `main`, so a PR never needs to.
 
-This inverted on 2026-08-27. The older convention required every PR to
-increment the version, so older branches and older habits point the wrong way.
-Apply the `no version increment` label when a deliberate version change is
-genuinely needed, such as a release.
+This inverted on 2026-08-27.
+The older convention required every PR to increment the version, so older branches and older habits point the wrong way.
+Apply the `no version increment` label when a deliberate version change is genuinely needed, such as a release.
 
 ## Two Accept-Lists
 
 Adding a word to the wrong one silently fails.
 
--   **`inst/WORDLIST`** — read by `spelling::spell_check_package()`,
-    covering `DESCRIPTION`, `man/*.Rd`, vignette sources, and root Markdown.
+-   **`inst/WORDLIST`** — read by `spelling::spell_check_package()`, covering `DESCRIPTION`, `man/*.Rd`, vignette sources, and root Markdown.
     Sorted by codepoint, so uppercase entries precede lowercase ones.
--   **`_typos.toml`**, at the repo root — read by crate-ci/typos, covering
-    everything the R spellchecker cannot see. Put a domain abbreviation in
-    `[default.extend-words]`; prefer fixing a real typo in the source over
-    listing it here.
+
+-   **`_typos.toml`**, at the repo root — read by crate-ci/typos, covering everything the R spellchecker cannot see.
+    Put a domain abbreviation in `[default.extend-words]`, and prefer fixing a real typo in the source over listing it here.
 
 ## Things Not to Flag
 
@@ -366,8 +349,8 @@ When making changes:
     `dL_clean_*.rda` or patient data spreadsheets.
 8.  **NEVER** modify `inst/stan/*.stan` files for stylistic reasons —
     only for clearly documented bug fixes.
-9.  **NEVER** change `DESCRIPTION`'s `Version:` in a pull request — see
-    "Versioning" above. `bump-dev-version` owns it.
+
+9.  **NEVER** change `DESCRIPTION`'s `Version:` in a pull request, because `bump-dev-version` owns it — see "Versioning" above.
 
 Only search for additional information if these instructions are
 incomplete or incorrect for your specific task.

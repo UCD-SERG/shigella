@@ -31,6 +31,7 @@ Two review notes specific to this repository:
 - `inst/scripts/` holds chapter analysis code rather than package code.
   It is held to a looser standard than `R/`, and it carries a known lint
   backlog.
+
 - Stan and JAGS files under `inst/extdata/` are not lintable as R, and their
   numerical content --- priors, parameter names, simulation semantics --- is
   not to be changed for style.

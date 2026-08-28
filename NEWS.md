@@ -26,9 +26,11 @@
 
 * Added `AGENTS.md` and `CLAUDE.md`, short orientation files for AI coding
   agents that defer to `.github/copilot-instructions.md` as the source of
-  truth, plus a `.claude/settings.json` permissions allowlist. Corrected that
-  file's now-stale CI section and recorded the inverted version convention and
-  the two separate spelling accept-lists (#35)
+  truth, plus a `.claude/settings.json` permissions allowlist (#35)
+
+* Corrected `.github/copilot-instructions.md`, whose CI section was stale, and
+  recorded the inverted version convention and the two separate spelling
+  accept-lists there (#35)
 
 # shigella 0.0.0
 

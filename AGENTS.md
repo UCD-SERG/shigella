@@ -29,8 +29,7 @@ It is maintained by UCD-SERG (Aiemjoy and Morrison labs).
 - `tests/` --- test suite
 - `vignettes/articles/` --- Quarto manuscripts and the dissertation source
 - `inst/WORDLIST` --- accepted spellings for {spelling}
-- `_typos.toml` --- where accepted terms for crate-ci/typos go, at the repo
-  root
+- `_typos.toml` --- where accepted terms for crate-ci/typos go, at the repo root
 - `.github/workflows/` --- CI, mostly thin callers of `Morrison-Lab/gha`
 
 ## Conventions that trip people up
@@ -57,6 +56,7 @@ Adding a word to the wrong one silently fails.
 - `inst/WORDLIST` --- read by `spelling::spell_check_package()`.
   Covers `DESCRIPTION`, `man/*.Rd`, vignette sources, and root Markdown.
   Sorted by codepoint, so uppercase entries precede lowercase ones.
+
 - `_typos.toml`, at the repo root --- read by crate-ci/typos.
   Covers everything the R spellchecker cannot see, diff-scoped to what a PR
   adds.
