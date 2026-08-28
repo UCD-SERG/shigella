@@ -1,13 +1,15 @@
 # Diff-scoped check: flags newly-added Markdown lines packing more than one
 # sentence or clause onto a single source line, so new prose lands with
 # semantic line breaks.
+#
+# pull_request only, deliberately, for the same reason as check-typos.yml:
+# gha derives the base from the pull_request event and skips (reporting
+# success) when there is none, so a push trigger would add a green check on
+# main that examined nothing.
 name: Check new markdown lines for missing semantic breaks
 
 on:
-  push:
-    branches: [main]
   pull_request:
-  workflow_dispatch:
 
 jobs:
   check:

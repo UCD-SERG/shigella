@@ -2,15 +2,14 @@
 # CONTRIBUTING.md-class Markdown, YAML, and code comments. Uses crate-ci/typos,
 # a corrections-list checker, so it needs no curated wordlist.
 #
-# Diff-scoped, so it only flags what a PR itself adds -- it will not surface
-# years of pre-existing drift.
+# pull_request only, deliberately. The workflow diffs against the PR base, and
+# a push run has no base to diff against -- gha skips it and reports success,
+# which would put a green check on main that examined nothing. Pass
+# `base-ref: all` and re-add a push trigger once the existing tree is clean.
 name: Check typos
 
 on:
-  push:
-    branches: [main]
   pull_request:
-  workflow_dispatch:
 
 jobs:
   check:
