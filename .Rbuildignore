@@ -12,6 +12,7 @@
 ^README\.Rmd$
 ^\.lintr\.R$
 ^_quarto\.yml$
+^_typos\.toml$
 ^.*\.qmd$
 ^.*\.png$
 ^Vary.*\.r$

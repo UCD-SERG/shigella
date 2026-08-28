@@ -335,7 +335,7 @@ report <- function(nm, z) {
 # =====================================================================
 # discord -- is the real data more discordant than arm_T predicts?
 #
-# THE OPEN ITEM.  Simulation says the composite OVERestimates lambda by
+# THE OPEN ITEM.  Simulation says the composite OVER-estimates lambda by
 # about 17%.  The real data show the joint estimate ABOVE the composite by
 # about 25%.  The signs disagree, and until that is explained no statement
 # about the level of incidence can be made.
