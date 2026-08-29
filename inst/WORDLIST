@@ -12,11 +12,14 @@ FIC
 Farzam
 Fogarty
 GMMA
+GitHub
 HlyE
 INV
 IgA
 IgG
 IpaB
+Iso
+Isotype
 KA
 LKJ
 LMICs
@@ -44,12 +47,14 @@ Seroepidemiology
 Seroincidence
 Serological
 Seroprevalence
+Seroresponse
 Serotype
 TTHc
 TW
 Typhi
 Unif
 al
+allowlist
 altSonflex
 analyte
 antigenically
@@ -131,6 +136,7 @@ mucoid
 mucosal
 multimodality
 ne
+newperson
 operatorname
 organismal
 pagebreak
@@ -182,6 +188,7 @@ textstyle
 tfrac
 th
 thirtyfold
+tibble
 titers
 underbrace
 underpowered
