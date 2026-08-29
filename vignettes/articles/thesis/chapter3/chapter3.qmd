@@ -75,13 +75,13 @@ thesis_ft <- function(df, widths = NULL, first_left = TRUE) {
 
 
 <!--
-NO CODE IS EXECUTED IN THIS DOCUMENT, AND THAT IS DELIBERATE.
+NO ANALYSIS IS RUN AT RENDER TIME, AND THAT IS DELIBERATE.
 
-Every number here is written out, and every figure is included as a finished PNG.
+Every number is written out or read from a stored table, and every figure is included as a finished PNG.
 The analysis lives in versioned R scripts that run on the compute server where the data are held; the bridge between the two is the CSV tables those scripts write.
 
 Three things follow.
-The manuscript renders anywhere Quarto is installed, with no R, no packages, and no data.
+The manuscript renders anywhere Quarto and flextable are installed, with no access to the data and no analysis packages.
 It can therefore be reviewed in a repository that must not contain participant data.
 And a number in the text that disagrees with the corresponding CSV is a discrepancy someone can find, which is not true of a number a chunk computes on the fly. -->
 
@@ -186,15 +186,15 @@ Assumptions made for tractability in seroepidemiology have not historically been
 ## Coverage as the evaluation criterion {#sec-ch3-coverage}
 
 An interval can be widened by anyone.
-Multiplying it by 1.3 makes it wider without making it right.
+Multiplying it by two makes it wider without making it right.
 
 The quantity that decides whether a wider interval is a better interval is coverage — the proportion of intervals that contain the true value when the true value is known — which is the standard target for evaluating an interval procedure by simulation [@morris2019].
 A nominal 95% interval should contain the truth 95% of the time.
 If the current method's intervals contain it less often than that, they are not merely narrower than an alternative; they are wrong, and by a measurable amount.
 
 Coverage is therefore the primary endpoint of this chapter, and it is the reason the chapter can make a claim about the published literature rather than only about a comparison between two estimators written here.
-A statement that one interval is 40% wider than another is a statement about that code.
-A statement that a nominal 95% interval covers 64% of the time is a statement about every published estimate computed the same way.
+A statement that one interval is half again as wide as another is a statement about that code.
+A statement that an interval reported as 95% covers far less often than that is a statement about every published estimate computed the same way.
 
 ## Pre-specified analyses {#sec-ch3-honest}
 
@@ -385,11 +385,12 @@ $$ {#eq-shared}
 
 @eq-shared and @eq-joint differ in the order of $\prod_j$ and $\frac1M\sum_k$ and in nothing else,
 which is what makes the second assumption isolable.
-The three are referred to throughout as forms
-A, B, and C, with
+We write the three as
 
 $$
-\ell_{\mathrm A}=\ell_{\mathrm{prod}},\qquad \ell_{\mathrm B}=\sum_i\log L_i^{\mathrm{shared}},\qquad \ell_{\mathrm C}=\ell_{\mathrm{joint}} .
+\ell_{\mathrm{prod}},\qquad
+\ell_{\mathrm{shared}}=\sum_i\log L_i^{\mathrm{shared}},\qquad
+\ell_{\mathrm{joint}} .
 $$ {#eq-abc}
 
 These three exhaust the arrangements: with a sum, an integral, and a product to order, the product form places the product outermost, the shared-time form the integral, and the joint form the sum.
@@ -498,11 +499,11 @@ The derivation is in @sec-appB-deriv.
 Two contrasts follow, and they partition the difference between current practice and the joint form:
 
 $$
-\underbrace{\;\mathrm B-\mathrm A\;}_{\text{sharing one infection time}}
+\underbrace{\;\ell_{\mathrm{shared}}-\ell_{\mathrm{prod}}\;}_{\text{sharing one infection time}}
 \qquad
-\underbrace{\;\mathrm C-\mathrm B\;}_{\text{pairing the draws}}
+\underbrace{\;\ell_{\mathrm{joint}}-\ell_{\mathrm{shared}}\;}_{\text{pairing the draws}}
 \qquad
-\underbrace{\;\mathrm C-\mathrm A\;}_{\text{both together}}
+\underbrace{\;\ell_{\mathrm{joint}}-\ell_{\mathrm{prod}}\;}_{\text{both together}}
 $$ {#eq-contrasts}
 
 The comparator is internal for a specific reason.
@@ -563,7 +564,9 @@ expressions of @eq-abc collapse to the same integral, because a Monte Carlo mean
 quadrature sum commute:
 
 $$
-\ell_{\mathrm A}(\lambda)\big\rvert_{J=1}= \ell_{\mathrm B}(\lambda)\big\rvert_{J=1}= \ell_{\mathrm C}(\lambda)\big\rvert_{J=1}.
+\ell_{\mathrm{prod}}(\lambda)\big\rvert_{J=1}=
+\ell_{\mathrm{shared}}(\lambda)\big\rvert_{J=1}=
+\ell_{\mathrm{joint}}(\lambda)\big\rvert_{J=1}.
 $$ {#eq-threeform}
 
 Unlike @eq-valid this is an identity within a single implementation, so it should hold to machine precision rather than to four decimals.
@@ -721,7 +724,8 @@ The draws enter both likelihood forms identically, so any error in it is common 
 And refitting by stratum would divide that fit into three, at sample sizes below where that model converges reliably, while that same fit is the source of the simulation truth.
 We report pooled versus age-stratified kinetics in the manuscript rather than the dissertation, on the advice of the committee.
 
-**Ethical Approval.** This study was approved by the institutional review boards of the Centers for Disease Control and Prevention, Stanford University (39557), and MassGeneral Brigham (2014P002602, 2019P000152, 2013P001965, 2016P000949) in the USA; the Bangladesh Institute of Child Health Ethical Review Committee (01-02-2019); the Nepal Health Research Council Ethical Review Board (391/2018); and the AKU Ethical Review Committee (2019-0410-4188) and the Pakistan National Bioethics Committee (4-87/NBC-341-Amend-revised/19/81) in Pakistan.
+## Ethical approval {#sec-ch3-ethics}
+ This study was approved by the institutional review boards of the Centers for Disease Control and Prevention, Stanford University (39557), and MassGeneral Brigham (2014P002602, 2019P000152, 2013P001965, 2016P000949) in the USA; the Bangladesh Institute of Child Health Ethical Review Committee (01-02-2019); the Nepal Health Research Council Ethical Review Board (391/2018); and the AKU Ethical Review Committee (2019-0410-4188) and the Pakistan National Bioethics Committee (4-87/NBC-341-Amend-revised/19/81) in Pakistan.
 Written informed consent was obtained from all participants and from the parents or guardians of participants younger than 18 years at enrollment, with written assent obtained from children aged 15--17 years.
 This secondary analysis used de-identified antibody measurements collected under the original consent and did not require additional consent or a waiver.
 
@@ -798,12 +802,12 @@ A third difference concerns the decay parameters, which @sec-ch3-discussion retu
 Censoring is far from symmetric between isotypes within a site: low-endemicity Pakistan has 59.7% of IgG at the limit against 1.0% of IgA, while the Nepal sites have both isotypes heavily censored together.
 Whatever governs the relationship between a participant's two measurements is evidently not the same in every setting.
 
-## Implementation verification {#sec-ch3-res-valid}
+## Results of the implementation checks {#sec-ch3-res-valid}
 
 All three implementation checks passed, so the comparisons that follow reflect the structure of the three likelihood forms rather than differences in how we coded them.
 Each check is an identity rather than an approximation, so each has a right answer known in advance.
 With one biomarker the three forms agreed to machine precision.
-Evaluated on the high-endemicity Bangladesh sample at five values of $\lambda$, separately for each isotype, the largest disagreement between forms A, B, and C was $5.7\times10^{-14}$ on a log-likelihood of order $10^{2}$, a relative difference of $1.2\times10^{-16}$ (@eq-threeform).
+Evaluated on the high-endemicity Bangladesh sample at five values of $\lambda$, separately for each isotype, the largest disagreement between the three forms was $5.7\times10^{-14}$ on a log-likelihood of order $10^{2}$, a relative difference of $1.2\times10^{-16}$ (@eq-threeform).
 The three densities are therefore one implementation branching in one place, and any two-biomarker difference between them is attributable to the order of the sum, the integral, and the product.
 
 Breaking the isotype pairing changed the product form by exactly zero.
@@ -960,7 +964,7 @@ The dotted line is the mean across
 the six conditions.
 :::
 
-## Application to serosurvey data {#sec-ch3-res-app}
+## Seroincidence in the serosurveys {#sec-ch3-res-app}
 
 @tbl-forms gives the three forms in all six sites and @fig-forest displays them.
 
@@ -1005,15 +1009,16 @@ The simulation does not reproduce it (@sec-ch3-res-shift), and what the chapter 
 ### Relative contribution of the two assumptions {#sec-ch3-res-split}
 
 The joint form turns on two assumptions at once, so pricing them separately requires a form that turns on only the first.
-That is the whole reason the shared-time form is computed: the shared-time form isolates the first assumption, so its difference from the product form is what the shared infection time is worth and $\mathrm C-\mathrm B$ is what the pairing adds on top of it.
+That is the whole reason the shared-time form is computed: the shared-time form isolates the first assumption, so its difference from the product form is what the shared infection time is worth and its difference from the joint form is what the pairing adds on top of it.
 
 ```{r}
 #| label: tbl-split
 #| echo: false
 #| tbl-cap: |
 #|   **Interval width contrasts by site, all three forms from one function.** The two
-#|   differences price the two assumptions separately: B − A is what sharing the infection
-#|   time is worth, and C − B is what pairing the parameter draws adds on top of it. Because
+#|   differences price the two assumptions separately: the difference between the shared-time and product
+#|   forms is what sharing the infection time is worth, and the difference between the
+#|   joint and shared-time forms is what pairing the parameter draws adds on top of it. Because
 #|   the three forms are branches of a single implementation, no part of either difference
 #|   can arise from anything else.
 d <- as.data.frame(do.call(rbind, list(
@@ -1058,7 +1063,7 @@ Every interval in @tbl-forms is wider than its product-form counterpart, and no 
 
 ### Unexplained shift in the point estimate {#sec-ch3-res-shift}
 
-The joint estimate exceeded the product estimate in six of six sites, by 14.2% to 42.4%, with a mean of 28.8%.
+The joint estimate exceeded the product estimate in six of six sites, by 14.2% to 42.4%, with a mean of 28.8% relative to the shared-time form.
 
 This was not predicted and the simulation does not account for it.
 Under simulated data the two forms differed in bias by less than one percentage point at every $\lambda$ (@tbl-cov).
@@ -1082,7 +1087,7 @@ Contours are the cloud the paired draws produce at that site's fitted incidence,
 The exclusion of censored pairs is a choice and the finding does not depend on it: retaining them gives observed correlations of 0.39 to 0.60 against 0.79 to 0.82, still lower in six of six.
 @sec-ch3-discussion sets out what is known about the origin of the discrepancy and records it as unresolved.
 
-## Sensitivity analyses {#sec-ch3-res-sens}
+## Results of the sensitivity analyses {#sec-ch3-res-sens}
 
 
 ::: {#fig-lod}
@@ -1126,7 +1131,7 @@ It restores coverage to 98.0% and costs a 25% wider interval — a cost that var
 
 An interval can miss the truth because it sits in the wrong place or because it is too short, and the two call for different responses.
 Here it is the second.
-Both forms estimate the incidence rate to within about two percent, and they differ from each other by less than one percentage point; what differs is the curvature of the log-likelihood, which the product form overstates because it counts one specimen as two independent observations.
+Both forms estimate the incidence rate to within about three percent, and they differ from each other by less than one percentage point; what differs is the curvature of the log-likelihood, which the product form overstates because it counts one specimen as two independent observations.
 
 This is exactly what composite likelihood theory predicts [@lindsay1988; @varin2011; @godambe1960] — the estimator stays consistent while the curvature of the composite log-likelihood overstates the information, so intervals come out too short with the point estimate unharmed.
 A product of valid marginal likelihoods remains a consistent estimating function, so the point estimate survives; but its second derivative is not the Fisher information, so intervals read from it in the usual way are too narrow [@godambe1960].
@@ -1184,7 +1189,7 @@ That analysis is specified in the kinetics analysis [@lee2026correlated].
 Agreement between the two would be a second measurement of the same quantity by a route that shares neither the data nor the quantity being estimated, and would put the attribution above on firmer ground than one contrast can.
 Disagreement would mean that one of them is measuring something else, and would have to be resolved before either is relied on.
 
-The joint estimate exceeded the product estimate in every site, by 29% on average, and the simulation does not reproduce this.
+The joint estimate exceeded the product estimate in every site, by 29% on average relative to the shared-time form, and the simulation does not reproduce this.
 Under data generated from the joint model the two forms differed in bias by less than a percentage point.
 Something in the observed data, absent from the simulation, separates them.
 
@@ -1220,7 +1225,7 @@ The results should be considered in light of the following limitations.
 The simulation generates from the model the joint likelihood assumes, and three facts partly mitigate this: the shared-time form is also misspecified with respect to the generator and is calibrated at nominal; both forms estimate the incidence closely, so the shortfall appears as width and not as bias, which is the specific failure composite likelihood theory predicts; and no simulator generates from the product form, since the established package's generator also gives each individual one latent infection history.
 The joint form is slightly conservative, covering above nominal, and whether the excess is a property of the estimator or an artifact of the finite number of parameter draws is not settled; drawing more of them and re-examining the coverage is the direct test.
 The kinetics analysis models correlation at one level of the hierarchy and not two, leaving residual measurement noise uncorrelated, so the fitted parameter correlation absorbs any concordance arising at the measurement level and simulating from it then over-predicts concordance in a study whose measurement-level component differs.
-The point-estimate shift is not explained: the joint form gives estimates about a third higher on the observed data and the simulation does not reproduce this (@sec-ch3-res-shift), so we report it as an open finding and no claim about the level of incidence rests on it.
+The point-estimate shift is not explained: the joint form gives estimates about a third higher than current practice on the observed data and the simulation does not reproduce this (@sec-ch3-res-shift), so we report it as an open finding and no claim about the level of incidence rests on it.
 And the comparison against the established software is conceptual rather than numerical, because the two implementations differ in the noise convention, the density for time since infection, the handling of the never-infected branch, and the time units (@sec-ch3-design).
 
 The correction is not expensive to describe and it is not expensive to justify: it asserts only that a participant's measurements come from one infection.
@@ -1233,11 +1238,12 @@ A survey designed for it, or an assay with a lower floor, would give the test th
 A model with correlated residuals would separate the measurement-level and parameter-level components of concordance, which a single fit cannot.
 Implementing the shared-time form in the established software would close a gap its maintainers have already identified, since the methodology vignette specifies that form while the implementation computes the product.
 And three further extensions follow directly.
-More than two biomarkers, where the estimator applies the independence assumption more times and its cost should grow.
-Other pathogens and cohorts, since nothing in the derivation is specific to enteric fever.
-And the discordance of @sec-ch3-discussion, which is the most interesting thing this chapter found and the thing it is least able to explain: if repeated infection is the cause, then the single-infection framework itself — shared by every likelihood form considered here — is the next assumption to examine.
+The cost should grow with more than two biomarkers, because the estimator applies the independence assumption more times.
+And nothing in the derivation is specific to enteric fever, so the same treatment applies to other pathogens and cohorts.
+And the discordance discussed below, which is the most interesting thing this chapter found and the thing it is least able to explain: if repeated infection is the cause, then the single-infection framework itself — shared by every likelihood form considered here — is the next assumption to examine.
 
-**Funding.**
+## Funding {#sec-ch3-funding}
+
 
 This research was supported by the Bill & Melinda Gates Foundation, which funded the Surveillance for Enteric Fever in Asia Project (INV-008335) and the ancillary serological study from which these data are drawn (INV-000572).
 The funders had no role in study design, data collection, data analysis, data interpretation, or the writing of this report.
@@ -1326,8 +1332,8 @@ When we compare the paired and shuffled draws under the joint likelihood, the ma
 The diagnostic distinguishes two explanations.
 Because the sample is nested as it grows, the offset is recomputed at increasing sample sizes:
 
-- offset grows in proportion to $n$ — the deficit is spread across participants, and the paired draws genuinely explain the data less well;
-- offset is constant in $n$ — a small number of participants carry all of it, their contribution
+If the offset grows in proportion to $n$, the deficit is spread across participants and the paired draws genuinely explain the data less well.
+If it is constant in $n$, a small number of participants carry all of it, and their contribution
 does not depend on $\lambda$, and inference is unaffected.
 We then report it as a limitation: the paired draws assign near-zero probability to some observed isotype pairs.
 
@@ -1358,5 +1364,4 @@ Analysis code will be deposited in a public repository at the time of publicatio
 #| include: false
 # nolint end
 ```
-
 
