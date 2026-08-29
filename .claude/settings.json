@@ -22,5 +22,18 @@
       "Bash(gh run list:*)",
       "Bash(typos:*)"
     ]
+  },
+  "extraKnownMarketplaces": {
+    "posit-dev-skills": {
+      "source": {
+        "source": "github",
+        "repo": "posit-dev/skills"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "r-lib@posit-dev-skills": true,
+    "github@posit-dev-skills": true,
+    "quarto@posit-dev-skills": true
   }
 }
