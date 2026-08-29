@@ -75,13 +75,13 @@ thesis_ft <- function(df, widths = NULL, first_left = TRUE) {
 
 
 <!--
-NO CODE IS EXECUTED IN THIS DOCUMENT, AND THAT IS DELIBERATE.
+NO ANALYSIS IS RUN AT RENDER TIME, AND THAT IS DELIBERATE.
 
-Every number here is written out, and every figure is included as a finished PNG.
+Every number is written out or read from a stored table, and every figure is included as a finished PNG.
 The analysis lives in versioned R scripts that run on the compute server where the data are held; the bridge between the two is the CSV tables those scripts write.
 
 Three things follow.
-The manuscript renders anywhere Quarto is installed, with no R, no packages, and no data.
+The manuscript renders anywhere Quarto and flextable are installed, with no access to the data and no analysis packages.
 It can therefore be reviewed in a repository that must not contain participant data.
 And a number in the text that disagrees with the corresponding CSV is a discrepancy someone can find, which is not true of a number a chunk computes on the fly. -->
 
@@ -433,11 +433,11 @@ all [@yao2022stacking], the weights being obtained by stacking the chains' leave
 densities.
 Reporting all three makes the filter's contribution visible rather than assumed, and @sec-ch2-res-sim compares them.
 
-**It is not tuning.** The threshold is not an influential quantity: we report results at 50, 100 and 200 and they agree to three decimal places, so no choice within that range changes a conclusion.
+**The threshold is fixed in advance and not chosen from the results.** The threshold is not an influential quantity: we report results at 50, 100 and 200 and they agree to three decimal places, so no choice within that range changes a conclusion.
 It is
 reported as a sensitivity rather than asserted as a constant fixed beforehand.
 
-**It is not convergence repair.** Within each mode the sampler is well behaved.
+**Chains that fail their own diagnostics are removed by a separate rule.** Within each mode the sampler is well behaved.
 The rule selects
 between modes; it does not rescue a chain that failed to converge, and we report chains that fail on their own terms separately.
 
@@ -526,7 +526,7 @@ names(d) <- c("Condition", "How the truth is built", "Marginal correlations", "Q
 thesis_ft(d, widths = c(0.83, 1.72, 1.78, 2.07))
 ```
 
-**The null condition is not the independent model refitted.** Refitting would produce its own population means, within-isotype blocks and measurement precisions, so a comparison against it would confound the cross-covariances with those differences.
+**The null condition comes from the correlated fit with the cross-covariances set to zero, not from refitting the independent model.** Refitting would produce its own population means, within-isotype blocks and measurement precisions, so a comparison against it would confound the cross-covariances with those differences.
 We built the null from the correlated model with $\mathbf c$ set to zero, which leaves one thing different between the two conditions and nothing else.
 That analysis makes the same move for the same reason when it breaks the isotype pairing by reordering rows rather than by refitting [@lee2026seroincidence].
 
@@ -577,7 +577,8 @@ names(d) <- c("analysis", "What is varied", "What it tests")
 thesis_ft(d, widths = c(0.95, 1.85, 3.60))
 ```
 
-**Ethical Approval.** This study was approved by the institutional review boards of the Centers for
+## Ethical approval {#sec-ch2-ethics}
+ This study was approved by the institutional review boards of the Centers for
 Disease Control and Prevention, Stanford University (39557), and MassGeneral Brigham (2014P002602,
 2019P000152, 2013P001965, 2016P000949) in the USA; the Bangladesh Institute of Child Health Ethical
 Review Committee (01-02-2019); the Nepal Health Research Council Ethical Review Board (391/2018);
@@ -736,14 +737,16 @@ visits, and they establish that the association is in the data and not only in t
 #|   reported. Chains retained is the number surviving the log-density filter out of 40. The
 #|   baseline correlation is shown because it is the largest of the five; per-parameter
 #|   estimates for all five are in @sec-appA-init.
+# The run identifiers are dropped: the starting scale is the thing that varies, and
+# it is already a column of its own.
 d <- as.data.frame(do.call(rbind, list(
-  c("T (primary)", "0.1", "38 / 40", "0.831", "442", "1.004", "4"),
-  c("T3", "0.5", "32 / 40", "0.826", "196", "1.005", "3"),
-  c("T2", "2", "24 / 40", "0.829", "214", "1.001", "245"),
-  c("T4", "3", "9 / 40", "0.831", "84", "1.006", "4,039")
+  c("0.1 (primary)", "38 / 40", "0.831", "442", "1.004", "4"),
+  c("0.5", "32 / 40", "0.826", "196", "1.005", "3"),
+  c("2", "24 / 40", "0.829", "214", "1.001", "245"),
+  c("3", "9 / 40", "0.831", "84", "1.006", "4,039")
 )), stringsAsFactors = FALSE)
-names(d) <- c("arm", "starting scale", "chains retained", "baseline correlation", "min ESS", "max R-hat", "divergences")
-thesis_ft(d, widths = c(0.8, 1.01, 1.08, 1.45, 0.61, 0.65, 0.8))
+names(d) <- c("starting scale", "chains retained", "baseline correlation", "min ESS", "max R-hat", "divergences")
+thesis_ft(d, widths = c(1.25, 1.15, 1.50, 0.65, 0.70, 0.85))
 ```
 
 Across a thirtyfold range of starting scales the posterior medians agree to within 0.005 for the
@@ -789,8 +792,7 @@ The prior sensitivity fits answer that directly: the same model and data with th
 
 The estimates barely move.
 The baseline correlation is 0.840 under the wide prior and 0.816 under
-the tight one, against 0.831 in the primary arm, and across all five parameters the movement is
-0.024 to 0.090 (@sec-appA-init).
+the tight one, against 0.831 in the primary arm, and across all five parameters the movement is 0.020 to 0.090 (@sec-appA-init).
 Every one of those is smaller than the seed-to-seed spread of a
 single fit in the simulation study, so **the correlations are determined by the data and not by the
 prior**, despite the parameter being unbounded.
@@ -798,8 +800,7 @@ The prediction recorded before these arms were run
 was a movement of about 0.19 in the baseline; the observed 0.024 is eight times smaller, and the
 direction was right where the magnitude was not.
 
-The largest of these movements, 0.090 for the time to peak, is nonetheless larger than Monte Carlo
-error can account for, and @sec-ch2-res-weak takes that parameter up separately.
+The largest movement on the prior axis, 0.090 for the time to peak, is nonetheless larger than Monte Carlo error can account for, and @sec-ch2-res-weak takes that parameter up separately.
 
 ## Recovery of the correlations under simulation {#sec-ch2-res-sim}
 
@@ -845,7 +846,7 @@ visible.
 The estimator recovered the correlations that were present and produced none where there were none.
 Simulating with all five cross-covariances at zero gave a mean bias of +0.008 to +0.010 against a truth of zero, with every interval containing zero; simulating with correlation present, against true values of 0.841, 0.645, 0.857, 0.671, and 0.658, gave a mean bias after filtering of −0.027.
 
-The pre-specified decision rule was not met in any of the six parameter-by-condition combinations (@sec-ch2-sim), and every
+The pre-specified decision rule was not met in any of the six condition-by-scheme combinations (@sec-ch2-sim), and every
 departure is in the same direction: coverage above nominal, from 0.926 to 0.980.
 
 Two parameters sit at the extremes of @fig-ch2-cov. Time to peak is the only one falling below nominal when correlation is present, at 0.860, and decay shape reaches 1.000 under all three schemes.
@@ -884,7 +885,7 @@ therefore not sensitive to where the line is drawn.
 #|   **Per-parameter performance under the condition with correlation present, after filtering, 100 intervals
 #|   each.** The pooled coverage above averages over real heterogeneity between parameters,
 #|   and two sit at the extremes: time to peak is the only parameter falling below nominal,
-#|   and decay shape reaches 1.000 while holding the second smallest mean squared error. Bias
+#|   and decay shape reaches 1.000 while holding the third smallest mean squared error. Bias
 #|   is the mean posterior median minus the truth, and the posterior variance is the average
 #|   over replicates of the variance implied by the interval.
 d <- as.data.frame(do.call(rbind, list(
@@ -902,14 +903,13 @@ The pooled figure of 0.936 averages over real heterogeneity.
 Two parameters sit at the extremes
 and each is informative.
 
-Decay-shape covers 1.000 with the second-smallest mean squared error.
+Decay-shape covers 1.000 with the third smallest mean squared error.
 Accurate point estimate,
 interval far wider than it needs to be: the cleanest possible form of over-coverage.
 
 Time to peak is the weakest parameter on every measure.
 It has the lowest coverage of the five
-at 0.860, the second-largest bias, and — separately — the largest disagreement between the arms of
-@sec-ch2-res-init, at 0.090.
+at 0.860, the second-largest bias, and — separately — the largest movement across prior scales in @sec-ch2-res-init, at 0.090.
 
 The posterior-variance column identifies which of the two failures it is.
 Its posterior variance is
@@ -1020,16 +1020,12 @@ We include it for that reason.
 The association is established by the rank correlations computed without a model, which @sec-ch2-res-main reports alongside the main results because they are evidence rather than commentary. **Those four Spearman coefficients use no model at all**, and they are what the figure cannot do: they carry the claim, while @fig-ch2-pairs carries the intuition.
 
 The pre-specified rule was not met in any of the six combinations.
-Every departure was above nominal.
+Every departure in those six was above nominal.
 
 The two arrows of @fig-ch2-filter show this is not one phenomenon but two, and the filter is what separates them.
 The direction each arrow points is the diagnostic: a vertical move means the filter removed chains without removing width, and a horizontal one means the width itself was what the filter took away.
 
-$$
-\underbrace{\text{null: the prior}}_{\text{cannot be filtered away}}
-\qquad
-\underbrace{\text{with correlation: multimodality}}_{\text{the filter removes it}}
-$$
+
 
 Over-coverage under the null comes from the prior, and no post-processing can remove it.
 $\rho_c \sim \mathcal N(0,1)$ centered at zero is the conservative choice for a chapter arguing that these correlations are non-zero, and its cost is that intervals cover 0.958 rather than 0.90 when the truth is zero.
@@ -1070,12 +1066,12 @@ We report both as failures.
 Pre-specifying the checks and reporting those that did not behave as predicted lets a reader judge whether the checks could have failed.
 
 Three separate signals identify the same parameter as the difficult one, and they arrive from different parts of the analysis.
-It has the lowest coverage of the five when correlation is present (@tbl-ch2-perparam); it shows the largest disagreement across arms, and by a margin too wide for Monte Carlo error to explain (@sec-ch2-res-init); and it is the parameter whose correlation is largest in the observed data (@tbl-rho).
+It has the lowest coverage of the five when correlation is present (@tbl-ch2-perparam); it shows the largest disagreement across prior scales, and by a margin too wide for Monte Carlo error to explain (@sec-ch2-res-init); and it is the parameter whose correlation is largest in the observed data (@tbl-rho).
 
 Its posterior variance says which of the two kinds of failure this is.
 That variance is four times the mean squared error, so the interval is not too short; what puts the truth outside it is the bias of $-0.056$.
 The distinction is the one the seroincidence analysis draws for the incidence interval [@lee2026seroincidence], reached here from the opposite direction — there an interval was too narrow and correctly centered, here it is wide enough and off-center.
-Something about the time to peak is harder than the rest, and the same parameter recurs in @sec-ch2-discussion for an unrelated reason.
+Something about the time to peak is harder than the rest, and the same parameter recurs below for an unrelated reason.
 
 A large correlation that is hard to estimate is not a contradiction.
 The time to peak is identified by observations taken before the peak, and although the SEES design supplies them for roughly three quarters of participants (@sec-ch2-why), it supplies few per person.
@@ -1124,7 +1120,8 @@ Two extensions follow directly.
 The model comparison needs $K$-fold cross-validation, since the comparison that matches the question — holding out a whole participant — cannot be done by importance sampling here and $K$-fold refits rather than reweights; at ten folds it is ten fits of a model that takes hours, which places it beyond the present work rather than beyond reach.
 And individual infection times are the natural next analysis, with the prediction recorded above so that either outcome is informative: if the correlated model recovers a participant's infection time more precisely than the independent one, that is a second and independent measurement of the decomposition the seroincidence analysis reports, and if it does not, that chapter's attribution needs revisiting.
 
-**Funding.**
+## Funding {#sec-ch2-funding}
+
 
 This research was supported by the Bill & Melinda Gates Foundation, which funded the Surveillance for Enteric Fever in Asia Project (INV-008335) and the ancillary serological study from which these data are drawn (INV-000572).
 The funders had no role in study design, data collection, data analysis, data interpretation, or the writing of this report.
@@ -1223,8 +1220,9 @@ The quantity to read is the range across arms for each parameter, not any single
 #| echo: false
 #| tbl-cap: |
 #|   Posterior medians of the five cross-isotype correlations, observed data, after
-#|   filtering. The range is over the four initialization arms, which share the prior and the
-#|   chain count; U and V vary the prior scale on ρ_c and are shown separately.
+#|   filtering. The first four columns give the starting scale and share the prior and the chain
+#|   count, and the range is over those four; the last two widen and tighten the prior
+#|   scale on ρ_c and are shown separately because they vary a different thing.
 d <- as.data.frame(do.call(rbind, list(
   c("baseline", "0.831", "0.826", "0.829", "0.831", "0.005", "0.840", "0.816"),
   c("peak", "0.639", "0.636", "0.636", "0.636", "0.003", "0.632", "0.619"),
@@ -1232,7 +1230,7 @@ d <- as.data.frame(do.call(rbind, list(
   c("decay-rate", "0.653", "0.654", "0.658", "0.648", "0.010", "0.672", "0.615"),
   c("decay-shape", "0.643", "0.635", "0.634", "0.650", "0.016", "0.649", "0.600")
 )), stringsAsFactors = FALSE)
-names(d) <- c("parameter", "T (0.1)", "T3 (0.5)", "T2 (2)", "T4 (3)", "range", "U (sd 3)", "V (sd 0.5)")
+names(d) <- c("parameter", "0.1", "0.5", "2", "3", "range", "prior sd 3", "prior sd 0.5")
 thesis_ft(d, widths = c(1.15, 0.73, 0.84, 0.63, 0.63, 0.55, 0.94, 0.94))
 ```
 
@@ -1268,8 +1266,7 @@ We report model stacking weights [@yao2022stacking] alongside the difference in 
 Analyses were carried out in R [@rcore2025]. The earlier kinetics study fitted its models in JAGS
 [@jags2003; @lee2026shigella]; this analysis uses Stan [@stan2024] throughout.
 Kinetic models use
-the `serodynamics` package; incidence estimation uses `serocalculator` [@serocalculator2025] for
-the product likelihood and the joint likelihood implementation developed for the seroincidence analysis.
+the `serodynamics` package.
 
 A script held under version control produces every quantity we report.
 Two conventions govern the order in which we run those scripts: validation checks precede the production runs they license, and we record pre-specified predictions before the results that test them.
@@ -1287,3 +1284,4 @@ Analysis code will be deposited in a public repository at the time of publicatio
 #| include: false
 # nolint end
 ```
+
