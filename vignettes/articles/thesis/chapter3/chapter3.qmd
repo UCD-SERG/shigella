@@ -967,14 +967,15 @@ the six conditions.
 
 ## Seroincidence in the serosurveys {#sec-ch3-res-app}
 
-The three forms in all six sites appear in @tbl-forms and are plotted in @fig-forest.
+The three forms give the estimates and intervals in all six sites shown in @tbl-forms and @fig-forest.
 
 ::: {#fig-forest}
 ![](fig/ch3_fig3_forest.png){width=95%}
 
 Seroincidence estimates and profile intervals for the three likelihood forms in each of the six survey sites, using the paired parameter draws.
-The gap from A to B is what sharing the infection time is
-worth; the gap from B to C is what pairing the parameter draws adds on top of it.
+The gap between the product and shared-time forms is what sharing the infection time is
+worth, and the gap between the shared-time and joint forms is what pairing the parameter
+draws adds on top of it.
 :::
 
 ```{r}
@@ -1364,6 +1365,7 @@ Analysis code will be deposited in a public repository at the time of publicatio
 #| include: false
 # nolint end
 ```
+
 
 
 

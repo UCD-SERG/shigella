@@ -544,7 +544,7 @@ We fixed the decision rule in advance.
 We judged coverage of an interval constructed to have 90% coverage against $0.90$, using twice the Monte Carlo standard error.
 A departure smaller than 2 MCSE is not called; one larger is, in whichever direction it
 falls.
-We recorded the rule before running the grids, and we report it as failing where it fails
+We recorded the rule before running the conditions, and we report it as failing where it fails
 — including the direction in which it fails, which is over-coverage and has the prior-shrinkage
 explanation given in @sec-ch2-priors.
 
@@ -810,11 +810,11 @@ We evaluated coverage, bias, and interval width under both conditions and all th
 #| label: tbl-ch2-cov
 #| echo: false
 #| tbl-cap: |
-#|   **Coverage of a nominal 90% interval, 100 seeds per grid, five parameters each.** Each
+#|   **Coverage of a nominal 90% interval, 100 seeds per condition, five parameters each.** Each
 #|   row pools 500 intervals. Three chain-handling schemes are compared: no filtering, the
 #|   log-density filter of @eq-lpfilter, and stacking weights, which has no threshold. Mean
 #|   width and mean bias are over the same intervals, and bias is measured against the truth
-#|   of that grid.
+#|   of that condition.
 d <- read.csv("tab/table2_coverage.csv", fileEncoding = "UTF-8")
 d$grid   <- ifelse(d$grid == "null", "null (c = 0)", "correlation present")
 d$scheme <- c(all = "unfiltered", lp = "lp filter",
@@ -823,7 +823,7 @@ d <- d[order(match(d$grid, c("null (c = 0)", "correlation present")),
              match(d$scheme, c("unfiltered", "lp filter", "stacking"))), ]
 d$grid[duplicated(d$grid)] <- ""
 out <- data.frame(
-  grid = d$grid, scheme = d$scheme,
+  condition = d$grid, scheme = d$scheme,
   intervals = format(d$n_int, big.mark = ","),
   coverage  = sprintf("%.3f", d$coverage),
   MCSE      = sprintf("%.3f", d$mcse),
@@ -838,8 +838,8 @@ thesis_ft(out, widths = c(1.28, 0.95, 0.81, 0.85, 0.71, 0.95, 0.85))
 Coverage of a nominal 90% interval for each of the five correlations, under the null condition (left) and the condition with correlation present (right), for the three chain-handling schemes.
 Bars are Monte Carlo standard errors;
 the dashed line is nominal.
-The five parameters are pooled into one figure per condition and scheme in
-@tbl-ch2-cov; this panel keeps them apart, which is where the two extremes of
+Where @tbl-ch2-cov pools the five parameters into one figure per condition and
+scheme, this panel keeps them apart, which is where the two extremes of
 @tbl-ch2-perparam become visible.
 :::
 
@@ -862,7 +862,7 @@ Each arrow runs from
 the unfiltered value to the filtered one; the dashed line is nominal 0.90.
 :::
 
-The two grids move in different directions.
+The two conditions move in different directions.
 Under the null, coverage falls from 0.980 to 0.958
 while the width changes by two per cent.
 When correlation is present, the width falls by seventy per cent,
@@ -871,7 +871,7 @@ coverage rises from 0.926 to 0.936, and the bias halves from −0.053 to −0.02
 
 The filter is not a tuned quantity.
 Recomputed from the cached fits at thresholds of 50, 100 and
-200, coverage is identical to three decimal places in both grids — 0.958 and 0.936 — and stacking,
+200, coverage is identical to three decimal places under both conditions — 0.958 and 0.936 — and stacking,
 which has no threshold at all, agrees to within 0.004.
 The quantity the filter selects on is
 therefore not sensitive to where the line is drawn.
@@ -1162,7 +1162,7 @@ The LKJ prior on the correlation factors is also what allows a Hamiltonian sampl
 
 ## Prior specification in full {#sec-appA-priors}
 
-Every prior in the model is set out in @tbl-priors, with the value used and the reason for it.
+Every prior in the model takes the value given in @tbl-priors, with the reason for each.
 
 ```{r}
 #| label: tbl-priors
@@ -1210,7 +1210,7 @@ Both appear in the simulation results and both have this single explanation.
 
 ## Initialization sensitivity for all parameters {#sec-appA-init}
 
-The baseline correlation across the four starting scales appears in @tbl-init, and the full set of five in @tbl-init-full.
+The baseline correlation moves across the four starting scales by 0.005 (@tbl-init), and the other four parameters by no more than 0.016 (@tbl-init-full).
 The quantity to read is the range across the initialization fits for each parameter, not any single one of them.
 
 ```{r}
@@ -1281,6 +1281,7 @@ Analysis code will be deposited in a public repository at the time of publicatio
 #| include: false
 # nolint end
 ```
+
 
 
 
