@@ -193,7 +193,7 @@ A nominal 95% interval should contain the truth 95% of the time.
 If the current method's intervals contain it less often than that, they are not merely narrower than an alternative; they are wrong, and by a measurable amount.
 
 Coverage is therefore the primary endpoint of this chapter, and it is the reason the chapter can make a claim about the published literature rather than only about a comparison between two estimators written here.
-A statement that one interval is half again as wide as another is a statement about that code.
+A statement that one interval is twice as wide as another is a statement about that code.
 A statement that an interval reported as 95% covers far less often than that is a statement about every published estimate computed the same way.
 
 ## Pre-specified analyses {#sec-ch3-honest}
@@ -296,7 +296,7 @@ four.
 The vignette states a different model from the one the code computes, and says so: the
 biomarkers are described there as conditionally independent *given* the time since infection, so
 that their densities multiply inside a single integral over $\tau$ rather than outside two separate
-ones [@serocalculator2025]. The package's issue tracker records the discrepancy as issue 637, and an implementation of the shared-time form is open there as issue 646.
+ones [@serocalculator2025]. The `serocalculator` issue tracker records the discrepancy (UCD-SERG/serocalculator#637), and an implementation of the shared-time form is open there as well (#646).
 What
 follows takes the stated model as the starting point and asks what else follows from it.
 
@@ -385,13 +385,13 @@ $$ {#eq-shared}
 
 @eq-shared and @eq-joint differ in the order of $\prod_j$ and $\frac1M\sum_k$ and in nothing else,
 which is what makes the second assumption isolable.
-We write the three as
+The three log-likelihoods compared in this chapter are
 
 $$
 \ell_{\mathrm{prod}},\qquad
 \ell_{\mathrm{shared}}=\sum_i\log L_i^{\mathrm{shared}},\qquad
 \ell_{\mathrm{joint}} .
-$$ {#eq-abc}
+$$ {#eq-threeforms}
 
 These three exhaust the arrangements: with a sum, an integral, and a product to order, the product form places the product outermost, the shared-time form the integral, and the joint form the sum.
 The three forms differ only in this ordering, which @sec-appB-deriv sets out side by side.
@@ -560,7 +560,7 @@ We required agreement to four decimal places before computing any two-biomarker 
 
 A second identity applies once all three forms live in one function.
 With $J=1$ the three
-expressions of @eq-abc collapse to the same integral, because a Monte Carlo mean and a
+expressions of @eq-threeforms collapse to the same integral, because a Monte Carlo mean and a
 quadrature sum commute:
 
 $$
@@ -724,8 +724,9 @@ The draws enter both likelihood forms identically, so any error in it is common 
 And refitting by stratum would divide that fit into three, at sample sizes below where that model converges reliably, while that same fit is the source of the simulation truth.
 We report pooled versus age-stratified kinetics in the manuscript rather than the dissertation, on the advice of the committee.
 
-## Ethical approval {#sec-ch3-ethics}
- This study was approved by the institutional review boards of the Centers for Disease Control and Prevention, Stanford University (39557), and MassGeneral Brigham (2014P002602, 2019P000152, 2013P001965, 2016P000949) in the USA; the Bangladesh Institute of Child Health Ethical Review Committee (01-02-2019); the Nepal Health Research Council Ethical Review Board (391/2018); and the AKU Ethical Review Committee (2019-0410-4188) and the Pakistan National Bioethics Committee (4-87/NBC-341-Amend-revised/19/81) in Pakistan.
+# Ethical approval {.unnumbered}
+
+This study was approved by the institutional review boards of the Centers for Disease Control and Prevention, Stanford University (39557), and MassGeneral Brigham (2014P002602, 2019P000152, 2013P001965, 2016P000949) in the USA; the Bangladesh Institute of Child Health Ethical Review Committee (01-02-2019); the Nepal Health Research Council Ethical Review Board (391/2018); and the AKU Ethical Review Committee (2019-0410-4188) and the Pakistan National Bioethics Committee (4-87/NBC-341-Amend-revised/19/81) in Pakistan.
 Written informed consent was obtained from all participants and from the parents or guardians of participants younger than 18 years at enrollment, with written assent obtained from children aged 15--17 years.
 This secondary analysis used de-identified antibody measurements collected under the original consent and did not require additional consent or a waiver.
 
@@ -792,7 +793,7 @@ out <- data.frame(
   `span, days`      = format(d$span_days, big.mark = ","),
   `months sampled`  = d$months_covered,
   check.names = FALSE)
-thesis_ft(out, widths = c(1.05, 0.80, 0.50, 0.95, 0.95, 0.80, 1.00))
+thesis_ft(out, widths = c(1.15, 0.85, 0.55, 1.02, 1.02, 0.86, 0.95))
 ```
 Two features of @tbl-cells bear on the analyses that follow.
 Censoring differs greatly between countries — from 0.2% of IgG measurements in high-endemicity Bangladesh to 59.7% in low-endemicity Pakistan — which is what the detection-limit sensitivity analysis addresses.
@@ -1003,13 +1004,13 @@ Giving the product form the paired draws moves the estimate by 2.3% — three si
 That is @tbl-two-banks appearing in a second place: the product form reads only the column medians, and those barely differ between the two sets of draws.
 End to end, from current practice to the joint form, the estimate rises by about a third.
 
-⚠ That last figure is not a claim of this chapter.
+That last figure is not a claim of this chapter.
 The simulation does not reproduce it (@sec-ch3-res-shift), and what the chapter establishes is the interval, not the level.
 
 ### Relative contribution of the two assumptions {#sec-ch3-res-split}
 
 The joint form turns on two assumptions at once, so pricing them separately requires a form that turns on only the first.
-That is the whole reason the shared-time form is computed: the shared-time form isolates the first assumption, so its difference from the product form is what the shared infection time is worth and its difference from the joint form is what the pairing adds on top of it.
+That is the whole reason the shared-time form is computed: the shared-time form isolates the first assumption, so its difference from the product form is what the shared infection time is worth, and what the pairing adds on top of it is the difference between the joint and shared-time forms.
 
 ```{r}
 #| label: tbl-split
@@ -1040,7 +1041,7 @@ The larger of the two axes therefore requires nothing from the kinetics analysis
 
 The same split appears in a second and independent measurement.
 The coverage study puts the same question a different way, on simulated rather than observed data and in coverage rather than width.
-An earlier version of this contrast, computed with the established implementation in the role of the product form, gave 79% for the sharing axis. **The internal comparison gives 76%.** Two routes that share no code and no data agree to three percentage points.
+An earlier version of this contrast, computed with the established implementation in the role of the product form, gave 79% for the sharing axis. **The internal comparison gives 76%, measured on the log scale on which the two contributions compound.** Two routes that share no code and no data agree to three percentage points.
 
 ### Effect on epidemiological inference {#sec-ch3-res-epi}
 
@@ -1063,7 +1064,7 @@ Every interval in @tbl-forms is wider than its product-form counterpart, and no 
 
 ### Unexplained shift in the point estimate {#sec-ch3-res-shift}
 
-The joint estimate exceeded the product estimate in six of six sites, by 14.2% to 42.4%, with a mean of 28.8% relative to the shared-time form.
+The joint estimate exceeded the product estimate in six of six sites, by 14.2% to 42.4%, with a mean of 28.8% relative to the product form on the same draws.
 
 This was not predicted and the simulation does not account for it.
 Under simulated data the two forms differed in bias by less than one percentage point at every $\lambda$ (@tbl-cov).
@@ -1127,7 +1128,7 @@ A participant's two measurements come from one person and one infection, and on 
 The nominal error rate of one in twenty is closer to one in ten.
 
 The correction is to share the infection time between biomarkers and to keep the parameter draws paired.
-It restores coverage to 98.0% and costs a 25% wider interval — a cost that varies by 0.8% of itself across an eightfold range of seroincidence.
+It restores coverage to 98.0% and costs a 25% wider interval — a cost that varies by two percent of itself across an eightfold range of seroincidence.
 
 An interval can miss the truth because it sits in the wrong place or because it is too short, and the two call for different responses.
 Here it is the second.
@@ -1189,7 +1190,7 @@ That analysis is specified in the kinetics analysis [@lee2026correlated].
 Agreement between the two would be a second measurement of the same quantity by a route that shares neither the data nor the quantity being estimated, and would put the attribution above on firmer ground than one contrast can.
 Disagreement would mean that one of them is measuring something else, and would have to be resolved before either is relied on.
 
-The joint estimate exceeded the product estimate in every site, by 29% on average relative to the shared-time form, and the simulation does not reproduce this.
+The joint estimate exceeded the product estimate in every site, by 29% on average relative to the product form on the same draws, and the simulation does not reproduce this.
 Under data generated from the joint model the two forms differed in bias by less than a percentage point.
 Something in the observed data, absent from the simulation, separates them.
 
@@ -1240,10 +1241,9 @@ Implementing the shared-time form in the established software would close a gap 
 And three further extensions follow directly.
 The cost should grow with more than two biomarkers, because the estimator applies the independence assumption more times.
 And nothing in the derivation is specific to enteric fever, so the same treatment applies to other pathogens and cohorts.
-And the discordance discussed below, which is the most interesting thing this chapter found and the thing it is least able to explain: if repeated infection is the cause, then the single-infection framework itself — shared by every likelihood form considered here — is the next assumption to examine.
+The discordance reported above is the most interesting thing this chapter found and the thing it is least able to explain. If repeated infection is the cause, the single-infection framework itself, which every likelihood form considered here shares, is the next assumption to examine.
 
-## Funding {#sec-ch3-funding}
-
+# Funding {.unnumbered}
 
 This research was supported by the Bill & Melinda Gates Foundation, which funded the Surveillance for Enteric Fever in Asia Project (INV-008335) and the ancillary serological study from which these data are drawn (INV-000572).
 The funders had no role in study design, data collection, data analysis, data interpretation, or the writing of this report.
@@ -1364,4 +1364,5 @@ Analysis code will be deposited in a public repository at the time of publicatio
 #| include: false
 # nolint end
 ```
+
 

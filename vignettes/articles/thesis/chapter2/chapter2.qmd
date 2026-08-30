@@ -451,13 +451,13 @@ we count separately, and they are not the same phenomenon.
 finds.
 We therefore fitted the observed data from four starting scales spanning a thirtyfold range and report all four (@tbl-init).
 
-We ran four arms and chose the primary before comparing the estimates.
-We ran each arm for a stated reason and in sequence, not until one gave a preferred answer.
+We ran four fits and chose the primary before comparing the estimates.
+We ran each fit for a stated reason and in sequence, not until one gave a preferred answer.
 We ran the widest, at a starting scale of 3, specifically to test a competing explanation raised in
 committee: that the rising count of minor-mode chains under wider starts might mean the minor mode
 is genuinely larger, rather than that the sampler is trapping chains short of the typical set.
 
-The primary arm was selected on retained chains and effective sample size, not on the estimate.
+The primary fit was selected on retained chains and effective sample size, not on the estimate.
 That distinction is only defensible because the estimates barely differ across the four; had they
 differed, no choice among them would have been innocent, and the disagreement itself would have been
 the result.
@@ -577,8 +577,9 @@ names(d) <- c("analysis", "What is varied", "What it tests")
 thesis_ft(d, widths = c(0.95, 1.85, 3.60))
 ```
 
-## Ethical approval {#sec-ch2-ethics}
- This study was approved by the institutional review boards of the Centers for
+# Ethical approval {.unnumbered}
+
+This study was approved by the institutional review boards of the Centers for
 Disease Control and Prevention, Stanford University (39557), and MassGeneral Brigham (2014P002602,
 2019P000152, 2013P001965, 2016P000949) in the USA; the Bangladesh Institute of Child Health Ethical
 Review Committee (01-02-2019); the Nepal Health Research Council Ethical Review Board (391/2018);
@@ -735,10 +736,9 @@ visits, and they establish that the association is in the data and not only in t
 #|   **Initialization sensitivity, observed data, after filtering.** The model was fitted
 #|   four times from starting values dispersed over a thirtyfold range, and all four are
 #|   reported. Chains retained is the number surviving the log-density filter out of 40. The
-#|   baseline correlation is shown because it is the largest of the five; per-parameter
-#|   estimates for all five are in @sec-appA-init.
-# The run identifiers are dropped: the starting scale is the thing that varies, and
-# it is already a column of its own.
+#|   baseline correlation is shown because it is the parameter the initialization
+#|   comparison turns on; per-parameter estimates for all five are in @sec-appA-init.
+# Rows are identified by starting scale, which is the quantity that varies.
 d <- as.data.frame(do.call(rbind, list(
   c("0.1 (primary)", "38 / 40", "0.831", "442", "1.004", "4"),
   c("0.5", "32 / 40", "0.826", "196", "1.005", "3"),
@@ -746,7 +746,7 @@ d <- as.data.frame(do.call(rbind, list(
   c("3", "9 / 40", "0.831", "84", "1.006", "4,039")
 )), stringsAsFactors = FALSE)
 names(d) <- c("starting scale", "chains retained", "baseline correlation", "min ESS", "max R-hat", "divergences")
-thesis_ft(d, widths = c(1.25, 1.15, 1.50, 0.65, 0.70, 0.85))
+thesis_ft(d, widths = c(1.40, 1.25, 1.60, 0.68, 0.72, 0.75))
 ```
 
 Across a thirtyfold range of starting scales the posterior medians agree to within 0.005 for the
@@ -755,7 +755,7 @@ What changes is how many chains
 reach the typical set, and through that the effective sample size.
 The estimate does not change.
 
-That separation licenses the choice of primary arm.
+That separation licenses the choice of primary fit.
 It was made on retained chains and effective
 sample size (@sec-ch2-fits), and because the estimates agree, that criterion could not have
 selected a preferred answer.
@@ -765,7 +765,7 @@ A wider start sends more chains to the minor mode.
 Two readings are available: the minor mode is
 genuinely substantial and narrow starts were missing it, or wide starts strand chains short of the
 typical set.
-The arm at a starting scale of 3 distinguishes them.
+The fit at a starting scale of 3 distinguishes them.
 
 It does not converge.
 Thirty-one of forty chains fail: 4,039 divergent transitions, 87% of
@@ -792,11 +792,11 @@ The prior sensitivity fits answer that directly: the same model and data with th
 
 The estimates barely move.
 The baseline correlation is 0.840 under the wide prior and 0.816 under
-the tight one, against 0.831 in the primary arm, and across all five parameters the movement is 0.020 to 0.090 (@sec-appA-init).
+the tight one, against 0.831 in the primary fit, and across all five parameters the movement is 0.020 to 0.090 (@sec-appA-init).
 Every one of those is smaller than the seed-to-seed spread of a
 single fit in the simulation study, so **the correlations are determined by the data and not by the
 prior**, despite the parameter being unbounded.
-The prediction recorded before these arms were run
+The prediction recorded before these fits were run
 was a movement of about 0.19 in the baseline; the observed 0.024 is eight times smaller, and the
 direction was right where the magnitude was not.
 
@@ -918,8 +918,7 @@ is the only parameter whose coverage falls below nominal while carrying an inter
 what puts the truth outside it is the bias of −0.056 rather than the width.
 That is the same distinction the seroincidence analysis draws for the incidence interval [@lee2026seroincidence], arrived at here from
 the opposite direction.
-Given a posterior standard deviation of 0.054 and bulk effective
-sample sizes of 45 and 76 in those arms, that difference is seven standard errors and so is not Monte
+Given a posterior standard deviation of 0.054 and bulk effective sample sizes of 45 and 76 in those fits, that difference is seven standard errors and so is not Monte
 Carlo noise.
 
 ## Out-of-sample predictive comparison {#sec-ch2-res-loo}
@@ -1046,8 +1045,8 @@ Coverage is identical to three decimals across the range of thresholds examined 
 Stacking, which has no threshold at all, reaches the same place by different machinery [@yao2022stacking].
 Within each mode the sampler is well behaved, so the rule selects between modes; it does not repair convergence.
 
-And the arm at a starting scale of 3 shows what the filter is actually doing.
-Most of its chains never reach the typical set and drag the unfiltered figure far below every other arm; the few that arrive return the primary estimate exactly (@sec-ch2-res-init).
+And the fit at a starting scale of 3 shows what the filter is actually doing.
+Most of its chains never reach the typical set and drag the unfiltered figure far below every other fit; the few that arrive return the primary estimate exactly (@sec-ch2-res-init).
 The filter recovered the same answer from a quarter of the chains, which is what a rule that separates arrival from non-arrival should do, and not what a rule selecting a preferred answer would do.
 
 Importance sampling cannot deliver the comparison that matches the question, which is holding out a whole participant, and the reason is structural, not incidental.
@@ -1120,8 +1119,7 @@ Two extensions follow directly.
 The model comparison needs $K$-fold cross-validation, since the comparison that matches the question — holding out a whole participant — cannot be done by importance sampling here and $K$-fold refits rather than reweights; at ten folds it is ten fits of a model that takes hours, which places it beyond the present work rather than beyond reach.
 And individual infection times are the natural next analysis, with the prediction recorded above so that either outcome is informative: if the correlated model recovers a participant's infection time more precisely than the independent one, that is a second and independent measurement of the decomposition the seroincidence analysis reports, and if it does not, that chapter's attribution needs revisiting.
 
-## Funding {#sec-ch2-funding}
-
+# Funding {.unnumbered}
 
 This research was supported by the Bill & Melinda Gates Foundation, which funded the Surveillance for Enteric Fever in Asia Project (INV-008335) and the ancillary serological study from which these data are drawn (INV-000572).
 The funders had no role in study design, data collection, data analysis, data interpretation, or the writing of this report.
@@ -1201,7 +1199,7 @@ $\eta=\max\{(\nu-2p+3)/2,\,0.1\}=6.5$. These hyperparameters are the `serodynami
 were derived from the enteric fever cohorts, so they are the pathogen-appropriate values here rather
 than a choice made for this analysis; the earlier study set its own from the *Shigella* assay.
 The only
-prior this chapter introduces is the one on $\rho_c$, and we apply it identically in both arms.
+prior this chapter introduces is the one on $\rho_c$, and we apply it identically in both fits.
 
 That prior has a consequence that has to be reported, not discovered.
 Being centered at
@@ -1213,14 +1211,14 @@ Both appear in the simulation results and both have this single explanation.
 ## Initialization sensitivity for all parameters {#sec-appA-init}
 
 @tbl-init gives the baseline correlation across the four starting scales; @tbl-init-full gives the full set.
-The quantity to read is the range across arms for each parameter, not any single arm.
+The quantity to read is the range across fits for each parameter, not any single fit.
 
 ```{r}
 #| label: tbl-init-full
 #| echo: false
 #| tbl-cap: |
 #|   Posterior medians of the five cross-isotype correlations, observed data, after
-#|   filtering. The first four columns give the starting scale and share the prior and the chain
+#|   filtering. The four scale columns share the prior and the chain
 #|   count, and the range is over those four; the last two widen and tighten the prior
 #|   scale on ρ_c and are shown separately because they vary a different thing.
 d <- as.data.frame(do.call(rbind, list(
@@ -1234,12 +1232,11 @@ names(d) <- c("parameter", "0.1", "0.5", "2", "3", "range", "prior sd 3", "prior
 thesis_ft(d, widths = c(1.15, 0.73, 0.84, 0.63, 0.63, 0.55, 0.94, 0.94))
 ```
 
-Every arm is filtered by the same pre-specified rule (@eq-lpfilter), so the comparison within the
-first four columns is between starting scales and nothing else.
+Every fit is filtered by the same pre-specified rule (@eq-lpfilter), so the comparison within the
+four scale columns is between starting scales and nothing else.
 
 The two axes should not be pooled into one range, because they vary different things.
-Across the
-four initialization arms, which share a prior, the medians move by 0.003 to 0.016.
+Across the four initialization fits, which share a prior, the medians move by 0.003 to 0.016.
 Across the three
 prior scales — 0.5, 1, and 3 — they move by 0.020 to 0.090.
 The second is the larger of the two and
@@ -1247,7 +1244,7 @@ is the quantity that bears on whether the estimates are prior-driven; every valu
 than the seed-to-seed spread of a single fit in @sec-ch2-res-sim. For the time to peak it is
 nonetheless larger than Monte Carlo error can explain, which @sec-ch2-res-weak takes up.
 
-Retained-chain counts differ across arms because the same rule that removes minor-mode chains also removes chains that fail on their own terms.
+Retained-chain counts differ across fits because the same rule that removes minor-mode chains also removes chains that fail on their own terms.
 At a starting scale of 3 that is thirty-one of forty
 (@tbl-init); the nine that remain give the same answer as the thirty-eight of the primary fit.
 
@@ -1284,4 +1281,5 @@ Analysis code will be deposited in a public repository at the time of publicatio
 #| include: false
 # nolint end
 ```
+
 
