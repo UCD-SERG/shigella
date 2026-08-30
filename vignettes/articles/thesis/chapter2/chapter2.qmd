@@ -556,7 +556,7 @@ Where the large-sample condition could not be run, the obstacle is stated with t
 
 ## Sensitivity analyses {#sec-ch2-sens}
 
-@tbl-ch2-sens lists the analyses, what each varies, and what each would have shown had it failed.
+Each sensitivity analysis varies one component of the specification and would have shown one thing had it failed (@tbl-ch2-sens).
 
 ```{r}
 #| label: tbl-ch2-sens
@@ -804,7 +804,7 @@ The largest movement on the prior axis, 0.090 for the time to peak, is nonethele
 
 ## Recovery of the correlations under simulation {#sec-ch2-res-sim}
 
-@tbl-ch2-cov gives coverage, bias, and interval width under both conditions and all three chain-handling schemes.
+We evaluated coverage, bias, and interval width under both conditions and all three chain-handling schemes (@tbl-ch2-cov).
 
 ```{r}
 #| label: tbl-ch2-cov
@@ -838,9 +838,9 @@ thesis_ft(out, widths = c(1.28, 0.95, 0.81, 0.85, 0.71, 0.95, 0.85))
 Coverage of a nominal 90% interval for each of the five correlations, under the null condition (left) and the condition with correlation present (right), for the three chain-handling schemes.
 Bars are Monte Carlo standard errors;
 the dashed line is nominal.
-@tbl-ch2-cov pools the five parameters into one figure per grid and
-scheme; this panel keeps them apart, which is where the two extremes of @tbl-ch2-perparam become
-visible.
+The five parameters are pooled into one figure per condition and scheme in
+@tbl-ch2-cov; this panel keeps them apart, which is where the two extremes of
+@tbl-ch2-perparam become visible.
 :::
 
 The estimator recovered the correlations that were present and produced none where there were none.
@@ -1162,7 +1162,7 @@ The LKJ prior on the correlation factors is also what allows a Hamiltonian sampl
 
 ## Prior specification in full {#sec-appA-priors}
 
-@tbl-priors gives every prior in the model, with the value used and the reason for it.
+Every prior in the model is set out in @tbl-priors, with the value used and the reason for it.
 
 ```{r}
 #| label: tbl-priors
@@ -1210,7 +1210,7 @@ Both appear in the simulation results and both have this single explanation.
 
 ## Initialization sensitivity for all parameters {#sec-appA-init}
 
-@tbl-init gives the baseline correlation across the four starting scales; @tbl-init-full gives the full set.
+The baseline correlation across the four starting scales appears in @tbl-init, and the full set of five in @tbl-init-full.
 The quantity to read is the range across the initialization fits for each parameter, not any single one of them.
 
 ```{r}
@@ -1281,5 +1281,6 @@ Analysis code will be deposited in a public repository at the time of publicatio
 #| include: false
 # nolint end
 ```
+
 
 
