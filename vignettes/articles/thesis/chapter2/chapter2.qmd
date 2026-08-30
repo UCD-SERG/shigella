@@ -556,7 +556,7 @@ Where the large-sample condition could not be run, the obstacle is stated with t
 
 ## Sensitivity analyses {#sec-ch2-sens}
 
-Each sensitivity analysis varies one component of the specification and would have shown one thing had it failed (@tbl-ch2-sens).
+Each sensitivity analysis names what it varies and what it would have shown had it failed (@tbl-ch2-sens).
 
 ```{r}
 #| label: tbl-ch2-sens
@@ -818,7 +818,7 @@ We evaluated coverage, bias, and interval width under both conditions and all th
 d <- read.csv("tab/table2_coverage.csv", fileEncoding = "UTF-8")
 d$grid   <- ifelse(d$grid == "null", "null (c = 0)", "correlation present")
 d$scheme <- c(all = "unfiltered", lp = "lp filter",
-              stack = "stacking")[d$scheme]
+              stacking = "stacking")[d$scheme]
 d <- d[order(match(d$grid, c("null (c = 0)", "correlation present")),
              match(d$scheme, c("unfiltered", "lp filter", "stacking"))), ]
 d$grid[duplicated(d$grid)] <- ""
@@ -838,9 +838,9 @@ thesis_ft(out, widths = c(1.28, 0.95, 0.81, 0.85, 0.71, 0.95, 0.85))
 Coverage of a nominal 90% interval for each of the five correlations, under the null condition (left) and the condition with correlation present (right), for the three chain-handling schemes.
 Bars are Monte Carlo standard errors;
 the dashed line is nominal.
-Where @tbl-ch2-cov pools the five parameters into one figure per condition and
-scheme, this panel keeps them apart, which is where the two extremes of
-@tbl-ch2-perparam become visible.
+This panel keeps the five parameters apart rather than pooling them into one
+figure per condition and scheme (@tbl-ch2-cov), which is where the two extremes
+of @tbl-ch2-perparam become visible.
 :::
 
 The estimator recovered the correlations that were present and produced none where there were none.
@@ -1219,7 +1219,8 @@ The quantity to read is the range across the initialization fits for each parame
 #| tbl-cap: |
 #|   Posterior medians of the five cross-isotype correlations, observed data, after
 #|   filtering. The four scale columns share the prior and the chain
-#|   count, and the range is over those four; the last two widen and tighten the prior
+#|   count, and the range is over those four and is computed from the medians as
+#|   printed; the last two widen and tighten the prior
 #|   scale on ρ_c and are shown separately because they vary a different thing.
 d <- as.data.frame(do.call(rbind, list(
   c("baseline", "0.831", "0.826", "0.829", "0.831", "0.005", "0.840", "0.816"),
@@ -1281,7 +1282,3 @@ Analysis code will be deposited in a public repository at the time of publicatio
 #| include: false
 # nolint end
 ```
-
-
-
-

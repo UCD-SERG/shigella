@@ -967,7 +967,7 @@ the six conditions.
 
 ## Seroincidence in the serosurveys {#sec-ch3-res-app}
 
-The three forms give the estimates and intervals in all six sites shown in @tbl-forms and @fig-forest.
+The three forms give the estimates and intervals for all six sites (@tbl-forms, @fig-forest).
 
 ::: {#fig-forest}
 ![](fig/ch3_fig3_forest.png){width=95%}
@@ -1365,7 +1365,3 @@ Analysis code will be deposited in a public repository at the time of publicatio
 #| include: false
 # nolint end
 ```
-
-
-
-
