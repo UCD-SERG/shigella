@@ -556,13 +556,13 @@ Where the large-sample condition could not be run, the obstacle is stated with t
 
 ## Sensitivity analyses {#sec-ch2-sens}
 
-Each sensitivity analysis varies one component of the specification and tests one stated thing (@tbl-ch2-sens).
+Each sensitivity analysis varies one thing and tests one stated thing (@tbl-ch2-sens).
 
 ```{r}
 #| label: tbl-ch2-sens
 #| echo: false
 #| tbl-cap: |
-#|   **Sensitivity analyses.** Each row varies one specification and leaves the
+#|   **Sensitivity analyses.** Each row varies one thing and leaves the
 #|   rest of the model untouched, so that any change in the estimates is attributable to that
 #|   row alone. The first three address whether the reported correlations are a product of the
 #|   prior, the sampler, or the chain-filtering rule; the last addresses what the design

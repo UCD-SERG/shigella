@@ -339,7 +339,7 @@ The six country-by-endemicity sites are described in @tbl-cells.
 Measurements below the detection limit are retained at the limit and enter as censored contributions rather than being dropped, for the reason given there [@lee2026correlated].
 
 Specimens were collected between February 2019 and June 2021, but not on a common schedule.
-Five of the six sites sampled across 13 to 16 calendar months, with a gap through the middle of 2020 when field work was suspended; the low-endemicity Pakistan site drew all 120 of its specimens within eleven days in January 2021 (@tbl-collect).
+Five of the six sites sampled across 13 to 16 calendar months, with a gap through the middle of 2020 when field work was suspended; the low-endemicity Pakistan site drew its dated specimens within eleven days in January 2021 (@tbl-collect).
 A site sampled in a single window sits at one point in the transmission year rather than across it, which bears on @sec-ch3-res-shift.
 
 ## Alternative likelihood formulations {#sec-ch3-joint}
@@ -778,7 +778,9 @@ thesis_ft(out, widths = c(0.95, 0.75, 0.45, 1.10, 0.55, 0.70, 0.70, 0.55, 0.65))
 #| tbl-cap: |
 #|   **Specimen collection windows.** First and last collection date, the span
 #|   between them, and the number of distinct calendar months in which specimens
-#|   were drawn, by site. Five sites sampled across more than a year; the
+#|   were drawn, by site. n is the number of participants contributing a dated
+#|   specimen with both isotypes above the detection limit; the windows describe
+#|   those participants only. Five sites sampled across more than a year; the
 #|   low-endemicity Pakistan site sampled within a single window.
 d <- read.csv("tab/kr_collection_dates.csv", fileEncoding = "UTF-8")
 # The script that writes this file names its first column "stratum"; the display
@@ -828,12 +830,12 @@ At $J=2$ the two implementations diverge, and the size of that divergence is why
 #|   shown here mixes those with the independence assumption and cannot be attributed to
 #|   either. It is given to show why the comparator in this chapter is internal.
 d <- as.data.frame(do.call(rbind, list(
-  c("highE Bangladesh", "0.304", "0.332", "−8.5%"),
-  c("highE Pakistan", "0.081", "0.084", "−4.3%"),
-  c("highE Nepal", "0.036", "0.036", "0.0%"),
-  c("lowE Bangladesh", "0.157", "0.164", "−4.3%"),
-  c("lowE Pakistan", "0.048", "0.048", "0.0%"),
-  c("lowE Nepal", "0.031", "0.031", "0.0%")
+  c("Bangladesh, high endemicity", "0.304", "0.332", "−8.5%"),
+  c("Pakistan, high endemicity", "0.081", "0.084", "−4.3%"),
+  c("Nepal, high endemicity", "0.036", "0.036", "0.0%"),
+  c("Bangladesh, low endemicity", "0.157", "0.164", "−4.3%"),
+  c("Pakistan, low endemicity", "0.048", "0.048", "0.0%"),
+  c("Nepal, low endemicity", "0.031", "0.031", "0.0%")
 )), stringsAsFactors = FALSE)
 names(d) <- c("site", "product form (this chapter)", "established implementation", "difference")
 thesis_ft(d, widths = c(1.4, 1.84, 2.28, 0.88))
@@ -938,7 +940,7 @@ Coverage of 1.000 at $\lambda=0.20$ and $0.25$ is not evidence of exact coverage
 Fifty replicates with no failures give a one-sided 95% lower bound of 0.94 by the rule of three; the Monte Carlo standard error printed as zero is an artifact of the binomial at its boundary.
 
 The product form covered 0.960 at $\lambda=0.33$, against 0.84 to 0.92 at the other five values.
-At 50 replicates that departure is within the range Monte Carlo error can produce, and the pooled result does not depend on it.
+At 50 replicates that departure is within the range Monte Carlo error can produce.
 The pooled result does not depend on it: excluding $\lambda=0.33$ entirely gives 0.884 for the product form.
 
 ### Decomposition of interval failure {#sec-ch3-res-decomp}
@@ -988,12 +990,12 @@ draws adds on top of it.
 #|   practice from end to end** — the independent draws with the product form. The last is
 #|   what this chapter proposes.
 d <- as.data.frame(do.call(rbind, list(
-  c("highE Bangladesh", "0.291 (0.254–0.332)", "0.304 (0.266–0.347)", "0.332 (0.290–0.379)", "0.379 (0.317–0.432)"),
-  c("highE Pakistan", "0.081 (0.071–0.092)", "0.081 (0.071–0.092)", "0.088 (0.077–0.105)", "0.092 (0.077–0.105)"),
-  c("highE Nepal", "0.036 (0.032–0.042)", "0.036 (0.032–0.044)", "0.048 (0.040–0.054)", "0.050 (0.042–0.059)"),
-  c("lowE Bangladesh", "0.150 (0.137–0.171)", "0.157 (0.143–0.179)", "0.187 (0.164–0.213)", "0.213 (0.187–0.243)"),
-  c("lowE Pakistan", "0.048 (0.040–0.054)", "0.048 (0.040–0.057)", "0.062 (0.052–0.077)", "0.057 (0.048–0.071)"),
-  c("lowE Nepal", "0.029 (0.023–0.037)", "0.031 (0.025–0.038)", "0.040 (0.032–0.052)", "0.044 (0.033–0.054)"),
+  c("Bangladesh, high endemicity", "0.291 (0.254–0.332)", "0.304 (0.266–0.347)", "0.332 (0.290–0.379)", "0.379 (0.317–0.432)"),
+  c("Pakistan, high endemicity", "0.081 (0.071–0.092)", "0.081 (0.071–0.092)", "0.088 (0.077–0.105)", "0.092 (0.077–0.105)"),
+  c("Nepal, high endemicity", "0.036 (0.032–0.042)", "0.036 (0.032–0.044)", "0.048 (0.040–0.054)", "0.050 (0.042–0.059)"),
+  c("Bangladesh, low endemicity", "0.150 (0.137–0.171)", "0.157 (0.143–0.179)", "0.187 (0.164–0.213)", "0.213 (0.187–0.243)"),
+  c("Pakistan, low endemicity", "0.048 (0.040–0.054)", "0.048 (0.040–0.057)", "0.062 (0.052–0.077)", "0.057 (0.048–0.071)"),
+  c("Nepal, low endemicity", "0.029 (0.023–0.037)", "0.031 (0.025–0.038)", "0.040 (0.032–0.052)", "0.044 (0.033–0.054)"),
   c("mean change from column 1", "—", "+2.3%", "—", "+31.9%")
 )), stringsAsFactors = FALSE)
 names(d) <- c("site", "independent draws\nproduct form", "paired draws\nproduct form", "paired draws\nshared-time form", "paired draws\njoint form")
@@ -1026,12 +1028,12 @@ That is the whole reason the shared-time form is computed: the shared-time form 
 #|   the three forms are branches of a single implementation, no part of either difference
 #|   can arise from anything else.
 d <- as.data.frame(do.call(rbind, list(
-  c("highE Bangladesh", "+9.2%", "+30.4%", "+42.5%"),
-  c("highE Pakistan", "+30.4%", "+0.0%", "+30.4%"),
-  c("highE Nepal", "+24.7%", "+22.3%", "+52.5%"),
-  c("lowE Bangladesh", "+40.2%", "+14.2%", "+60.0%"),
-  c("lowE Pakistan", "+50.1%", "−8.5%", "+37.4%"),
-  c("lowE Nepal", "+46.8%", "+4.5%", "+53.4%"),
+  c("Bangladesh, high endemicity", "+9.2%", "+30.4%", "+42.5%"),
+  c("Pakistan, high endemicity", "+30.4%", "+0.0%", "+30.4%"),
+  c("Nepal, high endemicity", "+24.7%", "+22.3%", "+52.5%"),
+  c("Bangladesh, low endemicity", "+40.2%", "+14.2%", "+60.0%"),
+  c("Pakistan, low endemicity", "+50.1%", "−8.5%", "+37.4%"),
+  c("Nepal, low endemicity", "+46.8%", "+4.5%", "+53.4%"),
   c("mean", "+33.6%", "+10.5%", "+46.0%")
 )), stringsAsFactors = FALSE)
 names(d) <- c("site", "shared − product", "joint − shared", "joint − product")
@@ -1119,7 +1121,7 @@ The sandwich estimator did not detect the within-participant dependence that the
 
 
 The paired draws assign very low probability to a small number of observed pairs, and this does not affect inference.
-Under the joint form the maximized log-likelihood was lower for the paired draws than for the shuffled draws by 697.1, 701.4, 701.7, and 699.4 at nested samples of 10, 20, 30, and 50 participants — a fivefold increase in sample size moved it by 4.6 log units, which is to say it did not move.
+Under the joint form the maximized log-likelihood was lower for the paired draws than for the shuffled draws by 697.1, 701.4, 701.7, and 699.4 at nested samples of 10, 20, 30, and 50 participants — a fivefold increase in sample size moved it by 2.3 log units, which is to say it did not move.
 It is a constant, not a per-participant cost: essentially all of it is present in the first ten participants, it does not depend on $\lambda$, and the estimate and interval are therefore unaffected.
 What it says is that a handful of observed isotype pairs are close to impossible under the pairing the kinetics analysis estimates.
 
