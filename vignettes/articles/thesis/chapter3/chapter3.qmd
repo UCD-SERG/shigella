@@ -322,7 +322,7 @@ We restricted the analysis to the two population-based survey arms, high- and lo
 We excluded household members enrolled alongside an index case, whose exposure is that of a household containing a known case rather than that of the community; including them would attach a case's household to a population rate.
 From the remaining participants we used the baseline visit only, because the estimator takes one specimen per participant and a later visit from the same person is not a second draw from the population.
 A participant entered the analysis if both HlyE IgG and IgA, the two biomarkers the kinetic model treats jointly, were measured at that visit; one isotype alone carries no information about the pairing that separates the three likelihood forms.
-@fig-ch3-flow gives the number remaining after each step.
+The number remaining after each step is given in @fig-ch3-flow.
 
 ::: {#fig-ch3-flow}
 ![](fig/ch3_fig_flow.png){width=100%}

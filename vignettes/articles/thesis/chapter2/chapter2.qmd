@@ -195,7 +195,7 @@ And we excluded participants contributing a single visit, because five subject-s
 
 Two further requirements are mechanical rather than substantive.
 A specimen enters only if it carries a time since fever onset and a positive concentration, since the curve is a function of that time; and a visit enters only if both isotypes were measured at it, since a cross-isotype covariance is defined within a visit and not across them.
-@fig-ch2-flow gives the number remaining after each step.
+The number remaining after each step is given in @fig-ch2-flow.
 
 ::: {#fig-ch2-flow}
 ![](fig/ch2_fig_flow.png){width=100%}
@@ -526,7 +526,7 @@ names(d) <- c("Condition", "How the truth is built", "Marginal correlations", "Q
 thesis_ft(d, widths = c(0.83, 1.72, 1.78, 2.07))
 ```
 
-**The null condition comes from the correlated fit with the cross-covariances set to zero, not from refitting the independent model.** Refitting would produce its own population means, within-isotype blocks and measurement precisions, so a comparison against it would confound the cross-covariances with those differences.
+The null condition comes from the correlated fit with the cross-covariances set to zero, **not from refitting the independent model**. Refitting would produce its own population means, within-isotype blocks and measurement precisions, so a comparison against it would confound the cross-covariances with those differences.
 We built the null from the correlated model with $\mathbf c$ set to zero, which leaves one thing different between the two conditions and nothing else.
 That analysis makes the same move for the same reason when it breaks the isotype pairing by reordering rows rather than by refitting [@lee2026seroincidence].
 
@@ -606,7 +606,7 @@ makes the peak height and the time to peak quantities these data observe rather 
 reached by extrapolation (@sec-ch2-why).
 Concentrations at the assay's detection limit are rare here, 34 of 3,318
 measurements, so the censoring convention has little to act on (@tbl-ch2-pop).
-@fig-ch2-raw shows the series themselves.
+The series themselves appear in @fig-ch2-raw.
 
 ::: {#fig-ch2-raw}
 ![](fig/ch2_fig0_trajectories.png){width=100%}
@@ -788,7 +788,7 @@ unconstrained (@sec-ch2-priors), the reported correlations could in principle co
 from the prior centered at zero rather than from the data — and the two largest of them, the baseline and the
 time to peak, correspond to values of $\rho_c$ that sit more than one and a half standard deviations
 outside it.
-The prior sensitivity fits answer that directly: the same model and data with the prior scale widened to 3 and tightened to 0.5, a sixfold range, at twenty chains rather than forty.
+The prior-sensitivity fits answer that directly: the same model and data with the prior scale widened to 3 and tightened to 0.5, a sixfold range, at twenty chains rather than forty.
 
 The estimates barely move.
 The baseline correlation is 0.840 under the wide prior and 0.816 under
@@ -918,7 +918,7 @@ is the only parameter whose coverage falls below nominal while carrying an inter
 what puts the truth outside it is the bias of −0.056 rather than the width.
 That is the same distinction the seroincidence analysis draws for the incidence interval [@lee2026seroincidence], arrived at here from
 the opposite direction.
-Given a posterior standard deviation of 0.054 and bulk effective sample sizes of 45 and 76 in those fits, that difference is seven standard errors and so is not Monte
+Given a posterior standard deviation of 0.054 and bulk effective sample sizes of 45 and 76 in the prior-sensitivity fits, that difference is seven standard errors and so is not Monte
 Carlo noise.
 
 ## Out-of-sample predictive comparison {#sec-ch2-res-loo}
@@ -1007,7 +1007,7 @@ All five kinetic parameters — the pre-infection level, the peak, the time to p
 This is estimated with the smallest extension that can express it: five parameters, one per kinetic feature, with the two within-isotype blocks left exactly as the earlier study had them.
 Setting them to zero returns the previous model identically (@eq-nest), so the comparison attributes any difference to those five and to nothing else.
 
-@fig-ch2-pairs is not independent evidence that the correlations are real, because the figure is persuasive in a way the numbers behind it do not support.
+The pairwise scatter of @fig-ch2-pairs is not independent evidence that the correlations are real, because it is persuasive in a way the numbers behind it do not support.
 
 A participant's IgA posterior mean is shrunk toward what their IgG implies, through the correlation being estimated.
 The points are therefore more correlated than the underlying parameters, not less: every panel's correlation exceeds the corresponding $\rho_c$ (@fig-ch2-pairs).
@@ -1199,8 +1199,7 @@ $\eta=\max\{(\nu-2p+3)/2,\,0.1\}=6.5$. These hyperparameters are the `serodynami
 were derived from the enteric fever cohorts, so they are the pathogen-appropriate values here rather
 than a choice made for this analysis; the earlier study set its own from the *Shigella* assay.
 The only
-prior this chapter introduces is the one on $\rho_c$, and it is the same $\mathcal N(0,1)$ wherever $\mathbf c$ is estimated: the four initialization fits of @tbl-init, and both simulation conditions of @tbl-sim.
-The two prior-sensitivity refits vary its scale by design (@sec-appA-init), and the independent model, which holds $\mathbf c$ at zero, carries no such prior at all.
+prior this chapter introduces is the one on $\rho_c$, and it is $\mathcal N(0,1)$ in the four initialization fits of @tbl-init and under both simulation conditions. The two prior-sensitivity fits vary its scale by design (@sec-appA-init), and the independent model, which holds $\mathbf c$ at zero, carries no such prior at all.
 
 That prior has a consequence that has to be reported, not discovered.
 Being centered at
