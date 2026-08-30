@@ -451,8 +451,8 @@ we count separately, and they are not the same phenomenon.
 finds.
 We therefore fitted the observed data from four starting scales spanning a thirtyfold range and report all four (@tbl-init).
 
-We ran four fits and chose the primary before comparing the estimates.
-We ran each fit for a stated reason and in sequence, not until one gave a preferred answer.
+We ran four initialization fits and chose the primary before comparing the estimates.
+We ran each of them for a stated reason and in sequence, not until one gave a preferred answer.
 We ran the widest, at a starting scale of 3, specifically to test a competing explanation raised in
 committee: that the rising count of minor-mode chains under wider starts might mean the minor mode
 is genuinely larger, rather than that the sampler is trapping chains short of the typical set.
@@ -1199,7 +1199,8 @@ $\eta=\max\{(\nu-2p+3)/2,\,0.1\}=6.5$. These hyperparameters are the `serodynami
 were derived from the enteric fever cohorts, so they are the pathogen-appropriate values here rather
 than a choice made for this analysis; the earlier study set its own from the *Shigella* assay.
 The only
-prior this chapter introduces is the one on $\rho_c$, and we apply it identically in both fits.
+prior this chapter introduces is the one on $\rho_c$, and it is the same $\mathcal N(0,1)$ wherever $\mathbf c$ is estimated: the four initialization fits of @tbl-init, and both simulation conditions of @tbl-sim.
+The two prior-sensitivity refits vary its scale by design (@sec-appA-init), and the independent model, which holds $\mathbf c$ at zero, carries no such prior at all.
 
 That prior has a consequence that has to be reported, not discovered.
 Being centered at
@@ -1211,7 +1212,7 @@ Both appear in the simulation results and both have this single explanation.
 ## Initialization sensitivity for all parameters {#sec-appA-init}
 
 @tbl-init gives the baseline correlation across the four starting scales; @tbl-init-full gives the full set.
-The quantity to read is the range across fits for each parameter, not any single fit.
+The quantity to read is the range across the initialization fits for each parameter, not any single one of them.
 
 ```{r}
 #| label: tbl-init-full
@@ -1244,7 +1245,7 @@ is the quantity that bears on whether the estimates are prior-driven; every valu
 than the seed-to-seed spread of a single fit in @sec-ch2-res-sim. For the time to peak it is
 nonetheless larger than Monte Carlo error can explain, which @sec-ch2-res-weak takes up.
 
-Retained-chain counts differ across fits because the same rule that removes minor-mode chains also removes chains that fail on their own terms.
+Retained-chain counts differ across the initialization fits because the same rule that removes minor-mode chains also removes chains that fail on their own terms.
 At a starting scale of 3 that is thirty-one of forty
 (@tbl-init); the nine that remain give the same answer as the thirty-eight of the primary fit.
 

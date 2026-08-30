@@ -1041,7 +1041,7 @@ The larger of the two axes therefore requires nothing from the kinetics analysis
 
 The same split appears in a second and independent measurement.
 The coverage study puts the same question a different way, on simulated rather than observed data and in coverage rather than width.
-An earlier version of this contrast, computed with the established implementation in the role of the product form, gave 79% for the sharing axis. **The internal comparison gives 76%, measured on the log scale on which the two contributions compound.** Two routes that share no code and no data agree to three percentage points.
+An earlier version of this contrast, computed with the established implementation in the role of the product form, gave 79% for the sharing axis. **The internal comparison gives 76%**, measured on the log scale on which the two contributions compound. Two routes that share no code and no data agree to three percentage points.
 
 ### Effect on epidemiological inference {#sec-ch3-res-epi}
 
