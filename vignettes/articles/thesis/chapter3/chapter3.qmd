@@ -905,38 +905,40 @@ The product form multiplies the two isotype likelihoods; the joint form shares t
 d <- read.csv("tab/table6_coverage.csv", fileEncoding = "UTF-8")
 A <- d[d$form == "composite", ]; C <- d[d$form == "joint", ]
 A <- A[order(A$lambda), ];       C <- C[order(C$lambda), ]
+# The two forms are combined row by row, so they must be on the same grid.
+stopifnot(identical(A$lambda, C$lambda))
 out <- data.frame(
   lambda = sprintf("%.2f", A$lambda),
-  `A coverage` = sprintf("%.3f", A$coverage),
-  `MCSE ` = sprintf("%.3f", A$mcse),
-  `C coverage` = sprintf("%.3f", C$coverage),
-  MCSE = sprintf("%.3f", C$mcse),
-  `A bias` = sprintf("%+.1f%%", A$bias),
-  `C bias` = sprintf("%+.1f%%", C$bias),
-  `width C/A` = sprintf("%.3f", C$width / A$width),
+  `product coverage` = sprintf("%.3f", A$coverage),
+  `product MCSE` = sprintf("%.3f", A$mcse),
+  `joint coverage` = sprintf("%.3f", C$coverage),
+  `joint MCSE` = sprintf("%.3f", C$mcse),
+  `product bias` = sprintf("%+.1f%%", A$bias),
+  `joint bias` = sprintf("%+.1f%%", C$bias),
+  `width joint/product` = sprintf("%.3f", C$width / A$width),
   check.names = FALSE)
 pooled <- data.frame(
   lambda = "pooled",
-  `A coverage` = sprintf("%.3f", mean(A$coverage)),
-  `MCSE ` = sprintf("%.3f", sqrt(mean(A$coverage) * (1 - mean(A$coverage)) / sum(A$reps))),
-  `C coverage` = sprintf("%.3f", mean(C$coverage)),
-  MCSE = sprintf("%.3f", sqrt(mean(C$coverage) * (1 - mean(C$coverage)) / sum(C$reps))),
-  `A bias` = sprintf("%+.1f%%", mean(A$bias)),
-  `C bias` = sprintf("%+.1f%%", mean(C$bias)),
-  `width C/A` = sprintf("%.3f", mean(C$width / A$width)),
+  `product coverage` = sprintf("%.3f", mean(A$coverage)),
+  `product MCSE` = sprintf("%.3f", sqrt(mean(A$coverage) * (1 - mean(A$coverage)) / sum(A$reps))),
+  `joint coverage` = sprintf("%.3f", mean(C$coverage)),
+  `joint MCSE` = sprintf("%.3f", sqrt(mean(C$coverage) * (1 - mean(C$coverage)) / sum(C$reps))),
+  `product bias` = sprintf("%+.1f%%", mean(A$bias)),
+  `joint bias` = sprintf("%+.1f%%", mean(C$bias)),
+  `width joint/product` = sprintf("%.3f", mean(C$width / A$width)),
   check.names = FALSE)
 thesis_ft(rbind(out, pooled), widths = rep(0.8, 8))
 ```
 Intervals formed by summing the two isotype log-likelihoods covered the truth 89.7% of the time against a nominal 95% (300 intervals, MCSE 1.8%, 3.0 standard errors below nominal).
 The joint form covered 98.0% (MCSE 0.8%).
-The pooled difference is +8.3 percentage points, and the per-$\lambda$ paired differences are positive at all six values, reaching 2.6 standard errors at $\lambda=0.15$.
+The pooled difference is +8.3 percentage points, and the per-$\lambda$ paired differences are positive at all six values, reaching 2.45 standard errors at $\lambda=0.15$.
 
 Two readings are not supported by the replicate count.
 Coverage of 1.000 at $\lambda=0.20$ and $0.25$ is not evidence of exact coverage.
 Fifty replicates with no failures give a one-sided 95% lower bound of 0.94 by the rule of three; the Monte Carlo standard error printed as zero is an artifact of the binomial at its boundary.
 
 The product form covered 0.960 at $\lambda=0.33$, against 0.84 to 0.92 at the other five values.
-At 50 replicates that departure is 1.0 standard error and cannot be called either way.
+At 50 replicates that departure is within the range Monte Carlo error can produce, and the pooled result does not depend on it.
 The pooled result does not depend on it: excluding $\lambda=0.33$ entirely gives 0.884 for the product form.
 
 ### Decomposition of interval failure {#sec-ch3-res-decomp}
@@ -967,7 +969,7 @@ the six conditions.
 
 ## Seroincidence in the serosurveys {#sec-ch3-res-app}
 
-The three forms give the estimates and intervals for all six sites (@tbl-forms, @fig-forest).
+The three forms give the estimates and intervals for all six sites (@tbl-forms), and the same estimates appear as a forest plot (@fig-forest).
 
 ::: {#fig-forest}
 ![](fig/ch3_fig3_forest.png){width=95%}

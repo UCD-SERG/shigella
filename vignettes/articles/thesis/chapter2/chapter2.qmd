@@ -556,7 +556,7 @@ Where the large-sample condition could not be run, the obstacle is stated with t
 
 ## Sensitivity analyses {#sec-ch2-sens}
 
-Each sensitivity analysis names what it varies and what it would have shown had it failed (@tbl-ch2-sens).
+Each sensitivity analysis varies one component of the specification and tests one stated thing (@tbl-ch2-sens).
 
 ```{r}
 #| label: tbl-ch2-sens
@@ -839,8 +839,8 @@ Coverage of a nominal 90% interval for each of the five correlations, under the 
 Bars are Monte Carlo standard errors;
 the dashed line is nominal.
 This panel keeps the five parameters apart rather than pooling them into one
-figure per condition and scheme (@tbl-ch2-cov), which is where the two extremes
-of @tbl-ch2-perparam become visible.
+number per condition and scheme (@tbl-ch2-cov). That separation is what makes
+the two extremes of @tbl-ch2-perparam visible.
 :::
 
 The estimator recovered the correlations that were present and produced none where there were none.
@@ -939,14 +939,15 @@ Two comparisons bear on it and a third quantity is available without approximati
 #|   actually differ on, and it is the one the importance-sampling approximation could not
 #|   deliver: the Pareto diagnostic exceeded 0.7 in every fold, so that row is reported as an
 #|   attempt rather than an estimate.
-d <- read.csv("tab/table9_loo.csv", row.names = 1, fileEncoding = "UTF-8")
+# Values are literal: the participant row is not in tab/table9_loo.csv, so this
+# table cannot be built from the file.
 out <- data.frame(
   `held-out unit` = c("observation (n = 3,318)", "participant (n = 461)"),
   `correlated model` = c("\u22123296.2", "\u22123339.9"), `independent model` = c("\u22123636.9", "\u22123614.7"),
   difference = c("340.7", "274.8"),
   SE = c("44.1", "33.5"),
   `Pareto k > 0.7, correlated` = c("20%", "100%"),
-  `independent` = c("27%", "100%"),
+  `Pareto k > 0.7, independent` = c("27%", "100%"),
   check.names = FALSE)
 thesis_ft(out, widths = c(1.76, 0.85, 0.85, 0.81, 0.55, 1.07, 0.51))
 ```
