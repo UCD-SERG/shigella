@@ -40,6 +40,7 @@ Paratyphi
 Postprocess
 Pre
 RLDT
+SERG
 SOSAR
 Schur
 Schwarz's
@@ -52,6 +53,7 @@ Serotype
 TTHc
 TW
 Typhi
+UCD
 Unif
 al
 allowlist
@@ -158,6 +160,7 @@ rvert
 scalable
 sera
 sero
+serocalculator
 seroconversion
 serodiagnostic
 serodynamics
