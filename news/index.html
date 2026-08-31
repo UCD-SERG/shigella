@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">shigella</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9012</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9013</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,6 +52,7 @@
 <li><p>Pinned <code>use-ai-config: true</code> explicitly on the Claude and Claude-review <code>Morrison-Lab/gha@v2</code> callers (#36). The reusable workflows already default that input to true, so the bot and the reviewer were already installing the shared <code>ai-config</code> plugin on every run. Setting it in the caller records that intent and keeps it from changing if the <code>@v2</code> default ever moves.</p></li>
 <li><p>Added <code>AGENTS.md</code> and <code>CLAUDE.md</code>, short orientation files for AI coding agents that defer to <code>.github/copilot-instructions.md</code> as the source of truth, plus a <code>.claude/settings.json</code> permissions allowlist (#35)</p></li>
 <li><p>Corrected <code>.github/copilot-instructions.md</code>, whose CI section was stale, and recorded the inverted version convention and the two separate spelling accept-lists there (#35)</p></li>
+<li><p>Made the Claude reviewer on-request only: dropped the <code>pull_request</code> trigger from <code>.github/workflows/claude-code-review.yml</code>, so a push to a pull request no longer starts a review by itself (#44). A review is now requested with an <code>@claude review</code> comment or a manual dispatch. Two automatic paths survive upstream, in <code>gha</code>’s <code>claude.yml</code>, neither with a caller-side opt-out: an <code>@claude</code> run that pushes commits to a pull request dispatches a review of them, and an <code>@claude</code> run on an issue that pushes a branch opens a draft pull request and dispatches a review of that. Both are tracked as Morrison-Lab/gha#778. Because the check no longer appears on every pull request, <code>review / require-review</code> must not be listed as a required status check.</p></li>
 </ul></div>
 </div>
     <div class="section level2">

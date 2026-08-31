@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="index.html">shigella</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9012</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9013</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -248,7 +248,7 @@
 <li>
 <strong>lint-workflows.yml</strong>, <strong>lint-yaml.yml</strong>, <strong>lint-markdown.yml</strong> — currently warn-only, while a pre-existing backlog is worked down.</li>
 <li>
-<strong>claude.yml</strong> and <strong>claude-code-review.yml</strong> — the <code>@claude</code> agent and its reviewer, which are a pair. <code>claude.yml</code> dispatches the reviewer by filename, so keep both names and keep their pins in step.</li>
+<strong>claude.yml</strong> and <strong>claude-code-review.yml</strong> — the <code>@claude</code> agent and its reviewer, which are a pair. <code>claude.yml</code> dispatches the reviewer by filename, so keep both names and keep their pins in step. The reviewer runs <strong>on request only</strong> (#44): it carries no <code>pull_request</code> trigger, so an ordinary push to a PR does not start a review. Ask for one with an <code>@claude review</code> comment on the PR, or dispatch it by hand with <code>gh workflow run claude-code-review.yml [--ref &lt;pr-branch&gt;] -f pr_number=&lt;N&gt;</code>. Pass <code>--ref</code> on an ordinary same-repo PR, so the check run lands on the PR head. Omit it when the PR edits a top-level <code>.github/workflows/*.yml</code> or comes from a fork: <code>gha</code>’s own dispatcher omits it there so GitHub executes the trusted default-branch caller rather than the PR head’s unreviewed copy. The check run then attaches to the default branch instead, though the review comment still posts on the PR. Two automatic paths survive, both in <code>gha</code>’s <code>claude.yml</code> rather than here, and neither has a caller-side opt-out (<code>Morrison-Lab/gha#778</code>). An <code>@claude</code> run that pushes commits to a PR dispatches a review of them, whatever the comment asked for. An <code>@claude</code> run on an <em>issue</em> that pushes a branch opens or reuses a draft PR and then dispatches a review of that. <code>review / require-review</code> is absent from a PR nobody has requested a review for, so it must not be a required status check.</li>
 </ul><p><code>main</code> is a thin package skeleton: the chapter analysis code, the Stan models, and the dissertation sources live on long-running feature branches. Check what is present with <code>git ls-files</code> before asserting a layout, rather than reading it from this file or from another branch’s tree.</p>
 <p>On the branches that carry <code>inst/scripts/</code>, <code>lint-changed-lines</code> reports a large pre-existing backlog. It is not something a given PR introduced, and clearing it is not in scope for unrelated work.</p>
 </div>

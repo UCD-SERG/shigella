@@ -50,6 +50,19 @@
   stale, and recorded the inverted version convention and the two
   separate spelling accept-lists there (#35)
 
+- Made the Claude reviewer on-request only: dropped the `pull_request`
+  trigger from `.github/workflows/claude-code-review.yml`, so a push to
+  a pull request no longer starts a review by itself (#44). A review is
+  now requested with an `@claude review` comment or a manual dispatch.
+  Two automatic paths survive upstream, in `gha`’s `claude.yml`, neither
+  with a caller-side opt-out: an `@claude` run that pushes commits to a
+  pull request dispatches a review of them, and an `@claude` run on an
+  issue that pushes a branch opens a draft pull request and dispatches a
+  review of that. Both are tracked as Morrison-Lab/gha#778. Because the
+  check no longer appears on every pull request,
+  `review / require-review` must not be listed as a required status
+  check.
+
 ## shigella 0.0.0
 
 Started development.
