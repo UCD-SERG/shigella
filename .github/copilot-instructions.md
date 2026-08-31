@@ -293,9 +293,13 @@ Called from `gha`:
 -   **claude.yml** and **claude-code-review.yml** — the `@claude` agent and its reviewer, which are a pair.
     `claude.yml` dispatches the reviewer by filename, so keep both names and keep their pins in step.
     The reviewer runs **on request only** (#44): it carries no `pull_request` trigger, so an ordinary push to a PR does not start a review.
-    Ask for one with an `@claude review` comment on the PR, or dispatch it by hand with `gh workflow run claude-code-review.yml --ref <pr-branch> -f pr_number=<N>`.
-    Pass `--ref`: a dispatch without one runs against the default branch, so its check runs attach there rather than to the PR head, though the review comment still posts on the PR.
-    One automatic path survives, in `gha`'s `claude.yml` rather than here --- an `@claude` run that pushes commits to a PR dispatches a review of them, whatever the comment asked for, and there is no caller-side opt-out (`Morrison-Lab/gha#778`).
+    Ask for one with an `@claude review` comment on the PR, or dispatch it by hand with `gh workflow run claude-code-review.yml [--ref <pr-branch>] -f pr_number=<N>`.
+    Pass `--ref` on an ordinary same-repo PR, so the check run lands on the PR head.
+    Omit it when the PR edits a top-level `.github/workflows/*.yml` or comes from a fork: `gha`'s own dispatcher omits it there so GitHub executes the trusted default-branch caller rather than the PR head's unreviewed copy.
+    The check run then attaches to the default branch instead, though the review comment still posts on the PR.
+    Two automatic paths survive, both in `gha`'s `claude.yml` rather than here, and neither has a caller-side opt-out (`Morrison-Lab/gha#778`).
+    An `@claude` run that pushes commits to a PR dispatches a review of them, whatever the comment asked for.
+    An `@claude` run on an *issue* that pushes a branch opens or reuses a draft PR and then dispatches a review of that.
     `review / require-review` is absent from a PR nobody has requested a review for, so it must not be a required status check.
 
 `main` is a thin package skeleton: the chapter analysis code, the Stan models, and the dissertation sources live on long-running feature branches.
