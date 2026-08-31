@@ -292,6 +292,11 @@ Called from `gha`:
 -   **lint-workflows.yml**, **lint-yaml.yml**, **lint-markdown.yml** — currently warn-only, while a pre-existing backlog is worked down.
 -   **claude.yml** and **claude-code-review.yml** — the `@claude` agent and its reviewer, which are a pair.
     `claude.yml` dispatches the reviewer by filename, so keep both names and keep their pins in step.
+    The reviewer runs **on request only** (#44): it carries no `pull_request` trigger, so an ordinary push to a PR does not start a review.
+    Ask for one with an `@claude review` comment on the PR, or dispatch it by hand with `gh workflow run claude-code-review.yml --ref <pr-branch> -f pr_number=<N>`.
+    Pass `--ref`: a dispatch without one runs against the default branch, so its check runs attach there rather than to the PR head, though the review comment still posts on the PR.
+    One automatic path survives, in `gha`'s `claude.yml` rather than here --- an `@claude` run that pushes commits to a PR dispatches a review of them, whatever the comment asked for, and there is no caller-side opt-out (`Morrison-Lab/gha#778`).
+    `review / require-review` is absent from a PR nobody has requested a review for, so it must not be a required status check.
 
 `main` is a thin package skeleton: the chapter analysis code, the Stan models, and the dissertation sources live on long-running feature branches.
 Check what is present with `git ls-files` before asserting a layout, rather than reading it from this file or from another branch's tree.

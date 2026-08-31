@@ -5,14 +5,37 @@
 # inherits secrets into a reusable workflow owned by the same org/user, so a
 # cross-owner caller (e.g. a UCD-SERG-org repo calling this d-morrison
 # user-owned workflow) inherits an empty token and the run fails env-validation.
-# The workflow_dispatch path lets claude.yml re-dispatch a review after an
-# @claude run pushes commits — keep the file named claude-code-review.yml (or
-# set claude.yml's review-workflow-file to match).
+# claude.yml dispatches this workflow by filename, so keep the file named
+# claude-code-review.yml (or set claude.yml's review-workflow-file to match).
 name: Claude Code Review
 
 on:
-  pull_request:
-    types: [opened, synchronize, ready_for_review, reopened]
+  # On-request only (#44): there is deliberately no `pull_request` trigger, so
+  # opening a PR, pushing to it, reopening it, or marking it ready for review
+  # does not start a review on its own. Three paths still reach this workflow,
+  # all of them a dispatch:
+  #   * a manual dispatch --- `gh workflow run claude-code-review.yml
+  #     --ref <pr-branch> -f pr_number=<N>`, or the "Run workflow" button;
+  #   * an `@claude review` comment on the PR, which claude.yml turns into
+  #     exactly that dispatch;
+  #   * an @claude agent run on a PR that pushes commits. claude.yml's
+  #     "Dispatch code review after Claude pushed commits" step fires on a
+  #     changed head SHA alone, with no review-request condition, so asking
+  #     the agent for an unrelated fix still costs a review round. That step
+  #     lives in the callee and has no caller-side opt-out (Morrison-Lab/gha#778).
+  # The callee supports a dispatch-only caller end to end. `preempt-previous`,
+  # `gather-context`, and `claude-review` each admit
+  # `github.event_name == 'workflow_dispatch'` as their own arm; `post-review`
+  # and `require-review` gate on the other jobs' results rather than on the
+  # event, so they are event-agnostic. Every PR number any of them reads falls
+  # back to `inputs.pr-number` when there is no pull_request payload.
+  # Two consequences worth knowing before adding a branch-protection rule.
+  # `review / require-review` does not appear at all on a PR nobody has
+  # requested a review for, so it must not be listed as a required check. And
+  # a dispatch that resolves no `--ref` runs against the default branch, so its
+  # check runs attach to that branch rather than to the PR head (gha#285) even
+  # though the review comment still posts on the PR --- hence the `--ref` in
+  # the manual command above.
   workflow_dispatch:
     inputs:
       pr_number:
@@ -34,8 +57,8 @@ jobs:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}               # direct API key; empty when using OAuth
       SUBMODULES_TOKEN: ${{ secrets.SUBMODULES_TOKEN }}   # optional; empty when unset
     with:
-      # Wires the workflow_dispatch input through so claude.yml can re-dispatch
-      # a review on Claude's commits; empty (and ignored) for pull_request runs.
+      # Wires the workflow_dispatch input through. It is the only source of the
+      # PR number here, since there is no pull_request payload to fall back on.
       pr-number: ${{ inputs.pr_number }}
       # Install the shared Morrison-Lab/ai-config plugin, so the reviewer
       # applies the lab's shared review conventions rather than only this
