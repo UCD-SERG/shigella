@@ -1,5 +1,5 @@
 ---
-title: "Correlated antibody kinetics and the uncertainty of seroincidence estimates"
+title: "Antibody kinetics and within-person biomarker correlation in seroincidence estimation for Shigella and enteric fever"
 subtitle: "Chapters 1, 2, and 3"
 author: "Kwan Ho Lee"
 date: today
@@ -90,50 +90,70 @@ which is not true of a number a chunk computes on the fly.
 
 # Abstract {.unnumbered}
 
-Where blood culture surveillance is out of reach, serological surveys can estimate how often a
-population is infected without observing the infections themselves, from one blood draw per
-participant. Doing so requires a model of how antibody concentrations change after infection, and
-when more than one antibody is measured, a rule for combining them. Both have been developed
-carefully; what neither states as a restriction is the simplification they share. A participant's
-antibody isotypes are treated as independent of one another, when they are measured on one specimen,
-from one person, following one infection.
+Shigella and enteric fever are bacterial enteric infections that cause substantial illness in
+resource-limited settings, but stool and blood culture are difficult to implement at population
+scale, creating a need for seroincidence methods that estimate infection rates from antibody
+measurements.
+These methods require longitudinal models that describe how antibody responses rise, peak, and decay
+after infection, including baseline response, peak magnitude, time to peak, decay rate, and the shape
+of the decay.
+When more than one antibody is measured on the same specimen, the methods also require a rule for
+combining them, and the rule in current use treats a participant's antibody isotypes as independent
+of one another.
+This dissertation characterizes the kinetics these methods require for *Shigella*, tests whether the
+independence assumption holds for enteric fever, and measures what the assumption costs a
+seroincidence estimate.
 
-This dissertation examines that assumption in three steps and finds that the rule in current use
-overstates the precision of the estimates it produces.
+Chapter 1 characterizes IgG and IgA responses to five *Shigella* antigens in 48 individuals with
+stool culture- or molecular-confirmed infection in Dhaka, Bangladesh, using a hierarchical two-phase
+model of the rise, peak, and decay.
+IgA responses rise and decay rapidly, returning toward baseline within two to three months, while IgG
+responses persist above baseline through 200 days, so the two isotypes mark different exposure
+windows.
+Children under five have lower baseline responses and higher peaks than older children, and responses
+to the O-specific polysaccharides are serotype-restricted, with cross-reactivity between *S.
+flexneri* 2a and 3a.
+Which participants a kinetic model is estimated from changes the parameters it recovers: pooling
+antigenically distinct serotypes produced implausible decay, while serotype-matched estimation did
+not.
 
-Chapter 1 characterizes antibody kinetics after culture- or molecular-confirmed *Shigella*
-infection in a longitudinal cohort of 48 individuals in Dhaka, Bangladesh, using a hierarchical
-two-phase model for IgG and IgA against five antigens. IgA returned to baseline within two to three
-months while IgG remained elevated through 200 days, and how participants were grouped for
-estimation changed the parameters recovered — pooling antigenically distinct serotypes produced
-implausible decay, while serotype-matched estimation did not.
+Chapter 2 estimates cross-isotype correlations in the kinetic parameters using 461 individuals with
+blood-culture-confirmed enteric fever from Bangladesh, Nepal, and Pakistan.
+Five correlations, one for each kinetic parameter, are added to the covariance structure of the
+chapter 1 model while every other component is left unchanged, so that a model with no correlation is
+a special case of the model with correlation and any difference in fit is attributable to the
+correlations alone.
+IgG and IgA responses are strongly correlated across all five parameters, with posterior medians
+between 0.64 and 0.84, and the same association is present in the measurements themselves without any
+model.
+A simulation study at the observed sample size confirms that the estimator recovers a correlation
+that is present and does not produce one when none is there.
 
-Chapter 2 asks whether a participant's two isotypes respond independently, which is what the
-chapter 1 framework assumes. Using 461 blood-culture-confirmed enteric fever cases from three
-countries, it adds five cross-isotype correlations to the existing covariance structure while leaving
-everything else unchanged, so that setting them to zero recovers the previous model exactly.
-All five correlations exclude zero, with posterior medians between 0.64 and 0.84. A simulation
-study confirms that the estimator recovers a correlation that is present and does not produce one when none is there.
+Chapter 3 develops a joint likelihood that allows two biomarkers measured on the same participant to
+share an infection time and to draw their kinetic parameters together.
+The established estimator combines biomarkers by adding their log-likelihoods, which treats one
+participant's two measurements as though they came from two independently infected people.
+Evaluated in simulation across an eightfold range of seroincidence, an interval reported as 95%
+contains the true incidence 89.7% of the time under the established estimator and 98.0% under the
+joint likelihood, so a rate quoted with one-in-twenty confidence carries closer to one error in ten.
+Applied to serosurveys of 2,613 participants across six sites in three countries, intervals widened
+by 46% on average while the ranking of countries and the high- versus low-endemicity contrasts held,
+and sharing the infection time accounted for three quarters of the widening, requiring no result
+about correlation.
 
-Chapter 3 asks what follows for seroincidence. The established estimator combines biomarkers by
-adding their log-likelihoods, which treats one participant's two measurements as though they came
-from two independently infected people. Replacing that with a likelihood in which the measurements
-share one infection time, and the kinetic parameters are drawn as a pair, changes the uncertainty
-rather than the estimate: a nominal 95% interval built the current way contains the true incidence
-89.7% of the time, and the joint form restores calibration at a cost in width that is constant across an eightfold range of seroincidence. Applied to cross-sectional surveys in Bangladesh, Nepal, and Pakistan, every interval widened and no epidemiological conclusion changed: the ranking of countries and the high- versus low-endemicity contrasts held.
-About three quarters of the correction follows from the simple fact that a participant has one
-infection time, and requires nothing from chapter 2.
+One result does not fit, and it is a finding in its own right.
+Simulating from the chapter 2 model predicts an IgG-IgA correlation of 0.78 to 0.81 in the survey
+populations, but the observed correlation is 0.17 to 0.63, lower in six of six sites.
+The kinetics of chapters 1 and 2 are estimated on people whose infections were confirmed by culture,
+while the serosurveys of chapter 3 draw from populations in which most infections are milder and many
+participants have been infected more than once.
+A within-host model fitted on the first does not transfer unchanged to the second, and relaxing the
+single-infection assumption is where the next study should begin.
 
-The three chapters do not sit comfortably together, and the discomfort is itself a finding. In the
-general population the isotypes are markedly less linked than chapter 2 predicts — an observed
-correlation of 0.17 to 0.63 against a predicted 0.78 to 0.81, in six of six survey sites. The kinetics of chapters 1 and 2 are estimated on people whose infections were confirmed by blood
-culture; the serosurveys of chapter 3 are drawn from a population in which most infections are
-milder and many participants have been infected more than once. A within-host model fitted on the
-first does not transfer unchanged to the second. That is a limitation of the approach as a whole
-rather than of any one chapter, and it identifies the assumption the next study should relax.
-
-Taken together, the three chapters describe a measurement problem, a structure in the data the
-standard model omits, and the consequence of that omission for what a serosurvey can claim.
+Together, these chapters show that seroincidence estimates for enteric infections depend on kinetic
+models that reflect pathogen-specific antibody dynamics and within-person dependence among
+biomarkers, and that ignoring that dependence overstates the precision of what a serosurvey can
+claim.
 
 {{< pagebreak >}}
 
@@ -238,15 +258,12 @@ exercise.
 The answer at the seam is that the isotypes are linked, and that the linkage matters less for the
 estimate than for the confidence placed in it. All five kinetic parameters correlate across IgG
 and IgA. Carrying that correlation into the seroincidence likelihood — together with the more basic
-fact that a participant's two measurements come from one infection at one time — leaves the
-estimated incidence almost unchanged in accuracy and widens its interval by about a quarter. That
+fact that a participant's two measurements come from one infection at one time — leaves the accuracy of the estimated incidence almost unchanged and widens its interval by about a quarter in simulation. That
 widening is not a loss of precision but a correction to it: a nominal 95% interval built the
 current way contains the true incidence 89.7% of the time in simulation, and the joint form restores
 calibration. Applied to surveys in three countries, every interval widened and no epidemiological conclusion changed: the ranking of countries and the high- versus low-endemicity contrasts held.
 
-And the two changes are separable, which turns out to matter. About three quarters of the
-correction follows from the shared infection time alone and requires nothing from chapter 2; the
-correlation supplies the remainder. A reader who is unpersuaded by chapter 2 is therefore not
+And the two changes are separable, which turns out to matter. Applied to the surveys the intervals widened by 46% on average, and about three quarters of that widening follows from the shared infection time alone and requires nothing from chapter 2; the correlation supplies the remainder. A reader who is unpersuaded by chapter 2 is therefore not
 being asked to accept chapter 3 on its authority.
 
 The pathogen changes between chapter 1 and chapter 2, and the reason is itself a result rather
@@ -2810,12 +2827,7 @@ measurements themselves, with no model involved (@sec-ch2-res-main), and a simul
 confirms that the estimator recovers a correlation that is present and does not produce one when none is there (@sec-ch2-res-sim).
 
 **Intervals built by summing isotype log-likelihoods are too narrow.** A nominal 95% interval
-covered the truth 89.7% of the time in simulation; the joint form restored calibration at a cost of
-about a quarter in width, constant across an eightfold range of seroincidence (@sec-ch3-res-cov).
-
-**Three quarters of that correction requires nothing from chapter 2.** Sharing one infection time
-accounts for 76% of the widening and pairing the parameter draws for the remainder
-(@sec-ch3-res-split), so the main result of chapter 3 stands whatever a reader concludes about
+covered the truth 89.7% of the time in simulation; the joint form restored calibration at a cost of about a quarter in width in simulation, constant across an eightfold range of seroincidence (@sec-ch3-res-cov). **Three quarters of the correction requires nothing from chapter 2.** Applied to the surveys, where intervals widened by 46% on average, sharing one infection time accounts for 76% of that widening and pairing the parameter draws for the remainder (@sec-ch3-res-split), so the main result of chapter 3 stands whatever a reader concludes about
 chapter 2.
 
 ## What it does not establish {#sec-closing-limits}
@@ -3188,4 +3200,5 @@ Analysis code will be deposited in a public repository at the time of publicatio
 
 ::: {#refs}
 :::
+
 
