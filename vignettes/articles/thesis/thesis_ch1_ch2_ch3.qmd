@@ -90,70 +90,47 @@ which is not true of a number a chunk computes on the fly.
 
 # Abstract {.unnumbered}
 
-Shigella and enteric fever are bacterial enteric infections that cause substantial illness in
+Shigella and enteric fever are bacterial infections of the gut that cause substantial illness in
 resource-limited settings, but stool and blood culture are difficult to implement at population
 scale, creating a need for seroincidence methods that estimate infection rates from antibody
-measurements.
-These methods require longitudinal models that describe how antibody responses rise, peak, and decay
-after infection, including baseline response, peak magnitude, time to peak, decay rate, and the shape
-of the decay.
-When more than one antibody is measured on the same specimen, the methods also require a rule for
-combining them, and the rule in current use treats a participant's antibody isotypes as independent
-of one another.
-This dissertation characterizes the kinetics these methods require for *Shigella*, tests whether the
-independence assumption holds for enteric fever, and measures what the assumption costs a
-seroincidence estimate.
+measurements. These methods require longitudinal models that describe how antibody responses rise,
+peak, and decay after infection, and such a model has five parameters: the baseline response, the
+peak magnitude, the time to peak, the decay rate, and the shape of the decay.
 
-Chapter 1 characterizes IgG and IgA responses to five *Shigella* antigens in 48 individuals with
-stool culture- or molecular-confirmed infection in Dhaka, Bangladesh, using a hierarchical two-phase
-model of the rise, peak, and decay.
-IgA responses rise and decay rapidly, returning toward baseline within two to three months, while IgG
-responses persist above baseline through 200 days, so the two isotypes mark different exposure
-windows.
-Children under five have lower baseline responses and higher IgA peaks than older children, and responses
-to the O-specific polysaccharides are serotype-restricted, with cross-reactivity between *S.
-flexneri* 2a and 3a.
-Which participants a kinetic model is estimated from changes the parameters it recovers: pooling
-antigenically distinct serotypes produced implausible decay, while serotype-matched estimation did
-not.
+Chapter 1 characterizes IgG and IgA responses to five Shigella antigens in 48 individuals with stool
+culture- or molecular-confirmed infection in Dhaka, Bangladesh, and shows that IgA responses rise
+and decay within two to three months while IgG persists beyond 200 days, that children under five
+have lower baseline responses and higher IgA peaks than older children, and that which participants
+a model is estimated from changes the parameters recovered: pooling all serotypes failed to
+converge, the two that share an O-antigen were best estimated together, and the two with enough
+participants were best estimated alone.
 
 Chapter 2 estimates cross-isotype correlations in the kinetic parameters using 461 individuals with
-blood-culture-confirmed enteric fever from Bangladesh, Nepal, and Pakistan.
-Five correlations, one for each kinetic parameter, are added to the covariance structure of the
-chapter 1 model while every other component is left unchanged, so that a model with no correlation is
-a special case of the model with correlation and any difference in fit is attributable to the
-correlations alone.
-IgG and IgA responses are strongly correlated across all five parameters, with posterior medians
-between 0.64 and 0.84, and the same association is present in the measurements themselves without any
-model.
-A simulation study at the observed sample size confirms that the estimator recovers a correlation
-that is present and does not produce one when none is there.
+blood-culture-confirmed enteric fever from Bangladesh, Nepal, and Pakistan, and shows that a
+participant's IgG and IgA responses are strongly correlated across all five parameters, with
+posterior medians between 0.64 and 0.84. Setting those correlations to zero recovers the model
+currently in use, so the difference in fit is attributable to them alone. The same association is
+present in the measurements themselves, and the estimator neither invents a correlation where none
+exists nor fails to recover one that does.
 
-Chapter 3 develops a joint likelihood that allows two biomarkers measured on the same participant to
-share an infection time and to draw their kinetic parameters together.
-The established estimator combines biomarkers by adding their log-likelihoods — the product form — which treats one
-participant's two measurements as though they came from two independently infected people.
-Evaluated in simulation across an eightfold range of seroincidence, an interval reported as 95%
-contains the true incidence 89.7% of the time under the product form and 98.0% under the joint
-likelihood, so a rate quoted with one-in-twenty confidence carries closer to one error in ten.
-Applied to serosurveys of 2,613 participants across six sites in three countries, intervals widened
-by 46% on average while the ranking of countries and the high- versus low-endemicity contrasts held,
-and sharing the infection time accounted for three quarters of the widening, requiring no result
-about correlation.
+Chapter 3 develops a joint likelihood in which two biomarkers measured on one participant share an
+infection time and their kinetic parameters are drawn in pairs, evaluates it in simulation across an
+eightfold range of seroincidence, and applies it to serosurveys of 2,613 participants at six sites
+in three countries. An interval reported as 95% contains the true incidence 89.7% of the time under
+the product form and 98.0% under the joint likelihood. Applied to the surveys, intervals widened by
+46% on average without changing the ordering between sites, and three quarters of that widening
+follows from the shared infection time rather than from the correlations.
 
-One result does not fit, and it is a finding in its own right.
-Simulating from the chapter 2 model predicts an IgG-IgA correlation of 0.78 to 0.81 in the survey
-populations, but the observed correlation is 0.17 to 0.63, lower in six of six sites.
-The kinetics of chapters 1 and 2 are estimated on people whose infections were confirmed by culture,
-while the serosurveys of chapter 3 draw from populations in which most infections are milder and many
-participants have been infected more than once.
-A within-host model fitted on the first does not transfer unchanged to the second, and relaxing the
-single-infection assumption is where the next study should begin.
+One observation remains unexplained. The correlation the chapter 2 model predicts for these survey
+populations, between 0.78 and 0.81, is higher than the correlation observed at every one of the six
+sites, where it ranges from 0.17 to 0.63. Repeated infection and milder disease are both plausible
+explanations, and neither could be separated from censoring in these data. The kinetics are
+estimated from culture-confirmed patients and applied to communities where most infection is milder,
+and that gap is where the discrepancy sits.
 
 Together, these chapters show that seroincidence estimates for enteric infections depend on kinetic
 models that reflect pathogen-specific antibody dynamics and within-person dependence among
-biomarkers, and that ignoring that dependence overstates the precision of what a serosurvey can
-claim.
+biomarkers.
 
 {{< pagebreak >}}
 

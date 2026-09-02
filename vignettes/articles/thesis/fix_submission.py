@@ -58,6 +58,9 @@ WHAT IT DOES
     the current build.  Filling the three front lists moves every page after
     them, and a spot fix would only move the problem.
 
+7.  THE ABSTRACT HEADING IS CENTRED, and only that one.  See
+    centre_abstract().
+
 RUNNING IT TWICE IS A NO-OP.
 """
 import re
@@ -193,6 +196,32 @@ def front_lists(xml):
     return xml, repaired, inserted
 
 
+ABSTRACT_HEADING = re.compile(
+    r'<w:p>\s*<w:pPr>((?:(?!</w:pPr>).)*?)</w:pPr>\s*<w:r>\s*'
+    r'<w:t[^>]*>Abstract</w:t>\s*</w:r>\s*</w:p>', re.S
+)
+
+
+def centre_abstract(xml):
+    """7: centre the word Abstract, and nothing else.
+
+    Abstract shares the Heading1 style with Chapter 1, Chapter 2, Chapter 3 and
+    the appendices, so centring the style would centre all of them.  Direct
+    formatting on the one paragraph overrides the style for that paragraph
+    alone, which is why this is a w:jc on the heading rather than a change to
+    reference.docx.  w:jc comes late in the order CT_PPrBase fixes, so it goes
+    at the end of the pPr.
+    """
+    m = ABSTRACT_HEADING.search(xml)
+    if m is None or "Heading1" not in m.group(1):
+        return xml, False
+    if "<w:jc " in m.group(1):
+        return xml, False                       # already centred
+    at = m.start(1) + len(m.group(1))
+    return xml[:at] + '<w:jc w:val="center"/>' + xml[at:], True
+
+
+
 def section_break(xml):
     """4: turn the page break before the Introduction into a section break."""
     if "<w:pgNumType" in xml and 'w:fmt="lowerRoman"' in xml:
@@ -247,8 +276,11 @@ def no_blank_pages(xml):
         if nxt.startswith("<w:p>"):
             lead = xml[m.end():gap.end()]
             if nxt.startswith("<w:p><w:pPr>"):
-                out.append(lead + "<w:p><w:pPr><w:pageBreakBefore/>")
-                pos = gap.end() + len("<w:p><w:pPr>")
+                # w:pStyle comes first in CT_PPrBase, so step over it.
+                ps = re.match(r"<w:p><w:pPr>(<w:pStyle\b[^>]*/>)?", nxt)
+                head = ps.group(0)
+                out.append(lead + head + "<w:pageBreakBefore/>")
+                pos = gap.end() + len(head)
             else:
                 out.append(lead + "<w:p><w:pPr><w:pageBreakBefore/></w:pPr>")
                 pos = gap.end() + len("<w:p>")
@@ -291,12 +323,14 @@ def main():
                 xml, merged, restyled = merge_caption_pprs(xml)
                 assert strip(xml) == before, "merge changed content outside w:pPr"
                 xml, repaired, inserted = front_lists(xml)
+                xml, centred = centre_abstract(xml)
                 xml, sectioned = section_break(xml)
                 xml, hoisted, thinned = no_blank_pages(xml)
                 print(f"  caption pPr merged        : {merged}")
                 print(f"  table captions restyled   : {restyled}")
                 print(f"  list field codes repaired : {repaired}")
                 print(f"  front lists inserted      : {inserted}")
+                print(f"  abstract heading centred  : {centred}")
                 print(f"  section break inserted    : {sectioned}")
                 print(f"  breaks -> pageBreakBefore  : {hoisted}")
                 print(f"  breaks kept but thinned   : {thinned}")
