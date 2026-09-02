@@ -9,18 +9,18 @@ bibliography: references.bib
 csl: vancouver.csl
 link-citations: true
 number-sections: true
-number-depth: 3
+number-depth: 4
 format:
   html:
     theme: cosmo
     toc: true
-    toc-depth: 3
+    toc-depth: 4
     embed-resources: true
     html-math-method: mathjax
     code-fold: true
   docx:
     toc: true
-    toc-depth: 3
+    toc-depth: 4
     lof: true
     lot: true
     number-sections: true
@@ -2959,7 +2959,7 @@ log-normal scales (@sec-ch2-est).
 
 # Appendix B — Chapter 2 supporting material {#sec-appA}
 
-### Construction of the covariance and positive definiteness {#sec-appA-chol}
+## Construction of the covariance and positive definiteness {#sec-appA-chol}
 
 A Kronecker factorization would constrain $\mathbf c$ in a way the data cannot justify.
 Writing $\boldsymbol\Sigma_{\text{ch2}}$ as in @eq-blocks and factoring it requires, by the Schur complement, the $10\times10$ matrix is positive definite if and only if
@@ -2991,7 +2991,7 @@ Second, $\mathbf c=\mathbf 0$ gives $\mathbf B=\mathbf 0$ and $\mathbf L$ block 
 
 The LKJ prior on the correlation factors is also what allows a Hamiltonian sampler to move through the space at all — see the note in @sec-ch2-est.
 
-### Prior specification in full {#sec-appA-priors}
+## Prior specification in full {#sec-appA-priors}
 
 Every prior in the model takes the value given in @tbl-priors, with the reason for each.
 
@@ -3039,7 +3039,7 @@ Under the null condition of @tbl-sim this pulls estimates
 toward the truth and produces over-coverage; when correlation is present it pulls them away and produces a small negative bias.
 Both appear in the simulation results and both have this single explanation.
 
-### Initialization sensitivity for all parameters {#sec-appA-init}
+## Initialization sensitivity for all parameters {#sec-appA-init}
 
 The baseline correlation moves across the four starting scales by 0.005 (@tbl-init), and the other four parameters by no more than 0.016 (@tbl-init-full).
 The quantity to read is the range across the initialization fits for each parameter, not any single one of them.
@@ -3080,7 +3080,7 @@ Retained-chain counts differ across the initialization fits because the same rul
 At a starting scale of 3 that is thirty-one of forty
 (@tbl-init); the nine that remain give the same answer as the thirty-eight of the primary fit.
 
-### Leave-one-out cross-validation diagnostics {#sec-appA-loo}
+## Leave-one-out cross-validation diagnostics {#sec-appA-loo}
 
 Approximate leave-one-out cross-validation follows @vehtari2017, with Pareto-smoothed importance
 sampling and the improved diagnostics of @vehtari2021. The held-out unit is the participant
@@ -3092,7 +3092,7 @@ We report model stacking weights [@yao2022stacking] alongside the difference in 
 
 # Appendix C — Chapter 3 supporting material {#sec-appB}
 
-### Derivation of the three likelihood formulations {#sec-appB-deriv}
+## Derivation of the three likelihood formulations {#sec-appB-deriv}
 
 The derivation is in @sec-ch3-setup through @sec-ch3-decomp.
 This appendix records only the ordering that distinguishes the three forms, which is the whole of their difference (@tbl-order).
@@ -3118,7 +3118,7 @@ Two consequences follow, and we check both in @sec-ch3-res-valid.
 With one biomarker there is no product to reorder and the three coincide, which is the equivalence gate.
 With uncorrelated parameter draws the covariance in @eq-covdraws vanishes and C reduces to B, which is the null contrast.
 
-### Measurement error model {#sec-appB-noise}
+## Measurement error model {#sec-appB-noise}
 
 Observed concentration is the noise-free value $y_f$ perturbed in two stages: **biological noise added, then measurement noise multiplied**.
 
@@ -3137,7 +3137,7 @@ with $p=0$ where $z_{\max}\le z_{\min}$. **Observations at or below the detectio
 
 The noise parameters $\nu$, $\varepsilon$, and $y_{\text{low}}$ are laboratory quantities estimated empirically at each site and are used as supplied, with standardization of $y_{\text{low}}$ examined as the sensitivity analysis of @sec-ch3-sens.
 
-### Numerical settings and their tolerances {#sec-appB-numeric}
+## Numerical settings and their tolerances {#sec-appB-numeric}
 
 Neither likelihood has a closed form in the incidence, so both are evaluated on a fixed grid.
 The settings that determine how fine that grid is, and the tolerances we required of each, are in @tbl-numeric.
@@ -3165,7 +3165,7 @@ thesis_ft(d, widths = c(0.62, 1.27, 4.51))
 The dominant term is the biomarker-by-draw density matrix, which is computed once per participant and reused across the $\lambda$ grid; cost therefore grows sublinearly in the number of participants and linearly in the size of the $\lambda$ grid.
 This is why validation gates are run at product-form cost wherever the question permits it.
 
-### Constant offsets in the maximized log-likelihood {#sec-appB-offset}
+## Constant offsets in the maximized log-likelihood {#sec-appB-offset}
 
 When we compare the paired and shuffled draws under the joint likelihood, the maximized log-likelihood can differ by a large constant while the point estimate and interval are identical to the reported precision. **A difference in height with no difference in shape over the $\lambda$ grid is a $\lambda$-independent offset**, and cannot affect the estimate or the interval.
 
