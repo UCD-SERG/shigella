@@ -10,6 +10,12 @@ csl: vancouver.csl
 link-citations: true
 number-sections: true
 number-depth: 4
+# UC Davis's own guidance uses "Fig. 1.1" as its example, so the short form is
+# at least as acceptable as the long one.  Tables keep "Table": "Fig." is
+# conventional shorthand and "Tbl." is not.
+crossref:
+  fig-title: "Fig."
+  fig-prefix: "Fig."
 format:
   html:
     theme: cosmo
@@ -90,14 +96,14 @@ which is not true of a number a chunk computes on the fly.
 
 # Abstract {.unnumbered}
 
-Shigella and enteric fever are bacterial infections of the gut that cause substantial illness in
+*Shigella* and enteric fever are bacterial infections of the gut that cause substantial illness in
 resource-limited settings, but stool and blood culture are difficult to implement at population
 scale, creating a need for seroincidence methods that estimate infection rates from antibody
 measurements. These methods require longitudinal models that describe how antibody responses rise,
 peak, and decay after infection, and such a model has five parameters: the baseline response, the
 peak magnitude, the time to peak, the decay rate, and the shape of the decay.
 
-Chapter 1 characterizes IgG and IgA responses to five Shigella antigens in 48 individuals with stool
+Chapter 1 characterizes IgG and IgA responses to five *Shigella* antigens in 48 individuals with stool
 culture- or molecular-confirmed infection in Dhaka, Bangladesh, and shows that IgA responses rise
 and decay within two to three months while IgG persists beyond 200 days, that children under five
 have lower baseline responses and higher IgA peaks than older children, and that which participants

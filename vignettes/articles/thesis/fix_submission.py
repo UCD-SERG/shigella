@@ -61,6 +61,12 @@ WHAT IT DOES
 7.  THE ABSTRACT HEADING IS CENTRED, and only that one.  See
     centre_abstract().
 
+8.   THE QUARTO TITLE BLOCK IS DROPPED.  See strip_title_block().
+
+9.   THE ABSTRACT COMES BEFORE THE THREE LISTS.  See front_matter_order().
+
+10.  EACH FRONT LIST STARTS A NEW PAGE.  See break_before_front_lists().
+
 RUNNING IT TWICE IS A NO-OP.
 """
 import re
@@ -222,6 +228,76 @@ def centre_abstract(xml):
 
 
 
+TITLE_STYLES = ("Title", "Subtitle", "Author", "Date")
+SDT_BLOCK = re.compile(r"<w:sdt>.*?</w:sdt>", re.S)
+TOC_HEADING = re.compile(
+    r'(<w:p>\s*<w:pPr>\s*<w:pStyle w:val="TOCHeading" />)(\s*</w:pPr>)'
+)
+
+
+def strip_title_block(xml):
+    """8: drop Quarto's title, subtitle, author and date paragraphs.
+
+    The UC Davis title page is merged in separately and is the one that counts;
+    this block would sit between it and the front lists.  Only the four
+    paragraphs go — the YAML metadata stays, so pandoc still writes the title
+    and author into docProps/core.xml, which is where ProQuest and Word's
+    document properties read them from.
+    """
+    dropped = 0
+    out, pos = [], 0
+    for m in re.finditer(r"<w:p>", xml):
+        if m.start() < pos:
+            continue
+        close = xml.find("</w:p>", m.end())
+        if close == -1:
+            break
+        para = xml[m.start():close + len("</w:p>")]
+        st = re.search(r'<w:pStyle w:val="(\w+)" />', para)
+        if st and st.group(1) in TITLE_STYLES:
+            out.append(xml[pos:m.start()])
+            pos = close + len("</w:p>")
+            dropped += 1
+    out.append(xml[pos:])
+    return "".join(out), dropped
+
+
+def front_matter_order(xml):
+    """9: Abstract first, then the three lists, then the Introduction.
+
+    The lists are w:sdt blocks and the Abstract is ordinary content, so this
+    lifts the three blocks out and puts them back immediately before the
+    paragraph that carries the preliminary section's sectPr.  That paragraph is
+    the last of the lowercase-roman section, so the Abstract and all three
+    lists stay roman and the Introduction is still arabic 1.
+    """
+    blocks = SDT_BLOCK.findall(xml)
+    if len(blocks) != 3:
+        return xml, False
+    anchor = xml.find("<w:sectPr>")           # the inserted preliminary sectPr
+    if anchor == -1:
+        return xml, False
+    para = xml.rfind("<w:p>", 0, anchor)
+    if para == -1 or para < xml.find(blocks[-1]):
+        return xml, False                     # already after the lists
+    for b in blocks:
+        xml = xml.replace(b, "", 1)
+    para = xml.rfind("<w:p>", 0, xml.find("<w:sectPr>"))
+    return xml[:para] + "".join(blocks) + xml[para:], True
+
+
+def break_before_front_lists(xml):
+    """10: each front list starts a new page, like every other heading.
+
+    w:pageBreakBefore goes after w:pStyle, which is where CT_PPrBase puts it.
+    """
+    xml, n = TOC_HEADING.subn(
+        lambda m: m.group(0) if "pageBreakBefore" in m.group(0)
+        else m.group(1) + "<w:pageBreakBefore/>" + m.group(2), xml)
+    return xml, sum(1 for _ in re.finditer(
+        r'<w:pStyle w:val="TOCHeading" /><w:pageBreakBefore/>', xml))
+
+
 def section_break(xml):
     """4: turn the page break before the Introduction into a section break."""
     if "<w:pgNumType" in xml and 'w:fmt="lowerRoman"' in xml:
@@ -323,14 +399,20 @@ def main():
                 xml, merged, restyled = merge_caption_pprs(xml)
                 assert strip(xml) == before, "merge changed content outside w:pPr"
                 xml, repaired, inserted = front_lists(xml)
+                xml, dropped = strip_title_block(xml)
                 xml, centred = centre_abstract(xml)
                 xml, sectioned = section_break(xml)
+                xml, reordered = front_matter_order(xml)
+                xml, broken = break_before_front_lists(xml)
                 xml, hoisted, thinned = no_blank_pages(xml)
                 print(f"  caption pPr merged        : {merged}")
                 print(f"  table captions restyled   : {restyled}")
                 print(f"  list field codes repaired : {repaired}")
                 print(f"  front lists inserted      : {inserted}")
+                print(f"  title-block paras dropped : {dropped}")
                 print(f"  abstract heading centred  : {centred}")
+                print(f"  front matter reordered    : {reordered}")
+                print(f"  front lists on a new page : {broken}")
                 print(f"  section break inserted    : {sectioned}")
                 print(f"  breaks -> pageBreakBefore  : {hoisted}")
                 print(f"  breaks kept but thinned   : {thinned}")
