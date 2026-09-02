@@ -110,7 +110,7 @@ model of the rise, peak, and decay.
 IgA responses rise and decay rapidly, returning toward baseline within two to three months, while IgG
 responses persist above baseline through 200 days, so the two isotypes mark different exposure
 windows.
-Children under five have lower baseline responses and higher peaks than older children, and responses
+Children under five have lower baseline responses and higher IgA peaks than older children, and responses
 to the O-specific polysaccharides are serotype-restricted, with cross-reactivity between *S.
 flexneri* 2a and 3a.
 Which participants a kinetic model is estimated from changes the parameters it recovers: pooling
@@ -134,8 +134,8 @@ share an infection time and to draw their kinetic parameters together.
 The established estimator combines biomarkers by adding their log-likelihoods, which treats one
 participant's two measurements as though they came from two independently infected people.
 Evaluated in simulation across an eightfold range of seroincidence, an interval reported as 95%
-contains the true incidence 89.7% of the time under the established estimator and 98.0% under the
-joint likelihood, so a rate quoted with one-in-twenty confidence carries closer to one error in ten.
+contains the true incidence 89.7% of the time when the two isotype log-likelihoods are summed and
+98.0% under the joint likelihood, so a rate quoted with one-in-twenty confidence carries closer to one error in ten.
 Applied to serosurveys of 2,613 participants across six sites in three countries, intervals widened
 by 46% on average while the ranking of countries and the high- versus low-endemicity contrasts held,
 and sharing the infection time accounted for three quarters of the widening, requiring no result
@@ -217,15 +217,16 @@ of participants for estimation changes the parameters recovered. It uses the SOS
 — 48 participants, 218 samples — and reports kinetic parameters for five antigens and two isotypes.
 
 **Chapter 2** develops the smallest extension of the kinetic model that can express a cross-isotype
-association, estimates it on 461 blood-culture-confirmed enteric fever cases, and supplies
+association, estimates it on 461 blood-culture-confirmed SEES enteric fever cases, and supplies
 simulation evidence that the estimator recovers a correlation that is present and does not produce one when none is there. Setting the five new parameters to zero recovers the previous model
 exactly, so any difference in fit is attributable to them alone.
 
 **Chapter 3** derives a joint likelihood for seroincidence in which a participant's biomarkers share
 one infection time and their kinetic parameters are drawn as a pair, validates it against the
-implementation in current use, and evaluates the calibration of that implementation in a coverage
-study. It separates the two assumptions the joint form relaxes so that their contributions can be
-measured rather than argued.
+implementation in current use at the single-biomarker case, and evaluates the calibration of the
+product form in a coverage study. It applies both forms to SEES cross-sectional serosurveys covering
+2,613 participants, and separates the two assumptions the joint form relaxes so that their
+contributions can be measured rather than argued.
 
 Two contributions run across the chapters. The first is that **failures of design are reported as
 results**: the *Shigella* cohort cannot support the correlated model, and the specific obstacle — a
@@ -234,20 +235,6 @@ The second is that **every pre-specified check is reported whether or not it beh
 which is what allows a reader to judge whether the checks were capable of failing.
 
 ## Dissertation organization {#sec-intro-organization}
-
-Chapter 1 asks how antibodies behave after a confirmed infection, and whether it matters how
-participants are grouped for estimation. It uses the SOSAR *Shigella* cohort — 48 participants, 218
-samples — and produces kinetic parameters for five antigens and two isotypes, together with an
-answer to the grouping question.
-
-Chapter 2 asks whether the kinetic parameters of a participant's two isotypes are correlated, and
-by how much. It uses 461 SEES enteric fever cases and develops the smallest extension that can
-answer the question, with simulation evidence that the answer is recoverable.
-
-Chapter 3 asks what that correlation, and the more basic fact of shared origin, do to a
-seroincidence estimate and to its uncertainty. It uses SEES cross-sectional serosurveys covering
-2,613 participants, and contributes a joint likelihood, its validation, and a coverage study of the
-estimator in current use.
 
 The chapters are cumulative, not parallel. Chapter 1 establishes that a two-phase model
 with participant-specific parameters describes these data and that estimation is sensitive to how
@@ -263,7 +250,7 @@ widening is not a loss of precision but a correction to it: a nominal 95% interv
 current way contains the true incidence 89.7% of the time in simulation, and the joint form restores
 calibration. Applied to surveys in three countries, every interval widened and no epidemiological conclusion changed: the ranking of countries and the high- versus low-endemicity contrasts held.
 
-And the two changes are separable, which turns out to matter. Applied to the surveys the intervals widened by 46% on average, and about three quarters of that widening follows from the shared infection time alone and requires nothing from chapter 2; the correlation supplies the remainder. A reader who is unpersuaded by chapter 2 is therefore not
+And the two changes are separable, which turns out to matter. Across those surveys the intervals widened by 46% on average, and about three quarters of that widening follows from the shared infection time alone and requires nothing from chapter 2; the correlation supplies the remainder. A reader who is unpersuaded by chapter 2 is therefore not
 being asked to accept chapter 3 on its authority.
 
 The pathogen changes between chapter 1 and chapter 2, and the reason is itself a result rather
@@ -275,7 +262,7 @@ the data did not support.
 
 ## Conventions and notation {#sec-intro-conventions}
 
-The remainder of this chapter can be skipped on a first reading and returned to when the methods
+The remainder of this section can be skipped on a first reading and returned to when the methods
 sections begin. It records three conventions the chapters follow and three symbols that look alike
 and are not.
 
@@ -304,7 +291,7 @@ twice, under two symbols, and the difference is not one of units. In chapter 2 t
 is measured from an infection that is known: participants were enrolled on a confirmed diagnosis, so
 $t$ is data. In chapter 3 the elapsed time $\tau$ is measured from an infection that was never
 observed and may not have happened at all, so $\tau$ is a latent quantity that has to be integrated
-away. That is the whole difficulty of the third chapter in one line: the same curve is being read
+away. That is the whole difficulty of chapter 3 in one line: the same curve is being read
 forward from a known origin in one place and backward toward an unknown one in the other.
 
 The same Greek letter carries a second and unrelated meaning earlier on. In the observation models
@@ -2859,7 +2846,7 @@ measurements themselves, with no model involved (@sec-ch2-res-main), and a simul
 confirms that the estimator recovers a correlation that is present and does not produce one when none is there (@sec-ch2-res-sim).
 
 **Intervals built by summing isotype log-likelihoods are too narrow.** A nominal 95% interval
-covered the truth 89.7% of the time in simulation; the joint form restored calibration at a cost of about a quarter in width in simulation, constant across an eightfold range of seroincidence (@sec-ch3-res-cov). **Three quarters of the correction requires nothing from chapter 2.** Applied to the surveys, where intervals widened by 46% on average, sharing one infection time accounts for 76% of that widening and pairing the parameter draws for the remainder (@sec-ch3-res-split), so the main result of chapter 3 stands whatever a reader concludes about
+covered the truth 89.7% of the time in simulation; the joint form restored calibration at a cost of about a quarter in width, constant across an eightfold range of seroincidence (@sec-ch3-res-cov). **Three quarters of the correction requires nothing from chapter 2.** Applied to the surveys, where intervals widened by 46% on average, sharing one infection time accounts for 76% of that widening and pairing the parameter draws for the remainder (@sec-ch3-res-split), so the main result of chapter 3 stands whatever a reader concludes about
 chapter 2.
 
 ## What it does not establish {#sec-closing-limits}
@@ -3218,9 +3205,9 @@ The first would be a negative result about the applicability of the kinetics ana
 # Appendix D — Reproducibility {#sec-appC}
 
 Analyses were carried out in R [@rcore2025]. Chapter 1's models were fitted in JAGS
-[@jags2003]; chapters 2 and 3 use Stan [@stan2024] throughout. Kinetic models use the
-`serodynamics` package; incidence estimation uses `serocalculator` [@serocalculator2025] for the
-product likelihood and the joint likelihood implementation developed for chapter 3.
+[@jags2003]; chapters 2 and 3 were fitted in Stan [@stan2024] throughout. Kinetic models use the
+`serodynamics` package; incidence estimation uses the product and joint likelihood implementations
+developed for chapter 3; `serocalculator` [@serocalculator2025] is used only for the single-biomarker equivalence check.
 
 Every reported quantity is produced by a script held under version control. Two conventions
 govern the order in which those scripts are run: validation checks precede the production runs
