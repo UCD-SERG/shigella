@@ -410,7 +410,7 @@ Antibody responses measured across all ten antigen–isotype combinations (five 
 
 
 ::: {#fig-ch1-cross}
-![](fig/ch1_fig1_crossreactivity.png){width=100%}
+![](fig/ch1_fig1_crossreactivity.png){height=6.6in}
 
 **Longitudinal IgG and IgA antibody responses to five *Shigella* antigens in the Bangladesh cohort, stratified by infecting serotype.** IgG (left panel) and IgA (right panel) are shown separately with independent color scales to accommodate the markedly different dynamic ranges of the two isotypes. Within each panel, columns represent antigens (IpaB, *S. flexneri* 2a OSP, *S. flexneri* 3a OSP, *S. flexneri* 6 OSP, and *S. sonnei* OSP), and rows represent individual participants grouped by infecting serotype (Sf2a, Sf3a, Sf6, sonnei, and a heterogeneous "Other" group containing *S. boydii*, *S. dysenteriae*, RLDT-positive, Sf-NT, and sf1c cases). Within each serotype facet, participants are sorted by age (oldest at top). Tile color indicates antibody MFI at each sampled time point.
 :::
@@ -425,7 +425,7 @@ Raw antibody trajectories exhibited substantial heterogeneity across antigens, i
 
 
 ::: {#fig-ch1-traj}
-![](fig/ch1_fig2_trajectories.png){width=100%}
+![](fig/ch1_fig2_trajectories.png){height=7in}
 
 **Raw longitudinal IgG and IgA antibody responses to five *Shigella* antigens, colored by infecting serotype.** Each line represents an individual participant; points mark individual sample collections. Panels are arranged by antigen (rows) and isotype (columns). Antibody levels are shown on a logarithmic scale, while time since symptom onset is shown on a linear scale. Line color indicates infecting serotype. The figure illustrates antigen- and isotype-specific response patterns, substantial inter-individual heterogeneity, and overlap among *S. flexneri* serotypes consistent with cross-reactivity.
 :::
@@ -534,7 +534,7 @@ thesis_ft(d, widths = c(0.84, 0.74, 1.18, 1.33, 1.33, 0.98))
 
 
 ::: {#fig-ch1-pooling}
-![](fig/ch1_fig4_pooling.png){width=100%}
+![](fig/ch1_fig4_pooling.png){height=5.6in}
 
 **Individual-level antibody trajectory predictions under alternative modeling approaches.** Each row shows one representative participant; each panel shows one antigen–isotype combination. Blue solid line = overall model ($n = 48$); red dashed = serotype-specific model; green dotted = combined *S. flexneri* model ($n = 25$; Row C only). Shaded ribbons = 95% credible intervals. Open circles = observed MFI values for the selected individual. **(A)** *S. flexneri* 2a, ID P028 ($n_{\text{sero}} = 17$): both models produce comparable fits for the dominant serotype, confirming that the overall model performs adequately when the pooled sample is enriched for the matching serotype. **(B)** *S. sonnei*, ID P017 ($n_{\text{sero}} = 11$): the overall model (blue) fails to capture antibody dynamics ($\alpha \approx 0$, near-flat trajectory), while the serotype-specific model (red) recovers the expected rise–peak–decay pattern. **(C)** *S. flexneri* 3a, ID P036 ($n_{\text{sero}} = 8$; $n_{\text{combined}} = 25$): the serotype-specific model (red) shows wide credible intervals reflecting limited sample size; the combined *S. flexneri* model (green) produces tighter estimates by leveraging O-antigen cross-reactivity between SF2a and SF3a. MCMC: 4 chains $\times$ 100,000 iterations, 20,000 burn-in, $\hat{R} < 1.05$.
 :::

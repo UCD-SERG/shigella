@@ -14,7 +14,9 @@ WHAT IT SETS.
   w:cantSplit  on every <w:tr>, outer and inner.  Word's "Allow row to break
                across pages", off.
   w:keepNext   on every paragraph in a table except those in its last row, so
-               Word keeps the rows together rather than filling the page.
+               Word keeps the rows together rather than filling the page; and
+               on every paragraph immediately followed by a table in the same
+               cell, which is the caption of a Quarto wrapper.
 
 BOTH ARE MERGED, NOT PREPENDED.  A <w:p> may carry at most one <w:pPr> and a
 <w:tr> at most one <w:trPr>, so a property is added to the element that is
@@ -47,7 +49,7 @@ from pathlib import Path
 TOKEN = re.compile(
     r"<w:tbl(?:\s[^>]*)?>|</w:tbl>"
     r"|<w:tr(?:\s[^>]*)?>|</w:tr>"
-    r"|<w:p(?:\s[^>]*)?>"
+    r"|<w:p(?:\s[^>]*)?>|</w:p>"
 )
 
 TR_OPEN = re.compile(r"<w:tr(?:\s[^>]*)?>")
@@ -103,6 +105,27 @@ def patch_document_xml(xml: str):
             in_last = max(0, in_last - 1) if in_last else 0
         elif P_OPEN.fullmatch(t) and depth > 0 and not in_last:
             inside.append((m.start(), m.end()))
+
+    # The caption paragraph of a wrapper is skipped by the rule above, because
+    # the wrapper has exactly one row and that row is therefore its last.  It is
+    # the one paragraph that most needs keepNext: it is what a renderer leaves
+    # behind when it puts the table on the next page, and keepNext is honoured
+    # where cantSplit on a row holding a nested table is not.  Any paragraph
+    # immediately followed by a table inside the same cell gets it.
+    depth = 0
+    prev_close = None
+    for m in TOKEN.finditer(xml):
+        t = m.group(0)
+        if t.startswith("<w:tbl"):
+            if depth > 0 and prev_close is not None:
+                op = xml.rfind("<w:p>", 0, prev_close)
+                if op != -1:
+                    inside.append((op, op + len("<w:p>")))
+            depth += 1
+        elif t == "</w:tbl>":
+            depth -= 1
+        prev_close = m.end() if t == "</w:p>" else prev_close
+    inside = sorted(set(inside))
 
     # Build the patched string in one pass, back to front, so earlier offsets
     # stay valid.

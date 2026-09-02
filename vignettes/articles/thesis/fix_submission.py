@@ -22,12 +22,15 @@ WHAT IT DOES
     figures.  Captions whose text begins "Table" are moved to the TableCaption
     style, which reference.docx defines with the same formatting.
 
-3.  UPDATE FIELDS ON OPEN.  The three front lists are TOC fields with no cached
+3.  THE THREE FRONT LISTS.  See front_lists() below — the two list field
+    codes are repaired, and either list is inserted if it is absent.
+
+4.  UPDATE FIELDS ON OPEN.  The three front lists are TOC fields with no cached
     result.  Without w:updateFields Word never offers to fill them and they
     open empty.  Pandoc writes its own settings.xml rather than copying the
     reference document's, so this cannot be set in reference.docx.
 
-4.  ROMAN PRELIMINARY PAGES, ARABIC BODY.  UC Davis wants the preliminary pages
+5.  ROMAN PRELIMINARY PAGES, ARABIC BODY.  UC Davis wants the preliminary pages
     in lowercase roman with the title page as i, and the body restarting at
     arabic 1.  That needs two sections, and a .qmd has no way to ask for one.
     The page-break paragraph before the Introduction heading is turned into a
@@ -38,7 +41,7 @@ WHAT IT DOES
     separately and is page i.  If that title page turns out to be more than one
     page, raise this by one for each extra page.
 
-5.  NO BLANK PAGES.  UC Davis prohibits them.  {{< pagebreak >}} compiles to an
+6.  NO BLANK PAGES.  UC Davis prohibits them.  {{< pagebreak >}} compiles to an
     empty paragraph carrying <w:br w:type="page"/>.  That paragraph needs a
     line of room on the page it starts on; when the text before it ends at a
     page boundary there is none, so the paragraph moves to a fresh page, its
@@ -140,6 +143,56 @@ def merge_caption_pprs(xml):
     return "".join(out), merged, restyled
 
 
+SDT = ('<w:sdt><w:sdtPr><w:docPartObj>'
+       '<w:docPartGallery w:val="Table of Contents" /><w:docPartUnique />'
+       '</w:docPartObj></w:sdtPr><w:sdtContent>'
+       '<w:p><w:pPr><w:pStyle w:val="TOCHeading" /></w:pPr>'
+       '<w:r><w:t xml:space="preserve">{title}</w:t></w:r></w:p>'
+       '<w:p><w:r><w:fldChar w:fldCharType="begin" w:dirty="true" />'
+       '<w:instrText xml:space="preserve">TOC \\h \\z \\t &quot;{style},1&quot;</w:instrText>'
+       '<w:fldChar w:fldCharType="separate" /><w:fldChar w:fldCharType="end" />'
+       '</w:r></w:p></w:sdtContent></w:sdt>')
+
+FRONT = [("List of Figures", "Image Caption"), ("List of Tables", "Table Caption")]
+
+
+def front_lists(xml):
+    """3: a table of contents, a list of figures and a list of tables, in that
+    order, each with a field code Word will accept.
+
+    Quarto emits all three, but the two list fields are switched
+    `\t "Image Caption" \c` — a bare \c, which takes a SEQ identifier and is
+    invalid without one — inside a content control whose docPartGallery is
+    "List of Figures", which is not one of Word's galleries.  A Word that
+    discards them on update leaves the table of contents alone, which is
+    exactly what a docx that has been through Word looks like.  Both are
+    rewritten to `\t "Style,1"` in a Table of Contents gallery, and inserted
+    after the table of contents if they are not there at all.
+    """
+    repaired = inserted = 0
+    for _, style in FRONT:
+        bad = 'TOC \\h \\z \\t &quot;%s&quot; \\c' % style
+        good = 'TOC \\h \\z \\t &quot;%s,1&quot;' % style
+        if bad in xml:
+            xml = xml.replace(bad, good)
+            repaired += 1
+    xml = xml.replace('<w:docPartGallery w:val="List of Figures" />',
+                      '<w:docPartGallery w:val="Table of Contents" />')
+    xml = xml.replace('<w:docPartGallery w:val="List of Tables" />',
+                      '<w:docPartGallery w:val="Table of Contents" />')
+    # Insert whichever is missing, after the last sdt already present.
+    for title, style in FRONT:
+        if ">%s</w:t>" % title in xml:
+            continue
+        end = xml.rfind("</w:sdt>")
+        if end == -1:
+            break
+        end += len("</w:sdt>")
+        xml = xml[:end] + SDT.format(title=title, style=style) + xml[end:]
+        inserted += 1
+    return xml, repaired, inserted
+
+
 def section_break(xml):
     """4: turn the page break before the Introduction into a section break."""
     if "<w:pgNumType" in xml and 'w:fmt="lowerRoman"' in xml:
@@ -237,10 +290,13 @@ def main():
                 before = strip(xml)
                 xml, merged, restyled = merge_caption_pprs(xml)
                 assert strip(xml) == before, "merge changed content outside w:pPr"
+                xml, repaired, inserted = front_lists(xml)
                 xml, sectioned = section_break(xml)
                 xml, hoisted, thinned = no_blank_pages(xml)
                 print(f"  caption pPr merged        : {merged}")
                 print(f"  table captions restyled   : {restyled}")
+                print(f"  list field codes repaired : {repaired}")
+                print(f"  front lists inserted      : {inserted}")
                 print(f"  section break inserted    : {sectioned}")
                 print(f"  breaks -> pageBreakBefore  : {hoisted}")
                 print(f"  breaks kept but thinned   : {thinned}")
