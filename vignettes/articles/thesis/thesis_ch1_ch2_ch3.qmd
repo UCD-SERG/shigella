@@ -1098,6 +1098,21 @@ names(d) <- c("analysis", "What is varied", "What it tests")
 thesis_ft(d, widths = c(0.95, 1.85, 3.60))
 ```
 
+## Ethical approval {.unnumbered}
+
+This study was approved by the institutional review boards of the Centers for
+Disease Control and Prevention, Stanford University (39557), and MassGeneral Brigham (2014P002602,
+2019P000152, 2013P001965, 2016P000949) in the USA; the Bangladesh Institute of Child Health Ethical
+Review Committee (01-02-2019); the Nepal Health Research Council Ethical Review Board (391/2018);
+and the AKU Ethical Review Committee (2019-0410-4188) and the Pakistan National Bioethics Committee
+(4-87/NBC-341-Amend-revised/19/81) in Pakistan.
+Written informed consent was obtained from all
+participants and from the parents or guardians of participants younger than 18 years at enrollment,
+with written assent obtained from children aged 15--17 years.
+This secondary analysis used
+de-identified antibody measurements collected under the original consent and did not require
+additional consent or a waiver.
+
 ## Results {#sec-ch2-results}
 
 ### Study sample characteristics {#sec-ch2-res-pop}
@@ -1626,6 +1641,11 @@ Two extensions follow directly.
 The model comparison needs $K$-fold cross-validation, since the comparison that matches the question — holding out a whole participant — cannot be done by importance sampling here and $K$-fold refits rather than reweights; at ten folds it is ten fits of a model that takes hours, which places it beyond the present work rather than beyond reach.
 And individual infection times are the natural next analysis, with the prediction recorded above so that either outcome is informative: if the correlated model recovers a participant's infection time more precisely than the independent one, that is a second and independent measurement of the decomposition the seroincidence analysis reports, and if it does not, that chapter's attribution needs revisiting.
 
+## Funding {.unnumbered}
+
+This research was supported by the Bill & Melinda Gates Foundation, which funded the Surveillance for Enteric Fever in Asia Project (INV-008335) and the ancillary serological study from which these data are drawn (INV-000572).
+The funders had no role in study design, data collection, data analysis, data interpretation, or the writing of this report.
+
 # From chapter 2 to chapter 3 {#sec-bridge23}
 
 Chapter 2 establishes that a participant's IgG and IgA kinetic parameters are correlated, and
@@ -1667,6 +1687,7 @@ A chapter can be indispensable to the one after it without supplying the larger 
 effect, and the design below is arranged so that the distinction can be measured, not argued.
 
 {{< pagebreak >}}
+
 # Chapter 3 — A joint likelihood for seroincidence: shared infection time and correlated biomarkers {#sec-ch3}
 
 ## Introduction {#sec-ch3-intro}
@@ -2261,6 +2282,12 @@ The draws enter both likelihood forms identically, so any error in it is common 
 And refitting by stratum would divide that fit into three, at sample sizes below where that model converges reliably, while that same fit is the source of the simulation truth.
 We report pooled versus age-stratified kinetics in the manuscript rather than the dissertation, on the advice of the committee.
 
+## Ethical approval {.unnumbered}
+
+This study was approved by the institutional review boards of the Centers for Disease Control and Prevention, Stanford University (39557), and MassGeneral Brigham (2014P002602, 2019P000152, 2013P001965, 2016P000949) in the USA; the Bangladesh Institute of Child Health Ethical Review Committee (01-02-2019); the Nepal Health Research Council Ethical Review Board (391/2018); and the AKU Ethical Review Committee (2019-0410-4188) and the Pakistan National Bioethics Committee (4-87/NBC-341-Amend-revised/19/81) in Pakistan.
+Written informed consent was obtained from all participants and from the parents or guardians of participants younger than 18 years at enrollment, with written assent obtained from children aged 15--17 years.
+This secondary analysis used de-identified antibody measurements collected under the original consent and did not require additional consent or a waiver.
+
 ## Results {#sec-ch3-results}
 
 ### Study sites and sample characteristics {#sec-ch3-res-cells}
@@ -2779,6 +2806,11 @@ The cost should grow with more than two biomarkers, because the estimator applie
 And nothing in the derivation is specific to enteric fever, so the same treatment applies to other pathogens and cohorts.
 The discordance reported above is the most interesting thing this chapter found and the thing it is least able to explain. If repeated infection is the cause, the single-infection framework itself, which every likelihood form considered here shares, is the next assumption to examine.
 
+## Funding {.unnumbered}
+
+This research was supported by the Bill & Melinda Gates Foundation, which funded the Surveillance for Enteric Fever in Asia Project (INV-008335) and the ancillary serological study from which these data are drawn (INV-000572).
+The funders had no role in study design, data collection, data analysis, data interpretation, or the writing of this report.
+
 # Conclusion and future work {#sec-closing}
 
 The three chapters describe the same pair of measurements three times, and the descriptions do not
@@ -2867,6 +2899,7 @@ implementation computes the product, and it would deliver three quarters of the 
 requiring any user to accept the correlation result.
 
 {{< pagebreak >}}
+
 # Appendix A — Chapter 1 supporting material {#sec-appA1}
 
 This appendix reproduces the supplementary methods submitted with the chapter 1 manuscript.
