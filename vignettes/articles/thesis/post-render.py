@@ -2,10 +2,17 @@
 """
 Quarto project post-render hook.
 
-WHAT IT DOES.  Runs fix_table_breaks.py over the dissertation, so that a local
-`quarto render` produces the same file CI produces.  Until now the fix existed
-only as the "Keep tables whole" step in render-thesis-vignettes.yaml, so the
-docx on your machine and the docx in the CI artifact differed.
+WHAT IT DOES.  Runs the two post-processing scripts over the dissertation, so
+that a local `quarto render` produces the file that gets filed:
+
+  fix_submission.py   the UC Davis submission mechanics — one w:pPr per
+                      caption, table captions styled as tables, updateFields,
+                      roman preliminary pages and an arabic body, no blank page
+  fix_table_breaks.py cantSplit on every row, so a table or figure and its
+                      caption stay on one page
+
+The CI workflow runs fix_table_breaks.py itself, after this hook has already
+run inside `quarto render`; both scripts are no-ops the second time.
 
 WHY IT IS GUARDED.  _quarto.yml is shared with chapter2.qmd and chapter3.qmd,
 and a post-render hook runs for every render in the project — including
@@ -28,7 +35,7 @@ if not any(Path(line.strip()).name == TARGET for line in outputs.splitlines() if
     sys.exit(0)
 
 here = Path(__file__).resolve().parent
-subprocess.run(
-    [sys.executable, str(here / "fix_table_breaks.py"), str(here / TARGET)],
-    check=True,
-)
+for script in ("fix_submission.py", "fix_table_breaks.py"):
+    subprocess.run(
+        [sys.executable, str(here / script), str(here / TARGET)], check=True
+    )

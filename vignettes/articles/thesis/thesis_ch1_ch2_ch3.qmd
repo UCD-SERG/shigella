@@ -498,7 +498,7 @@ Population-level kinetic trajectories estimated from the best-performing model f
 
 
 ::: {#fig-ch1-pop}
-![](fig/ch1_fig3_population.png){width=100%}
+![](fig/ch1_fig3_population.png){height=6in}
 
 **Population-level antibody kinetic trajectories from the best-performing model for each antigen.** Blue curves show posterior median trajectories; gray ribbons indicate 95% credible intervals derived from the population mean parameters. Thin gray lines represent observed individual antibody trajectories. Panels correspond to IgG (left) and IgA (right) responses for each antigen. **(A)** IpaB, overall model (n=48, blue solid) with age-stratified curves: children <5 years (orange dashed) and children ≥5 years (green dashed). Younger children show lower baselines and more dynamic trajectories, while older children exhibit higher baselines consistent with prior exposure. **(B)** *S. sonnei* OSP, serotype-specific model (n=11). **(C)** *S. flexneri* 2a OSP, serotype-specific model (n=17). **(D)** *S. flexneri* 3a OSP, combined *S. flexneri* model (n=25). **(E)** *S. flexneri* 6 OSP, overall model (n=48). The y-axis is displayed on a log scale.
 :::
