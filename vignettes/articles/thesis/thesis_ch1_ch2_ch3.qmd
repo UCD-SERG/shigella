@@ -131,11 +131,11 @@ that is present and does not produce one when none is there.
 
 Chapter 3 develops a joint likelihood that allows two biomarkers measured on the same participant to
 share an infection time and to draw their kinetic parameters together.
-The established estimator combines biomarkers by adding their log-likelihoods, which treats one
+The established estimator combines biomarkers by adding their log-likelihoods — the product form — which treats one
 participant's two measurements as though they came from two independently infected people.
 Evaluated in simulation across an eightfold range of seroincidence, an interval reported as 95%
-contains the true incidence 89.7% of the time when the two isotype log-likelihoods are summed and
-98.0% under the joint likelihood, so a rate quoted with one-in-twenty confidence carries closer to one error in ten.
+contains the true incidence 89.7% of the time under the product form and 98.0% under the joint
+likelihood, so a rate quoted with one-in-twenty confidence carries closer to one error in ten.
 Applied to serosurveys of 2,613 participants across six sites in three countries, intervals widened
 by 46% on average while the ranking of countries and the high- versus low-endemicity contrasts held,
 and sharing the infection time accounted for three quarters of the widening, requiring no result
@@ -246,8 +246,8 @@ The answer at the seam is that the isotypes are linked, and that the linkage mat
 estimate than for the confidence placed in it. All five kinetic parameters correlate across IgG
 and IgA. Carrying that correlation into the seroincidence likelihood — together with the more basic
 fact that a participant's two measurements come from one infection at one time — leaves the accuracy of the estimated incidence almost unchanged and widens its interval by about a quarter in simulation. That
-widening is not a loss of precision but a correction to it: a nominal 95% interval built the
-current way contains the true incidence 89.7% of the time in simulation, and the joint form restores
+widening is not a loss of precision but a correction to it: a nominal 95% interval built by adding
+log-likelihoods contains the true incidence 89.7% of the time in simulation, and the joint form restores
 calibration. Applied to surveys in three countries, every interval widened and no epidemiological conclusion changed: the ranking of countries and the high- versus low-endemicity contrasts held.
 
 And the two changes are separable, which turns out to matter. Across those surveys the intervals widened by 46% on average, and about three quarters of that widening follows from the shared infection time alone and requires nothing from chapter 2; the correlation supplies the remainder. A reader who is unpersuaded by chapter 2 is therefore not
@@ -1633,6 +1633,8 @@ And individual infection times are the natural next analysis, with the predictio
 This research was supported by the Bill & Melinda Gates Foundation, which funded the Surveillance for Enteric Fever in Asia Project (INV-008335) and the ancillary serological study from which these data are drawn (INV-000572).
 The funders had no role in study design, data collection, data analysis, data interpretation, or the writing of this report.
 
+{{< pagebreak >}}
+
 # From chapter 2 to chapter 3 {#sec-bridge23}
 
 Chapter 2 establishes that a participant's IgG and IgA kinetic parameters are correlated, and
@@ -2798,6 +2800,8 @@ The discordance reported above is the most interesting thing this chapter found 
 This research was supported by the Bill & Melinda Gates Foundation, which funded the Surveillance for Enteric Fever in Asia Project (INV-008335) and the ancillary serological study from which these data are drawn (INV-000572).
 The funders had no role in study design, data collection, data analysis, data interpretation, or the writing of this report.
 
+{{< pagebreak >}}
+
 # Conclusion and future work {#sec-closing}
 
 The three chapters describe the same pair of measurements three times, and the descriptions do not
@@ -2976,6 +2980,8 @@ using prior predictive simulation.
 The Wishart prior here is what chapter 2 cannot use: it is incompatible with Hamiltonian Monte Carlo
 at the dimension the correlated model requires, which is why chapter 2 moves to an LKJ prior with
 log-normal scales (@sec-ch2-est).
+
+{{< pagebreak >}}
 
 # Appendix B — Chapter 2 supporting material {#sec-appA}
 

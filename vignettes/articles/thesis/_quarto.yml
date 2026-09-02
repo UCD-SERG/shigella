@@ -31,6 +31,11 @@ project:
     - thesis_ch1_ch2_ch3.qmd
     - chapter2/chapter2.qmd
     - chapter3/chapter3.qmd
+  # Keeps every table and figure whole on one page. The hook is guarded on
+  # QUARTO_PROJECT_OUTPUT_FILES and touches the dissertation only, so rendering
+  # either manuscript is unaffected. See post-render.py.
+  post-render:
+    - post-render.py
 
 # The chunks read CSVs and build flextables. Nothing here is expensive enough to
 # be worth caching, and a stale freeze would be worse than a rebuild.
