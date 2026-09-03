@@ -145,7 +145,7 @@ Seroprevalence compares the proportion above a threshold between populations, wh
 Methods built on paired sera require two visits per participant.
 Antibody-dynamic methods of the kind used here need only one visit and recover a rate rather than a prevalence, at the cost of depending on a model of the kinetics — which is what makes the fidelity of that model, and of the likelihood built on it, the subject of this chapter.
 
-An estimate that informs decisions of that consequence should be accompanied by an honest account of its uncertainty.
+An estimate that informs decisions of that consequence should be accompanied by a calibrated account of its uncertainty.
 This chapter is about a place where that account is currently too optimistic, and about how much too optimistic it is.
 
 ## Seroincidence estimation from cross-sectional serosurveys {#sec-ch3-gap}
@@ -199,7 +199,7 @@ A statement that an interval reported as 95% covers far less often than that is 
 
 ## Pre-specified analyses {#sec-ch3-honest}
 
-The argument above is a prediction, not a result, and it has failure modes that were specified before anything was run.
+The argument of @sec-ch3-stakes is a prediction, not a result, and it has failure modes that were specified before anything was run.
 
 The conventional diagnostic could disagree.
 The standard way to show that a composite likelihood overstates precision is a cluster-robust (sandwich) standard error with the participant as the cluster [@chandler2007; @ribatet2012].
@@ -213,7 +213,7 @@ And where incidence is low, most specimens sit far along the decay curve, where 
 A correction whose effect is small is still worth making if it is the correct one, and knowing that it is small tells the next study that precision has to come from somewhere else.
 
 The apparent effect could be an artifact of the data, not of the likelihood.
-Two features of these serosurveys could produce a spurious difference between countries: detection limits that differ by laboratory, and age structures that differ by survey arm.
+Detection limits that differ by laboratory and age structures that differ by survey arm could each produce such an artifact.
 Both are examined as pre-specified sensitivity analyses (@sec-ch3-sens) with predictions recorded in advance.
 
 ## The established seroincidence estimator {#sec-ch3-setup}
@@ -316,7 +316,7 @@ It is intended to establish how much the simplification costs, so that a practit
 ## Study population and sample {#sec-ch3-data}
 
 Cross-sectional data come from the population-based serosurveys conducted alongside the SEES case cohorts: high-endemicity and low-endemicity household surveys in each of Bangladesh, Nepal and Pakistan [@aiemjoy2022].
-HlyE IgG and IgA were measured by the same ELISA as in the longitudinal cohorts, so the parameter draws and the specimens they are applied to are on one scale.
+HlyE IgG and IgA were measured by the same enzyme-linked immunosorbent assay (ELISA) as in the longitudinal cohorts, so the parameter draws and the specimens they are applied to are on one scale.
 
 We restricted the analysis to the two population-based survey arms, high- and low-endemicity, which sample the community rather than the case cohorts that provided the kinetic estimates.
 We excluded household members enrolled alongside an index case, whose exposure is that of a household containing a known case rather than that of the community; including them would attach a case's household to a population rate.
@@ -434,8 +434,7 @@ The two assumptions can be stated separately.
 The first is that a participant's biomarkers arise from one infection rather than from separate ones; relaxing the current estimator on this axis requires no result from the kinetics analysis at all.
 The second is that the kinetic parameters of the two isotypes are drawn as a pair, preserving the cross-isotype correlation.
 This is where the kinetics analysis enters, and only here.
-The shared infection time does not depend on it, and this matters for how the chapter's conclusion should be read.
-A reader who is unconvinced by the kinetics analysis still has to accept that a participant has one infection time.
+The shared infection time does not depend on it.
 The design of @sec-ch3-design is built so that the contribution of the shared infection time can be read off separately, and if it is the larger of the two, the main result of this chapter is independent of the previous one.
 
 ## Posterior parameter draws {#sec-ch3-banks}
@@ -507,7 +506,7 @@ $$ {#eq-contrasts}
 
 The comparator is internal for a specific reason.
 It would be more direct to
-compare the joint form against the established implementation, but that comparison is not made.
+compare the joint form against the established implementation, but we did not make that comparison.
 
 The two codebases differ in the noise convention, in the density assumed for time since infection,
 in the handling of the never-infected branch and in the time units.
@@ -601,7 +600,7 @@ We report the grid spacing alongside every interval, because it sets the finest 
 This is the primary evaluation.
 Everything before it establishes that the joint likelihood is correctly implemented; this establishes whether the intervals it produces are the right width.
 
-The design follows the standard for simulation studies [@morris2019]: we report a Monte Carlo standard error for every performance measure, and we fixed what counts as acceptable before running any grid.
+The design follows the standard for simulation studies [@morris2019]: we report a Monte Carlo standard error (MCSE) for every performance measure, and we fixed what counts as acceptable before running any grid.
 
 The simulated sample size is $n=300$, at the lower end of the range the observed sites span — 242 to 596, with a median near 450 (@tbl-cells).
 Evaluating calibration at a sample size no larger than the smaller surveys keeps the assessment from being more favorable than the data the method is applied to.
@@ -796,7 +795,7 @@ out <- data.frame(
 thesis_ft(out, widths = c(1.15, 0.85, 0.55, 1.02, 1.02, 0.86, 0.95))
 ```
 Two features of @tbl-cells bear on the analyses that follow.
-Censoring differs greatly between countries — from 0.2% of IgG measurements in high-endemicity Bangladesh to 59.7% in low-endemicity Pakistan — which is what the detection-limit sensitivity analysis addresses.
+Censoring differs between countries — from 0.2% of IgG measurements in high-endemicity Bangladesh to 59.7% in low-endemicity Pakistan — which is what the detection-limit sensitivity analysis addresses.
 And one site has an age structure unlike the rest: the low-endemicity Pakistan arm is 22.0% aged 26 or over against 0.8% or less elsewhere, and it sits on the low side of the Pakistan endemicity contrast, which is why we re-analyzed that site alone under an age restriction.
 
 A third difference concerns the decay parameters, which @sec-ch3-discussion returns to.
@@ -1119,7 +1118,7 @@ The sandwich estimator did not detect the within-participant dependence that the
 
 The paired draws assign very low probability to a small number of observed pairs, and this does not affect inference.
 Under the joint form the maximized log-likelihood was lower for the paired draws than for the shuffled draws by 697.1, 701.4, 701.7, and 699.4 at nested samples of 10, 20, 30, and 50 participants — a fivefold increase in sample size moved it by 2.3 log units, which is to say it did not move.
-It is a constant, not a per-participant cost: essentially all of it is present in the first ten participants, it does not depend on $\lambda$, and the estimate and interval are therefore unaffected.
+It is a constant, not a per-participant cost: essentially all of it is present in the first ten participants, it does not depend on $\lambda$, and the estimate and interval are therefore unaffected; @sec-appB-offset gives the algebra.
 What it says is that a handful of observed isotype pairs are close to impossible under the pairing the kinetics analysis estimates.
 
 # Discussion {#sec-ch3-discussion}
@@ -1171,18 +1170,18 @@ The joint form is the more accurate of the two at every value of $\lambda$, but 
 An estimator already accurate to within a tenth of the true value cannot be made much more accurate by reordering its likelihood.
 
 What improved was the calibration of the interval.
-A nominal 95% interval built by adding log-likelihoods contains the truth 89.7% of the time; the joint form restores calibration at a constant cost in width.
+The joint form restores calibration at a constant cost in width.
 The correlation does not tell us the incidence more exactly — it tells us how much we did not know.
 
 That is a smaller claim than the one anticipated and a more defensible one.
-An interval is what a surveillance program acts on when it decides whether two settings differ, or whether a rate has changed; a method that reports honest uncertainty is therefore more useful to it than one that reports a slightly different number.
+An interval is what a surveillance program acts on when it decides whether two settings differ, or whether a rate has changed; a method that reports calibrated uncertainty is therefore more useful to it than one that reports a slightly different number.
 
 @eq-two-assumptions separated two changes that the joint form makes together: sharing the infection time, which follows from a participant having had one infection, and pairing the kinetic parameters, which is where the kinetics estimate enters.
 The separation was built into the design so that the contributions could be read off, and the reading is that sharing accounts for 76% of the widening (@tbl-split).
 An independent route to the same contrast, sharing neither code nor data, agrees to within three percentage points (@sec-ch3-res-decomp).
 
-This matters for how the chapter should be read.
-A reader who is unpersuaded by the correlation estimate still has to accept that a participant has one infection time, and three quarters of the effect reported here follows from that alone.
+Three quarters of the correction therefore does not depend on the kinetics analysis at all.
+A reader who is unpersuaded by the correlation estimate still has to accept that a participant has one infection time.
 The dependence between the two chapters is real but partial, and we quantified it rather than asserting it.
 
 The same decomposition can be made at the individual level, and has not been here.
@@ -1197,14 +1196,14 @@ Under data generated from the joint model the two forms differed in bias by less
 Something in the observed data, absent from the simulation, separates them.
 
 The most direct evidence about what that feature is concerns the relationship between the isotypes.
-Real isotype pairs are markedly more discordant than the fitted kinetics imply (@sec-ch3-res-shift), and the same finding accounts for the constant log-likelihood deficit of @sec-ch3-res-sens: for some participants no single parameter draw explains both measurements well.
+Real isotype pairs are more discordant than the fitted kinetics imply (@sec-ch3-res-shift), and the same finding accounts for the constant log-likelihood deficit of @sec-ch3-res-sens: for some participants no single parameter draw explains both measurements well.
 
 We tested one of these directly.
 If repeated infection separates the isotypes, the youngest participants — who have had the least time to accumulate infections — should agree with the model better than the oldest.
-Restricting to participants detected in both isotypes, the correlation among children under five exceeded that among participants aged sixteen and over in one of the three sites where both bands retained enough participants to estimate one (high-endemicity Bangladesh, 0.63 against 0.48), was flat in a second, and ran the other way in the third (low-endemicity Bangladesh, 0.27 against 0.44).
+Restricting to participants detected in both isotypes, the correlation among children under five exceeded that among participants aged sixteen and over in one of the three sites where both bands retained enough participants to estimate one, was flat in a second, and ran the other way in the third.
 
 The test is weak, and weak in a specific way: detection is itself related to age.
-Children under five carry lower concentrations and are censored more often, so the restriction that makes the correlation computable removes 60% to 91% of that band in three of the six sites and leaves it with too few participants to estimate anything.
+Children under five carry lower concentrations and are censored more often, so the restriction that makes the correlation computable removes most of that band in three of the six sites and leaves it with too few participants to estimate anything.
 A stratification that loses most of its youngest participants cannot adjudicate a hypothesis about accumulated exposure, and we report the result as inconclusive rather than as evidence against repeated infection.
 
 Two explanations are consistent with the data and cannot be separated here.
@@ -1236,14 +1235,14 @@ It is, however, expensive to compute, since the shared integral cannot be factor
 Where that cost is prohibitive, the appropriate reporting choice is to state the interval as approximate, not as 95%.
 
 Several extensions follow naturally.
-Age stratification remains the most direct way to separate the two explanations above, but it needs a sample in which the youngest participants are not censored away.
+Age stratification remains the most direct way to separate the two explanations, but it needs a sample in which the youngest participants are not censored away.
 A survey designed for it, or an assay with a lower floor, would give the test the power this one lacked.
 A model with correlated residuals would separate the measurement-level and parameter-level components of concordance, which a single fit cannot.
 Implementing the shared-time form in the established software would close a gap its maintainers have already identified, since the methodology vignette specifies that form while the implementation computes the product.
 And three further extensions follow directly.
 The cost should grow with more than two biomarkers, because the estimator applies the independence assumption more times.
 And nothing in the derivation is specific to enteric fever, so the same treatment applies to other pathogens and cohorts.
-The discordance reported above is the finding this chapter is least able to explain. If repeated infection is the cause, the single-infection framework itself, which every likelihood form considered here shares, is the next assumption to examine.
+The discordance of @sec-ch3-res-shift is the finding this chapter is least able to explain. If repeated infection is the cause, the single-infection framework itself, which every likelihood form considered here shares, is the next assumption to examine.
 
 # Funding {.unnumbered}
 
