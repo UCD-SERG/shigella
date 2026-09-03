@@ -163,9 +163,9 @@ Adding log-likelihoods does increase apparent precision.
 Whether that precision is real depends on whether the terms being added are independent, and a participant's two measurements are not: they come from one person, one infection, and one specimen.
 However long ago that infection occurred, it is a single interval of time, shared by both isotypes.
 
+Both isotypes in this chapter are directed against hemolysin E (HlyE), a pore-forming toxin that *Salmonella* Typhi and Paratyphi A express during human infection and the most immunoreactive antigen identified in confirmed enteric fever.
 What the pair carries that neither marker carries alone is easiest to see for one participant.
 A high IgA response together with a low IgG response points to a more recent exposure than elevated IgA and IgG together: the combination locates the infection in time in a way neither concentration does by itself.
-Both isotypes in this chapter are directed against hemolysin E (HlyE), a pore-forming toxin that Salmonella Typhi and Paratyphi A express during human infection and the most immunoreactive antigen identified in confirmed enteric fever.
 A likelihood that integrates each isotype over its own infection time discards precisely that information, and then reports a narrower interval for having done so.
 
 The software's own simulator gives each participant one infection time and one set of kinetic parameters, and reads both isotypes from that single state.
@@ -316,7 +316,6 @@ It is intended to establish how much the simplification costs, so that a practit
 ## Study population and sample {#sec-ch3-data}
 
 Cross-sectional data come from the population-based serosurveys conducted alongside the SEES case cohorts: high-endemicity and low-endemicity household surveys in each of Bangladesh, Nepal and Pakistan [@aiemjoy2022].
-We measured antibody responses against hemolysin E (HlyE).
 HlyE IgG and IgA were measured by the same ELISA as in the longitudinal cohorts, so the parameter draws and the specimens they are applied to are on one scale.
 
 We restricted the analysis to the two population-based survey arms, high- and low-endemicity, which sample the community rather than the case cohorts that provided the kinetic estimates.
@@ -1253,6 +1252,7 @@ The funders had no role in study design, data collection, data analysis, data in
 
 
 {{< pagebreak >}}
+
 # Supporting material
 
 ## Derivation of the three likelihood formulations {#sec-appB-deriv}
