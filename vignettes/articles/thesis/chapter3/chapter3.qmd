@@ -218,7 +218,7 @@ Both are examined as pre-specified sensitivity analyses (@sec-ch3-sens) with pre
 
 ## The established seroincidence estimator {#sec-ch3-setup}
 
-We used the estimator implemented in `serocalculator` [@serocalculator2025] and followed the notation in its methodology vignette so readers can compare each step directly.
+We describe the estimator implemented in `serocalculator` [@serocalculator2025] and follow the notation in its methodology vignette so readers can compare each step directly.
 
 The model assumes that infections occur randomly over a participant's lifetime according to a Poisson process with rate $\lambda$, the seroconversion rate in infections per person-year, which is the quantity we estimate.
 For a participant of age $a$, the model first distinguishes between participants who have never been infected and those who have been infected at least once.
@@ -1348,7 +1348,7 @@ The first would be a negative result about the applicability of the kinetics ana
 
 Analyses were carried out in R [@rcore2025].
 The earlier kinetics study fitted its models in JAGS [@jags2003; @lee2026shigella]; this analysis uses Stan [@stan2024] throughout.
-Kinetic models use the `serodynamics` package; incidence estimation uses `serocalculator` [@serocalculator2025] for the product likelihood and the joint likelihood implementation developed for this analysis.
+Kinetic models use the `serodynamics` package; incidence estimation uses the product and joint likelihood implementations developed for this analysis; `serocalculator` [@serocalculator2025] is used for the single-biomarker equivalence check and for the reference comparison of @tbl-ref.
 
 A script held under version control produces every quantity we report.
 Two conventions govern the order in which we run those scripts: validation checks precede the production runs they license, and we record pre-specified predictions before the results that test them.
