@@ -448,6 +448,25 @@ a statement about the published package.
 ★ **Test**: every figure in an abstract, introduction, bridge, or discussion must appear
 in the results or an appendix of the same document. A summary may not introduce a number.
 
+### ⚠⚠ Exception — where the generating code lives
+
+★★★ **A missing writer script in this repository is not a finding and must not be
+reported as one.**
+
+Tables and figures in these chapters are produced by scripts that run on the **Mercury
+compute server**, where the model fitting happens. Those scripts are not all mirrored to
+GitHub. The committed CSV under `tab/` is the citable artifact, and the analysis is
+reproducible.
+
+```
+★ In scope    a number in the prose with no CSV and no table behind it
+⚠ Out of scope a CSV that exists and is committed, but whose writer script is not in
+               this repository
+```
+
+★ If you notice the second kind, say nothing. It is expected. Do not trace it, do not
+propose a fix, and do not treat it as a finding.
+
 ## 8.5 [D] ★★★ Every external figure traces to a citation that actually contains it
 
 ⚠⚠ This one has bitten us.
@@ -503,6 +522,7 @@ Dissertation   ★ no limit, but two pages double-spaced is the practical ceilin
 12 repeated result values   figures appearing in both Results and Discussion   [G2.6]
 13 cross-reference integrity  every @ref resolves; every anchor is used
 14 number provenance       every figure in a summary section appears in Results [D]
+                           ⚠ stop at the CSV — do not check for a writer script (§8.4)
 ```
 
 ---
@@ -510,7 +530,9 @@ Dissertation   ★ no limit, but two pages double-spaced is the practical ceilin
 
 # 11. ⚠ What a reviewer must NOT flag
 
-★ These have been decided. Flagging them wastes a round.
+★ These have been decided. Flagging any of them wastes a round.
+
+⚠ The last two were added after a review spent two rounds on them.
 
 | Item | Why it stands |
 |---|---|
@@ -520,6 +542,8 @@ Dissertation   ★ no limit, but two pages double-spaced is the practical ceilin
 | "transmission year" in the seasonality sentence | ★ Names a period, not the estimand |
 | τ rather than T | ★ Deliberate departure from the software, explained in the text |
 | Appendix numbering in the thesis | ✅ Correct there; the issue is the standalone chapter only |
+| A committed CSV whose writer script is not in this repository | ★★ Expected. The scripts run on Mercury. See §8.4 |
+| "A script held under version control produces every quantity we report" | ★ Accurate. The scripts exist and are versioned, just not all on GitHub |
 
 ---
 ---
