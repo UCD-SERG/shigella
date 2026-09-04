@@ -813,7 +813,7 @@ Across all six sites the contrast of @eq-nullcheck was $0.0\%$ to the precision 
 This was recorded as a prediction before the contrasts were computed (@sec-ch3-design); a departure would have indicated that the pairing was entering somewhere it could not legitimately enter, and would have invalidated every other contrast reported below.
 
 The equivalence gate against the established implementation (@eq-valid) passed at $J=1$ after correcting the four errors described in @sec-ch3-valid.
-At $J=2$ the two implementations diverge, and the size of that divergence is why the comparator in this chapter is internal.
+At $J=2$ the two codebases diverge, and the size of that divergence is why the comparator in this chapter is internal.
 
 ```{r}
 #| label: tbl-ref
