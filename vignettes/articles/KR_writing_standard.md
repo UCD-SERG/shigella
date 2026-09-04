@@ -520,9 +520,13 @@ Dissertation   ★ no limit, but two pages double-spaced is the practical ceilin
 10 ambiguous reference      \b(there|above|as noted)\b without a nearby anchor  [D]
 11 numeral at sentence start                                     [G4.6]
 12 repeated result values   figures appearing in both Results and Discussion   [G2.6]
+                            ⚠ strip image attributes first — `{width=90%}` and the
+                            like are markup, not prose. Seven appear in chapter 3
+                            and they will be counted as re-quoted values otherwise
 13 cross-reference integrity  every @ref resolves; every anchor is used
 14 number provenance       every figure in a summary section appears in Results [D]
                            ⚠ stop at the CSV — do not check for a writer script (§8.4)
+                           ⚠ strip image attributes first, as in check 12
 ```
 
 ---
@@ -532,7 +536,7 @@ Dissertation   ★ no limit, but two pages double-spaced is the practical ceilin
 
 ★ These have been decided. Flagging any of them wastes a round.
 
-⚠ The last two were added after a review spent two rounds on them.
+⚠ Rows are added here when a review spends a round on something already decided.
 
 | Item | Why it stands |
 |---|---|
@@ -544,6 +548,11 @@ Dissertation   ★ no limit, but two pages double-spaced is the practical ceilin
 | Appendix numbering in the thesis | ✅ Correct there; the issue is the standalone chapter only |
 | A committed CSV whose writer script is not in this repository | ★★ Expected. The scripts run on Mercury. See §8.4 |
 | "A script held under version control produces every quantity we report" | ★ Accurate. The scripts exist and are versioned, just not all on GitHub |
+| The Discussion's opening restatement of 89.7% and 98.0% | ★ Conventional at the head of a Discussion. §6.2 forbids re-quoting a value without a new comparison; the opening summary is the exception, and the third instance was already cut |
+| "95%" anywhere in the chapter | ★ A nominal coverage level, not a result value. §6.2 does not apply to it |
+| The 25% width cost in the Discussion | ★ Restates the 1.2520 width ratio that Results gives at @sec-ch3-res-width. Same quantity, different form — not a number without provenance |
+| Section anchors defined but never referenced | ★ Deliberate. They cost nothing and make future cross-referencing possible. Check 13's "every anchor is used" applies to equation labels, which consume a number |
+| "The forms below" (§1.6) and "Everything below" (§2.7) | ★ Both point forward a few lines inside their own subsection. §6.3 governs back-references that stand in for a cross-reference, not ordinary forward signposting |
 
 ---
 ---
