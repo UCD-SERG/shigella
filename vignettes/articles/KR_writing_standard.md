@@ -1,7 +1,9 @@
 # Manuscript Writing Standard — SERG dissertation chapters
 
-**Version 2.** Rebuilt from primary sources on 2026-09-04. ⚠ Version 1 carried two
-numeric thresholds that appear in neither source; see §0.4.
+**Version 3.** Rebuilt from primary sources on 2026-09-04, then corrected on the same
+day by a review that used it. ⚠ Version 1 carried two numeric thresholds that appear in
+neither source (§0.4); ⚠ version 2 promoted three targets that cannot hold at once
+(§0.5).
 
 ---
 
@@ -59,13 +61,13 @@ review is not an extrapolation — it is what she asked for.
 
 ## 0.3 ★★★ Measurements are not thresholds
 
-⚠ The guideline sets **exactly three numeric targets**, all in [G8.18]. Everything else
-it says about style is qualitative.
+⚠ The guideline names three numeric targets, all in [G8.18]. ★★ Only the first can be
+treated as a target — see §0.5.
 
 ```
-✅ [G8.18]  average words per sentence  < 25
-✅ [G8.18]  Flesch Reading Ease         > 50
-✅ [G8.18]  Flesch-Kincaid grade level  16–18
+✅ [G8.18]  average words per sentence  < 25       ★ enforce
+⚠ [G8.18]  Flesch Reading Ease         > 50       ★ report only
+⚠ [G8.18]  Flesch-Kincaid grade level  16–18      ★ report only
 ```
 
 ★★ For anything else — passive voice percentage, longest sentence, count of a phrase —
@@ -89,6 +91,56 @@ idea in each. Split complex sentences."* — no count. [G8.18] targets an **aver
 25, not a per-sentence cap.
 
 ★★ Both are removed. What replaces them is in §1.1 and §4.1.
+
+## 0.4a ⚠ Three errors in version 2, corrected here
+
+★ All three were found by a review that used version 2 and checked it against the
+sources rather than against my summary of what had changed.
+
+```
+① I said version 2 added four Kristen comments. ★ It added eight —
+   K8, K11, K13, K23, K26, K27, K33, K34. My check matched verbatim strings and
+   missed the two long replacement passages and two that version 1 had paraphrased.
+
+② I said it added twelve guideline sections. ★ Thirteen — I omitted
+   [G1.4-Sequential], which §6.3 rests on.
+
+③ I said §11 lists eighteen items. ★ It lists fourteen. Eighteen is the count of
+   checks in §10. ⚠ The wrong number reached a review instruction.
+```
+
+★★ **A count in this document is a fact about this document.** ⚠ Verify it against the
+file rather than against a change note.
+
+## 0.5 ⚠⚠ The three [G8.18] targets cannot hold at once
+
+★★★ This was found by a review that applied version 2, not by reading the guideline.
+
+```
+To reach Flesch-Kincaid grade 16 at 23 words per sentence, prose needs about
+1.85 syllables per word. ⚠ At that density Flesch Reading Ease falls below 25 —
+half of target 2.
+
+Conversely, prose that holds Reading Ease above 50 at 23 words per sentence tops
+out near grade 12.
+```
+
+★★ So targets 1 and 2 are jointly reachable; ⚠ target 3 is not reachable with them.
+
+★ Chapter 3 measures 22.9 words per sentence, Reading Ease 38–49, and grade 12–14. It
+sits at the joint optimum of targets 1 and 2. **Its grade level is a consequence of
+meeting the other two, not a defect.**
+
+### ★ How to use them
+
+```
+1  average words per sentence < 25   ★ a target. Report it and treat a miss as a finding
+2  Flesch Reading Ease                ⚠ report the number. Do not grade
+3  Flesch-Kincaid grade level         ⚠ report the number. Do not grade
+```
+
+⚠ And say which syllable counter produced the reading scores. ★ A regex heuristic and a
+hyphenation library can land on opposite sides of 50 for the same text.
 
 ---
 ---
@@ -272,9 +324,16 @@ readership. A term that needs defining for *Lancet Microbe* may be standard in
 *Statistics in Medicine*.
 
 ```
-★ chapter 3 (Lancet Microbe)      define: nominal · accuracy · coverage
+★ chapter 3 (Lancet Microbe)      ★★ define: nominal · accuracy · coverage
+                                  ⚠ Kristen's comment was written ON this manuscript
 ★ chapter 2 (Statistics in Med)   ⚠ these are standard. Defining them is not required
 ```
+
+⚠⚠ **Read the direction carefully.** [K6] was written on chapter 3, for a clinical
+readership. In chapter 3 the definitions **are required**. In chapter 2 they are not.
+
+★ A reviewer working on chapter 3 who finds `nominal` undefined has found a violation.
+A reviewer working on chapter 2 who finds the same thing has not.
 
 ## 2.7 [G5.9] ★★★ One term per object, throughout
 
@@ -752,10 +811,12 @@ Dissertation   ★ no limit. Two pages double-spaced is a practical ceiling
 counts and nothing more.**
 
 ```
-★ SOURCED TARGETS  [G8.18]
- 1  average words per sentence        target < 25
- 2  Flesch Reading Ease               target > 50
- 3  Flesch-Kincaid grade level        target 16–18
+★ SOURCED TARGET  [G8.18] — one only, see §0.5
+ 1  average words per sentence        ★ target < 25
+
+★ REPORTED, NOT GRADED  [G8.18]
+ 2  Flesch Reading Ease               ⚠ report the number and the syllable counter used
+ 3  Flesch-Kincaid grade level        ⚠ report the number. Unreachable alongside 1 and 2
 
 ★ COUNTS — report, do not grade
  4  passive voice %                   (was|were|is|are|been) + past participle
