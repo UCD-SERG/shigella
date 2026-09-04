@@ -150,18 +150,13 @@ A high IgA response together with a low IgG response suggests a more recent expo
 That reading treats the two as separable signals.
 If they are strongly linked at the level of the individual response, it needs qualifying — and the strength of the link is a quantity that can be estimated rather than assumed.
 
-## Choice of study cohort {#sec-ch2-why}
+## What the model requires of the data {#sec-ch2-why}
 
-The model asks each participant's data to identify their own peak height and time to peak, and specimens collected before the peak identify both. **In the *Shigella* cohorts of the earlier kinetics study [@lee2026shigella] that condition is not met**: the first specimen is drawn on day 2 and the population peak for `ipaB` falls at roughly 1.5 days, so the rise is over before enrollment.
-Fitted on those data the correlated model returns a baseline cross-correlation that is bimodal, with modes at $+0.92$ and $-0.89$ whose relative weights change with the initialization, while $\hat R$ within each mode is 1.000–1.001 — a property of the posterior, not a failure of estimation.
-The other four antigens fail the same condition in their own ways: for *S. flexneri* 3a the IgA decay rate sits near zero, leaving the decay correlation unidentified; for *S. sonnei* only 11 participants are serotype-matched, too few for a five-parameter cross-block; and for *S. flexneri* 2a and 6 the peak again precedes the first draw.
-A mode weight that flips with the starting values is not determined by the data, and no amount of tuning removes it.
+The model asks each participant's data to identify their own peak height and time to peak, and specimens collected before the peak identify both.
 
-The Seroepidemiology and Environmental Surveillance for Enteric Fever (SEES) cohorts do not have this problem.
+The Seroepidemiology and Environmental Surveillance for Enteric Fever (SEES) cohorts meet this condition.
 The first specimen comes at a median of six days against a population peak near 22 days, so roughly three quarters of participants contribute at least one observation before the peak, and the timing varies between individuals rather than being fixed by protocol [@aiemjoy2022].
 The rise phase is observed rather than inferred, and we estimate the model on data that can support it.
-
-We retained the *Shigella* cohorts as a limiting case rather than discarding them (@sec-ch2-sens).
 
 ## Objectives {#sec-ch2-aims}
 
@@ -564,14 +559,12 @@ Each sensitivity analysis varies one thing and tests one stated thing (@tbl-ch2-
 #| tbl-cap: |
 #|   **Sensitivity analyses.** Each row varies one thing and leaves the
 #|   rest of the model untouched, so that any change in the estimates is attributable to that
-#|   row alone. The first three address whether the reported correlations are a product of the
-#|   prior, the sampler, or the chain-filtering rule; the last addresses what the design
-#|   can and cannot support.
+#|   row alone. The three address whether the reported correlations are a product of the
+#|   prior, the sampler, or the chain-filtering rule.
 d <- as.data.frame(do.call(rbind, list(
   c("Prior on ρ_c", "scale of the normal prior", "whether the estimates are prior-driven"),
   c("Filter threshold", "50 / 100 / 200 log-density units", "whether the filter drives the result"),
-  c("Initial values", "three dispersed scales", "minor-mode landing frequency and depth"),
-  c("Cohort", "Shigella cohorts of the earlier study", "what the design cannot support; the reason is given in the Introduction")
+  c("Initial values", "three dispersed scales", "minor-mode landing frequency and depth")
 )), stringsAsFactors = FALSE)
 names(d) <- c("analysis", "What is varied", "What it tests")
 thesis_ft(d, widths = c(0.95, 1.85, 3.60))
@@ -616,7 +609,7 @@ participant and points mark specimen collections; concentrations are on a log sc
 The dashed line
 marks day 22, the approximate population time to peak.
 Most participants contribute a specimen
-before it, which is the condition the model of @sec-ch2-hier needs and the *Shigella* schedule of the earlier study [@lee2026shigella] does not meet (@sec-ch2-why); the between-participant spread visible at every time is what
+before it, which is the condition the model of @sec-ch2-hier needs (@sec-ch2-why); the between-participant spread visible at every time is what
 the hierarchical parameters carry.
 :::
 
