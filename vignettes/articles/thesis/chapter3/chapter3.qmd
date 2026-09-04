@@ -609,13 +609,13 @@ Evaluating calibration at a sample size no larger than the smaller surveys keeps
 We then fit both likelihoods to the same simulated dataset and score both intervals.
 
 We wrote the simulator out rather than taking it from the established implementation.
-This is not because the established implementation generates from the product model — it does not, and its documentation is explicit that each individual's biomarkers share one latent infection history — but because its generative model differs from the estimator in other ways, set out below.
-The simulator used here is the estimator run backward, so that the data-generating process and the joint likelihood are the same model stated in two directions.
+This is not because the established implementation generates from the product model — it does not, and its documentation is explicit that each individual's biomarkers share one latent infection history — but because its generative model differs from the estimator it accompanies in other ways, set out below.
+The simulator used here is the joint likelihood run backward, so that the data-generating process and that likelihood are the same model stated in two directions.
 That is what makes the resulting coverage number interpretable; a simulator that did not match would produce a plausible number that meant nothing.
 
 Reading the established implementation's generator also settled a question that had been open.
 It draws infections as a Poisson process across the whole lifetime and sets the baseline of each new response to the level the previous one had decayed to, so antibody accumulates across infections.
-The estimator, by contrast, models a single most-recent infection with a baseline drawn afresh.
+The established implementation's estimator, by contrast, models a single most-recent infection with a baseline drawn afresh.
 The two are not the same model, which is a further reason why neither could serve as a reference for the other, and it bears on the discordance reported in @sec-ch3-res-app.
 
 We validated the simulator before use, against the joint form rather than against the established implementation.
