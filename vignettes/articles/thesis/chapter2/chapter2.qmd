@@ -98,9 +98,9 @@ In practice both come from one specimen, from one person, following one infectio
 
 Existing kinetic models assume that a participant's antibody isotypes respond independently of one another.
 We relaxed that assumption by adding five cross-isotype correlations, one for each kinetic parameter, to the covariance structure of a hierarchical two-phase model, leaving every other component unchanged; setting the five to zero recovers the previous model exactly, so any difference in fit is attributable to them alone.
-We fitted the model to 461 blood-culture-confirmed enteric fever cases from Bangladesh, Nepal, and Pakistan, with HlyE IgG and IgA measured at a median of four visits each over two years.
+We fitted the model to 461 blood-culture-confirmed enteric fever cases from Bangladesh, Nepal, and Pakistan, with hemolysin E (HlyE) IgG and IgA measured at a median of four visits each over two years.
 
-All five correlations excluded zero, with posterior medians from 0.64 to 0.84 and a smallest lower bound of 0.53.
+All five correlations excluded zero, with posterior medians from 0.64 to 0.84 and a smallest lower bound of 0.525.
 The same association is present in the measurements themselves with no model involved, at Spearman correlations of 0.51 to 0.67 across four features that can be read directly from a participant's own series.
 The estimates did not depend on where the sampler started, across a thirtyfold range of initial scales, nor on the prior scale, across a sixfold range.
 A simulation study at the observed sample size confirmed that the estimator recovers a correlation that is present and does not produce one when none is there.
@@ -186,7 +186,7 @@ The independent model is nested inside the correlated one at $\mathbf c=\mathbf 
 ## Study population and sample {#sec-ch2-data}
 
 Participants were drawn from the SEES serological study nested within the Surveillance for Enteric Fever in Asia Project (SEAP), restricted to prospectively enrolled, blood-culture-confirmed cases in Bangladesh, Nepal and Pakistan [@aiemjoy2022].
-Antibody responses to hemolysin E (HlyE) were measured for two isotypes, IgG and IgA, by ELISA at each visit.
+Antibody responses to hemolysin E (HlyE) were measured for two isotypes, IgG and IgA, by enzyme-linked immunosorbent assay (ELISA) at each visit.
 
 We applied three exclusions, each for a reason internal to the model rather than to data quality.
 We excluded retrospectively enrolled participants, whose first specimen is drawn at a median of 131 days with only about 20% sampled before the population peak, so that the rise phase is unobserved and the model reaches the peak parameters only by extrapolating backward.
@@ -239,7 +239,7 @@ The five participant-specific parameters are
 
 $$
 \boldsymbol\theta_{ik}=\big(y_{0,ik},\;y_{1,ik},\;t_{1,ik},\;\alpha_{ik},\;r_{ik}\big),
-$$ {#eq-theta}
+$$
 
 the pre-infection concentration, the peak concentration, the time to peak, the decay rate, and the decay shape.
 
@@ -255,7 +255,7 @@ $$
 $$ {#eq-obs}
 
 with the precision $\tau_k$ estimated alongside everything else.
-This is the observation model of the earlier kinetics study [@lee2026shigella], carried over unchanged.
+@eq-obs is the observation model of the earlier kinetics study [@lee2026shigella], carried over unchanged.
 
 ## Hierarchical model and cross-isotype covariance {#sec-ch2-hier}
 
@@ -378,7 +378,7 @@ It also has a consequence that has to be reported, not discovered: shrinkage tow
 Both appear in @sec-ch2-sim and both have this explanation.
 
 **The decay parameters.** We used a weakly informative prior, and the chapter reports it throughout.
-The decay is the least well identified part of the curve, so a tighter prior would move the estimates more than a tighter prior elsewhere would; keeping it weak is the choice that lets the data speak on the parameter they speak least clearly about.
+The decay is the least well identified part of the curve, so a tighter prior would move the estimates more than a tighter prior elsewhere would; keeping it weak is the choice that lets the data speak on the parameter they speak least about.
 
 **The between-participant scales.** These are tighter than is ideal and are a known limitation, recorded in @sec-ch2-discussion.
 
@@ -514,13 +514,13 @@ The two conditions are:
 #| tbl-cap: |
 #|   **The two simulation conditions.** Both take every population parameter from the same
 #|   correlated-model fit and differ in the cross-block alone: the null sets it to zero,
-#|   and the other takes it from that fit's posterior. Each generates 100 datasets at the
+#|   and the alternative takes it from that fit's posterior. Each generates 100 datasets at the
 #|   observed sample size. The truth against which each is scored is the marginal correlation
 #|   read off the assembled covariance matrix, not the value handed to the simulator, because
 #|   the two are not the same number once the cross-covariances come from a fit.
 d <- as.data.frame(do.call(rbind, list(
   c("Null", "c = 0, everything else from the correlated fit", "0, 0, 0, 0, 0", "Does the estimator produce correlation when none is present?"),
-  c("Correlation present", "c from the correlated fit's posterior", "0.841, 0.645, 0.857, 0.671, 0.658", "Does the estimator recover correlation?")
+  c("Alternative", "c from the correlated fit's posterior", "0.841, 0.645, 0.857, 0.671, 0.658", "Does the estimator recover correlation?")
 )), stringsAsFactors = FALSE)
 names(d) <- c("Condition", "How the truth is built", "Marginal correlations", "Question")
 thesis_ft(d, widths = c(0.83, 1.72, 1.78, 2.07))
@@ -538,10 +538,10 @@ $\boldsymbol\Sigma$. We scored each replicate against those values rather than t
 
 We report four quantities for each parameter, following @morris2019: bias, mean squared error,
 posterior variance and coverage — for the model parameters, not for prediction error.
-We report each with a Monte Carlo standard error.
+We report each with a Monte Carlo standard error (MCSE).
 
 We fixed the decision rule in advance.
-We judged coverage of a nominal 90% interval against $0.90$, using twice the Monte Carlo standard error.
+We judged coverage of a nominal 90% interval against $0.90$, using twice the MCSE.
 A departure smaller than 2 MCSE is not called; one larger is, in whichever direction it
 falls.
 We recorded the rule before running the conditions, and we report it as failing where it fails
@@ -835,7 +835,7 @@ thesis_ft(out, widths = c(1.28, 0.95, 0.81, 0.85, 0.71, 0.95, 0.85))
 ::: {#fig-ch2-cov}
 ![](fig/ch2_fig2_coverage.png){width=100%}
 
-Coverage of a nominal 90% interval for each of the five correlations, under the null condition (left) and the condition with correlation present (right), for the three chain-handling schemes.
+Coverage of a nominal 90% interval for each of the five correlations, under the null (left) and under the alternative (right), for the three chain-handling schemes.
 Bars are Monte Carlo standard errors;
 the dashed line is nominal.
 This panel keeps the five parameters apart rather than pooling them into one
@@ -1003,7 +1003,7 @@ It is reported because it is exact, it agrees in direction with the observation-
 # Discussion {#sec-ch2-discussion}
 
 A participant's two antibody isotypes do not respond independently.
-All five kinetic parameters — the pre-infection level, the peak, the time to peak, and both decay parameters — correlate across IgG and IgA, with posterior medians between 0.64 and 0.84 and lower credible bounds no smaller than 0.53.
+All five kinetic parameters — the pre-infection level, the peak, the time to peak, and both decay parameters — correlate across IgG and IgA, with posterior medians between 0.64 and 0.84 and lower credible bounds no smaller than 0.525.
 
 This is estimated with the smallest extension that can express it: five parameters, one per kinetic feature, with the two within-isotype blocks left exactly as the earlier study had them.
 Setting them to zero returns the previous model identically (@eq-nest), so the comparison attributes any difference to those five and to nothing else.
@@ -1155,7 +1155,7 @@ $$
 $$ {#eq-chol}
 
 where $\mathbf L_G$ and $\mathbf L_{A\mid G}$ are lower triangular with positive diagonal, each built from a positive scale vector and an LKJ Cholesky correlation factor [@lkj2009].
-Any $\mathbf L$ of this shape gives a positive definite $\mathbf L\mathbf L^{\top}$, so @eq-admissible holds automatically and $\mathbf c$ is unconstrained.
+Any $\mathbf L$ of the shape in @eq-chol gives a positive definite $\mathbf L\mathbf L^{\top}$, so @eq-admissible holds automatically and $\mathbf c$ is unconstrained.
 Multiplying out, $\mathbf L_G\mathbf B^{\top}=\operatorname{diag}(\mathbf c)$ exactly, which is the cross-block of @eq-blocks.
 
 Two consequences follow, and both invite misreading.
@@ -1197,7 +1197,7 @@ $$
 m_j=\tfrac12\big[\log(\Omega_{jj}/2)-\psi(s^{*})\big],
 \qquad
 s=\tfrac12\sqrt{\psi'(s^{*})}=0.182,
-$$ {#eq-momentmatch}
+$$
 
 and the implied prior on each correlation matrix by $\mathrm{LKJ}(\eta)$ with
 $\eta=\max\{(\nu-2p+3)/2,\,0.1\}=6.5$. These hyperparameters are the `serodynamics` defaults, which
