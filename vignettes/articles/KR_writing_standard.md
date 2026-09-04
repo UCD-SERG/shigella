@@ -142,6 +142,130 @@ meeting the other two, not a defect.**
 ⚠ And say which syllable counter produced the reading scores. ★ A regex heuristic and a
 hyphenation library can land on opposite sides of 50 for the same text.
 
+## 0.6 ★★★ Applying this to a chapter it was not written from
+
+⚠⚠ **Every [K##] rule in this document was written on chapter 3.** Kristen asked for
+chapter 2 to be revised the same way before she reads it [K33], so the standard governs
+both — ★ but it was derived from one manuscript and does not transfer uniformly.
+
+### ★ Three kinds of rule, and how to tell them apart
+
+```
+UNIVERSAL      ★ The rule is about how prose works, not about this manuscript.
+               Active voice · complete sentences · one term per object ·
+               no new data in the Discussion · cite the primary source.
+               → apply everywhere
+
+JOURNAL-BOUND  ⚠ The rule depends on who reads the journal.
+               Defining nominal, accuracy, coverage · abstract length ·
+               how much statistical shorthand needs unpacking.
+               → ★ check the target journal before applying. §2.6 is the worked case
+
+CHAPTER-BOUND  ⚠⚠ The rule names something only chapter 3 has.
+               τ rather than T · the equations in the introduction ·
+               the seroincidence estimator · the joint likelihood.
+               → ★ has no counterpart elsewhere. Say so; do not stretch it
+```
+
+### ★★ The test, in one question
+
+> ⚠ **Would this rule still make sense if the manuscript were about something else?**
+
+```
+"Use active voice"            → yes. UNIVERSAL
+"Define nominal coverage"     → only for a clinical readership. JOURNAL-BOUND
+"τ rather than T"             → no. CHAPTER-BOUND
+```
+
+### ⚠ What to do when a rule does not transfer
+
+★ **Say so in the review.** Do not stretch it into something adjacent, and do not silently
+skip it.
+
+```
+❌ silently skip           ⚠ I cannot tell whether you checked
+❌ stretch it              ⚠ produces a finding that is not one
+✅ "§8.1 has no counterpart here — chapter 2 does not validate against
+    an existing estimator. Not applicable."
+```
+
+★★ A section in the report listing rules that did not apply, with one line each, is worth
+as much as the findings. ⚠ It tells me the standard is being read rather than pattern-matched.
+
+### ★★★ And when a chapter does the opposite of a rule and is right
+
+⚠ This has already happened once. §2.6 says define `nominal`; chapter 2 uses it nine
+times undefined; ★ that is correct, because [K6] was written for a clinical readership and
+chapter 2 targets *Statistics in Medicine*.
+
+```
+★ Report it as: "chapter 2 does the opposite of §2.6 and I believe that is right,
+  because …" — then let me decide.
+⚠ Do not report it as a violation, and do not leave it out.
+```
+
+### ★★ On "where relevant" — where that came from
+
+★ Kristen's comments were written on chapter 3, and she asked for chapter 2 to be
+revised the same way before she reads it [K33]. ⚠ But the two chapters target different
+journals, so I asked her directly in a meeting whether her comments were meant to apply
+unconditionally.
+
+★★★ **She said they apply where relevant.**
+
+⚠ That exchange is not in the document — it was spoken — so a reviewer cannot verify it
+by reading the comments. ★★ It is nonetheless her instruction, and it is the reason this
+section exists.
+
+★ So the shape of the work is: **chapter 3 is the skeleton, and chapter 2 gets what
+fits.** ⚠ Applying the whole document uniformly to chapter 2 would be doing the opposite
+of what she asked.
+
+## 0.7 ★ What each chapter is
+
+⚠ A reviewer needs this before deciding whether a rule transfers.
+
+| | chapter 1 | chapter 2 | chapter 3 |
+|---|---|---|---|
+| Target | PLOS NTD | **Statistics in Medicine** | Lancet Microbe |
+| Readership | clinical / global health | ★ **statistical** | clinical / global health |
+| Pathogen | *Shigella* | enteric fever | enteric fever |
+| Design | longitudinal, 48 cases | longitudinal, 461 cases | cross-sectional, 2,613 |
+| What it does | antibody kinetics | ★ cross-isotype correlation | seroincidence estimation |
+| Status | ⚠ **submitted** — out of scope | in revision | ★ closed |
+
+★★ **Chapter 1 is a submitted manuscript.** ⚠ If something in chapter 2 or 3 looks
+inconsistent with it, that is a QUESTION, not a finding.
+
+★ Chapter 2 additionally reports a *Shigella* limitation case that chapter 3 does not.
+⚠ Its numbers are attributed to chapter 1; a reviewer cannot verify them from chapter 2
+alone and should say so rather than assuming.
+
+### ★★ What "different journals" means in practice
+
+⚠ *Statistics in Medicine* and *Lancet Microbe* want different prose, and several rules
+in this document read differently under each.
+
+```
+                        Lancet Microbe (ch1, ch3)      Statistics in Medicine (ch2)
+statistical shorthand   ★ define it                    ⚠ standard — do not define
+notation                sparing, ★ explained in words  ★ expected, carries the argument
+equations in text       ⚠ justify each one             ★ ordinary
+"nominal", "coverage"   ★ define                       ⚠ defining reads as padding
+audience                clinicians, epidemiologists    ★ statisticians
+```
+
+★★★ **A rule that improves chapter 3 can flatten chapter 2.** ⚠ Explaining a standard
+statistical term to a statistical readership is not clarity; it is condescension, and a
+reviewer at that journal will read it as authors who are unsure of their audience.
+
+### ⚠ The same applies in reverse
+
+★ Chapter 2 may carry notation and derivation that chapter 3 would have to justify.
+⚠ A rule that asks for a concept before its notation [§7.2] still holds — Kristen wrote
+that about readability, not about hiding mathematics — but **how much explanation counts
+as enough differs between the two readerships.**
+
 ---
 ---
 
@@ -864,6 +988,11 @@ splits long ones**, which understates both the average length and the passive fr
 
 ★ These have been decided. Flagging any of them wastes a round.
 
+⚠⚠ **Most of these were decided about chapter 3.** ★ If you find the same pattern in
+another chapter and think the decision should not carry across, raise it as a QUESTION
+rather than treating it as either a finding or as settled. ★★ The two marked *both* apply
+everywhere.
+
 | Item | Why it stands |
 |---|---|
 | Equations in the introduction of chapter 3 | ★ [K25] required it. Overrides [G3.2] |
@@ -872,8 +1001,8 @@ splits long ones**, which understates both the average length and the passive fr
 | "transmission year" in the seasonality sentence | ★ Names a period, not the estimand |
 | τ rather than T | ★ Deliberate departure from the software, explained in the text |
 | Appendix numbering in the thesis | ✅ Correct there; the issue is the standalone chapter |
-| A committed CSV whose writer script is not in this repository | ★★ Expected. See §8.5 |
-| "A script held under version control produces every quantity we report" | ★ Accurate. The scripts exist and are versioned, just not all on GitHub |
+| A committed CSV whose writer script is not in this repository | ★★ **both** — Expected. See §8.5 |
+| "A script held under version control produces every quantity we report" | ★ **both** — Accurate. The scripts exist and are versioned, just not all on GitHub |
 | `nominal`, `accuracy`, `coverage` undefined in chapter 2 | ★★ Standard in Statistics in Medicine. [K6] was written for a clinical readership |
 | The Discussion's opening restatement of a headline result | ★ Conventional. §6.2 |
 | "95%" as a nominal coverage level | ★ Not a result value |
@@ -897,10 +1026,15 @@ For each finding:
 
 Then, separately:
 
-  MEASUREMENTS — the numbers from §10, with the three sourced targets marked
-  OPINIONS     — things you would write differently that violate no rule
-  QUESTIONS    — things you could not resolve from the document
+  MEASUREMENTS  — the numbers from §10, with the one sourced target marked
+  NOT APPLICABLE — ★ rules that do not transfer to this chapter, one line each (§0.6)
+  OPINIONS      — things you would write differently that violate no rule
+  QUESTIONS     — things you could not resolve from the document
 ```
+
+★★ **NOT APPLICABLE is not optional.** ⚠ A standard derived from one manuscript will
+have rules that do not reach another, and a review that omits them looks the same as one
+that missed them.
 
 ⚠ **Do not mix them.** A MUST buried among opinions gets missed.
 
