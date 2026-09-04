@@ -292,7 +292,7 @@ We added five parameters, not twenty-five.
 A cohort of 461 participants cannot inform a full cross-block, so we restricted it to its diagonal.
 A full cross-block would ask those participants to inform 25 additional covariances, most of which correspond to questions nobody has posed — whether one isotype's peak height relates to the other's time to peak.
 The diagonal restriction asks only the question that motivates the chapter, which is whether a kinetic feature in one isotype travels with the same feature in the other.
-It is a modeling choice, and @sec-ch2-sens revisits it.
+It is a modeling choice.
 
 The five correlations need no admissibility constraint, and the sampler explores them unconstrained.
 We never assemble and factor $\boldsymbol\Sigma_{\text{ch2}}$; instead we build it from a Cholesky factor that is positive definite for every $\mathbf c$; the construction, and the distinction between the conditional and marginal IgA blocks that it introduces, are in @sec-appA-chol.
