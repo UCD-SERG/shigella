@@ -435,7 +435,7 @@ The first is that a participant's biomarkers arise from one infection rather tha
 The second is that the kinetic parameters of the two isotypes are drawn as a pair, preserving the cross-isotype correlation.
 This is where the kinetics analysis enters, and only here.
 The shared infection time does not depend on it.
-The design of @sec-ch3-design is built so that the contribution of the shared infection time can be read off separately, and if it is the larger of the two, the main result of this chapter is independent of the previous one.
+The design of @sec-ch3-design is built so that the contribution of the shared infection time can be read off separately, and if that contribution is the larger of the two, the main result of this chapter is independent of the previous one.
 
 ## Posterior parameter draws {#sec-ch3-banks}
 
@@ -675,8 +675,6 @@ Two are pre-specified, and both are *internal* comparisons — between the two l
 
 The first is the ranking of countries by incidence under the product form, and whether the joint form preserves it.
 The second is the contrast between the high- and low-endemicity arms within each country, and whether the intervals separate under both forms.
-
-A wider interval that preserves both is a different result from one that destroys either, and the distinction is the point of the application.
 
 We used no external benchmark.
 It would be natural to compare these estimates against previously published seroincidence figures from the same surveillance program.
@@ -1170,14 +1168,14 @@ The joint form is the more accurate of the two at every value of $\lambda$, but 
 An estimator already accurate to within a tenth of the true value cannot be made much more accurate by reordering its likelihood.
 
 What improved was the calibration of the interval.
-The joint form restores calibration at a constant cost in width.
+The joint form restores it at a constant cost in width.
 The correlation does not tell us the incidence more exactly — it tells us how much we did not know.
 
 That is a smaller claim than the one anticipated and a more defensible one.
 An interval is what a surveillance program acts on when it decides whether two settings differ, or whether a rate has changed; a method that reports calibrated uncertainty is therefore more useful to it than one that reports a slightly different number.
 
 @eq-two-assumptions separated two changes that the joint form makes together: sharing the infection time, which follows from a participant having had one infection, and pairing the kinetic parameters, which is where the kinetics estimate enters.
-The separation was built into the design so that the contributions could be read off, and the reading is that sharing accounts for 76% of the widening (@tbl-split).
+The separation was built into the design so that the contributions could be read off, and the reading is that sharing accounts for 76% of the correction (@tbl-split).
 An independent route to the same contrast, sharing neither code nor data, agrees to within three percentage points (@sec-ch3-res-decomp).
 
 Three quarters of the correction therefore does not depend on the kinetics analysis at all.
@@ -1198,15 +1196,15 @@ Something in the observed data, absent from the simulation, separates them.
 The most direct evidence about what that feature is concerns the relationship between the isotypes.
 Real isotype pairs are more discordant than the fitted kinetics imply (@sec-ch3-res-shift), and the same finding accounts for the constant log-likelihood deficit of @sec-ch3-res-sens: for some participants no single parameter draw explains both measurements well.
 
-We tested one of these directly.
+Two explanations could account for it, and we tested one directly.
 If repeated infection separates the isotypes, the youngest participants — who have had the least time to accumulate infections — should agree with the model better than the oldest.
 Restricting to participants detected in both isotypes, the correlation among children under five exceeded that among participants aged sixteen and over in one of the three sites where both bands retained enough participants to estimate one, was flat in a second, and ran the other way in the third.
 
 The test is weak, and weak in a specific way: detection is itself related to age.
-Children under five carry lower concentrations and are censored more often, so the restriction that makes the correlation computable removes most of that band in three of the six sites and leaves it with too few participants to estimate anything.
+Children under five carry lower concentrations and are censored more often, so the restriction that makes the correlation computable removes the greater part of that band in three of the six sites and leaves it with too few participants to estimate anything.
 A stratification that loses most of its youngest participants cannot adjudicate a hypothesis about accumulated exposure, and we report the result as inconclusive rather than as evidence against repeated infection.
 
-Two explanations are consistent with the data and cannot be separated here.
+Both remain consistent with the data, and this chapter cannot separate them.
 
 **Repeated infection.** The model describes one most-recent infection.
 In these settings participants have had several, and IgG accumulates across them while IgA reflects mainly the most recent exposure [@aiemjoy2022repeat] — which decouples the two.
