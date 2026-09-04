@@ -1,100 +1,193 @@
 # Manuscript Writing Standard — SERG dissertation chapters
 
-**Sources**
-1. Kristen Aiemjoy's 34 review comments on `chapter3_v1_Kristen_reviewed.docx` (2026-08-26)
-2. Luby S, Southern D. *A Guide to Quantitative Writing in the Health Sciences* (2022) —
-   the reference Kristen named in comments #17 and #32
+**Version 2.** Rebuilt from primary sources on 2026-09-04. ⚠ Version 1 carried two
+numeric thresholds that appear in neither source; see §0.4.
 
-**Scope** — chapter1.qmd, chapter2.qmd, chapter3.qmd, and the thesis-only sections of
-thesis_ch1_ch2_ch3.qmd.
+---
 
-⚠ This document is written to be handed to a reviewer, human or automated, as the
-standard against which a draft is checked. Every rule below traces to a source. Where
-the two sources conflict, §0.2 says which wins.
+## Sources, and what I actually read
+
+```
+[K##]  Kristen Aiemjoy's review comments on chapter3_v1_Kristen_reviewed.docx
+       ★ 34 comments, read verbatim from word/comments.xml
+
+[G#.#] Luby S, Southern D. The Pathway to Publishing: A Guide to Quantitative Writing
+       in the Health Sciences. Springer, 2022. 188 pp.
+       ★ Section numbers verified against the table of contents.
+       ⚠ Sections quoted below were read in full. Sections cited without a quotation
+         were located but not read end to end, and are marked ⚠ unread.
+
+[D]    Derived by us. ★ Every one says what it was derived from and why.
+```
+
+⚠ **A rule with no tag is an opinion.** Opinions go in a separate list.
+
+## ⚠ Scope — Kristen asked for both chapters
+
+> *"please do the same for chapter 2 as well before i review"* [K33]
+
+★★ Her comments were written on chapter 3, but she asked for chapter 2 to be revised
+the same way **before she reviews it**. ⚠ So this standard governs both, and a chapter 2
+review is not an extrapolation — it is what she asked for.
+
+★ Where a rule does not transfer, §2.6 and §11 say so.
 
 ---
 
 # 0. How to use this
 
-## 0.1 Rules are numbered by origin
-
-```
-[K##]  Kristen's comment number
-[G#.#] Guideline section number
-[D]    Derived — follows from both, or from a decision we made
-```
-
-★ When reporting a violation, cite the tag. A finding with no tag is an opinion, and
-opinions go in a separate list.
-
-## 0.2 ⚠ Precedence when the two sources disagree
+## 0.1 Precedence
 
 ```
 ★★★ Kristen's explicit instruction wins over a general guideline principle.
 ```
 
-**Worked example.** [G3.2] says avoid lengthy background in the introduction. [K25] says
-"previous method goes in background." Following [K25] put four equations in the
-introduction of chapter 3. ★ That is correct as it stands. The guideline yields.
+**Worked example.** [G3.2] separates the roles of Introduction and Methods. [K25] says
+*"previous method goes in background, new methods go in methods section."* Following
+[K25] put four equations in chapter 3's introduction. ★ That is correct as it stands.
 
-⚠ A reviewer must not flag the equations-in-introduction as a violation.
+⚠ A reviewer must not flag it.
 
-## 0.3 What a review should and should not do
+## 0.2 What a review does
 
 ```
 ★ Report        rule violated · location · the text · a concrete replacement
 ⚠ Do not        rewrite silently · improve prose that violates nothing ·
-                flag style preferences as violations
+                report a measurement as a violation when the source sets no threshold
 ★★ Separate     "violates a rule" from "I would have written it differently"
 ```
+
+## 0.3 ★★★ Measurements are not thresholds
+
+⚠ The guideline sets **exactly three numeric targets**, all in [G8.18]. Everything else
+it says about style is qualitative.
+
+```
+✅ [G8.18]  average words per sentence  < 25
+✅ [G8.18]  Flesch Reading Ease         > 50
+✅ [G8.18]  Flesch-Kincaid grade level  16–18
+```
+
+★★ For anything else — passive voice percentage, longest sentence, count of a phrase —
+**measure it and report the number, then point at the sentences.** ⚠ Do not call a
+percentage a violation.
+
+## 0.4 ⚠⚠ Two errors in version 1, corrected here
+
+### ★ "passive voice under 25% of sentences"
+
+⚠ **Not in either source.** [G5.3] gives no percentage at all — see §1.1, which now
+quotes it. The number 25 was taken from [G8.18], where it is the target for **average
+words per sentence**, a different quantity. Version 1 also stated that chapter 3's
+measured 23.4% *"is the standard, not an aspiration"*, ★ which converted an observation
+into a rule.
+
+### ★ "sentences under 40 words"
+
+⚠ **Not in either source.** [G1.4-Short] says *"Use short sentences containing only one
+idea in each. Split complex sentences."* — no count. [G8.18] targets an **average** below
+25, not a per-sentence cap.
+
+★★ Both are removed. What replaces them is in §1.1 and §4.1.
 
 ---
 ---
 
 # 1. Voice and person
 
-## 1.1 [K16][K32][G1.4-Strong] Active voice
+## 1.1 [K16][K32][G5.3][G1.4-Strong] ★★ Active voice — with the exceptions the source names
 
-⚠ Kristen's overall verdict on v1: *"reads like a stream of consciousness. Rewrite in
-clear active scientific voice."*
+⚠ Kristen's verdict on v1, verbatim:
+
+> *"this reads like train of thought. try to use clear active voice scientific writing"* [K16]
+
+> *"I would like you to use ACTIVE scientific voice and a general-to-specific structure,
+> consistent with The Pathway to Publishing"* [K32]
+
+★ And [G1.4-Strong]:
+
+> *"Use the verb as the center of gravity of your sentence. If the verb is weak, the
+> sentence is weak. For example, instead of 'we did an interview,' write 'we
+> interviewed.' Use active voice instead of passive."*
+
+### ⚠⚠ But [G5.3] explicitly permits passive, and names when
+
+> *"Although passive voice is used in many scientific articles, **especially in the
+> methods section**, active voice is increasingly common."*
+
+> *"**When to Use Passive Voice** — It is not always an error to use passive voice.
+> Passive voice is particularly useful, even recommended, in two situations:*
+> *1. When it is more important to draw our attention to the person or thing acted upon*
+> *2. When the actor in the situation is not important: Passive voice is especially
+> helpful in scientific or technical writing or laboratory reports where the process or
+> principle being described is of ultimate importance."*
+
+### ★★★ So the rule is
 
 ```
-★ Target      passive constructions under 25% of sentences
-★ Measure     count "was/were/is/are + past participle"
+★ Where you can say the same thing either way, choose active.       [G5.3]
+★ Methods sections legitimately carry more passive.                 [G5.3]
+⚠ Report the percentage. ★ Do not call it a violation.              [D, from §0.3]
+★ Point at specific sentences where active would have served.
 ```
 
-**Before / after from v2:**
+★ The test [G5.3] gives is not a ratio:
+
+> *"its imprecisions risks conveying that the authors are **unwilling to specify who took
+> the action**."*
+
+⚠ **That** is what to look for — a passive that hides an actor who matters.
+
+### ★★ Kristen wrote a replacement sentence, verbatim [K26]
+
+> *"again use active voice throughout the manuscript: **We used the estimator implemented
+> in serocalculator and followed the notation in its methodology vignette so readers can
+> compare each step directly.**"*
+
+⚠ Note what happened to that sentence afterwards. [K1] forbids claiming validation
+against a method whose limits you are showing, and the chapter's own body says the
+comparator is internal. So the verb had to change again — *"We describe the estimator
+implemented in serocalculator…"* — because §1.5 exists to describe the prior method
+rather than to report running it.
+
+★★★ **Two of Kristen's comments can pull in different directions.** When they do, the
+one about the claim wins over the one about the voice.
+
+### ★ Reference measurements
+
 ```
-before  "The likelihood was evaluated across a grid of λ."
-after   "We evaluated the likelihood across a grid of λ."
+chapter 3 v1  37.2%   ⚠ Kristen: "reads like train of thought"
+chapter 3 v2  24.0%   ★ Kristen has not seen it
+chapter 2     26.8%
 ```
 
-★ v1 → v2 moved from 37.2% passive to 23.4%. ⚠ That is the standard, not an aspiration.
+⚠ ★ These are context, not targets.
 
 ## 1.2 [G5.4] ★★★ "We" must be attributable
 
-⚠ The guideline forbids attributing work to "we" when it was done by people not on the
-author line.
+★ Verbatim:
 
-**Violation found in chapter 3 v2:**
-```
-"★ We measured HlyE IgG and IgA by the same ELISA…"
-```
-⚠ The next sentence says the laboratories did it.
+> *"Work that is conducted by fieldworkers or other members of the team who are not on
+> the author line should not be attributed to the authors."*
+>
+> *✗ We interviewed households at baseline* → *✓ Trained enumerators interviewed
+> households at baseline*
+
+★★ In these chapters that means:
 
 ```
-★ Fix     "HlyE IgG and IgA were measured by the same ELISA at the study laboratories"
-★★ Rule   Field and laboratory work performed by study staff takes passive voice or
-          names the actor. Analysis performed by the authors takes "we".
+✅ "We evaluated the likelihood across a grid"        analysis, authors did it
+✅ "Antibody responses were measured by ELISA"        laboratory, staff did it
+⚠ "We measured HlyE IgG and IgA"                      ★ violation
 ```
 
 ## 1.3 [D] ★★ No first person singular
 
-⚠ These are multi-author manuscripts.
+⚠ Derived from [G5.4]: these are multi-author manuscripts, and "my" names one.
 
 ```
-Violation found:  "a second version of my own code"
-Fix:              "a second implementation written for this analysis"
+Found in chapter 3 v2:  "a second version of my own code"
+Fixed to:               "a second implementation written for this analysis"
 ```
 
 ★ Scan for `\bmy\b`, `\bI\b`, `\bmine\b` outside quotations.
@@ -106,64 +199,102 @@ Fix:              "a second implementation written for this analysis"
 
 ## 2.1 [K2] ★★ Name the quantity you estimate
 
+⚠ Verbatim: *"we measure infection rate not transmission"*
+
 ```
 ❌ transmission · transmission intensity · force of infection
 ✅ seroincidence · infection rate
 ```
 
-⚠ Kristen: *"we are not measuring transmission, we are measuring the infection rate."*
+★ "transmission year" naming a period is acceptable — it is not the estimand.
 
-★ One survivor is acceptable — "transmission year" in a seasonality context — because it
-names a period, not the estimand.
+## 2.2 [K30][K34][G6.5] ★★★ Do not invent labels
 
-## 2.2 [K30] ★★★ Do not invent terms
+⚠ Kristen, twice:
 
-⚠ Kristen: *"why 'bank'? Use a standard term, or define it clearly on first use."*
+> *"I still don't understand why we are using the new term 'bank' can we use standard
+> terminology or else the concept/terminology needs to be clearly introduced at first
+> use"* [K30]
+
+> *"what is arm S? rather than infecting new nomenclature can we describe what each
+> thing is"* [K34]
+
+> *"use epidemiology terms 'study sites' not 'cells'"* [K22]
+
+★ And [G6.5] names the mechanism:
+
+> *"Study teams commonly develop some study-specific vocabulary, for example, Group A
+> and Group B and Phase 1 and Phase 2. The study team becomes so familiar with these
+> labels and their underlying characteristics that they use these labels in everyday
+> conversation within the study team."*
 
 ```
 ❌ bank · parameter bank · arm S · cells
-✅ posterior parameter draws · paired draws · independent draws · shuffled draws
-✅ study sites
+✅ posterior parameter draws · paired draws · independent draws · study sites
 ```
 
 ★ **Test**: if a term appears in no paper you cite, either drop it or define it in the
 sentence where it first appears.
 
-## 2.3 [K18][K4] ★★ Expand every abbreviation on first use — **in each document part**
+## 2.3 [K4][K18][G4.1] ★★ Expand every abbreviation on first use — in each document part
 
-⚠⚠ The abstract and the body are read independently. A journal indexes the abstract on
-its own.
+⚠ Kristen: *"this acronym will be for abstract readers"* [K4] and *"sell out accronym at
+fist use"* [K18]
 
-```
-Violation found:  SEES expanded in the abstract, undefined at its first body use
-Fix:              expand in both
-```
+★★ The abstract and the body are read independently; a journal indexes the abstract on
+its own. **Expand in both.**
 
-★ Same for HlyE, MFI, ELISA, STROBE.
+★ Applies to: SEES, SEAP, HlyE, MFI, ELISA, MCSE, STROBE, LPS.
 
 ## 2.4 [K12] ★★ Introduce the antigen before you use it
 
-```
-Violation found:  HlyE first used in §1.6; defined in §2.1, ~4,500 characters later
-```
+⚠ Verbatim: *"introduce the antigens / hlye"*
 
-★ Definition goes where the reader first meets the word.
+★ The definition goes where the reader first meets the word, not four sections later.
 
 ## 2.5 [K31] ★ Say which analysis you mean
 
+⚠ Verbatim: *"'companion anlalysis' is vague do you mean the longitudinal model you
+estimate in chapter 2?"*
+
 ```
 ❌ the companion analysis · the other paper
-✅ the kinetics analysis of chapter 2  (first mention)
-✅ the kinetics analysis                (thereafter)
+✅ the kinetics analysis of chapter 2   (first mention)
+✅ the kinetics analysis                 (thereafter)
 ```
 
-⚠ In the integrated dissertation, "chapter 2" is the right anchor. ★ When the chapter
-separates for journal submission, replace it with the citation.
+## 2.6 [K6] ★ Define statistical shorthand before using it
 
-## 2.6 [K5] ★ Define statistical shorthand before using it
+⚠ Verbatim: *"how is accuracy defined here?"*
+
+⚠⚠ **This one is journal-dependent.** Kristen's comment is on a manuscript for a clinical
+readership. A term that needs defining for *Lancet Microbe* may be standard in
+*Statistics in Medicine*.
 
 ```
-"nominal"  →  define once: "an interval constructed to have 95% coverage"
+★ chapter 3 (Lancet Microbe)      define: nominal · accuracy · coverage
+★ chapter 2 (Statistics in Med)   ⚠ these are standard. Defining them is not required
+```
+
+## 2.7 [G5.9] ★★★ One term per object, throughout
+
+★ Verbatim:
+
+> *"To avoid mind-numbing repetition, authors commonly vary word choice and style
+> throughout the manuscript. Although such variation can engage readers, **if it is
+> applied to scientific terms, it risks confusing readers.**"*
+>
+> *✓ Define the term injury … in the methods section. Use the term injury consistently
+> throughout the manuscript.*
+
+★★ This is the rule behind chapter 2's null/alternative problem: nine phrasings for one
+condition, none of them the standard pair.
+
+```
+★ Define the pair once, where the design is stated.
+★ Use it in prose thereafter.
+⚠ Figure and table labels may stay descriptive — a legend has no preceding sentence
+  to carry the definition.
 ```
 
 ---
@@ -171,21 +302,26 @@ separates for journal submission, replace it with the citation.
 
 # 3. Structure
 
-## 3.1 [K15][K32] ★★ Standard informative headings
+## 3.1 [K15][K32] ★★ Informative section headings
 
-⚠ Kristen: *"use manuscript-style informative section headings."*
+⚠ Verbatim: *"use manuscript/informative section headings"* [K15]
 
-```
-❌ "What remains" · "The seam this opens" · conversational headings
-✅ noun phrases naming the content
-✅ Kristen accepted: "Study population and sampling" · "Measurement and detection limits"
-```
+★ And [K32] gives examples of both kinds:
+
+> *"Several current headings read like a train of thought rather than section headings,
+> for example 'Two more arrangements of the same integral,' 'Two assumptions, not one,'
+> and 'The shortfall is width, not location.' Please use headings that tell the reader
+> what the section is about in a formal, scientific way, such as **'Alternative
+> likelihood formulations,' 'Decomposition of independence assumptions,' or 'Coverage
+> and interval calibration.'**"*
 
 ## 3.2 [G5.6] ★ No sub-headings in the Discussion
 
-★ chapter 3 v2 complies. ⚠ Keep it that way.
+⚠ unread. Section located at p. 71.
 
 ## 3.3 [K25][G3.2] ★★★ IMRAD role separation
+
+⚠ Kristen: *"previous method goes in background, new methods go in methods section"*
 
 ```
 Introduction  ★ the existing method, what it assumes, why the assumption matters
@@ -194,103 +330,130 @@ Results       numbers, no interpretation
 Discussion    interpretation, no new numbers
 ```
 
-⚠ **See §0.2** — [K25] permits equations in the introduction when they describe the
-existing method. That is not a violation.
+★ **See §0.1** — [K25] permits equations in the introduction when they describe the
+existing method.
 
 ## 3.4 [K19][G4.13] ★★★ No numbered or bulleted lists
 
-⚠ Absolute. v1 had 15+; v2 has zero.
+⚠ Verbatim: *"dont use numbered/bulleted list"*
 
-```
-★ Convert every list to prose. Three items become one sentence with semicolons or
-  a short paragraph.
-```
+★ Absolute. Convert every list to prose.
 
 ## 3.5 [K20][K21] ★ Participant flow as a figure, per STROBE
+
+⚠ Verbatim: *"use a flow diagram instead and this can be included as figure 1 of the
+manuscript (as per STROBE guidelines)"* [K20] and *"replace with flow diagram / figure
+1"* [K21]
 
 ```
 ❌ a table of exclusions
 ✅ a flow diagram
 ```
 
-⚠ Kristen asked for it as Figure 1. ★ In chapter 3 it is Figure 2, behind the assumption
-schematic. **That is an open question with her, not a settled violation.**
+⚠ Chapter 2 has it as Figure 1. Chapter 3 has it as Figure 2, behind an assumption
+schematic. ★ That difference is open with Kristen, not a settled violation.
 
-## 3.6 [D] ★★ Appendix numbering must not collide
+## 3.6 [G3.8] ★★★ No new data in the Discussion
+
+★ Verbatim:
+
+> *"The role of the discussion is to tell the reader what the authors believe the results
+> mean. It is a violation of the standard IMRAD format …"*
+
+⚠ unread beyond this sentence.
+
+★★ This is the rule behind chapter 3's age-stratified correlation: the Discussion
+reported four values that appeared nowhere in Results.
+
+## 3.7 [D] ★★ Appendix numbering must not collide
+
+⚠ Derived from a rendering fault, not from either source.
 
 ```
-Violation found:  "# Supporting material {.unnumbered}" with level-2 children
-                  → children inherit the previous numbered section and render 4.1–4.4,
-                    which reads as a subsection of "4 Discussion"
-Fix:              number the parent
+"# Supporting material {.unnumbered}" with level-2 children
+  → children inherit the previous numbered section and render 4.1–4.4,
+    reading as subsections of "4 Discussion"
+★ Fix: number the parent
 ```
 
 ⚠ In the thesis this does not arise — the appendices are numbered top-level sections
-there. ★ A reviewer must check which document it is looking at.
+there. ★ Check which document you are looking at.
 
 ---
 ---
 
 # 4. Sentences
 
-## 4.1 [G1.4-Short] ★★ One idea per sentence
+## 4.1 [G1.4-Short][G8.18] ★★ One idea per sentence
+
+★ Verbatim [G1.4-Short]:
+
+> *"Use short sentences containing only one idea in each. Split complex sentences. Cut
+> unnecessary information elements and only include those data that relate to the point
+> of your paper. … Remember, 'if it's only nice to know, it ought to go.'"*
+
+★★★ And the one measurable target, verbatim [G8.18]:
+
+> *"1. Average words per sentence should be <25. Strive to be concise."*
 
 ```
-★ Target   under 40 words
-⚠ chapter 3 v2: 74 sentences (17%) exceed it
+✅ Measure    average words per sentence — ★ target < 25
+⚠ Do not     apply a per-sentence word cap. Neither source sets one.
+★ Report     the longest sentences and whether each carries more than one idea
 ```
 
-**Longest offender and its fix:**
-```
-before  "The estimator has been validated against blood-culture surveillance in these
-         same populations, where the rank ordering of seroincidence across countries
-         agreed with the rank ordering of culture-confirmed incidence, and it is that
-         agreement — not the level of any single estimate — that the field relies on
-         when it uses seroincidence to compare places." (52 words)
+⚠ **A 45-word sentence carrying one idea is not a violation.** A 30-word sentence
+carrying three is.
 
-after   "The estimator has been validated against blood-culture surveillance in these
-         same populations. The rank ordering of seroincidence across countries agreed
-         with the rank ordering of culture-confirmed incidence. It is that agreement,
-         not the level of any single estimate, that the field relies on when it uses
-         seroincidence to compare places."
-```
+## 4.2 [G8.18] ★ Readability, measurable
 
-## 4.2 [K22] ★ Complete sentences only
+> *"2. Readability: (a) Flesch Reading Ease on a scale of 1–100. … Strive for >50.
+> (a) Flesch-Kincaid Grade level … Target a grade level of 16–18."*
+
+⚠ These are the only other numbers either source gives. ★ Report them.
+
+## 4.3 [K23] ★ Complete sentences only
+
+⚠ Verbatim: *"awkward transition/incomplete sentence"*
 
 ```
 ❌ "What remains."  ·  "Nothing else departs."
-✅ "The final analysis sample comprised 2,613 participants."
 ```
 
-## 4.3 [K29][K32] ★★★ No conversational asides
+## 4.4 [K32] ★★★ No conversational asides
 
-⚠ Kristen flagged four by name in v1: *"Nothing else departs"* · *"the change is not
-cosmetic"* · *"the whole content of the chapter"* · *"that statement as a picture"*.
+⚠ Verbatim, and this is the fullest statement of the problem Kristen had:
 
-★★ **What they have in common**: each is vague or refers to the writing rather than to
-the science. That is the test — **not** whether a sentence sounds informal.
+> *"In many sections, the chapter reads more like an internal technical memo than a
+> dissertation chapter written for a scientific audience. Phrases such as **'nothing else
+> departs,' 'the change is not cosmetic,' 'the whole content of the chapter,' and 'that
+> statement as a picture'** feel conversational or defensive, and they do not help orient
+> the reader."*
 
-```
-❌ "the check costs seconds"                    → vague about cost
-❌ "That comparison is not made anywhere"        → evasive passive
-❌ "This matters more than a generic reassurance would."  → asserts its own importance
-```
-
-⚠⚠ **A concrete, checkable statement is not a violation even if it is vivid.**
+★★★ **What those four share**: each is vague, or refers to the writing rather than to
+the science. ⚠ That is the test — **not** whether a sentence sounds informal.
 
 ```
-✅ KEEP  "An interval can be widened by anyone. Multiplying it by two makes it wider
-          without making it right."
+❌ "the check costs seconds"                             vague about cost
+❌ "That comparison is not made anywhere in this chapter"  evasive passive
+❌ "This matters more than a generic reassurance would"    asserts its own importance
+✅ "Multiplying it by two makes it wider without making it right"
+   ★ specific, checkable, carries the argument. Keep it.
 ```
-★ This is specific, verifiable, and carries the chapter's argument. Flattening it loses
-content.
 
-## 4.4 [G4.5][G4.6] ★ Numerals
+## 4.5 [K32] ★★ Paragraphs open with the message
 
-```
-★ Numbers under ten in words, except with units
-★ Never begin a sentence with a numeral
-```
+★ Verbatim:
+
+> *"Each paragraph should generally begin with the main message or interpretation,
+> followed by the supporting technical detail. Right now, many paragraphs begin with
+> notation, implementation details, or algebraic distinctions, and the main point only
+> becomes clear later."*
+
+## 4.6 [G4.5][G4.6] ★ Numerals
+
+⚠ unread. [G4.5] "Failure to Spell Out an Isolated Numeral < 10", [G4.6] "Starting a
+Sentence with a Numeral".
 
 ---
 ---
@@ -299,10 +462,16 @@ content.
 
 ## 5.1 [G5.5] ★★★ No psychological or subjective framing
 
-⚠ The guideline forbids "interesting", "surprising", "striking", and any statement of
-the authors' reaction.
+★ Verbatim:
 
-**Violations found in chapter 3 v2:**
+> *"What interests or surprises people varies and often depends upon their personal
+> experiences … when you are writing a scientific manuscript, you should focus on the
+> ideas relevant to the issues examined in your study and the consistency of ideas and
+> theories with available evidence."*
+>
+> *✗ We were surprised to find that people admitted to using alcohol …*
+
+★★ Found and fixed in chapter 3 v2:
 
 | before | after |
 |---|---|
@@ -311,25 +480,31 @@ the authors' reaction.
 | the **honest** reporting choice | the appropriate reporting choice |
 | the kind that **does not announce itself** | the error is not self-evident in the output |
 
-★★★ The first of these matters most. ⚠ Kristen said the same thing out loud about the
-same result: *"I wouldn't say it's the most interesting finding, because it's not quite
-a finding. We don't really know what it is yet."*
+⚠⚠ The first mattered most. Kristen said the same thing aloud about the same result:
+*"I wouldn't say it's the most interesting finding, because it's not quite a finding."*
 
-## 5.2 [G1.4-Specific] ★ No subjective intensifiers
+## 5.2 [G1.4-Specific][G6.3] ★ No subjective intensifiers
+
+★ Verbatim [G1.4-Specific]:
+
+> *"Don't use qualifiers, which are imprecise and judgmental. Avoid words such as 'very,'
+> 'rather,' or 'much.' Choose adjectives carefully. Don't use adjectives that imply
+> subjectivity and/or emotion, for example, 'It was a very large outbreak.' **What does
+> very mean? How big is large?**"*
 
 ```
-❌ striking · remarkable · dramatic · surprisingly · notably · clearly
+❌ striking · remarkable · dramatic · surprisingly · notably · clearly · greatly · markedly
 ★ If the number is large, the number says so.
 ```
 
 ## 5.3 [D] ★★ State what you did not do, plainly
 
+⚠ Derived from [G5.3]'s test — passive that hides an actor.
+
 ```
 ❌ "That comparison is not made anywhere in this chapter."
 ✅ "We did not make that comparison."
 ```
-
-⚠ Passive avoidance reads as concealment. ★ Owning it reads as care.
 
 ---
 ---
@@ -338,72 +513,96 @@ a finding. We don't really know what it is yet."*
 
 ## 6.1 [G2.6] ★★★ Say it once
 
-**Violation found:** detection-limit handling appears in §1.5, §2.1, and §4.2.
+⚠ [G2.6] "Repeating Information", p. 39. ⚠ unread in full, but [G2.3.1] gives the
+adjacent principle verbatim:
 
-⚠ Kristen's comment [K24] was *"move it up"*, which is not *"put it in three places"*.
+> *"Best practice is to refer to a prior article that provided details and then offer a
+> succinct summary."*
+
+★★ Applied within a document: **refer to the section that has the detail, then summarize.**
+
+⚠ Found in chapter 3 v2: detection-limit handling appeared in §1.5, §2.1 and §4.2.
+[K24] said *"this is part of the general method, can be moved above"* — ★ which is not
+"put it in three places."
+
+## 6.2 [G3.8][D] ★★ The Discussion may name a result, not re-quote its value
+
+⚠ Derived from [G3.8]. ★ The exception: an opening restatement at the head of a
+Discussion is conventional and helps a reader who has not read the Results.
+
+## 6.3 [D] ★★ Cross-references replace backward pointers
+
+⚠ Derived from [G1.4-Sequential]:
+
+> *"Take the reader by the hand through the sequence of thoughts, step-by-step, without
+> any leaps or missing links."*
 
 ```
-★ Keep    the general statement where the method is first described
-★ Keep    the specific statement where equations need it
-⚠ Delete  the third
-```
-
-## 6.2 [G2.6] ★★ The Discussion does not restate Results numbers
-
-```
-Violation found:  89.7% and 98.0% appear in Results and again in Discussion
-                  46% appears three times
-```
-
-★ **Rule**: the Discussion may name a result. It may not re-quote its value unless the
-comparison is new.
-
-## 6.3 [D] ⚠ Cross-references replace repetition
-
-```
-❌ "for the reason given there"          ← ambiguous antecedent
-✅ "@sec-ch3-methods"                     ← a reference resolves
+❌ "for the reason given there"          ambiguous antecedent
+✅ "@sec-ch3-methods"                     a reference resolves
 ```
 
 ★ **Test**: if "there", "above", or "as noted" cannot be replaced by a section anchor,
-the sentence is unclear.
+the sentence is unclear. ⚠ A pointer to a few lines up inside the same subsection is
+ordinary signposting and is fine.
 
 ---
 ---
 
 # 7. Equations and notation
 
-## 7.1 [K14] ★★ Do not quote source text; summarize and show the equation
+## 7.1 [K14] ★★ Summarize the source; show the equation
 
-⚠ Kristen: *"summarize rather than quote directly, and show it as an equation."*
+⚠ Verbatim: *"i dont think you need to quote the description verbatim - instead you can
+summarize and possibly show the math"*
 
 ## 7.2 [K28] ★★★ Concept before notation
 
-⚠ Kristen on the τ paragraph: *"hard to follow. Put the concept before the notation,
-delete 'atom', and cut or move the t/τ and p/f symbol discussion."*
+⚠ Verbatim, and this is the most detailed instruction Kristen gave:
+
+> *"I found this paragraph hard to understand, and I think the issue is **not just wording
+> but structure.** The reader needs a clear explanation of the modeling idea **before the
+> notation.** Please revise to explain first that, in the serosurvey, the infection date
+> is unknown and some participants may never have been infected, so time since infection
+> is treated as a latent variable and integrated over. Avoid technical shorthand like
+> 'an atom at never infected' unless you define it in plain language. The discussion of
+> symbol choices (t vs. τ, p vs. f) feels distracting here and **should be shortened or
+> moved out of the main text.**"*
 
 ```
 ★ Order   what the quantity means  →  the symbol for it  →  the equation
 ❌        symbol  →  definition  →  meaning
 ```
 
+⚠ Note *"shortened **or** moved"* — shortening satisfies it.
+
+### ★★ And she wrote the replacement herself [K27]
+
+> *"The model assumes that infections occur randomly over a participant's lifetime
+> according to a Poisson process with rate λ, the seroconversion rate in infections per
+> person-year. For a participant of age a, the model first distinguishes between
+> participants who have never been infected and those who have been infected at least
+> once. Among participants who have been infected, τ denotes the time since the most
+> recent infection and follows a truncated exponential distribution."*
+
+★★★ Read the order she used: **the assumption in words → the rate and its units → the
+two cases → then τ.** The symbol arrives last and only after the reader knows what it
+measures.
+
+⚠ ★ This paragraph is the clearest single statement of what [K28] and [K32] are asking
+for. When a passage is hard to follow, compare it to this one.
+
 ## 7.3 [D] ★★ Notation must match across documents
 
-```
-★ chapter 3 uses τ, and explains why it departs from the software's T
-⚠ Slides and the thesis must use τ too
-```
-
-★ **Test**: pick three symbols and grep every document that discusses them.
+⚠ Derived. ★ chapter 3 uses τ and explains why it departs from the software's T; the
+slides and the thesis must use τ too.
 
 ## 7.4 [D] ⚠ LaTeX renders
 
-```
-Violation found:  "$ ho_c$"  ← backslash lost from \rho
-```
+⚠ Derived from a defect found in chapter 3 v2: `$ ho_c$`, a lost backslash.
 
-★ **Automated check**: search for `$ ` followed by a Greek letter name — `ho`, `ambda`,
-`heta`, `au`, `igma`, `lpha`, `eta`, `elta` — with no preceding backslash.
+★ Search for `$ ` followed by a Greek letter name with no preceding backslash — `ho`,
+`ambda`, `heta`, `au`, `igma`, `lpha`, `eta`, `elta`.
 
 ---
 ---
@@ -412,7 +611,7 @@ Violation found:  "$ ho_c$"  ← backslash lost from \rho
 
 ## 8.1 [K1] ★★★ Do not claim validation against a method whose limits you are showing
 
-⚠ Kristen: *"how can you validate against the existing method when we know its
+⚠ Verbatim: *"how can it be validated against current use when we know current use has
 limitations?"*
 
 ```
@@ -421,59 +620,45 @@ limitations?"*
     is measured"
 ```
 
-★★ **Same rule elsewhere**: a coverage figure computed with your own product form is not
-a statement about the published package.
-
-```
-❌ "89.7% under the established estimator"
-✅ "89.7% when the two isotype log-likelihoods are summed"
-✅ "89.7% under the product form"
-```
+★★ Same rule elsewhere: a coverage figure computed with your own product form is not a
+statement about the published package.
 
 ## 8.2 [K3] ★★ Assumptions before you relax them
 
-```
-★ Order   state the assumption  →  say you relax it  →  show what changes
-```
+⚠ Verbatim: *"the assumptions need to be described first before sayign that they are
+relaxed"*
 
-## 8.3 [K6] ★ Define every performance term
+## 8.3 [K9] ★ The longitudinal model comes first
 
-```
-"accuracy"  →  "relative root mean squared error"
-"coverage"  →  "the proportion of intervals containing the true value"
-```
+⚠ Verbatim: *"the base longitudinal model needs to be describe first"*
 
-## 8.4 [D] ⚠ Every number traces to a source in the same document
+## 8.3a [K13] ★★ Describe the prior method's own combination rule
 
-★ **Test**: every figure in an abstract, introduction, bridge, or discussion must appear
-in the results or an appendix of the same document. A summary may not introduce a number.
+⚠ Verbatim: *"now describe how serocalculator combines information from multiple
+biomarkers"*
 
-### ⚠⚠ Exception — where the generating code lives
+★★ This is the comment that put four equations in chapter 3's introduction. Kristen did
+not ask for a citation to the software; she asked for the combination rule to be
+**written out**, so the reader can see what the new method changes.
 
-★★★ **A missing writer script in this repository is not a finding and must not be
-reported as one.**
+★ Paired with [K3] and [K25], the order is: state the existing rule → state what it
+assumes → then relax it.
 
-Tables and figures in these chapters are produced by scripts that run on the **Mercury
-compute server**, where the model fitting happens. Those scripts are not all mirrored to
-GitHub. The committed CSV under `tab/` is the citable artifact, and the analysis is
-reproducible.
+## 8.4 [G2.2.1][G2.3.1] ★★★ Cite the primary source, and check it says what you say
 
-```
-★ In scope    a number in the prose with no CSV and no table behind it
-⚠ Out of scope a CSV that exists and is committed, but whose writer script is not in
-               this repository
-```
+★ Verbatim [G2.3.1]:
 
-★ If you notice the second kind, say nothing. It is expected. Do not trace it, do not
-propose a fix, and do not treat it as a finding.
+> *"In this form of the error, the author cites an article that cites the original
+> observation. Standard scientific practice is to cite the primary observation. It is a
+> flagrant error if you cite an article that makes a similar point to the argument you
+> want to make in your article, and the article that you are citing perhaps, in its
+> introduction, cites the primary articles."*
 
-## 8.5 [D] ★★★ Every external figure traces to a citation that actually contains it
-
-⚠⚠ This one has bitten us.
+⚠⚠ **This has bitten us.**
 
 ```
-Violation found:  "an estimated 200 million episodes of shigellosis annually
-                   [@kotloff2013gems; @troeger2018]"
+Found:  "an estimated 200 million episodes of shigellosis annually
+         [@kotloff2013gems; @troeger2018]"
 
 ★ Kotloff 2013 is a seven-site case-control study — it cannot produce a global count
 ★ Khalil & Troeger 2018 reports deaths and per-1000 rates, not a global episode total
@@ -481,53 +666,135 @@ Violation found:  "an estimated 200 million episodes of shigellosis annually
 ```
 
 ★ **Rule**: before citing a figure, confirm the cited paper states that figure. A
-plausible number in a review that cites the paper is not the same thing.
+plausible number in a review that cites the paper is a secondary source.
+
+## 8.5 [D] ⚠ Every number traces to a source in the same document
+
+⚠ Derived from [G3.8].
+
+★ **Test**: every figure in an abstract, introduction, bridge, or discussion must appear
+in the results or an appendix of the same document.
+
+### ⚠⚠ Exception — where the generating code lives
+
+★★★ **A missing writer script in this repository is not a finding.**
+
+Tables and figures are produced by scripts that run on the **Mercury compute server**,
+which are not all mirrored to GitHub. The committed CSV under `tab/` is the citable
+artifact and the analysis is reproducible.
+
+```
+★ In scope     a number in the prose with no CSV and no table behind it
+⚠ Out of scope a CSV that exists and is committed, but whose writer script is not here
+```
+
+## 8.6 [G7.3][G7.4] ★★ Decimal places, and where rounding changes a claim
+
+⚠ unread. ★ But the distinction we needed is [D]:
+
+```
+✅ Descriptive rounding   median 0.639 → "0.64"        ★ fine
+⚠ Boundary claims        lower bound 0.525 → "0.53"   ★★ changes the fact
+                         "no smaller than 0.53" is false when 0.525 is in the table
+```
 
 ---
 ---
 
 # 9. Abstract
 
-## 9.1 [K7] ★ Name both diseases in the first sentence
-## 9.2 [K9] ★★ The longitudinal model comes before the estimator that uses it
-## 9.3 [K10] ★ Say how participants were selected
-## 9.4 [K4] ★★ Expand abbreviations — the abstract stands alone
-## 9.5 [D] ⚠ Length
+⚠ Kristen wrote replacement text for two abstract passages. ★ Both are quoted here
+because the wording is hers, and changing it is a question for her rather than a
+decision for us.
+
+## 9.1 [K7] ★ Name both diseases
+
+⚠ Verbatim: *"enteric fever should be mentioned somewhere"*
+
+★ Note what this does **not** say: it does not ask for typhoid and paratyphoid to be
+listed separately.
+
+## 9.2 [K8] ★★ Kristen's replacement opening, verbatim
+
+> *"Cross-sectional serosurveys can estimate the seroincidence rate of enteric fever by
+> leveraging antibody decay dynamics estimated from confirmed cases. These methods
+> recover the same rank-order burden as blood-culture-based clinical incidence
+> estimates, while requiring a fraction of the time, cost, and infrastructure. The
+> established estimator combines biomarkers by adding their log-likelihoods, which
+> treats one participant's two measurements as though they came from two independently
+> infected people."*
+
+## 9.3 [K11] ★★ Kristen's replacement closing, verbatim
+
+> *"Seroincidence remains a useful, lower-cost approach for ranking enteric fever burden
+> and supporting vaccine-prioritization decisions, but when multiple biomarkers are
+> combined, the current method likely reports uncertainty that is too narrow."*
+
+## 9.4 [K10] ★ Say how participants were selected
+
+⚠ Verbatim: *"randomly selected population"*
+
+## 9.5 [K4] ★★ The abstract stands alone — expand abbreviations there too
+
+## 9.6 [G8.8][D] ⚠ Length
 
 ```
-Journal        under 300 words, or the journal's limit
-Dissertation   ★ no limit, but two pages double-spaced is the practical ceiling
+Journal        the journal's limit — Lancet Microbe and Stat Med differ
+Dissertation   ★ no limit. Two pages double-spaced is a practical ceiling
 ```
 
 ---
 ---
 
-# 10. Automated checks a reviewer can run
+# 10. Automated checks
 
-★ These need no judgment. Run them first.
+★ These need no judgment. ⚠ Numbers 1, 2 and 3 have sourced targets; **the rest report
+counts and nothing more.**
 
 ```
-1  passive voice %          (was|were|is|are|been) + past participle ÷ sentences
-2  "we" count               and whether any is unattributable  [G5.4]
-3  first person singular    \bmy\b  \bI\b  \bmine\b            [D]
-4  lists                    ^\s*[-*+]  or  ^\s*\d+[.)]          [G4.13]
-5  sentence length          count over 40 words                 [G1.4]
-6  subjective words         interesting|striking|surprising|remarkable|honest|
-                            notably|clearly|obviously            [G5.5]
-7  banned terms             transmission intensity|bank|arm S|cells|companion  [K2][K30][K31]
-8  broken LaTeX             \$\s+(ho|ambda|heta|au|igma|lpha|eta|elta)\b        [D]
-9  undefined abbreviations  every all-caps token; is it expanded before first use? [K18]
-10 ambiguous reference      \b(there|above|as noted)\b without a nearby anchor  [D]
-11 numeral at sentence start                                     [G4.6]
-12 repeated result values   figures appearing in both Results and Discussion   [G2.6]
-                            ⚠ strip image attributes first — `{width=90%}` and the
-                            like are markup, not prose. Seven appear in chapter 3
-                            and they will be counted as re-quoted values otherwise
-13 cross-reference integrity  every @ref resolves; every anchor is used
-14 number provenance       every figure in a summary section appears in Results [D]
-                           ⚠ stop at the CSV — do not check for a writer script (§8.4)
-                           ⚠ strip image attributes first, as in check 12
+★ SOURCED TARGETS  [G8.18]
+ 1  average words per sentence        target < 25
+ 2  Flesch Reading Ease               target > 50
+ 3  Flesch-Kincaid grade level        target 16–18
+
+★ COUNTS — report, do not grade
+ 4  passive voice %                   (was|were|is|are|been) + past participle
+                                      ⚠ no threshold exists. Point at sentences where
+                                      an actor is hidden [G5.3]
+ 5  longest sentences                 report the top ten and whether each has one idea
+ 6  "we" instances                    and whether any is unattributable  [G5.4]
+ 7  first person singular             \bmy\b  \bI\b  \bmine\b
+ 8  lists                             ^\s*[-*+]  or  ^\s*\d+[.)]   [G4.13] — zero
+ 9  subjective words                  interesting|striking|surprising|remarkable|honest|
+                                      notably|clearly|greatly|markedly|very|rather|much
+10  retired terms                     transmission intensity|bank|arm S|cells|companion
+11  broken LaTeX                      \$\s+(ho|ambda|heta|au|igma|lpha|eta|elta)\b
+12  undefined abbreviations           every all-caps token; expanded before first use?
+                                      ⚠ check the abstract separately  [K4]
+13  ambiguous back-references         \b(there|above|as noted)\b without a nearby anchor
+14  numeral at sentence start         [G4.6]
+15  repeated result values            figures in both Results and Discussion  [G3.8]
+                                      ⚠ strip image attributes first — {width=90%} is
+                                      markup, not prose
+16  cross-reference integrity         every @ref resolves; every equation label is cited
+17  number provenance                 every figure in a summary section appears in
+                                      Results  ⚠ stop at the CSV (§8.5)
+18  one term per object               list every phrasing used for each key condition
+                                      [G5.9]
 ```
+
+## ⚠ On sentence segmentation
+
+★ A `.qmd` wraps sentences across lines. **A line-based splitter overcounts sentences and
+splits long ones**, which understates both the average length and the passive fraction.
+
+```
+★ Correct rule  a prose line ending in terminal punctuation closes a sentence;
+                otherwise it continues to the next line
+⚠ Skip          code fences, YAML, #| options, table rows, equation displays
+```
+
+⚠ Chapter 3 measured 667 sentences under the naive rule and 532 under the correct one.
 
 ---
 ---
@@ -536,23 +803,22 @@ Dissertation   ★ no limit, but two pages double-spaced is the practical ceilin
 
 ★ These have been decided. Flagging any of them wastes a round.
 
-⚠ Rows are added here when a review spends a round on something already decided.
-
 | Item | Why it stands |
 |---|---|
 | Equations in the introduction of chapter 3 | ★ [K25] required it. Overrides [G3.2] |
 | "Multiplying it by two makes it wider without making it right" | ★★ Concrete and checkable. Carries the argument |
-| Figure 2 as the flow diagram | ⚠ Open with Kristen, not a settled violation |
+| Figure 2 as chapter 3's flow diagram | ⚠ Open with Kristen, not a settled violation |
 | "transmission year" in the seasonality sentence | ★ Names a period, not the estimand |
 | τ rather than T | ★ Deliberate departure from the software, explained in the text |
-| Appendix numbering in the thesis | ✅ Correct there; the issue is the standalone chapter only |
-| A committed CSV whose writer script is not in this repository | ★★ Expected. The scripts run on Mercury. See §8.4 |
+| Appendix numbering in the thesis | ✅ Correct there; the issue is the standalone chapter |
+| A committed CSV whose writer script is not in this repository | ★★ Expected. See §8.5 |
 | "A script held under version control produces every quantity we report" | ★ Accurate. The scripts exist and are versioned, just not all on GitHub |
-| The Discussion's opening restatement of 89.7% and 98.0% | ★ Conventional at the head of a Discussion. §6.2 forbids re-quoting a value without a new comparison; the opening summary is the exception, and the third instance was already cut |
-| "95%" anywhere in the chapter | ★ A nominal coverage level, not a result value. §6.2 does not apply to it |
-| The 25% width cost in the Discussion | ★ Restates the 1.2520 width ratio that Results gives at @sec-ch3-res-width. Same quantity, different form — not a number without provenance |
-| Section anchors defined but never referenced | ★ Deliberate. They cost nothing and make future cross-referencing possible. Check 13's "every anchor is used" applies to equation labels, which consume a number |
-| "The forms below" (§1.6) and "Everything below" (§2.7) | ★ Both point forward a few lines inside their own subsection. §6.3 governs back-references that stand in for a cross-reference, not ordinary forward signposting |
+| `nominal`, `accuracy`, `coverage` undefined in chapter 2 | ★★ Standard in Statistics in Medicine. [K6] was written for a clinical readership |
+| The Discussion's opening restatement of a headline result | ★ Conventional. §6.2 |
+| "95%" as a nominal coverage level | ★ Not a result value |
+| Section anchors defined but never referenced | ★ Deliberate. Equation labels are different — those consume a number |
+| Forward signposting inside a subsection | ★ "The forms below", "Everything below" — ordinary, not §6.3 |
+| chapter 2 names SEAP, chapter 3 does not | ★ Follows the two designs. To be checked once both sit in the dissertation |
 
 ---
 ---
@@ -563,21 +829,46 @@ Dissertation   ★ no limit, but two pages double-spaced is the practical ceilin
 For each finding:
 
   [tag]  section · line
-  rule   one sentence
+  rule   one sentence, ★ with the source's own words if short enough
   found  the exact text
   fix    the exact replacement
   grade  MUST / SHOULD / CONSIDER
 
 Then, separately:
 
-  OPINIONS  — things you would write differently that violate no rule
-  QUESTIONS — things you could not resolve from the document
+  MEASUREMENTS — the numbers from §10, with the three sourced targets marked
+  OPINIONS     — things you would write differently that violate no rule
+  QUESTIONS    — things you could not resolve from the document
 ```
 
-⚠ **Do not mix the three.** A MUST buried among opinions gets missed.
+⚠ **Do not mix them.** A MUST buried among opinions gets missed.
 
 ★★ And state what you could not check:
 
 > *"I could not verify the burden figures because I did not read the cited papers."*
 
 ⚠ Silence about an unchecked item reads as a pass.
+
+---
+---
+
+# 13. ⚠ Rules whose source I have not read in full
+
+★ Recorded so nobody mistakes a located section for a read one.
+
+```
+[G3.2]  Confusing the Role of Introduction, Methods, Results and Discussion   p.42
+[G3.8]  Presenting New Data in the Discussion — ★ first sentence read only    p.55
+[G4.1]  Using Nonstandard Acronyms                                            p.65
+[G4.5]  Failure to Spell Out an Isolated Numeral < 10                         p.68
+[G4.6]  Starting a Sentence with a Numeral                                    p.68
+[G4.13] Using Bulleted Lists Rather Than Sentences                            p.72
+[G5.6]  Using Excessive Subheadings in the Discussion                         p.71
+[G6.3]  Using Adjectives and Qualifiers                                       p.74
+[G6.5]  Using Nondescriptive Numeric or Alphabetical Labels — ★ opening read  p.83
+[G7.3]  Using Too Many Decimal Places                                         p.98
+[G7.4]  Using Too Few Decimal Places                                          p.98
+[G8.8]  Exceeding the Journal Word Limit                                      p.112
+```
+
+⚠ If a review turns on one of these, ★ read the section before deciding.
