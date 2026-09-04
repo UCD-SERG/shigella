@@ -97,7 +97,7 @@ The established estimator combines biomarkers by adding their log-likelihoods, w
 The established estimator makes two assumptions that we relax: that a participant's biomarkers arise from separate infections, and that their kinetic parameters are drawn independently of one another.
 We derived a joint likelihood in which the biomarkers share one infection time and their kinetic parameters are drawn together, and we verified that it reproduces the established estimator when only one biomarker is measured.
 We evaluated the coverage of both in a simulation study spanning an eightfold range of seroincidence, and separated the two assumptions so that each contribution could be measured.
-We applied all three forms to the Surveillance for Enteric Fever in Asia (SEES) cross-sectional serosurveys, covering 2,613 participants in Bangladesh, Nepal, and Pakistan.
+We applied all three forms to the Seroepidemiology and Environmental Surveillance for Enteric Fever (SEES) cross-sectional serosurveys, covering 2,613 participants in Bangladesh, Nepal, and Pakistan.
 
 An interval constructed to have 95% coverage contained the true seroincidence 89.7% of the time when built by adding log-likelihoods; the joint form restored coverage to 98.0%, at a cost in width of about a quarter that held across the range of seroincidence examined.
 The two forms recovered the true seroincidence with almost the same error: relative root mean squared error was 10.16% for the product form and 9.53% for the joint form.
@@ -306,7 +306,7 @@ follows takes the stated model as the starting point and asks what else follows 
 We derived a joint likelihood in which the infection time is shared between isotypes and the kinetic parameters are paired, separating the two assumptions so that their contributions can be attributed individually (@eq-two-assumptions).
 Because no joint likelihood exists in the available software, we implemented it and verified that it reproduces the established estimator in the single-biomarker case, where the two forms are the same integral and must agree exactly.
 We then evaluated coverage on simulated cross-sectional data with known $\lambda$, across a range of seroincidence chosen to span the observed settings, reporting coverage, interval width, and bias for both likelihoods.
-Finally we applied the forms to the cross-sectional serosurveys of the Surveillance for Enteric Fever in Asia (SEES) study in three countries, crossing the likelihood form with the parameter draws so that the paired and independent draws of @sec-ch3-banks enter without any additional model fitting, and asked whether the epidemiological conclusions — the ranking of countries and the contrast between high- and low-endemicity arms — survive.
+Finally we applied the forms to the cross-sectional serosurveys of the Seroepidemiology and Environmental Surveillance for Enteric Fever (SEES) study in three countries, crossing the likelihood form with the parameter draws so that the paired and independent draws of @sec-ch3-banks enter without any additional model fitting, and asked whether the epidemiological conclusions — the ranking of countries and the contrast between high- and low-endemicity arms — survive.
 
 The correction is not intended to displace the existing method.
 It is intended to establish how much the simplification costs, so that a practitioner combining isotypes knows whether the resulting interval can be taken at face value — and, if the cost is small, can continue to use the faster calculation knowing what has been checked.

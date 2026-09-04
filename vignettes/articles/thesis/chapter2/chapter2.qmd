@@ -157,7 +157,7 @@ Fitted on those data the correlated model returns a baseline cross-correlation t
 The other four antigens fail the same condition in their own ways: for *S. flexneri* 3a the IgA decay rate sits near zero, leaving the decay correlation unidentified; for *S. sonnei* only 11 participants are serotype-matched, too few for a five-parameter cross-block; and for *S. flexneri* 2a and 6 the peak again precedes the first draw.
 A mode weight that flips with the starting values is not determined by the data, and no amount of tuning removes it.
 
-The Surveillance for Enteric Fever in Asia (SEES) cohorts do not have this problem.
+The Seroepidemiology and Environmental Surveillance for Enteric Fever (SEES) cohorts do not have this problem.
 The first specimen comes at a median of six days against a population peak near 22 days, so roughly three quarters of participants contribute at least one observation before the peak, and the timing varies between individuals rather than being fixed by protocol [@aiemjoy2022].
 The rise phase is observed rather than inferred, and we estimate the model on data that can support it.
 
@@ -185,7 +185,7 @@ The independent model is nested inside the correlated one at $\mathbf c=\mathbf 
 
 ## Study population and sample {#sec-ch2-data}
 
-Participants were drawn from the Severe Typhoid Fever Surveillance in Africa and Asia (SEES) program, restricted to prospectively enrolled, blood-culture-confirmed cases in Bangladesh, Nepal and Pakistan [@aiemjoy2022].
+Participants were drawn from the SEES serological study nested within the Surveillance for Enteric Fever in Asia Project (SEAP), restricted to prospectively enrolled, blood-culture-confirmed cases in Bangladesh, Nepal and Pakistan [@aiemjoy2022].
 Antibody responses to hemolysin E (HlyE) were measured for two isotypes, IgG and IgA, by ELISA at each visit.
 
 We applied three exclusions, each for a reason internal to the model rather than to data quality.
