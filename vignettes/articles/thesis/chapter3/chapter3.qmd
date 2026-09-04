@@ -97,7 +97,7 @@ The established estimator combines biomarkers by adding their log-likelihoods, w
 The established estimator makes two assumptions that we relax: that a participant's biomarkers arise from separate infections, and that their kinetic parameters are drawn independently of one another.
 We derived a joint likelihood in which the biomarkers share one infection time and their kinetic parameters are drawn together, and we verified that it reproduces the established estimator when only one biomarker is measured.
 We evaluated the coverage of both in a simulation study spanning an eightfold range of seroincidence, and separated the two assumptions so that each contribution could be measured.
-We applied all three forms to the Seroepidemiology and Environmental Surveillance for Enteric Fever (SEES) cross-sectional serosurveys, covering 2,613 participants in Bangladesh, Nepal, and Pakistan.
+We applied all three forms to the Seroepidemiology and Environmental Surveillance for Enteric Fever (SEES) cross-sectional serosurveys, covering 2,613 participants in randomly selected population samples in Bangladesh, Nepal, and Pakistan.
 
 An interval constructed to have 95% coverage contained the true seroincidence 89.7% of the time when built by adding log-likelihoods; the joint form restored coverage to 98.0%, at a cost in width of about a quarter that held across the range of seroincidence examined.
 The two forms recovered the true seroincidence with almost the same error: relative root mean squared error was 10.16% for the product form and 9.53% for the joint form.
@@ -158,7 +158,7 @@ $$
 \ell(\lambda)=\sum_{i}\sum_{j=1}^{J}\log L_{ij}(\lambda)
 $$ {#eq-sumll}
 
-On that assumption the sum increases the precision of the seroincidence estimate, and it is that consequence this chapter examines.
+On that assumption the sum of @eq-sumll increases the precision of the seroincidence estimate, and it is that consequence this chapter examines.
 Adding log-likelihoods does increase apparent precision.
 Whether that precision is real depends on whether the terms being added are independent, and a participant's two measurements are not: they come from one person, one infection, and one specimen.
 However long ago that infection occurred, it is a single interval of time, shared by both isotypes.
@@ -168,7 +168,7 @@ What the pair carries that neither marker carries alone is easiest to see for on
 A high IgA response together with a low IgG response points to a more recent exposure than elevated IgA and IgG together: the combination locates the infection in time in a way neither concentration does by itself.
 A likelihood that integrates each isotype over its own infection time discards precisely that information, and then reports a narrower interval for having done so.
 
-The software's own simulator gives each participant one infection time and one set of kinetic parameters, and reads both isotypes from that single state.
+The established implementation's own simulator gives each participant one infection time and one set of kinetic parameters, and reads both isotypes from that single state.
 Its estimator then integrates each isotype over its own infection time and multiplies the results.
 The two components describe different data-generating processes, and only one of them matches how the data were collected.
 
@@ -191,7 +191,7 @@ Multiplying it by two makes it wider without making it right.
 
 The quantity that decides whether a wider interval is a better interval is coverage — the proportion of intervals that contain the true value when the true value is known — which is the standard target for evaluating an interval procedure by simulation [@morris2019].
 A nominal 95% interval should contain the truth 95% of the time.
-If the current method's intervals contain it less often than that, they are not merely narrower than an alternative; they are wrong, and by a measurable amount.
+If the established estimator's intervals contain it less often than that, they are not merely narrower than an alternative; they are wrong, and by a measurable amount.
 
 Coverage is therefore the primary endpoint of this chapter, and it is the reason the chapter can make a claim about the published literature rather than only about a comparison between two estimators written here.
 A statement that one interval is twice as wide as another is a statement about that code.
@@ -255,7 +255,7 @@ Values at or below the assay's detection limit contribute the probability $\Pr(Y
 ## The independence assumption in the current likelihood {#sec-ch3-product}
 
 Write $J$ for the number of biomarkers combined for one participant — $J=2$ throughout this chapter, HlyE IgG and HlyE IgA — and reserve the subscript $j$ for the biomarker and the superscript $(k)$ for the parameter draw, as the vignette does.
-With $J$ biomarkers the established implementation applies @eq-single to each biomarker in turn and sums the resulting log-likelihoods,
+With $J$ biomarkers the established estimator applies @eq-single to each biomarker in turn and sums the resulting log-likelihoods,
 
 $$
 \ell_{\mathrm{prod}}(\lambda)=\sum_{i}\sum_{j=1}^{J}\log L_{ij}(\lambda),
@@ -304,11 +304,11 @@ follows takes the stated model as the starting point and asks what else follows 
 ## Objectives {#sec-ch3-aims}
 
 We derived a joint likelihood in which the infection time is shared between isotypes and the kinetic parameters are paired, separating the two assumptions so that their contributions can be attributed individually (@eq-two-assumptions).
-Because no joint likelihood exists in the available software, we implemented it and verified that it reproduces the established estimator in the single-biomarker case, where the two forms are the same integral and must agree exactly.
+Because no joint likelihood exists in the established implementation, we implemented it and verified that it reproduces the established estimator in the single-biomarker case, where the two forms are the same integral and must agree exactly.
 We then evaluated coverage on simulated cross-sectional data with known $\lambda$, across a range of seroincidence chosen to span the observed settings, reporting coverage, interval width, and bias for both likelihoods.
 Finally we applied the forms to the cross-sectional serosurveys of the Seroepidemiology and Environmental Surveillance for Enteric Fever (SEES) study in three countries, crossing the likelihood form with the parameter draws so that the paired and independent draws of @sec-ch3-banks enter without any additional model fitting, and asked whether the epidemiological conclusions — the ranking of countries and the contrast between high- and low-endemicity arms — survive.
 
-The correction is not intended to displace the existing method.
+The correction is not intended to displace the established estimator.
 It is intended to establish how much the simplification costs, so that a practitioner combining isotypes knows whether the resulting interval can be taken at face value — and, if the cost is small, can continue to use the faster calculation knowing what has been checked.
 
 # Methods {#sec-ch3-methods}
@@ -368,7 +368,7 @@ $$ {#eq-joint}
 
 $$
 \ell_{\mathrm{joint}}(\lambda)=\sum_i \log L_i^{\mathrm{joint}}(\lambda).
-$$ {#eq-jointsum}
+$$
 
 Using the same draw index $k$ for both biomarkers is what draws from the joint distribution; using separate indices would draw from the product of the two marginals, which is the assumption @eq-truegen declines to make.
 
@@ -404,7 +404,7 @@ They are separable, and separating them is what allows their contributions to be
 $$
 p(y_1,y_2\mid \tau)=\iint p(y_1\mid\tau,\boldsymbol\theta_1)\,p(y_2\mid\tau,\boldsymbol\theta_2)\,
 p(\boldsymbol\theta_1,\boldsymbol\theta_2)\,d\boldsymbol\theta_1 d\boldsymbol\theta_2
-$$ {#eq-condindep}
+$$
 
 where $\boldsymbol\theta_1$ and $\boldsymbol\theta_2$ are the participant's kinetic parameters for
 the two biomarkers and $p(\boldsymbol\theta_1,\boldsymbol\theta_2)$ is their joint population distribution — the object the kinetics analysis estimated.
@@ -431,7 +431,7 @@ The cross-isotype correlation $\rho_c$ is a correlation between kinetic paramete
 The correlation between the two observed log concentrations is a third thing again, and it is neither of the first two: it is the quantity @sec-ch3-res-shift compares against what the parameter draws predict. **A set of draws can carry a large $\rho_c$ and still fail to reproduce the observed correlation**, and whether it does is a property of the draws rather than of $\rho_c$.
 
 The two assumptions can be stated separately.
-The first is that a participant's biomarkers arise from one infection rather than from separate ones; relaxing the current estimator on this axis requires no result from the kinetics analysis at all.
+The first is that a participant's biomarkers arise from one infection rather than from separate ones; relaxing the established estimator on this axis requires no result from the kinetics analysis at all.
 The second is that the kinetic parameters of the two isotypes are drawn as a pair, preserving the cross-isotype correlation.
 This is where the kinetics analysis enters, and only here.
 The shared infection time does not depend on it.
@@ -512,12 +512,12 @@ The two codebases differ in the noise convention, in the density assumed for tim
 in the handling of the never-infected branch and in the time units.
 On the same six datasets the product form and the established implementation differ by up to 8.5% (@tbl-ref).
 A contrast against the
-package would therefore mix the independence assumption with four other differences, and could not
+established implementation would therefore mix the independence assumption with four other differences, and could not
 be attributed to any of them.
 
 Placing all three forms in one function removes that entire class of ambiguity by construction.
 What
-is lost is the direct claim "the published implementation under-covers"; what is gained is that the
+is lost is the direct claim "the established implementation under-covers"; what is gained is that the
 contrast measures the independence assumption and nothing else.
 We report the established implementation once, as a reference, so that the size of the discrepancy is on the record.
 
@@ -552,7 +552,7 @@ $$
 $$ {#eq-valid}
 
 We checked this across a grid of $\lambda$ spanning the plausible range, separately for IgG and IgA,
-and against the existing compiled implementation rather than against a second implementation written for this analysis.
+and against the established compiled implementation rather than against a second implementation written for this analysis.
 We required agreement to four decimal places before computing any two-biomarker quantity.
 
 A second identity applies once all three forms live in one function.
@@ -574,7 +574,7 @@ It identified four separate errors in the first implementation, none of which wo
 
 The noise density was a placeholder rather than the two-stage convolution of @sec-appB-noise.
 Left censoring was not handled: observations at or below the detection limit require $\Pr(Y\le y_{\text{low}})$ rather than a density, and the resulting IgG error was roughly thirty times the IgA error, IgG being the more heavily censored isotype.
-Units were inconsistent, the decay rate being stored per day while age and $\lambda$ are in years; the existing implementation rescales by 365.25 for exactly this reason.
+Units were inconsistent, the decay rate being stored per day while age and $\lambda$ are in years; the established implementation rescales by 365.25 for exactly this reason.
 And the mixture weights over whether a participant was ever infected, $1-e^{-\lambda a}$ and $e^{-\lambda a}$ (@eq-brt), had been omitted.
 
 Each of the four would have produced a plausible number, not an obviously wrong one, which is the argument for running the gate before anything else.
@@ -608,17 +608,17 @@ Evaluating calibration at a sample size no larger than the smaller surveys keeps
 **Simulation design.** For each replicate: draw ages by resampling from the observed serosurvey; draw infection status and $\tau$ from @eq-brt at a known $\lambda$; draw one parameter index per participant, which is what preserves the pairing; evaluate @eq-curve for both isotypes at that $\tau$; apply the two-stage noise of @sec-appB-noise; and censor at the detection limit.
 We then fit both likelihoods to the same simulated dataset and score both intervals.
 
-We wrote the simulator out rather than taking it from the package.
-This is not because the package generates from the product model — it does not, and its documentation is explicit that each individual's biomarkers share one latent infection history — but because its generative model differs from the estimator in other ways, set out below.
+We wrote the simulator out rather than taking it from the established implementation.
+This is not because the established implementation generates from the product model — it does not, and its documentation is explicit that each individual's biomarkers share one latent infection history — but because its generative model differs from the estimator in other ways, set out below.
 The simulator used here is the estimator run backward, so that the data-generating process and the joint likelihood are the same model stated in two directions.
 That is what makes the resulting coverage number interpretable; a simulator that did not match would produce a plausible number that meant nothing.
 
-Reading the package's generator also settled a question that had been open.
+Reading the established implementation's generator also settled a question that had been open.
 It draws infections as a Poisson process across the whole lifetime and sets the baseline of each new response to the level the previous one had decayed to, so antibody accumulates across infections.
 The estimator, by contrast, models a single most-recent infection with a baseline drawn afresh.
 The two are not the same model, which is a further reason why neither could serve as a reference for the other, and it bears on the discordance reported in @sec-ch3-res-app.
 
-We validated the simulator before use, against the joint form rather than against the package.
+We validated the simulator before use, against the joint form rather than against the established implementation.
 Once the comparator is internal, the coherent question is no longer whether the simulator reproduces a second codebase — it is whether the simulator and the joint form are the same model stated in two directions.
 The gate therefore asks the joint form to recover a $\lambda$ drawn from its own generating process, at three values spanning the range, before any coverage replicate is run.
 
@@ -837,7 +837,7 @@ thesis_ft(d, widths = c(1.4, 1.84, 2.28, 0.88))
 ```
 
 The two agree exactly in three sites and differ by up to 8.5% in the others, with a mean of −2.8%.
-A contrast against the package would carry that difference inside it and could not be attributed to the independence assumption (@sec-ch3-design).
+A contrast against the established implementation would carry that difference inside it and could not be attributed to the independence assumption (@sec-ch3-design).
 It also explains why the gate passed at $J=1$ while the two forms parted company at $J=2$ — where the discrepancy is small, one biomarker does not reveal it.
 
 ### Comparability of the parameter draws {#sec-ch3-res-banks}
@@ -1114,7 +1114,7 @@ It was not met.
 The sandwich estimator did not detect the within-participant dependence that the coverage study measures directly; @sec-ch3-discussion takes up why.
 
 
-The paired draws assign very low probability to a small number of observed pairs, and this does not affect inference.
+The paired draws assign low probability to a small number of observed pairs, and this does not affect inference.
 Under the joint form the maximized log-likelihood was lower for the paired draws than for the shuffled draws by 697.1, 701.4, 701.7, and 699.4 at nested samples of 10, 20, 30, and 50 participants — a fivefold increase in sample size moved it by 2.3 log units, which is to say it did not move.
 It is a constant, not a per-participant cost: essentially all of it is present in the first ten participants, it does not depend on $\lambda$, and the estimate and interval are therefore unaffected; @sec-appB-offset gives the algebra.
 What it says is that a handful of observed isotype pairs are close to impossible under the pairing the kinetics analysis estimates.
@@ -1186,7 +1186,7 @@ The same decomposition can be made at the individual level, and has not been her
 Interval width is a population quantity; the identical partition can be asked in days, by holding out a participant's known time since fever onset and asking how accurately it is recovered from a single specimen using one biomarker, two under a shared infection time, and two with the parameters paired.
 That analysis is specified in the kinetics analysis [@lee2026correlated].
 
-Agreement between the two would be a second measurement of the same quantity by a route that shares neither the data nor the quantity being estimated, and would put the attribution above on firmer ground than one contrast can.
+Agreement between the two would be a second measurement of the same quantity by a route that shares neither the data nor the quantity being estimated, and would put the attribution in @sec-ch3-res-split on firmer ground than one contrast can.
 Disagreement would mean that one of them is measuring something else, and would have to be resolved before either is relied on.
 
 The joint estimate exceeded the product estimate in every site, by 29% on average relative to the product form on the same draws, and the simulation does not reproduce this.
@@ -1210,7 +1210,7 @@ Both remain consistent with the data, and this chapter cannot separate them.
 In these settings participants have had several, and IgG accumulates across them while IgA reflects mainly the most recent exposure [@aiemjoy2022repeat] — which decouples the two.
 The established simulator encodes exactly this process, carrying the baseline of each new response forward from where the previous one decayed to, even though the estimator it accompanies does not.
 
-**Kinetics estimated from confirmed cases.** The kinetics are fitted to blood-culture-confirmed infections, which are more severe than the subclinical and mild infections that dominate a population serosurvey.
+**Kinetics estimated from confirmed cases.** The kinetics analysis fits its models to blood-culture-confirmed infections, which are more severe than the subclinical and mild infections that dominate a population serosurvey.
 If community responses are smaller and more variable, the draws will overstate how tightly the isotypes travel together.
 
 Until we settle this, no claim about the level of incidence should rest on that shift.
@@ -1222,11 +1222,15 @@ Where two are combined, an interval obtained by adding log-likelihoods should no
 In these conditions it behaved as an interval of roughly 90%, and a reader wanting nominal coverage should either compute the joint form or widen by about a quarter, which is what the joint form costs.
 
 The results should be considered in light of the following limitations.
-The simulation generates from the model the joint likelihood assumes, and three facts partly mitigate this: the shared-time form is also misspecified with respect to the generator and is calibrated at nominal; both forms estimate the incidence closely, so the shortfall appears as width and not as bias, which is the specific failure composite likelihood theory predicts; and no simulator generates from the product form, since the established package's generator also gives each individual one latent infection history.
+The simulation generates from the model the joint likelihood assumes.
+Three facts partly mitigate this.
+The shared-time form is also misspecified with respect to the generator and is calibrated at nominal.
+Both forms estimate the incidence closely, so the shortfall appears as width and not as bias, which is the specific failure composite likelihood theory predicts.
+And no simulator generates from the product form, since the established implementation's generator also gives each individual one latent infection history.
 The joint form is slightly conservative, covering above nominal, and whether the excess is a property of the estimator or an artifact of the finite number of parameter draws is not settled; drawing more of them and re-examining the coverage is the direct test.
 The kinetics analysis models correlation at one level of the hierarchy and not two, leaving residual measurement noise uncorrelated, so the fitted parameter correlation absorbs any concordance arising at the measurement level and simulating from it then over-predicts concordance in a study whose measurement-level component differs.
 The point-estimate shift is not explained: the joint form gives estimates about a third higher than current practice on the observed data and the simulation does not reproduce this (@sec-ch3-res-shift), so we report it as an open finding and no claim about the level of incidence rests on it.
-And the comparison against the established software is conceptual rather than numerical, because the two implementations differ in the noise convention, the density for time since infection, the handling of the never-infected branch, and the time units (@sec-ch3-design).
+The comparison against the established implementation is conceptual rather than numerical, because the two implementations differ in the noise convention, the density for time since infection, the handling of the never-infected branch, and the time units (@sec-ch3-design).
 
 The correction is not expensive to describe and it is not expensive to justify: it asserts only that a participant's measurements come from one infection.
 It is, however, expensive to compute, since the shared integral cannot be factorized across biomarkers.
@@ -1345,12 +1349,11 @@ The first would be a negative result about the applicability of the kinetics ana
 # Reproducibility {.unnumbered}
 
 Analyses were carried out in R [@rcore2025].
-The earlier kinetics study fitted its models in JAGS [@jags2003; @lee2026shigella]; this analysis uses Stan [@stan2024] throughout.
-Kinetic models use the `serodynamics` package; incidence estimation uses the product and joint likelihood implementations developed for this analysis; `serocalculator` [@serocalculator2025] is used for the single-biomarker equivalence check and for the reference comparison of @tbl-ref.
+The kinetics analysis that supplies the parameter draws fitted its models in Stan [@stan2024; @lee2026correlated]; incidence estimation uses the product and joint likelihood implementations developed for this analysis; `serocalculator` [@serocalculator2025] is used for the single-biomarker equivalence check and for the reference comparison of @tbl-ref.
 
 A script held under version control produces every quantity we report.
 Two conventions govern the order in which we run those scripts: validation checks precede the production runs they license, and we record pre-specified predictions before the results that test them.
-Analysis code will be deposited in a public repository at the time of publication.
+We will deposit the analysis code in a public repository at the time of publication.
 
 {{< pagebreak >}}
 
