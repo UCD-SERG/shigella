@@ -101,7 +101,7 @@ We relaxed that assumption by adding five cross-isotype correlations, one for ea
 We fitted the model to 461 blood-culture-confirmed enteric fever cases from Bangladesh, Nepal, and Pakistan, with HlyE IgG and IgA measured at a median of four visits each over two years.
 
 All five correlations excluded zero, with posterior medians from 0.64 to 0.84 and a smallest lower bound of 0.53.
-The same association is present in the measurements themselves with no model involved, at rank correlations of 0.51 to 0.67 across four features that can be read directly from a participant's own series.
+The same association is present in the measurements themselves with no model involved, at Spearman correlations of 0.51 to 0.67 across four features that can be read directly from a participant's own series.
 The estimates did not depend on where the sampler started, across a thirtyfold range of initial scales, nor on the prior scale, across a sixfold range.
 A simulation study at the observed sample size confirmed that the estimator recovers a correlation that is present and does not produce one when none is there.
 Out-of-sample comparison favored the correlated model at both aggregations examined.
@@ -527,8 +527,8 @@ thesis_ft(d, widths = c(0.83, 1.72, 1.78, 2.07))
 ```
 
 The null condition comes from the correlated fit with the cross-covariances set to zero, **not from refitting the independent model**. Refitting would produce its own population means, within-isotype blocks and measurement precisions, so a comparison against it would confound the cross-covariances with those differences.
-We built the null from the correlated model with $\mathbf c$ set to zero, which leaves one thing different between the two conditions and nothing else.
-That analysis makes the same move for the same reason when it breaks the isotype pairing by reordering rows rather than by refitting [@lee2026seroincidence].
+We built the null from the correlated model with $\mathbf c$ set to zero, which leaves one thing different between the null and the alternative and nothing else.
+The seroincidence analysis makes the same move for the same reason when it breaks the isotype pairing by reordering rows rather than by refitting [@lee2026seroincidence].
 
 We computed the truth rather than assuming it, and computed it exactly rather than approximating it.
 Once
@@ -541,7 +541,7 @@ posterior variance and coverage — for the model parameters, not for prediction
 We report each with a Monte Carlo standard error.
 
 We fixed the decision rule in advance.
-We judged coverage of an interval constructed to have 90% coverage against $0.90$, using twice the Monte Carlo standard error.
+We judged coverage of a nominal 90% interval against $0.90$, using twice the Monte Carlo standard error.
 A departure smaller than 2 MCSE is not called; one larger is, in whichever direction it
 falls.
 We recorded the rule before running the conditions, and we report it as failing where it fails
@@ -844,12 +844,12 @@ the two extremes of @tbl-ch2-perparam visible.
 :::
 
 The estimator recovered the correlations that were present and produced none where there were none.
-Simulating with all five cross-covariances at zero gave a mean bias of +0.008 to +0.010 against a truth of zero, with every interval containing zero; simulating with correlation present, against true values of 0.841, 0.645, 0.857, 0.671, and 0.658, gave a mean bias after filtering of −0.027.
+Simulating with all five cross-covariances at zero gave a mean bias of +0.008 to +0.010 against a truth of zero, with every interval containing zero; simulating under the alternative, against true values of 0.841, 0.645, 0.857, 0.671, and 0.658, gave a mean bias after filtering of −0.027.
 
 The pre-specified decision rule was not met in any of the six condition-by-scheme combinations (@sec-ch2-sim), and every
 departure is in the same direction: coverage above nominal, from 0.926 to 0.980.
 
-Two parameters sit at the extremes of @fig-ch2-cov. Time to peak is the only one falling below nominal when correlation is present, at 0.860, and decay shape reaches 1.000 under all three schemes.
+Two parameters sit at the extremes of @fig-ch2-cov. Time to peak is the only one falling below nominal under the alternative, at 0.860, and decay shape reaches 1.000 under all three schemes.
 The three schemes differ by at most 0.010 for any parameter.
 
 ### Sources of over-coverage {#sec-ch2-res-two}
@@ -865,7 +865,7 @@ the unfiltered value to the filtered one; the dashed line is nominal 0.90.
 The two conditions move in different directions.
 Under the null, coverage falls from 0.980 to 0.958
 while the width changes by two per cent.
-When correlation is present, the width falls by seventy per cent,
+Under the alternative, the width falls by seventy per cent,
 coverage rises from 0.926 to 0.936, and the bias halves from −0.053 to −0.027.
 @sec-ch2-discussion takes up what each direction indicates.
 
@@ -1025,14 +1025,18 @@ Every departure in those six was above nominal.
 The two arrows of @fig-ch2-filter show this is not one phenomenon but two, and the filter is what separates them.
 The direction each arrow points is the diagnostic: a vertical move means the filter removed chains without removing width, and a horizontal one means the width itself was what the filter took away.
 
-
+$$
+\underbrace{\text{null: the prior}}_{\text{cannot be filtered away}}
+\qquad
+\underbrace{\text{alternative: multimodality}}_{\text{the filter removes it}}
+$$
 
 Over-coverage under the null comes from the prior, and no post-processing can remove it.
 $\rho_c \sim \mathcal N(0,1)$ centered at zero is the conservative choice for a chapter arguing that these correlations are non-zero, and its cost is that intervals cover 0.958 rather than 0.90 when the truth is zero.
 That the filter changes the width by only two per cent is what identifies the prior, not multimodality, as the source.
 Reporting a conservative interval as though it were exact would be the error; having a conservative interval is not.
 
-When correlation is present the filter removes the over-coverage almost entirely, and the mechanism is visible in the widths: seventy per cent of the unfiltered width was chains in a secondary mode contributing tails that carry no information.
+Under the alternative the filter removes the over-coverage almost entirely, and the mechanism is visible in the widths: seventy per cent of the unfiltered width was chains in a secondary mode contributing tails that carry no information.
 The first is the price of a prior centered at the null; the second is the reason the filter exists.
 
 Widening the prior would reduce the over-coverage.
@@ -1066,7 +1070,7 @@ We report both as failures.
 Pre-specifying the checks and reporting those that did not behave as predicted lets a reader judge whether the checks could have failed.
 
 Three separate signals identify the same parameter as the difficult one, and they arrive from different parts of the analysis.
-It has the lowest coverage of the five when correlation is present (@tbl-ch2-perparam); it shows the largest disagreement across prior scales, and by a margin too wide for Monte Carlo error to explain (@sec-ch2-res-init); and it is the parameter whose correlation is largest in the observed data (@tbl-rho).
+It has the lowest coverage of the five under the alternative (@tbl-ch2-perparam); it shows the largest disagreement across prior scales, and by a margin too wide for Monte Carlo error to explain (@sec-ch2-res-init); and it is the parameter whose correlation is largest in the observed data (@tbl-rho).
 
 Its posterior variance says which of the two kinds of failure this is.
 That variance is four times the mean squared error, so the interval is not too short; what puts the truth outside it is the bias of $-0.056$.
@@ -1109,7 +1113,7 @@ The results should be considered in light of the following limitations.
 The prior on the between-participant scales is tighter than would be ideal, and the intervals reported are conservative in consequence; the direction of that conservatism is understood, since a prior centered at zero makes non-zero correlations harder to find rather than easier, and so works against this chapter's own conclusion rather than for it.
 The cross-block is restricted to its diagonal on the argument that a cohort of this size cannot inform twenty-five cross-parameter covariances and that those covariances answer questions nobody has posed (@sec-ch2-hier); that argument is stated rather than demonstrated, and demonstrating it would require either a larger cohort or a simulation designed for the purpose.
 We evaluated coverage at one sample size under two truth vectors, which establishes that the estimator is calibrated where we use it but not that it remains so as the sample grows.
-The tree-depth ceiling binds under the condition with correlation present, and whether raising it removes the multimodality or only the saturation is not established.
+The tree-depth ceiling binds under the alternative, and whether raising it removes the multimodality or only the saturation is not established.
 The model describes the response to one infection, and fifteen participants contribute measurements from a suspected reinfection onward, 46 of the 3,318, which were retained rather than dropped; whether removing them moves the five correlations is not tested here.
 Age and country are nearly the same variable in this cohort — Bangladesh contributes children and Nepal adults (@sec-ch2-res-pop) — so a single pooled fit is the only one these data support, and neither the effect of age nor the effect of setting can be separated from the other without a design that varies one at a time.
 Clinical covariates were not examined for the same reason and one more: whether the strength of these correlations varies with severity, age, or prior exposure is a question the SEES design could address and this analysis does not.
@@ -1127,7 +1131,7 @@ The funders had no role in study design, data collection, data analysis, data in
 
 {{< pagebreak >}}
 
-# Supporting material {.unnumbered}
+# Supporting material
 
 ## Construction of the covariance and positive definiteness {#sec-appA-chol}
 
@@ -1206,7 +1210,7 @@ That prior has a consequence that has to be reported, not discovered.
 Being centered at
 zero, it shrinks estimates toward the null.
 Under the null condition of @tbl-sim this pulls estimates
-toward the truth and produces over-coverage; when correlation is present it pulls them away and produces a small negative bias.
+toward the truth and produces over-coverage; under the alternative it pulls them away and produces a small negative bias.
 Both appear in the simulation results and both have this single explanation.
 
 ## Initialization sensitivity for all parameters {#sec-appA-init}
