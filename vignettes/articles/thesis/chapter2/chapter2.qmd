@@ -167,7 +167,6 @@ Setting those five correlations to zero returns the independent-antibodies model
 We estimated the association for each kinetic parameter with credible intervals and assessed its sensitivity to the priors.
 We compared the correlated model with the independent model out of sample, holding out the participant rather than the observation.
 We then asked, in a simulation study, whether the estimator recovers correlations of the size observed and — equally important — whether it produces them when the truth is zero.
-Finally we examined what a cohort of this size can and cannot support.
 
 The simulation carries the weight.
 A correlation that cannot be recovered from data simulated at that value is not a result, and one that appears when nothing is there is worse than none.
