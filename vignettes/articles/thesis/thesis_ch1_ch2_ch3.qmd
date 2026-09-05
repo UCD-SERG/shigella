@@ -166,7 +166,8 @@ to a pathogen: the *Shigella* cohort used in chapter 1 has 48 participants and t
 cohorts of chapters 2 and 3 a few hundred each. **What a cohort of that size can and cannot support
 is therefore part of the problem rather than a detail of it** — chapter 1 finds that even the
 question of how participants are grouped for estimation changes the parameters recovered, and
-chapter 2 finds that the *Shigella* schedule cannot support the model it develops at all.
+chapter 2 restricts its cross-block to a diagonal on the argument that 461 participants cannot
+inform a full one.
 
 The method has two components, and this dissertation is about the seam between them. The first
 is a model of how antibodies behave after a single infection, estimated from a longitudinal cohort
@@ -2849,10 +2850,11 @@ Approximate Bayesian computation has been applied to repeat seroresponse in this
 past infections is not available in closed form while simulating from the process is
 straightforward — the established simulator already does it (@sec-ch3-discussion).
 
-**Draw the first specimen before the peak.** The *Shigella* protocol drew its first after the peak
-had passed, which is why chapter 2 could not use it. That obstacle is actionable in a way a null
-result is not: it specifies when to sample rather than declaring the question unanswerable
-(@sec-ch2-why).
+**Draw the first specimen before the peak.** The model of chapter 2 identifies a participant's
+peak height and time to peak from specimens drawn before the peak (@sec-ch2-why), and chapter 1
+reports that the ascending phase was largely unobserved for several of its antigen–isotype
+combinations. A design that observes the rise is what the model asks for, and knowing that is
+more actionable than a null result.
 
 **Extend to more than two biomarkers.** The independence assumption is applied once for two
 biomarkers and more often for more, so its cost should grow with the number combined. Nothing in the
