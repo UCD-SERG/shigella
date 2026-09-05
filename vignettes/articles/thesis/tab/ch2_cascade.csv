@@ -1,0 +1,6 @@
+step,rule,reason,participants,observations
+1,"Prospectively enrolled cases, HlyE IgG and IgA",the enrolment arm that observes the rise phase,717,3853
+2,Surgically enrolled cases excluded,that arm was enrolled retrospectively,660,3739
+3,Time since fever onset and a positive concentration required,the curve is a function of time since onset,659,3733
+4,Both isotypes measured at the same visit,the cross-isotype covariance is defined within a visit,659,3714
+5,At least two visits per participant,one observation cannot separate five subject parameters,461,3318

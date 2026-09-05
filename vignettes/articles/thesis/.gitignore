@@ -1,0 +1,12 @@
+# Rendered output. CI builds these and uploads them as artifacts; committing
+# them would put a large binary in every diff and there would be two versions of
+# the document to confuse a reviewer.
+*.docx
+!reference.docx
+
+# Quarto working directories
+/.quarto/
+**/.quarto/
+*_files/
+
+**/*.quarto_ipynb

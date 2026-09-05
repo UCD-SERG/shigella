@@ -12,9 +12,7 @@
 ^README\.Rmd$
 ^\.lintr\.R$
 ^_quarto\.yml$
-^AGENTS\.md$
-^CLAUDE\.md$
-^\.claude$
+^_typos\.toml$
 ^.*\.qmd$
 ^.*\.png$
 ^Vary.*\.r$
@@ -23,3 +21,6 @@
 ^shigella\.Rcheck$
 ^shigella.*\.tar\.gz$
 ^shigella.*\.tgz$
+^AGENTS\.md$
+^CLAUDE\.md$
+^\.claude$

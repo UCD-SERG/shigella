@@ -1,0 +1,43 @@
+# Quarto project config for the dissertation and the two manuscripts.
+#
+# WHY THIS FILE EXISTS
+# The repository root carries its own _quarto.yml for the package vignettes. It
+# sets `format: pdf` and `number-depth: 2`, neither of which suits these
+# documents: the filing format is Word, a pdf target would pull a LaTeX
+# toolchain into CI for no benefit, and all three number three levels deep.
+# Quarto uses the nearest _quarto.yml walking up from a file, so this one
+# shadows the root for everything under thesis/ — and leaves the root file
+# untouched, so the R package build and R-CMD-check are unaffected.
+#
+# WHAT IT DOES NOT SET
+# No `format:` key. Each document's own YAML carries the full docx
+# specification (reference-doc, toc, caption locations), and the three agree
+# with each other; declaring a format here as well invites one to shadow the
+# other.
+#
+# WHERE THE OUTPUT GOES
+# No output-dir either, so each .docx lands beside its .qmd — the same place it
+# appears when rendered locally. The CI workflow and the table post-processing
+# step then use the paths already in use on your machine.
+#
+# RENDERING
+#     quarto render                        # all three
+#     quarto render thesis_ch1_ch2_ch3.qmd --to docx   # just the dissertation
+#     cd chapter2 && quarto render chapter2.qmd --to docx
+
+project:
+  type: default
+  render:
+    - thesis_ch1_ch2_ch3.qmd
+    - chapter2/chapter2.qmd
+    - chapter3/chapter3.qmd
+  # Keeps every table and figure whole on one page. The hook is guarded on
+  # QUARTO_PROJECT_OUTPUT_FILES and touches the dissertation only, so rendering
+  # either manuscript is unaffected. See post-render.py.
+  post-render:
+    - post-render.py
+
+# The chunks read CSVs and build flextables. Nothing here is expensive enough to
+# be worth caching, and a stale freeze would be worse than a rebuild.
+execute:
+  freeze: false
