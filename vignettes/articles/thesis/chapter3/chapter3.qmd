@@ -1001,7 +1001,7 @@ Every interval widened.
 Relative to the product form on the same draws, the joint interval was 30% to 60% wider, with a mean of 46%.
 
 Giving the product form the paired draws moves the estimate by 2.3% — three sites by exactly zero and three by one step of the $\lambda$ grid.
-That is @tbl-two-banks appearing in a second place: the product form reads only the column medians, and those barely differ between the two sets of draws.
+That is @tbl-two-banks appearing in a second place: the product form sees each biomarker only through its average over the draws, and those averages barely differ between the two sets of draws.
 End to end, from current practice to the joint form, the estimate rises by about a third.
 
 That last figure is not a claim of this chapter.
