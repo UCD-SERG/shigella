@@ -140,6 +140,74 @@ biomarkers.
 
 {{< pagebreak >}}
 
+# Acknowledgments {.unnumbered}
+
+When I began this doctorate I wanted to become someone who could use statistics and
+mathematics well within epidemiology. I did not expect to spend five years watching how
+antibodies rise and fall inside the human body. This dissertation has the shape it does,
+not because I designed that path, but because there were people at every turn who led
+me along it.
+
+The journey began with Professor Douglas Ezra Morrison. He did not teach me methods so much as
+teach me what cannot be passed over unchecked. There is a Korean saying about tapping
+even a stone bridge before you cross it; Professor Morrison showed me, one step at a
+time, how the tapping is done. Code had to be posted before a meeting could start.
+Equations had to carry their derivations. Results had to say what they showed and what
+they did not. At first those demands felt heavy. Looking back, every sentence in this
+dissertation that I can defend is a sentence that passed through them. Each time he
+asked me a question in return, I learned what I did not know, and that became the frame
+this work is built on.
+
+Professor Kristen Aiemjoy came aboard this ship as a second captain, and she changed
+its course. Through her I learned how differently epidemiology handles numbers than
+statistics does. Who is in this sample, why did they give this specimen at this moment,
+and what does that mean for the quantity we are estimating — these questions were not
+in the model, and without her I would never have thought to ask them. Each time she
+returned a manuscript with a question mark beside a single word, I spent days working
+out why that word was imprecise, and in the process I learned that writing is part of
+the research. Above all, she opened the road I will walk from here: seroepidemiology.
+
+I am grateful to Professor Jiming Jiang. What I learned in his STA 231B did much to
+build the statistical foundation of this work, and the questions he asked as a
+committee member made me look again at assumptions I had been taking for granted.
+
+I thank Dr. Richelle Charles. Without the *Shigella* data she provided, the first
+chapter of this dissertation would not exist. She also read, with an immunologist's
+eye, what I could only see as numbers. Why a given antigen's response takes the shape it
+takes, and what phase of infection that shape describes — that interpretation, which was
+beyond my reach, is what gave these results their meaning.
+
+UCD-SERG is where I learned to do research and where I learned that research is not done
+alone. Sam Schildhauer built the `serodynamics` package with me. His questions about the
+code always landed precisely on the place I had been about to pass over, and because of
+them the computations in this dissertation are reproducible. To Krista Vaidya I owe a
+debt of a different kind. As a fellow international graduate student, what she offered
+was not advice about research but the strength to keep going. We encouraged each other
+through hard stretches, and I do not believe I would have made it through this last year
+without that. Kristina Lai gave her time at meetings and qualifying-exam practice, and
+her feedback lit up the places I had not thought to look.
+
+Cheng-Hong (Philip) Chi is the closest friend I made in Davis. We prepared for the
+written exam and the qualifying exam together, in the same year. Passing both was not a
+matter of my being capable; it was a matter of having someone beside me who would say
+"you can do this." Without the early mornings we spent together, and the hours of
+listening to each other's talks and asking each other clumsy questions, I might have
+stopped at that threshold. Thank you for being my friend.
+
+Finally, I thank my parents. I would especially like to dedicate this dissertation to my
+mother, Seon Yang Yoon. Long flights are hard for her now, and she came to Davis again
+and again anyway, so that her son would not fall apart in a foreign country. What she
+did when she arrived was nothing remarkable — she cooked, filled the refrigerator with
+side dishes, tidied the apartment, and went home. But those ordinary things are what
+made me able to write. I still do not fully know the size of what she gave up. To my
+father, Jong Tae Lee, I am grateful for his steady support and belief.
+
+They say that finishing a doctorate is not an end but a beginning. Standing at that
+beginning, the one thing I know for certain is that getting here was never my strength
+alone.
+
+{{< pagebreak >}}
+
 # Introduction {#sec-intro}
 
 ## Background {#sec-intro-background}
