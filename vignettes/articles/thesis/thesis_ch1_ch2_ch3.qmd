@@ -3196,7 +3196,7 @@ The first would be a negative result about the applicability of the kinetics ana
 Analyses were carried out in R [@rcore2025]. Chapter 1's models were fitted in JAGS
 [@jags2003]; chapters 2 and 3 were fitted in Stan [@stan2024] throughout. Kinetic models use the
 `serodynamics` package; incidence estimation uses the product and joint likelihood implementations
-developed for chapter 3; `serocalculator` [@serocalculator2025] is used only for the single-biomarker equivalence check.
+developed for chapter 3; `serocalculator` [@serocalculator2025] is used for the single-biomarker equivalence check and for the reference comparison of @tbl-ref.
 
 Every reported quantity is produced by a script held under version control. Two conventions
 govern the order in which those scripts are run: validation checks precede the production runs
