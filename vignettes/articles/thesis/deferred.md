@@ -38,6 +38,15 @@ Section numbers refer to version 3 of the standard.
       head of each — a careful reader misread the second as the first on two separate
       passes.
 
+- [ ] **ch3 in the dissertation** — the chapter refers to its source as the kinetics
+      analysis sixteen times and cites `@lee2026correlated` five times, and never says
+      chapter 2. §2.5 asks for "the kinetics analysis of chapter 2" at first mention, and
+      it is Kristen's own comment. Correct in the standalone, where the companion paper is
+      a paper; in the dissertation it is chapter 2, and the citation stands where a
+      cross-reference would serve. Fixing it in the standalone would be wrong, and the text
+      sits inside a transplanted region, so a thesis-only fix is reverted by the next
+      re-transplant. **§2.5**
+
 - [ ] **ch2 L812 / L815** — the coverage figure's internal labels read `null (c = 0)` and
       `correlation present` while every caption and every prose use now says null and
       alternative. The figure has to be regenerated on Mercury to change them, and §2.7
