@@ -714,7 +714,7 @@ concentration from there to the last visit for the decay rate.
 The fifth, the decay shape, has no
 such counterpart.
 Correlating each of the four between the isotypes across all 461 participants
-gives Spearman coefficients of +0.67, +0.58, +0.51 and +0.65.
+gives Spearman correlations of +0.67, +0.58, +0.51 and +0.65.
 These are uniformly smaller than the
 parameter correlations above, as one would expect of quantities measured with noise at a handful of
 visits, and they establish that the association is in the data and not only in the model.
@@ -1009,7 +1009,7 @@ A figure drawn from a model cannot test that model.
 What it does show is the pairing the fitted model carries, which is what the seroincidence analysis draws from when it pairs parameter draws within a simulated participant.
 We include it for that reason.
 
-The association is established by the rank correlations computed without a model, which @sec-ch2-res-main reports alongside the main results because they are evidence rather than commentary. **Those four Spearman coefficients use no model at all**, and they are what the figure cannot do: they carry the claim, while @fig-ch2-pairs carries the intuition.
+The association is established by the Spearman correlations computed without a model, which @sec-ch2-res-main reports alongside the main results because they are evidence rather than commentary. **Those four Spearman correlations use no model at all**, and they are what the figure cannot do: they carry the claim, while @fig-ch2-pairs carries the intuition.
 
 The pre-specified rule was not met in any of the six combinations.
 Every departure in those six was above nominal.
