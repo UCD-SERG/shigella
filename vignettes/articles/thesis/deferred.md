@@ -8,7 +8,8 @@ the standard, which lists items that must not be flagged.
 Both chapters go into one dissertation, so they share one list. Each entry names the
 chapter it belongs to.
 
-Last reviewed: 2026-09-04. Chapter 3 at bf48cc7, chapter 2 at a925bdf.
+Last reviewed: 2026-09-05. Chapter 3 at 628f67d, chapter 2 at a925bdf, dissertation at
+599b546.
 Section numbers refer to version 3 of the standard.
 
 ---
