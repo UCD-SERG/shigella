@@ -107,9 +107,9 @@ Chapter 1 characterizes IgG and IgA responses to five *Shigella* antigens in 48 
 culture- or molecular-confirmed infection in Dhaka, Bangladesh, and shows that IgA responses rise
 and decay within two to three months while IgG persists beyond 200 days, that children under five
 have lower baseline responses and higher IgA peaks than older children, and that which participants
-a model is estimated from changes the parameters recovered: pooling all serotypes failed to
-converge, the two that share an O-antigen were best estimated together, and the two with enough
-participants were best estimated alone.
+a model is estimated from changes the parameters recovered: pooling antigenically distinct
+serotypes produced implausible decay for *S. sonnei*, where estimation restricted to
+serotype-matched infections did not.
 
 Chapter 2 estimates cross-isotype correlations in the kinetic parameters using 461 individuals with
 blood-culture-confirmed enteric fever from Bangladesh, Nepal, and Pakistan, and shows that a

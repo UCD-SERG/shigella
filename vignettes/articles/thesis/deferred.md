@@ -60,6 +60,24 @@ Section numbers refer to version 3 of the standard.
       evidence and what is commentary, so tightening it means choosing which half to
       cut. **§6.1**
 
+- [ ] **ch1 L420** — the convergence-diagnostics paragraph narrows the pooled model's
+      failure to *S. sonnei* IgG, while Methods L351, Results L471 and Discussion L537 all
+      carry it unqualified as *S. sonnei*. L471 extends it explicitly ("*S. sonnei* IgA
+      showed a similar pattern") and the abstract and the closing chapter both use the
+      unqualified form. One paragraph reporting less than the other three, not a
+      contradiction; a two-word addition to L420 would settle it. Chapter 1 is submitted,
+      so this is a note for the next revision rather than a change to make now.
+
+- [ ] **ch1 — *S. flexneri* 6, a question to be ready for** — the abstract and L2822 say
+      that pooling antigenically distinct serotypes produced implausible decay. L307 calls
+      Sf6's O-antigen structurally distinct, Sf6 was pooled, and no convergence failure is
+      reported for it; L491 gives its pooled MAE as 0.19--0.22, which looks good. The
+      answer is L477: under the pooled model Sf6 shows the flattest trajectories, near
+      baseline for most participants, and a flat trajectory is easy to predict, so a low
+      MAE there is not evidence the model is right. L543 adds that no alternative was
+      fitted (n = 5) and L541 groups Sf6 with *S. sonnei* as requiring dedicated assays.
+      Not a defect in the text — an answer that lives in the body and not in the abstract.
+
 Not mine to decide:
 
 - [ ] **ch3 Abstract, §9.1 and §9.4** — the first sentence names only "enteric fever", and
