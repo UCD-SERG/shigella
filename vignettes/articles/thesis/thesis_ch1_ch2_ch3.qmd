@@ -565,20 +565,23 @@ recent infection and IgG marks cumulative exposure — two different things — 
 linked at the level of the individual response is a question about how much those readings can be
 treated as independent evidence. It is also a question the data can answer, not one that has to be assumed.
 
-## Why chapter 2 is not about *Shigella* {#sec-bridge12-pathogen}
+## Why the pathogen changes {#sec-bridge12-pathogen}
 
-The plan set out at the qualifying examination was for all three chapters to use the *Shigella*
-cohort. **Chapters 2 and 3 use enteric fever instead, and the reason lies in chapter 1's own limitations, not in any change of interest.**
+The plan set out at the qualifying examination was for all three chapters to use the
+*Shigella* cohort. Chapters 2 and 3 use enteric fever instead, and the reason lies in
+what the model of chapter 2 requires rather than in any change of interest.
 
-**The correlated model asks each participant's data to identify their own peak height and time to
-peak, and both are pinned down by specimens drawn *before* the peak.** The *Shigella* protocol drew
-its first specimen after the peak had passed, and every one of the five antigens fails that
-condition for its own reason. The obstacle and the evidence are set out where the model is
-introduced (@sec-ch2-why); what matters here is that the failure was not marginal and could not be
-tuned away, because there is nothing in the specimens to distinguish the answers the model returns.
+That model asks each participant's data to identify their own peak height and time to
+peak, and specimens drawn before the peak identify both (@sec-ch2-why). Chapter 1's
+cohort was sampled at acute presentation, on a schedule fixed by protocol. A schedule
+fixed by protocol places every participant's observations at the same nominal times, so
+a pre-peak specimen tells us where the population's rise sits without telling us how
+much it varies from one participant to the next — and that variation is what a model
+with participant-level parameters has to recover.
 
-The SEES enteric fever cohorts do not have that problem, and chapter 2 uses them for that reason
-alone.
+The SEES enteric fever cohorts do not have that difficulty: their specimens arrive at
+times that vary between participants, and chapter 2 uses them to ask whether a
+participant's two isotypes move together.
 
 **What is lost.** The three chapters no longer share a pathogen, so chapter 1's parameters do not
 feed chapter 3 directly. The dissertation's continuity is methodological, not organismal.
@@ -595,10 +598,10 @@ evaluates the same curve forward from posterior draws of three of them (@sec-ch3
 @tbl-ch1-kinetics reports for *Shigella*, the SEES fit of chapter 2 reports for enteric fever, in
 the same parameterization.
 
-And the failure is itself reported. *Shigella* is retained in chapter 2 as a limiting case rather
-than discarded. What a design cannot answer is as useful to whoever plans the next study as what it
-can, and the specific obstacle — a first specimen drawn after the peak — is actionable: it says when
-to draw blood, not that the question is unanswerable.
+What a design cannot answer is as useful to whoever plans the next study as what it
+can, and the obstacle here is specific: a cohort whose first specimens come at a fixed
+time after infection cannot inform how the time to peak varies between participants.
+That is a more useful thing to know than a fitted number the data did not support.
 
 {{< pagebreak >}}
 
