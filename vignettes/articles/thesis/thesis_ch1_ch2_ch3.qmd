@@ -3194,7 +3194,7 @@ The first would be a negative result about the applicability of the kinetics ana
 # Appendix D — Reproducibility {#sec-appC}
 
 Analyses were carried out in R [@rcore2025]. Chapter 1's models were fitted in JAGS
-[@jags2003]; chapters 2 and 3 were fitted in Stan [@stan2024] throughout. Kinetic models use the
+[@jags2003]; chapter 2's models were fitted in Stan [@stan2024]. Kinetic models use the
 `serodynamics` package; incidence estimation uses the product and joint likelihood implementations
 developed for chapter 3; `serocalculator` [@serocalculator2025] is used for the single-biomarker equivalence check and for the reference comparison of @tbl-ref.
 
