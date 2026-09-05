@@ -213,8 +213,8 @@ product form in a coverage study. It applies both forms to SEES cross-sectional 
 contributions can be measured rather than argued.
 
 Two contributions run across the chapters. The first is that **failures of design are reported as
-results**: the *Shigella* cohort cannot support the correlated model, and the specific obstacle — a
-first specimen drawn after the antibody peak — tells whoever plans the next study when to draw blood.
+results**: a schedule fixed by protocol cannot resolve how the time to peak varies between
+participants, which tells whoever plans the next study to let sampling times vary.
 The second is that **every pre-specified check is reported whether or not it behaved as predicted**,
 which is what allows a reader to judge whether the checks were capable of failing.
 
@@ -237,12 +237,10 @@ calibration. Applied to surveys in three countries, every interval widened and n
 And the two changes are separable, which turns out to matter. Across those surveys the intervals widened by 46% on average, and about three quarters of that widening follows from the shared infection time alone and requires nothing from chapter 2; the correlation supplies the remainder. A reader who is unpersuaded by chapter 2 is therefore not
 being asked to accept chapter 3 on its authority.
 
-The pathogen changes between chapter 1 and chapter 2, and the reason is itself a result rather
-than a change of interest: the model of chapter 2 needs specimens drawn before the antibody peak,
-and the *Shigella* protocol drew its first after the peak had passed. That failure is reported
-rather than worked around (@sec-bridge12-pathogen), because what a design cannot answer tells
-whoever plans the next study when to draw blood — a more useful thing to know than a fitted number
-the data did not support.
+The pathogen changes between chapter 1 and chapter 2, and the reason lies in what the
+model of chapter 2 requires: specimens drawn before the peak, arriving at times that vary
+between participants (@sec-bridge12-pathogen). Chapter 1's schedule was fixed by protocol,
+which resolves where the population's rise sits but not how much it varies.
 
 ## Conventions and notation {#sec-intro-conventions}
 
