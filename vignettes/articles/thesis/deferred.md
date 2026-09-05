@@ -8,7 +8,7 @@ the standard, which lists items that must not be flagged.
 Both chapters go into one dissertation, so they share one list. Each entry names the
 chapter it belongs to.
 
-Last reviewed: 2026-09-04. Chapter 3 at bf48cc7, chapter 2 at 800fde7.
+Last reviewed: 2026-09-04. Chapter 3 at bf48cc7, chapter 2 at a925bdf.
 Section numbers refer to version 3 of the standard.
 
 ---
@@ -43,6 +43,12 @@ Section numbers refer to version 3 of the standard.
       alternative. The figure has to be regenerated on Mercury to change them, and §2.7
       permits a legend to stay descriptive, so this is a decision about the figure
       rather than about the prose. **§2.7**
+
+- [ ] **ch2 L1012** — "computed without a model" and "use no model at all" say the same
+      thing eleven words apart. The bold marks the second as emphasis rather than
+      repetition, and the sentence carries the chapter's strongest claim about what is
+      evidence and what is commentary, so tightening it means choosing which half to
+      cut. **§6.1**
 
 Not mine to decide:
 
