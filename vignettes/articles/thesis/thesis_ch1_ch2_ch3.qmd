@@ -641,18 +641,13 @@ A high IgA response together with a low IgG response suggests a more recent expo
 That reading treats the two as separable signals.
 If they are strongly linked at the level of the individual response, it needs qualifying — and the strength of the link is a quantity that can be estimated rather than assumed.
 
-### Choice of study cohort {#sec-ch2-why}
+### What the model requires of the data {#sec-ch2-why}
 
-The model asks each participant's data to identify their own peak height and time to peak, and specimens collected before the peak identify both. **In the *Shigella* cohorts of the earlier kinetics study [@lee2026shigella] that condition is not met**: the first specimen is drawn on day 2 and the population peak for `ipaB` falls at roughly 1.5 days, so the rise is over before enrollment.
-Fitted on those data the correlated model returns a baseline cross-correlation that is bimodal, with modes at $+0.92$ and $-0.89$ whose relative weights change with the initialization, while $\hat R$ within each mode is 1.000–1.001 — a property of the posterior, not a failure of estimation.
-The other four antigens fail the same condition in their own ways: for *S. flexneri* 3a the IgA decay rate sits near zero, leaving the decay correlation unidentified; for *S. sonnei* only 11 participants are serotype-matched, too few for a five-parameter cross-block; and for *S. flexneri* 2a and 6 the peak again precedes the first draw.
-A mode weight that flips with the starting values is not determined by the data, and no amount of tuning removes it.
+The model asks each participant's data to identify their own peak height and time to peak, and specimens collected before the peak identify both.
 
-The Surveillance for Enteric Fever in Asia (SEES) cohorts do not have this problem.
+The Seroepidemiology and Environmental Surveillance for Enteric Fever (SEES) cohorts meet this condition.
 The first specimen comes at a median of six days against a population peak near 22 days, so roughly three quarters of participants contribute at least one observation before the peak, and the timing varies between individuals rather than being fixed by protocol [@aiemjoy2022].
 The rise phase is observed rather than inferred, and we estimate the model on data that can support it.
-
-We retained the *Shigella* cohorts as a limiting case rather than discarding them (@sec-ch2-sens).
 
 ### Objectives {#sec-ch2-aims}
 
@@ -663,7 +658,6 @@ Setting those five correlations to zero returns the independent-antibodies model
 We estimated the association for each kinetic parameter with credible intervals and assessed its sensitivity to the priors.
 We compared the correlated model with the independent model out of sample, holding out the participant rather than the observation.
 We then asked, in a simulation study, whether the estimator recovers correlations of the size observed and — equally important — whether it produces them when the truth is zero.
-Finally we examined what a cohort of this size can and cannot support.
 
 The simulation carries the weight.
 A correlation that cannot be recovered from data simulated at that value is not a result, and one that appears when nothing is there is worse than none.
@@ -676,8 +670,8 @@ The independent model is nested inside the correlated one at $\mathbf c=\mathbf 
 
 ### Study population and sample {#sec-ch2-data}
 
-Participants were drawn from the Severe Typhoid Fever Surveillance in Africa and Asia (SEES) program, restricted to prospectively enrolled, blood-culture-confirmed cases in Bangladesh, Nepal and Pakistan [@aiemjoy2022].
-Antibody responses to hemolysin E (HlyE) were measured for two isotypes, IgG and IgA, by ELISA at each visit.
+Participants were drawn from the SEES serological study nested within the Surveillance for Enteric Fever in Asia Project (SEAP), restricted to prospectively enrolled, blood-culture-confirmed cases in Bangladesh, Nepal and Pakistan [@aiemjoy2022].
+Antibody responses to hemolysin E (HlyE) were measured for two isotypes, IgG and IgA, by enzyme-linked immunosorbent assay (ELISA) at each visit.
 
 We applied three exclusions, each for a reason internal to the model rather than to data quality.
 We excluded retrospectively enrolled participants, whose first specimen is drawn at a median of 131 days with only about 20% sampled before the population peak, so that the rise phase is unobserved and the model reaches the peak parameters only by extrapolating backward.
@@ -730,7 +724,7 @@ The five participant-specific parameters are
 
 $$
 \boldsymbol\theta_{ik}=\big(y_{0,ik},\;y_{1,ik},\;t_{1,ik},\;\alpha_{ik},\;r_{ik}\big),
-$$ {#eq-theta}
+$$
 
 the pre-infection concentration, the peak concentration, the time to peak, the decay rate, and the decay shape.
 
@@ -746,7 +740,7 @@ $$
 $$ {#eq-obs}
 
 with the precision $\tau_k$ estimated alongside everything else.
-This is the observation model of the earlier kinetics study [@lee2026shigella], carried over unchanged.
+@eq-obs is the observation model of the earlier kinetics study [@lee2026shigella], carried over unchanged.
 
 ### Hierarchical model and cross-isotype covariance {#sec-ch2-hier}
 
@@ -788,7 +782,7 @@ We added five parameters, not twenty-five.
 A cohort of 461 participants cannot inform a full cross-block, so we restricted it to its diagonal.
 A full cross-block would ask those participants to inform 25 additional covariances, most of which correspond to questions nobody has posed — whether one isotype's peak height relates to the other's time to peak.
 The diagonal restriction asks only the question that motivates the chapter, which is whether a kinetic feature in one isotype travels with the same feature in the other.
-It is a modeling choice, and @sec-ch2-sens revisits it.
+It is a modeling choice.
 
 The five correlations need no admissibility constraint, and the sampler explores them unconstrained.
 We never assemble and factor $\boldsymbol\Sigma_{\text{ch2}}$; instead we build it from a Cholesky factor that is positive definite for every $\mathbf c$; the construction, and the distinction between the conditional and marginal IgA blocks that it introduces, are in @sec-appA-chol.
@@ -869,7 +863,7 @@ It also has a consequence that has to be reported, not discovered: shrinkage tow
 Both appear in @sec-ch2-sim and both have this explanation.
 
 **The decay parameters.** We used a weakly informative prior, and the chapter reports it throughout.
-The decay is the least well identified part of the curve, so a tighter prior would move the estimates more than a tighter prior elsewhere would; keeping it weak is the choice that lets the data speak on the parameter they speak least clearly about.
+The decay is the least well identified part of the curve, so a tighter prior would move the estimates more than a tighter prior elsewhere would; keeping it weak is the choice that lets the data speak on the parameter they speak least about.
 
 **The between-participant scales.** These are tighter than is ideal and are a known limitation, recorded in @sec-ch2-discussion.
 
@@ -1005,21 +999,21 @@ The two conditions are:
 #| tbl-cap: |
 #|   **The two simulation conditions.** Both take every population parameter from the same
 #|   correlated-model fit and differ in the cross-block alone: the null sets it to zero,
-#|   and the other takes it from that fit's posterior. Each generates 100 datasets at the
+#|   and the alternative takes it from that fit's posterior. Each generates 100 datasets at the
 #|   observed sample size. The truth against which each is scored is the marginal correlation
 #|   read off the assembled covariance matrix, not the value handed to the simulator, because
 #|   the two are not the same number once the cross-covariances come from a fit.
 d <- as.data.frame(do.call(rbind, list(
   c("Null", "c = 0, everything else from the correlated fit", "0, 0, 0, 0, 0", "Does the estimator produce correlation when none is present?"),
-  c("Correlation present", "c from the correlated fit's posterior", "0.841, 0.645, 0.857, 0.671, 0.658", "Does the estimator recover correlation?")
+  c("Alternative", "c from the correlated fit's posterior", "0.841, 0.645, 0.857, 0.671, 0.658", "Does the estimator recover correlation?")
 )), stringsAsFactors = FALSE)
 names(d) <- c("Condition", "How the truth is built", "Marginal correlations", "Question")
 thesis_ft(d, widths = c(0.83, 1.72, 1.78, 2.07))
 ```
 
 The null condition comes from the correlated fit with the cross-covariances set to zero, **not from refitting the independent model**. Refitting would produce its own population means, within-isotype blocks and measurement precisions, so a comparison against it would confound the cross-covariances with those differences.
-We built the null from the correlated model with $\mathbf c$ set to zero, which leaves one thing different between the two conditions and nothing else.
-That analysis makes the same move for the same reason when it breaks the isotype pairing by reordering rows rather than by refitting [@lee2026seroincidence].
+We built the null from the correlated model with $\mathbf c$ set to zero, which leaves one thing different between the null and the alternative and nothing else.
+The seroincidence analysis makes the same move for the same reason when it breaks the isotype pairing by reordering rows rather than by refitting [@lee2026seroincidence].
 
 We computed the truth rather than assuming it, and computed it exactly rather than approximating it.
 Once
@@ -1029,10 +1023,10 @@ $\boldsymbol\Sigma$. We scored each replicate against those values rather than t
 
 We report four quantities for each parameter, following @morris2019: bias, mean squared error,
 posterior variance and coverage — for the model parameters, not for prediction error.
-We report each with a Monte Carlo standard error.
+We report each with a Monte Carlo standard error (MCSE).
 
 We fixed the decision rule in advance.
-We judged coverage of an interval constructed to have 90% coverage against $0.90$, using twice the Monte Carlo standard error.
+We judged coverage of a nominal 90% interval against $0.90$, using twice the MCSE.
 A departure smaller than 2 MCSE is not called; one larger is, in whichever direction it
 falls.
 We recorded the rule before running the conditions, and we report it as failing where it fails
@@ -1055,14 +1049,12 @@ Each sensitivity analysis varies one thing and tests one stated thing (@tbl-ch2-
 #| tbl-cap: |
 #|   **Sensitivity analyses.** Each row varies one thing and leaves the
 #|   rest of the model untouched, so that any change in the estimates is attributable to that
-#|   row alone. The first three address whether the reported correlations are a product of the
-#|   prior, the sampler, or the chain-filtering rule; the last addresses what the design
-#|   can and cannot support.
+#|   row alone. The three address whether the reported correlations are a product of the
+#|   prior, the sampler, or the chain-filtering rule.
 d <- as.data.frame(do.call(rbind, list(
   c("Prior on ρ_c", "scale of the normal prior", "whether the estimates are prior-driven"),
   c("Filter threshold", "50 / 100 / 200 log-density units", "whether the filter drives the result"),
-  c("Initial values", "three dispersed scales", "minor-mode landing frequency and depth"),
-  c("Cohort", "Shigella cohorts of the earlier study", "what the design cannot support; the reason is given in the Introduction")
+  c("Initial values", "three dispersed scales", "minor-mode landing frequency and depth")
 )), stringsAsFactors = FALSE)
 names(d) <- c("analysis", "What is varied", "What it tests")
 thesis_ft(d, widths = c(0.95, 1.85, 3.60))
@@ -1107,7 +1099,7 @@ participant and points mark specimen collections; concentrations are on a log sc
 The dashed line
 marks day 22, the approximate population time to peak.
 Most participants contribute a specimen
-before it, which is the condition the model of @sec-ch2-hier needs and the *Shigella* schedule of the earlier study [@lee2026shigella] does not meet (@sec-ch2-why); the between-participant spread visible at every time is what
+before it, which is the condition the model of @sec-ch2-hier needs (@sec-ch2-why); the between-participant spread visible at every time is what
 the hierarchical parameters carry.
 :::
 
@@ -1213,7 +1205,7 @@ concentration from there to the last visit for the decay rate.
 The fifth, the decay shape, has no
 such counterpart.
 Correlating each of the four between the isotypes across all 461 participants
-gives Spearman coefficients of +0.67, +0.58, +0.51 and +0.65.
+gives Spearman correlations of +0.67, +0.58, +0.51 and +0.65.
 These are uniformly smaller than the
 parameter correlations above, as one would expect of quantities measured with noise at a handful of
 visits, and they establish that the association is in the data and not only in the model.
@@ -1326,7 +1318,7 @@ thesis_ft(out, widths = c(1.28, 0.95, 0.81, 0.85, 0.71, 0.95, 0.85))
 ::: {#fig-ch2-cov}
 ![](fig/ch2_fig2_coverage.png){width=100%}
 
-Coverage of a nominal 90% interval for each of the five correlations, under the null condition (left) and the condition with correlation present (right), for the three chain-handling schemes.
+Coverage of a nominal 90% interval for each of the five correlations, under the null (left) and under the alternative (right), for the three chain-handling schemes.
 Bars are Monte Carlo standard errors;
 the dashed line is nominal.
 This panel keeps the five parameters apart rather than pooling them into one
@@ -1335,12 +1327,12 @@ the two extremes of @tbl-ch2-perparam visible.
 :::
 
 The estimator recovered the correlations that were present and produced none where there were none.
-Simulating with all five cross-covariances at zero gave a mean bias of +0.008 to +0.010 against a truth of zero, with every interval containing zero; simulating with correlation present, against true values of 0.841, 0.645, 0.857, 0.671, and 0.658, gave a mean bias after filtering of −0.027.
+Simulating with all five cross-covariances at zero gave a mean bias of +0.008 to +0.010 against a truth of zero, with every interval containing zero; simulating under the alternative, against true values of 0.841, 0.645, 0.857, 0.671, and 0.658, gave a mean bias after filtering of −0.027.
 
 The pre-specified decision rule was not met in any of the six condition-by-scheme combinations (@sec-ch2-sim), and every
 departure is in the same direction: coverage above nominal, from 0.926 to 0.980.
 
-Two parameters sit at the extremes of @fig-ch2-cov. Time to peak is the only one falling below nominal when correlation is present, at 0.860, and decay shape reaches 1.000 under all three schemes.
+Two parameters sit at the extremes of @fig-ch2-cov. Time to peak is the only one falling below nominal under the alternative, at 0.860, and decay shape reaches 1.000 under all three schemes.
 The three schemes differ by at most 0.010 for any parameter.
 
 #### Sources of over-coverage {#sec-ch2-res-two}
@@ -1356,7 +1348,7 @@ the unfiltered value to the filtered one; the dashed line is nominal 0.90.
 The two conditions move in different directions.
 Under the null, coverage falls from 0.980 to 0.958
 while the width changes by two per cent.
-When correlation is present, the width falls by seventy per cent,
+Under the alternative, the width falls by seventy per cent,
 coverage rises from 0.926 to 0.936, and the bias halves from −0.053 to −0.027.
 @sec-ch2-discussion takes up what each direction indicates.
 
@@ -1373,7 +1365,7 @@ therefore not sensitive to where the line is drawn.
 #| label: tbl-ch2-perparam
 #| echo: false
 #| tbl-cap: |
-#|   **Per-parameter performance under the condition with correlation present, after filtering, 100 intervals
+#|   **Per-parameter performance under the alternative, after filtering, 100 intervals
 #|   each.** The pooled coverage above averages over real heterogeneity between parameters,
 #|   and two sit at the extremes: time to peak is the only parameter falling below nominal,
 #|   and decay shape reaches 1.000 while holding the third smallest mean squared error. Bias
@@ -1494,7 +1486,7 @@ It is reported because it is exact, it agrees in direction with the observation-
 ## Discussion {#sec-ch2-discussion}
 
 A participant's two antibody isotypes do not respond independently.
-All five kinetic parameters — the pre-infection level, the peak, the time to peak, and both decay parameters — correlate across IgG and IgA, with posterior medians between 0.64 and 0.84 and lower credible bounds no smaller than 0.53.
+All five kinetic parameters — the pre-infection level, the peak, the time to peak, and both decay parameters — correlate across IgG and IgA, with posterior medians between 0.64 and 0.84 and lower credible bounds no smaller than 0.525.
 
 This is estimated with the smallest extension that can express it: five parameters, one per kinetic feature, with the two within-isotype blocks left exactly as the earlier study had them.
 Setting them to zero returns the previous model identically (@eq-nest), so the comparison attributes any difference to those five and to nothing else.
@@ -1508,7 +1500,7 @@ A figure drawn from a model cannot test that model.
 What it does show is the pairing the fitted model carries, which is what the seroincidence analysis draws from when it pairs parameter draws within a simulated participant.
 We include it for that reason.
 
-The association is established by the rank correlations computed without a model, which @sec-ch2-res-main reports alongside the main results because they are evidence rather than commentary. **Those four Spearman coefficients use no model at all**, and they are what the figure cannot do: they carry the claim, while @fig-ch2-pairs carries the intuition.
+The association is established by the Spearman correlations computed without a model, which @sec-ch2-res-main reports alongside the main results because they are evidence rather than commentary. **Those four Spearman correlations use no model at all**, and they are what the figure cannot do: they carry the claim, while @fig-ch2-pairs carries the intuition.
 
 The pre-specified rule was not met in any of the six combinations.
 Every departure in those six was above nominal.
@@ -1516,14 +1508,18 @@ Every departure in those six was above nominal.
 The two arrows of @fig-ch2-filter show this is not one phenomenon but two, and the filter is what separates them.
 The direction each arrow points is the diagnostic: a vertical move means the filter removed chains without removing width, and a horizontal one means the width itself was what the filter took away.
 
-
+$$
+\underbrace{\text{null: the prior}}_{\text{cannot be filtered away}}
+\qquad
+\underbrace{\text{alternative: multimodality}}_{\text{the filter removes it}}
+$$
 
 Over-coverage under the null comes from the prior, and no post-processing can remove it.
 $\rho_c \sim \mathcal N(0,1)$ centered at zero is the conservative choice for a chapter arguing that these correlations are non-zero, and its cost is that intervals cover 0.958 rather than 0.90 when the truth is zero.
 That the filter changes the width by only two per cent is what identifies the prior, not multimodality, as the source.
 Reporting a conservative interval as though it were exact would be the error; having a conservative interval is not.
 
-When correlation is present the filter removes the over-coverage almost entirely, and the mechanism is visible in the widths: seventy per cent of the unfiltered width was chains in a secondary mode contributing tails that carry no information.
+Under the alternative the filter removes the over-coverage almost entirely, and the mechanism is visible in the widths: seventy per cent of the unfiltered width was chains in a secondary mode contributing tails that carry no information.
 The first is the price of a prior centered at the null; the second is the reason the filter exists.
 
 Widening the prior would reduce the over-coverage.
@@ -1557,7 +1553,7 @@ We report both as failures.
 Pre-specifying the checks and reporting those that did not behave as predicted lets a reader judge whether the checks could have failed.
 
 Three separate signals identify the same parameter as the difficult one, and they arrive from different parts of the analysis.
-It has the lowest coverage of the five when correlation is present (@tbl-ch2-perparam); it shows the largest disagreement across prior scales, and by a margin too wide for Monte Carlo error to explain (@sec-ch2-res-init); and it is the parameter whose correlation is largest in the observed data (@tbl-rho).
+It has the lowest coverage of the five under the alternative (@tbl-ch2-perparam); it shows the largest disagreement across prior scales, and by a margin too wide for Monte Carlo error to explain (@sec-ch2-res-init); and it is the parameter whose correlation is largest in the observed data (@tbl-rho).
 
 Its posterior variance says which of the two kinds of failure this is.
 That variance is four times the mean squared error, so the interval is not too short; what puts the truth outside it is the bias of $-0.056$.
@@ -1600,7 +1596,7 @@ The results should be considered in light of the following limitations.
 The prior on the between-participant scales is tighter than would be ideal, and the intervals reported are conservative in consequence; the direction of that conservatism is understood, since a prior centered at zero makes non-zero correlations harder to find rather than easier, and so works against this chapter's own conclusion rather than for it.
 The cross-block is restricted to its diagonal on the argument that a cohort of this size cannot inform twenty-five cross-parameter covariances and that those covariances answer questions nobody has posed (@sec-ch2-hier); that argument is stated rather than demonstrated, and demonstrating it would require either a larger cohort or a simulation designed for the purpose.
 We evaluated coverage at one sample size under two truth vectors, which establishes that the estimator is calibrated where we use it but not that it remains so as the sample grows.
-The tree-depth ceiling binds under the condition with correlation present, and whether raising it removes the multimodality or only the saturation is not established.
+The tree-depth ceiling binds under the alternative, and whether raising it removes the multimodality or only the saturation is not established.
 The model describes the response to one infection, and fifteen participants contribute measurements from a suspected reinfection onward, 46 of the 3,318, which were retained rather than dropped; whether removing them moves the five correlations is not tested here.
 Age and country are nearly the same variable in this cohort — Bangladesh contributes children and Nepal adults (@sec-ch2-res-pop) — so a single pooled fit is the only one these data support, and neither the effect of age nor the effect of setting can be separated from the other without a design that varies one at a time.
 Clinical covariates were not examined for the same reason and one more: whether the strength of these correlations varies with severity, age, or prior exposure is a question the SEES design could address and this analysis does not.
@@ -1675,7 +1671,7 @@ Seroprevalence compares the proportion above a threshold between populations, wh
 Methods built on paired sera require two visits per participant.
 Antibody-dynamic methods of the kind used here need only one visit and recover a rate rather than a prevalence, at the cost of depending on a model of the kinetics — which is what makes the fidelity of that model, and of the likelihood built on it, the subject of this chapter.
 
-An estimate that informs decisions of that consequence should be accompanied by an honest account of its uncertainty.
+An estimate that informs decisions of that consequence should be accompanied by a calibrated account of its uncertainty.
 This chapter is about a place where that account is currently too optimistic, and about how much too optimistic it is.
 
 ### Seroincidence estimation from cross-sectional serosurveys {#sec-ch3-gap}
@@ -1688,16 +1684,17 @@ $$
 \ell(\lambda)=\sum_{i}\sum_{j=1}^{J}\log L_{ij}(\lambda)
 $$ {#eq-sumll}
 
-On that assumption the sum increases the precision of the seroincidence estimate, and it is that consequence this chapter examines.
+On that assumption the sum of @eq-sumll increases the precision of the seroincidence estimate, and it is that consequence this chapter examines.
 Adding log-likelihoods does increase apparent precision.
 Whether that precision is real depends on whether the terms being added are independent, and a participant's two measurements are not: they come from one person, one infection, and one specimen.
 However long ago that infection occurred, it is a single interval of time, shared by both isotypes.
 
+Both isotypes in this chapter are directed against hemolysin E (HlyE), a pore-forming toxin that *Salmonella* Typhi and Paratyphi A express during human infection and the most immunoreactive antigen identified in confirmed enteric fever.
 What the pair carries that neither marker carries alone is easiest to see for one participant.
 A high IgA response together with a low IgG response points to a more recent exposure than elevated IgA and IgG together: the combination locates the infection in time in a way neither concentration does by itself.
 A likelihood that integrates each isotype over its own infection time discards precisely that information, and then reports a narrower interval for having done so.
 
-The software's own simulator gives each participant one infection time and one set of kinetic parameters, and reads both isotypes from that single state.
+The established implementation's own simulator gives each participant one infection time and one set of kinetic parameters, and reads both isotypes from that single state.
 Its estimator then integrates each isotype over its own infection time and multiplies the results.
 The two components describe different data-generating processes, and only one of them matches how the data were collected.
 
@@ -1707,7 +1704,7 @@ Counting one specimen as two independent observations is a form of composite lik
 The consequence is known in general terms: the estimator remains consistent, but the curvature of the composite log-likelihood overstates the information in the sample, so intervals built from it in the usual way are narrower than they should be [@godambe1960; @chandler2007].
 
 Intervals that are too narrow lead to overconfident comparisons between settings, which matters because these estimates inform burden rankings and vaccine introduction decisions.
-It is also the kind that does not announce itself: an interval that is too narrow looks like a better result, not a worse one, and nothing in the output distinguishes it from a genuinely precise one.
+The error is also not self-evident in the output: an interval that is too narrow looks like a better result, not a worse one, and nothing in the output distinguishes it from a genuinely precise one.
 
 The precedent is instructive.
 When antibody decay was ignored altogether in an earlier generation of serosurveillance methods, the burden was underestimated by more than half [@aiemjoy2024scrub].
@@ -1720,7 +1717,7 @@ Multiplying it by two makes it wider without making it right.
 
 The quantity that decides whether a wider interval is a better interval is coverage — the proportion of intervals that contain the true value when the true value is known — which is the standard target for evaluating an interval procedure by simulation [@morris2019].
 A nominal 95% interval should contain the truth 95% of the time.
-If the current method's intervals contain it less often than that, they are not merely narrower than an alternative; they are wrong, and by a measurable amount.
+If the established estimator's intervals contain it less often than that, they are not merely narrower than an alternative; they are wrong, and by a measurable amount.
 
 Coverage is therefore the primary endpoint of this chapter, and it is the reason the chapter can make a claim about the published literature rather than only about a comparison between two estimators written here.
 A statement that one interval is twice as wide as another is a statement about that code.
@@ -1728,7 +1725,7 @@ A statement that an interval reported as 95% covers far less often than that is 
 
 ### Pre-specified analyses {#sec-ch3-honest}
 
-The argument above is a prediction, not a result, and it has failure modes that were specified before anything was run.
+The argument of @sec-ch3-stakes is a prediction, not a result, and it has failure modes that were specified before anything was run.
 
 The conventional diagnostic could disagree.
 The standard way to show that a composite likelihood overstates precision is a cluster-robust (sandwich) standard error with the participant as the cluster [@chandler2007; @ribatet2012].
@@ -1742,12 +1739,12 @@ And where incidence is low, most specimens sit far along the decay curve, where 
 A correction whose effect is small is still worth making if it is the correct one, and knowing that it is small tells the next study that precision has to come from somewhere else.
 
 The apparent effect could be an artifact of the data, not of the likelihood.
-Two features of these serosurveys could produce a spurious difference between countries: detection limits that differ by laboratory, and age structures that differ by survey arm.
+Detection limits that differ by laboratory and age structures that differ by survey arm could each produce such an artifact.
 Both are examined as pre-specified sensitivity analyses (@sec-ch3-sens) with predictions recorded in advance.
 
 ### The established seroincidence estimator {#sec-ch3-setup}
 
-We used the estimator implemented in `serocalculator` [@serocalculator2025] and followed the notation in its methodology vignette so readers can compare each step directly.
+We describe the estimator implemented in `serocalculator` [@serocalculator2025] and follow the notation in its methodology vignette so readers can compare each step directly.
 
 The model assumes that infections occur randomly over a participant's lifetime according to a Poisson process with rate $\lambda$, the seroconversion rate in infections per person-year, which is the quantity we estimate.
 For a participant of age $a$, the model first distinguishes between participants who have never been infected and those who have been infected at least once.
@@ -1784,7 +1781,7 @@ Values at or below the assay's detection limit contribute the probability $\Pr(Y
 ### The independence assumption in the current likelihood {#sec-ch3-product}
 
 Write $J$ for the number of biomarkers combined for one participant — $J=2$ throughout this chapter, HlyE IgG and HlyE IgA — and reserve the subscript $j$ for the biomarker and the superscript $(k)$ for the parameter draw, as the vignette does.
-With $J$ biomarkers the established implementation applies @eq-single to each biomarker in turn and sums the resulting log-likelihoods,
+With $J$ biomarkers the established estimator applies @eq-single to each biomarker in turn and sums the resulting log-likelihoods,
 
 $$
 \ell_{\mathrm{prod}}(\lambda)=\sum_{i}\sum_{j=1}^{J}\log L_{ij}(\lambda),
@@ -1833,11 +1830,11 @@ follows takes the stated model as the starting point and asks what else follows 
 ### Objectives {#sec-ch3-aims}
 
 We derived a joint likelihood in which the infection time is shared between isotypes and the kinetic parameters are paired, separating the two assumptions so that their contributions can be attributed individually (@eq-two-assumptions).
-Because no joint likelihood exists in the available software, we implemented it and verified that it reproduces the established estimator in the single-biomarker case, where the two forms are the same integral and must agree exactly.
+Because no joint likelihood exists in the established implementation, we implemented it and verified that it reproduces the established estimator in the single-biomarker case, where the two forms are the same integral and must agree exactly.
 We then evaluated coverage on simulated cross-sectional data with known $\lambda$, across a range of seroincidence chosen to span the observed settings, reporting coverage, interval width, and bias for both likelihoods.
-Finally we applied the forms to the SEES cross-sectional serosurveys in three countries, crossing the likelihood form with the parameter draws so that the paired and independent draws of @sec-ch3-banks enter without any additional model fitting, and asked whether the epidemiological conclusions — the ranking of countries and the contrast between high- and low-endemicity arms — survive.
+Finally we applied the forms to the cross-sectional serosurveys of the Seroepidemiology and Environmental Surveillance for Enteric Fever (SEES) study in three countries, crossing the likelihood form with the parameter draws so that the paired and independent draws of @sec-ch3-banks enter without any additional model fitting, and asked whether the epidemiological conclusions — the ranking of countries and the contrast between high- and low-endemicity arms — survive.
 
-The correction is not intended to displace the existing method.
+The correction is not intended to displace the established estimator.
 It is intended to establish how much the simplification costs, so that a practitioner combining isotypes knows whether the resulting interval can be taken at face value — and, if the cost is small, can continue to use the faster calculation knowing what has been checked.
 
 ## Methods {#sec-ch3-methods}
@@ -1845,8 +1842,7 @@ It is intended to establish how much the simplification costs, so that a practit
 ### Study population and sample {#sec-ch3-data}
 
 Cross-sectional data come from the population-based serosurveys conducted alongside the SEES case cohorts: high-endemicity and low-endemicity household surveys in each of Bangladesh, Nepal and Pakistan [@aiemjoy2022].
-We measured antibody responses against hemolysin E (HlyE), a pore-forming toxin that *Salmonella* Typhi and Paratyphi A express during human infection and the most immunoreactive antigen identified in confirmed enteric fever.
-HlyE IgG and IgA were measured by the same ELISA as in the longitudinal cohorts, so the parameter draws and the specimens they are applied to are on one scale.
+HlyE IgG and IgA were measured by the same enzyme-linked immunosorbent assay (ELISA) as in the longitudinal cohorts, so the parameter draws and the specimens they are applied to are on one scale.
 
 We restricted the analysis to the two population-based survey arms, high- and low-endemicity, which sample the community rather than the case cohorts that provided the kinetic estimates.
 We excluded household members enrolled alongside an index case, whose exposure is that of a household containing a known case rather than that of the community; including them would attach a case's household to a population rate.
@@ -1866,7 +1862,6 @@ isotype.
 The final analysis sample comprised 2,613 participants, each contributing one HlyE IgG and one HlyE IgA measurement with no missing age or concentration.
 The household identifier is one-to-one with the participant identifier in these two arms, so no household clustering survives the second rule; 48% are male, ranging from 35% to 53% across the six sites.
 The six country-by-endemicity sites are described in @tbl-cells.
-Measurements below the detection limit are retained at the limit and enter as censored contributions rather than being dropped, for the reason given there [@lee2026correlated].
 
 Specimens were collected between February 2019 and June 2021, but not on a common schedule.
 Five of the six sites sampled across 13 to 16 calendar months, with a gap through the middle of 2020 when field work was suspended; the low-endemicity Pakistan site drew its dated specimens within eleven days in January 2021 (@tbl-collect).
@@ -1899,7 +1894,7 @@ $$ {#eq-joint}
 
 $$
 \ell_{\mathrm{joint}}(\lambda)=\sum_i \log L_i^{\mathrm{joint}}(\lambda).
-$$ {#eq-jointsum}
+$$
 
 Using the same draw index $k$ for both biomarkers is what draws from the joint distribution; using separate indices would draw from the product of the two marginals, which is the assumption @eq-truegen declines to make.
 
@@ -1935,7 +1930,7 @@ They are separable, and separating them is what allows their contributions to be
 $$
 p(y_1,y_2\mid \tau)=\iint p(y_1\mid\tau,\boldsymbol\theta_1)\,p(y_2\mid\tau,\boldsymbol\theta_2)\,
 p(\boldsymbol\theta_1,\boldsymbol\theta_2)\,d\boldsymbol\theta_1 d\boldsymbol\theta_2
-$$ {#eq-condindep}
+$$
 
 where $\boldsymbol\theta_1$ and $\boldsymbol\theta_2$ are the participant's kinetic parameters for
 the two biomarkers and $p(\boldsymbol\theta_1,\boldsymbol\theta_2)$ is their joint population distribution — the object the kinetics analysis estimated.
@@ -1958,16 +1953,15 @@ The correlation estimated by the kinetics analysis enters here, and only here �
 Two sets of draws with the same marginal distributions can differ entirely in it, which is the relation defined next.
 
 Three distinct correlations are now in play, and they are easy to conflate even though only one of them is a parameter.
-The cross-isotype correlation $ ho_c$ is a correlation between kinetic parameters — between the peak a participant would reach in IgG and the peak they would reach in IgA — and the kinetics analysis estimates it [@lee2026correlated]. $\widehat{\operatorname{Cov}}_k$ in @eq-covdraws is a covariance between two **density values** at a fixed $\tau$, taken across the parameter draws; it asks whether the draws that explain a participant's IgG well are the same rows that explain their IgA well, and we compute it rather than estimate it.
+The cross-isotype correlation $\rho_c$ is a correlation between kinetic parameters — between the peak a participant would reach in IgG and the peak they would reach in IgA — and the kinetics analysis estimates it [@lee2026correlated]. $\widehat{\operatorname{Cov}}_k$ in @eq-covdraws is a covariance between two **density values** at a fixed $\tau$, taken across the parameter draws; it asks whether the draws that explain a participant's IgG well are the same rows that explain their IgA well, and we compute it rather than estimate it.
 The correlation between the two observed log concentrations is a third thing again, and it is neither of the first two: it is the quantity @sec-ch3-res-shift compares against what the parameter draws predict. **A set of draws can carry a large $\rho_c$ and still fail to reproduce the observed correlation**, and whether it does is a property of the draws rather than of $\rho_c$.
 
 The two assumptions can be stated separately.
-The first is that a participant's biomarkers arise from one infection rather than from separate ones; relaxing the current estimator on this axis requires no result from the kinetics analysis at all.
+The first is that a participant's biomarkers arise from one infection rather than from separate ones; relaxing the established estimator on this axis requires no result from the kinetics analysis at all.
 The second is that the kinetic parameters of the two isotypes are drawn as a pair, preserving the cross-isotype correlation.
 This is where the kinetics analysis enters, and only here.
-The shared infection time does not depend on it, and this matters for how the chapter's conclusion should be read.
-A reader who is unconvinced by the kinetics analysis still has to accept that a participant has one infection time.
-The design of @sec-ch3-design is built so that the contribution of the shared infection time can be read off separately, and if it is the larger of the two, the main result of this chapter is independent of the previous one.
+The shared infection time does not depend on it.
+The design of @sec-ch3-design is built so that the contribution of the shared infection time can be read off separately, and if that contribution is the larger of the two, the main result of this chapter is independent of the previous one.
 
 ### Posterior parameter draws {#sec-ch3-banks}
 
@@ -2038,18 +2032,18 @@ $$ {#eq-contrasts}
 
 The comparator is internal for a specific reason.
 It would be more direct to
-compare the joint form against the established implementation, but that comparison is not made.
+compare the joint form against the established implementation, but we did not make that comparison.
 
 The two codebases differ in the noise convention, in the density assumed for time since infection,
 in the handling of the never-infected branch and in the time units.
 On the same six datasets the product form and the established implementation differ by up to 8.5% (@tbl-ref).
 A contrast against the
-package would therefore mix the independence assumption with four other differences, and could not
+established implementation would therefore mix the independence assumption with four other differences, and could not
 be attributed to any of them.
 
 Placing all three forms in one function removes that entire class of ambiguity by construction.
 What
-is lost is the direct claim "the published implementation under-covers"; what is gained is that the
+is lost is the direct claim "the established implementation under-covers"; what is gained is that the
 contrast measures the independence assumption and nothing else.
 We report the established implementation once, as a reference, so that the size of the discrepancy is on the record.
 
@@ -2084,8 +2078,7 @@ $$
 $$ {#eq-valid}
 
 We checked this across a grid of $\lambda$ spanning the plausible range, separately for IgG and IgA,
-and against the existing compiled implementation rather than against a second version of my own
-code.
+and against the established compiled implementation rather than against a second implementation written for this analysis.
 We required agreement to four decimal places before computing any two-biomarker quantity.
 
 A second identity applies once all three forms live in one function.
@@ -2100,14 +2093,14 @@ $$
 $$ {#eq-threeform}
 
 Unlike @eq-valid this is an identity within a single implementation, so it should hold to machine precision rather than to four decimals.
-A disagreement would be an indexing error, not a modeling choice, and the check costs seconds.
+A disagreement would indicate an indexing error rather than a modeling choice, and the check is computationally negligible.
 
 We describe the gate in some detail because it caught errors that would otherwise have propagated.
 It identified four separate errors in the first implementation, none of which would have produced an obviously wrong two-biomarker number:
 
 The noise density was a placeholder rather than the two-stage convolution of @sec-appB-noise.
 Left censoring was not handled: observations at or below the detection limit require $\Pr(Y\le y_{\text{low}})$ rather than a density, and the resulting IgG error was roughly thirty times the IgA error, IgG being the more heavily censored isotype.
-Units were inconsistent, the decay rate being stored per day while age and $\lambda$ are in years; the existing implementation rescales by 365.25 for exactly this reason.
+Units were inconsistent, the decay rate being stored per day while age and $\lambda$ are in years; the established implementation rescales by 365.25 for exactly this reason.
 And the mixture weights over whether a participant was ever infected, $1-e^{-\lambda a}$ and $e^{-\lambda a}$ (@eq-brt), had been omitted.
 
 Each of the four would have produced a plausible number, not an obviously wrong one, which is the argument for running the gate before anything else.
@@ -2133,7 +2126,7 @@ We report the grid spacing alongside every interval, because it sets the finest 
 This is the primary evaluation.
 Everything before it establishes that the joint likelihood is correctly implemented; this establishes whether the intervals it produces are the right width.
 
-The design follows the standard for simulation studies [@morris2019]: we report a Monte Carlo standard error for every performance measure, and we fixed what counts as acceptable before running any grid.
+The design follows the standard for simulation studies [@morris2019]: we report a Monte Carlo standard error (MCSE) for every performance measure, and we fixed what counts as acceptable before running any grid.
 
 The simulated sample size is $n=300$, at the lower end of the range the observed sites span — 242 to 596, with a median near 450 (@tbl-cells).
 Evaluating calibration at a sample size no larger than the smaller surveys keeps the assessment from being more favorable than the data the method is applied to.
@@ -2141,17 +2134,17 @@ Evaluating calibration at a sample size no larger than the smaller surveys keeps
 **Simulation design.** For each replicate: draw ages by resampling from the observed serosurvey; draw infection status and $\tau$ from @eq-brt at a known $\lambda$; draw one parameter index per participant, which is what preserves the pairing; evaluate @eq-curve for both isotypes at that $\tau$; apply the two-stage noise of @sec-appB-noise; and censor at the detection limit.
 We then fit both likelihoods to the same simulated dataset and score both intervals.
 
-We wrote the simulator out rather than taking it from the package.
-This is not because the package generates from the product model — it does not, and its documentation is explicit that each individual's biomarkers share one latent infection history — but because its generative model differs from the estimator in other ways, set out below.
-The simulator used here is the estimator run backward, so that the data-generating process and the joint likelihood are the same model stated in two directions.
+We wrote the simulator out rather than taking it from the established implementation.
+This is not because the established implementation generates from the product model — it does not, and its documentation is explicit that each individual's biomarkers share one latent infection history — but because its generative model differs from the estimator it accompanies in other ways, set out below.
+The simulator used here is the joint likelihood run backward, so that the data-generating process and that likelihood are the same model stated in two directions.
 That is what makes the resulting coverage number interpretable; a simulator that did not match would produce a plausible number that meant nothing.
 
-Reading the package's generator also settled a question that had been open.
+Reading the established implementation's generator also settled a question that had been open.
 It draws infections as a Poisson process across the whole lifetime and sets the baseline of each new response to the level the previous one had decayed to, so antibody accumulates across infections.
-The estimator, by contrast, models a single most-recent infection with a baseline drawn afresh.
+The established implementation's estimator, by contrast, models a single most-recent infection with a baseline drawn afresh.
 The two are not the same model, which is a further reason why neither could serve as a reference for the other, and it bears on the discordance reported in @sec-ch3-res-app.
 
-We validated the simulator before use, against the joint form rather than against the package.
+We validated the simulator before use, against the joint form rather than against the established implementation.
 Once the comparator is internal, the coherent question is no longer whether the simulator reproduces a second codebase — it is whether the simulator and the joint form are the same model stated in two directions.
 The gate therefore asks the joint form to recover a $\lambda$ drawn from its own generating process, at three values spanning the range, before any coverage replicate is run.
 
@@ -2209,11 +2202,9 @@ Two are pre-specified, and both are *internal* comparisons — between the two l
 The first is the ranking of countries by incidence under the product form, and whether the joint form preserves it.
 The second is the contrast between the high- and low-endemicity arms within each country, and whether the intervals separate under both forms.
 
-A wider interval that preserves both is a different result from one that destroys either, and the distinction is the point of the application.
-
 We used no external benchmark.
 It would be natural to compare these estimates against previously published seroincidence figures from the same surveillance program.
-That comparison is not made anywhere in this chapter.
+We did not make that comparison.
 
 The analysis sets differ in ways that make any agreement or disagreement uninterpretable.
 The parameter draws here come from prospectively enrolled participants only, with single-visit participants excluded [@lee2026correlated]; kinetics are fitted with one pooled set rather than by age stratum; and the cross-sectional restriction, the censoring convention, and the noise handling are all specified independently.
@@ -2328,7 +2319,7 @@ out <- data.frame(
 thesis_ft(out, widths = c(1.15, 0.85, 0.55, 1.02, 1.02, 0.86, 0.95))
 ```
 Two features of @tbl-cells bear on the analyses that follow.
-Censoring differs greatly between countries — from 0.2% of IgG measurements in high-endemicity Bangladesh to 59.7% in low-endemicity Pakistan — which is what the detection-limit sensitivity analysis addresses.
+Censoring differs between countries — from 0.2% of IgG measurements in high-endemicity Bangladesh to 59.7% in low-endemicity Pakistan — which is what the detection-limit sensitivity analysis addresses.
 And one site has an age structure unlike the rest: the low-endemicity Pakistan arm is 22.0% aged 26 or over against 0.8% or less elsewhere, and it sits on the low side of the Pakistan endemicity contrast, which is why we re-analyzed that site alone under an age restriction.
 
 A third difference concerns the decay parameters, which @sec-ch3-discussion returns to.
@@ -2348,7 +2339,7 @@ Across all six sites the contrast of @eq-nullcheck was $0.0\%$ to the precision 
 This was recorded as a prediction before the contrasts were computed (@sec-ch3-design); a departure would have indicated that the pairing was entering somewhere it could not legitimately enter, and would have invalidated every other contrast reported below.
 
 The equivalence gate against the established implementation (@eq-valid) passed at $J=1$ after correcting the four errors described in @sec-ch3-valid.
-At $J=2$ the two implementations diverge, and the size of that divergence is why the comparator in this chapter is internal.
+At $J=2$ the two codebases diverge, and the size of that divergence is why the comparator in this chapter is internal.
 
 ```{r}
 #| label: tbl-ref
@@ -2372,7 +2363,7 @@ thesis_ft(d, widths = c(1.4, 1.84, 2.28, 0.88))
 ```
 
 The two agree exactly in three sites and differ by up to 8.5% in the others, with a mean of −2.8%.
-A contrast against the package would carry that difference inside it and could not be attributed to the independence assumption (@sec-ch3-design).
+A contrast against the established implementation would carry that difference inside it and could not be attributed to the independence assumption (@sec-ch3-design).
 It also explains why the gate passed at $J=1$ while the two forms parted company at $J=2$ — where the discrepancy is small, one biomarker does not reveal it.
 
 #### Comparability of the parameter draws {#sec-ch3-res-banks}
@@ -2589,7 +2580,6 @@ Bangladesh separated under all three forms, with a ratio of 1.94 for the product
 Pakistan separated under the product and joint forms (1.70 and 1.63) though not under the shared-time form.
 Nepal overlapped under all three, as it does at native detection limits with the established implementation — the joint form did not create that overlap.
 
-This matters more than a generic reassurance would.
 The ordering of these three countries is the external check that established seroincidence as a usable measure in the first place: when seroincidence was compared against blood-culture surveillance in the same populations, the rank order of the two agreed, highest in Bangladesh and lowest in Nepal [@aiemjoy2022].
 The joint form preserves that agreement.
 A correction that widened the intervals and reversed the ordering would have cost the method its principal external validation; this one does not.
@@ -2650,9 +2640,9 @@ It was not met.
 The sandwich estimator did not detect the within-participant dependence that the coverage study measures directly; @sec-ch3-discussion takes up why.
 
 
-The paired draws assign very low probability to a small number of observed pairs, and this does not affect inference.
+The paired draws assign low probability to a small number of observed pairs, and this does not affect inference.
 Under the joint form the maximized log-likelihood was lower for the paired draws than for the shuffled draws by 697.1, 701.4, 701.7, and 699.4 at nested samples of 10, 20, 30, and 50 participants — a fivefold increase in sample size moved it by 2.3 log units, which is to say it did not move.
-It is a constant, not a per-participant cost: essentially all of it is present in the first ten participants, it does not depend on $\lambda$, and the estimate and interval are therefore unaffected.
+It is a constant, not a per-participant cost: essentially all of it is present in the first ten participants, it does not depend on $\lambda$, and the estimate and interval are therefore unaffected; @sec-appB-offset gives the algebra.
 What it says is that a handful of observed isotype pairs are close to impossible under the pairing the kinetics analysis estimates.
 
 ## Discussion {#sec-ch3-discussion}
@@ -2703,26 +2693,26 @@ Accuracy did not improve materially, and there was little room for it to.
 The joint form is the more accurate of the two at every value of $\lambda$, but by six per cent of itself (@sec-ch3-res-cov).
 An estimator already accurate to within a tenth of the true value cannot be made much more accurate by reordering its likelihood.
 
-What improved was the honesty of the uncertainty.
-A nominal 95% interval built by adding log-likelihoods contains the truth 89.7% of the time; the joint form restores calibration at a constant cost in width.
+What improved was the calibration of the interval.
+The joint form restores it at a constant cost in width.
 The correlation does not tell us the incidence more exactly — it tells us how much we did not know.
 
 That is a smaller claim than the one anticipated and a more defensible one.
-An interval is what a surveillance program acts on when it decides whether two settings differ, or whether a rate has changed; a method that reports honest uncertainty is therefore more useful to it than one that reports a slightly different number.
+An interval is what a surveillance program acts on when it decides whether two settings differ, or whether a rate has changed; a method that reports calibrated uncertainty is therefore more useful to it than one that reports a slightly different number.
 
 @eq-two-assumptions separated two changes that the joint form makes together: sharing the infection time, which follows from a participant having had one infection, and pairing the kinetic parameters, which is where the kinetics estimate enters.
-The separation was built into the design so that the contributions could be read off, and the reading is that sharing accounts for 76% of the widening (@tbl-split).
+The separation was built into the design so that the contributions could be read off, and the reading is that sharing accounts for 76% of the correction (@tbl-split).
 An independent route to the same contrast, sharing neither code nor data, agrees to within three percentage points (@sec-ch3-res-decomp).
 
-This matters for how the chapter should be read.
-A reader who is unpersuaded by the correlation estimate still has to accept that a participant has one infection time, and three quarters of the effect reported here follows from that alone.
+Three quarters of the correction therefore does not depend on the kinetics analysis at all.
+A reader who is unpersuaded by the correlation estimate still has to accept that a participant has one infection time.
 The dependence between the two chapters is real but partial, and we quantified it rather than asserting it.
 
 The same decomposition can be made at the individual level, and has not been here.
 Interval width is a population quantity; the identical partition can be asked in days, by holding out a participant's known time since fever onset and asking how accurately it is recovered from a single specimen using one biomarker, two under a shared infection time, and two with the parameters paired.
 That analysis is specified in the kinetics analysis [@lee2026correlated].
 
-Agreement between the two would be a second measurement of the same quantity by a route that shares neither the data nor the quantity being estimated, and would put the attribution above on firmer ground than one contrast can.
+Agreement between the two would be a second measurement of the same quantity by a route that shares neither the data nor the quantity being estimated, and would put the attribution in @sec-ch3-res-split on firmer ground than one contrast can.
 Disagreement would mean that one of them is measuring something else, and would have to be resolved before either is relied on.
 
 The joint estimate exceeded the product estimate in every site, by 29% on average relative to the product form on the same draws, and the simulation does not reproduce this.
@@ -2730,23 +2720,23 @@ Under data generated from the joint model the two forms differed in bias by less
 Something in the observed data, absent from the simulation, separates them.
 
 The most direct evidence about what that feature is concerns the relationship between the isotypes.
-Real isotype pairs are markedly more discordant than the fitted kinetics imply (@sec-ch3-res-shift), and the same finding accounts for the constant log-likelihood deficit of @sec-ch3-res-sens: for some participants no single parameter draw explains both measurements well.
+Real isotype pairs are more discordant than the fitted kinetics imply (@sec-ch3-res-shift), and the same finding accounts for the constant log-likelihood deficit of @sec-ch3-res-sens: for some participants no single parameter draw explains both measurements well.
 
-We tested one of these directly.
+Two explanations could account for it, and we tested one directly.
 If repeated infection separates the isotypes, the youngest participants — who have had the least time to accumulate infections — should agree with the model better than the oldest.
-Restricting to participants detected in both isotypes, the correlation among children under five exceeded that among participants aged sixteen and over in one of the three sites where both bands retained enough participants to estimate one (high-endemicity Bangladesh, 0.63 against 0.48), was flat in a second, and ran the other way in the third (low-endemicity Bangladesh, 0.27 against 0.44).
+Restricting to participants detected in both isotypes, the correlation among children under five exceeded that among participants aged sixteen and over in one of the three sites where both bands retained enough participants to estimate one, was flat in a second, and ran the other way in the third.
 
 The test is weak, and weak in a specific way: detection is itself related to age.
-Children under five carry lower concentrations and are censored more often, so the restriction that makes the correlation computable removes 60% to 91% of that band in three of the six sites and leaves it with too few participants to estimate anything.
+Children under five carry lower concentrations and are censored more often, so the restriction that makes the correlation computable removes the greater part of that band in three of the six sites and leaves it with too few participants to estimate anything.
 A stratification that loses most of its youngest participants cannot adjudicate a hypothesis about accumulated exposure, and we report the result as inconclusive rather than as evidence against repeated infection.
 
-Two explanations are consistent with the data and cannot be separated here.
+Both remain consistent with the data, and this chapter cannot separate them.
 
 **Repeated infection.** The model describes one most-recent infection.
 In these settings participants have had several, and IgG accumulates across them while IgA reflects mainly the most recent exposure [@aiemjoy2022repeat] — which decouples the two.
 The established simulator encodes exactly this process, carrying the baseline of each new response forward from where the previous one decayed to, even though the estimator it accompanies does not.
 
-**Kinetics estimated from confirmed cases.** The kinetics are fitted to blood-culture-confirmed infections, which are more severe than the subclinical and mild infections that dominate a population serosurvey.
+**Kinetics estimated from confirmed cases.** The kinetics analysis fits its models to blood-culture-confirmed infections, which are more severe than the subclinical and mild infections that dominate a population serosurvey.
 If community responses are smaller and more variable, the draws will overstate how tightly the isotypes travel together.
 
 Until we settle this, no claim about the level of incidence should rest on that shift.
@@ -2758,30 +2748,35 @@ Where two are combined, an interval obtained by adding log-likelihoods should no
 In these conditions it behaved as an interval of roughly 90%, and a reader wanting nominal coverage should either compute the joint form or widen by about a quarter, which is what the joint form costs.
 
 The results should be considered in light of the following limitations.
-The simulation generates from the model the joint likelihood assumes, and three facts partly mitigate this: the shared-time form is also misspecified with respect to the generator and is calibrated at nominal; both forms estimate the incidence closely, so the shortfall appears as width and not as bias, which is the specific failure composite likelihood theory predicts; and no simulator generates from the product form, since the established package's generator also gives each individual one latent infection history.
+The simulation generates from the model the joint likelihood assumes.
+Three facts partly mitigate this.
+The shared-time form is also misspecified with respect to the generator and is calibrated at nominal.
+Both forms estimate the incidence closely, so the shortfall appears as width and not as bias, which is the specific failure composite likelihood theory predicts.
+And no simulator generates from the product form, since the established implementation's generator also gives each individual one latent infection history.
 The joint form is slightly conservative, covering above nominal, and whether the excess is a property of the estimator or an artifact of the finite number of parameter draws is not settled; drawing more of them and re-examining the coverage is the direct test.
 The kinetics analysis models correlation at one level of the hierarchy and not two, leaving residual measurement noise uncorrelated, so the fitted parameter correlation absorbs any concordance arising at the measurement level and simulating from it then over-predicts concordance in a study whose measurement-level component differs.
 The point-estimate shift is not explained: the joint form gives estimates about a third higher than current practice on the observed data and the simulation does not reproduce this (@sec-ch3-res-shift), so we report it as an open finding and no claim about the level of incidence rests on it.
-And the comparison against the established software is conceptual rather than numerical, because the two implementations differ in the noise convention, the density for time since infection, the handling of the never-infected branch, and the time units (@sec-ch3-design).
+The comparison against the established implementation is conceptual rather than numerical, because the two codebases differ in the noise convention, the density for time since infection, the handling of the never-infected branch, and the time units (@sec-ch3-design).
 
 The correction is not expensive to describe and it is not expensive to justify: it asserts only that a participant's measurements come from one infection.
 It is, however, expensive to compute, since the shared integral cannot be factorized across biomarkers.
-Where that cost is prohibitive, the honest reporting choice is to state the interval as approximate, not as 95%.
+Where that cost is prohibitive, the appropriate reporting choice is to state the interval as approximate, not as 95%.
 
 Several extensions follow naturally.
-Age stratification remains the most direct way to separate the two explanations above, but it needs a sample in which the youngest participants are not censored away.
+Age stratification remains the most direct way to separate the two explanations, but it needs a sample in which the youngest participants are not censored away.
 A survey designed for it, or an assay with a lower floor, would give the test the power this one lacked.
 A model with correlated residuals would separate the measurement-level and parameter-level components of concordance, which a single fit cannot.
 Implementing the shared-time form in the established software would close a gap its maintainers have already identified, since the methodology vignette specifies that form while the implementation computes the product.
 And three further extensions follow directly.
 The cost should grow with more than two biomarkers, because the estimator applies the independence assumption more times.
 And nothing in the derivation is specific to enteric fever, so the same treatment applies to other pathogens and cohorts.
-The discordance reported above is the most interesting thing this chapter found and the thing it is least able to explain. If repeated infection is the cause, the single-infection framework itself, which every likelihood form considered here shares, is the next assumption to examine.
+The discordance of @sec-ch3-res-shift is the finding this chapter is least able to explain. If repeated infection is the cause, the single-infection framework itself, which every likelihood form considered here shares, is the next assumption to examine.
 
 ## Funding {.unnumbered}
 
 This research was supported by the Bill & Melinda Gates Foundation, which funded the Surveillance for Enteric Fever in Asia Project (INV-008335) and the ancillary serological study from which these data are drawn (INV-000572).
 The funders had no role in study design, data collection, data analysis, data interpretation, or the writing of this report.
+
 
 {{< pagebreak >}}
 
@@ -2990,7 +2985,7 @@ $$
 $$ {#eq-chol}
 
 where $\mathbf L_G$ and $\mathbf L_{A\mid G}$ are lower triangular with positive diagonal, each built from a positive scale vector and an LKJ Cholesky correlation factor [@lkj2009].
-Any $\mathbf L$ of this shape gives a positive definite $\mathbf L\mathbf L^{\top}$, so @eq-admissible holds automatically and $\mathbf c$ is unconstrained.
+Any $\mathbf L$ of the shape in @eq-chol gives a positive definite $\mathbf L\mathbf L^{\top}$, so @eq-admissible holds automatically and $\mathbf c$ is unconstrained.
 Multiplying out, $\mathbf L_G\mathbf B^{\top}=\operatorname{diag}(\mathbf c)$ exactly, which is the cross-block of @eq-blocks.
 
 Two consequences follow, and both invite misreading.
@@ -3032,7 +3027,7 @@ $$
 m_j=\tfrac12\big[\log(\Omega_{jj}/2)-\psi(s^{*})\big],
 \qquad
 s=\tfrac12\sqrt{\psi'(s^{*})}=0.182,
-$$ {#eq-momentmatch}
+$$
 
 and the implied prior on each correlation matrix by $\mathrm{LKJ}(\eta)$ with
 $\eta=\max\{(\nu-2p+3)/2,\,0.1\}=6.5$. These hyperparameters are the `serodynamics` defaults, which
@@ -3045,7 +3040,7 @@ That prior has a consequence that has to be reported, not discovered.
 Being centered at
 zero, it shrinks estimates toward the null.
 Under the null condition of @tbl-sim this pulls estimates
-toward the truth and produces over-coverage; when correlation is present it pulls them away and produces a small negative bias.
+toward the truth and produces over-coverage; under the alternative it pulls them away and produces a small negative bias.
 Both appear in the simulation results and both have this single explanation.
 
 ## Initialization sensitivity for all parameters {#sec-appA-init}
