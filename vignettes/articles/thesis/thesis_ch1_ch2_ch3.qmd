@@ -26,6 +26,7 @@ format:
     code-fold: true
   docx:
     toc: true
+    toc-title: "Table of Contents"
     toc-depth: 4
     lof: true
     lot: true
@@ -231,8 +232,8 @@ clinical attention [@simonsen2009; @teunis2020; @aiemjoy2022].
 The first of those two steps is where this dissertation begins. Characterizing the trajectory
 requires a longitudinal cohort of confirmed cases, and such cohorts are scarce, small, and specific
 to a pathogen: the *Shigella* cohort used in chapter 1 has 48 participants and the enteric fever
-cohorts of chapters 2 and 3 a few hundred each. **What a cohort of that size can and cannot support
-is therefore part of the problem rather than a detail of it** — chapter 1 finds that even the
+cohorts of chapters 2 and 3 a few hundred each. What a cohort of that size can and cannot support
+is therefore part of the problem rather than a detail of it — chapter 1 finds that even the
 question of how participants are grouped for estimation changes the parameters recovered, and
 chapter 2 restricts its cross-block to a diagonal on the argument that 461 participants cannot
 inform a full one.
@@ -280,10 +281,10 @@ product form in a coverage study. It applies both forms to SEES cross-sectional 
 2,613 participants, and separates the two assumptions the joint form relaxes so that their
 contributions can be measured rather than argued.
 
-Two contributions run across the chapters. The first is that **failures of design are reported as
-results**: a schedule fixed by protocol cannot resolve how the time to peak varies between
+Two contributions run across the chapters. The first is that failures of design are reported as
+results: a schedule fixed by protocol cannot resolve how the time to peak varies between
 participants, which tells whoever plans the next study to let sampling times vary.
-The second is that **every pre-specified check is reported whether or not it behaved as predicted**,
+The second is that every pre-specified check is reported whether or not it behaved as predicted,
 which is what allows a reader to judge whether the checks were capable of failing.
 
 ## Dissertation organization {#sec-intro-organization}
@@ -424,7 +425,7 @@ To assess robustness of model comparison conclusions to prior specification, we 
 
 All participants were included in the analysis, regardless of the number of longitudinal measurements or loss to follow-up, as the hierarchical framework borrows strength across individuals and does not require complete data at all scheduled time points. No imputation was performed; the likelihood was evaluated only at observed time points for each individual.
 
-**Ethical Approval.** This study was approved by the Institutional Review Boards of the International Centre for Diarrhoeal Disease Research, Bangladesh (icddr,b) and Massachusetts General Hospital. Written informed consent was obtained from all adult participants and the parents or legal guardians of participating children, with assent obtained from children as appropriate, at SOSAR enrollment, including consent for future use of archived samples. This secondary analysis used archived serum samples under the original consent and did not require additional consent or a waiver.
+**Ethical approval.** This study was approved by the Institutional Review Boards of the International Centre for Diarrhoeal Disease Research, Bangladesh (icddr,b) and Massachusetts General Hospital. Written informed consent was obtained from all adult participants and the parents or legal guardians of participating children, with assent obtained from children as appropriate, at SOSAR enrollment, including consent for future use of archived samples. This secondary analysis used archived serum samples under the original consent and did not require additional consent or a waiver.
 
 ## Results
 
@@ -513,8 +514,6 @@ thesis_ft(d, widths = c(0.73, 0.86, 0.93, 1.14, 0.73, 1.28, 0.73))
 ### Age-stratified kinetics for IpaB
 
 Because IpaB is conserved across *Shigella* species, age stratification could be performed in the overall sample without further conditioning on serotype. Children under five years (n=21) showed substantially lower baseline antibody levels ($y_0$) than children aged five years and older (n=27) for both IgG (76.41 vs. 6,797.87 MFI) and IgA (39.10 vs. 415.08 MFI), consistent with less prior *Shigella* exposure in younger children (@tbl-ch1-age). Peak levels ($y_1$) were comparable across age groups for IgG but markedly higher in children under five for IgA (2,142 vs. 528 MFI). Decay rates ($\alpha$) were higher in younger children for both isotypes, suggesting more dynamic antibody trajectories following what may represent primary or early repeat infections. These age-related differences are visible in the population-level kinetic trajectories (@fig-ch1-pop, panel A) and have practical implications: kinetic parameters estimated from a mixed-age population may not generalize to specific vaccine-eligible age groups. Age stratification was not feasible for O-antigen-specific responses because jointly conditioning on age and infecting serotype produced subgroups too small for stable hierarchical estimation.
-
-<!-- === NEW CODE CHUNK (paste right before the section text above) === -->
 
 ```{r}
 #| label: tbl-ch1-age
@@ -633,7 +632,7 @@ treated as independent evidence. It is also a question the data can answer, not 
 
 ## Why the pathogen changes {#sec-bridge12-pathogen}
 
-The plan set out at the qualifying examination was for all three chapters to use the
+The original plan was for all three chapters to use the
 *Shigella* cohort. Chapters 2 and 3 use enteric fever instead, and the reason lies in
 what the model of chapter 2 requires rather than in any change of interest.
 
@@ -654,8 +653,8 @@ feed chapter 3 directly. The dissertation's continuity is methodological, not or
 
 **What is kept.** The model is the same two-phase curve with the same five parameters (@eq-curve),
 fitted in the same hierarchical framework. Chapter 2 changes one thing about it — the covariance —
-and chapter 3 changes one thing about how the result is used. **Chapter 1's finding that the
-estimation pool determines the answer transfers directly**, and it is why chapter 2 restricts itself
+and chapter 3 changes one thing about how the result is used. Chapter 1's finding that the
+estimation pool determines the answer transfers directly, and it is why chapter 2 restricts itself
 to prospectively enrolled participants with observed rise phases (@sec-ch2-data).
 
 And the parameters themselves carry forward, even across the change of pathogen. Chapter 2
@@ -960,7 +959,7 @@ The tree-depth ceiling is not slack: a substantial share of transitions reaches 
 
 ### The two fitted models {#sec-ch2-fits}
 
-We fitted the model of @eq-sigma to the analysis set of @sec-ch2-data **twice**, using the block structure of @eq-blocks and the priors of @sec-ch2-priors.
+We fitted the model of @eq-sigma to the analysis set of @sec-ch2-data twice, using the block structure of @eq-blocks and the priors of @sec-ch2-priors.
 The two fits differ in one argument, which decides whether the five cross-covariances $\mathbf c$ are estimated or held at zero.
 
 The **correlated model** estimates them, as in @sec-ch2-gap; the **independent model** holds them at zero — the uncorrelated model that underlies current practice — not approximately but, by @eq-nest, exactly.
@@ -1347,8 +1346,8 @@ The estimates barely move.
 The baseline correlation is 0.840 under the wide prior and 0.816 under
 the tight one, against 0.831 in the primary fit, and across all five parameters the movement is 0.020 to 0.090 (@sec-appA-init).
 Every one of those is smaller than the seed-to-seed spread of a
-single fit in the simulation study, so **the correlations are determined by the data and not by the
-prior**, despite the parameter being unbounded.
+single fit in the simulation study, so the correlations are determined by the data and not by the
+prior, despite the parameter being unbounded.
 The prediction recorded before these fits were run
 was a movement of about 0.19 in the baseline; the observed 0.024 is eight times smaller, and the
 direction was right where the magnitude was not.
@@ -1570,7 +1569,7 @@ A figure drawn from a model cannot test that model.
 What it does show is the pairing the fitted model carries, which is what the seroincidence analysis draws from when it pairs parameter draws within a simulated participant.
 We include it for that reason.
 
-The association is established by the Spearman correlations computed without a model, which @sec-ch2-res-main reports alongside the main results because they are evidence rather than commentary. **Those four Spearman correlations use no model at all**, and they are what the figure cannot do: they carry the claim, while @fig-ch2-pairs carries the intuition.
+The association is established by the Spearman correlations computed without a model, which @sec-ch2-res-main reports alongside the main results because they are evidence rather than commentary. Those four Spearman correlations use no model at all, and they are what the figure cannot do: they carry the claim, while @fig-ch2-pairs carries the intuition.
 
 The pre-specified rule was not met in any of the six combinations.
 Every departure in those six was above nominal.
@@ -2637,7 +2636,7 @@ The larger of the two axes therefore requires nothing from the kinetics analysis
 
 The same split appears in a second and independent measurement.
 The coverage study puts the same question a different way, on simulated rather than observed data and in coverage rather than width.
-An earlier version of this contrast, computed with the established implementation in the role of the product form, gave 79% for the sharing axis. **The internal comparison gives 76%**, measured on the log scale on which the two contributions compound. Two routes that share no code and no data agree to three percentage points.
+An earlier version of this contrast, computed with the established implementation in the role of the product form, gave 79% for the sharing axis. The internal comparison gives 76%, measured on the log scale on which the two contributions compound. Two routes that share no code and no data agree to three percentage points.
 
 #### Effect on epidemiological inference {#sec-ch3-res-epi}
 
@@ -2871,13 +2870,13 @@ These are not three answers to one question; they are one answer arrived at in t
 kinetics of chapters 1 and 2 are estimated on people whose infections were confirmed by blood
 culture — people who were ill enough to present, to be cultured, and to be positive. The
 serosurveys of chapter 3 are drawn from the general population, where most infections are milder or
-subclinical and many participants have been infected more than once. **The case cohort and the
+subclinical and many participants have been infected more than once. The case cohort and the
 community are not the same population, and a within-host model fitted on the first does not
-transfer unchanged to the second.**
+transfer unchanged to the second.
 
 That is a limitation of the approach as a whole rather than of any one chapter, and it is the most
-substantial thing this work has to say beyond its own results. **It also indicates what to do about
-it.** Repeated infection is the mechanism most likely to produce the pattern [@aiemjoy2022repeat];
+substantial thing this work has to say beyond its own results. It also indicates what to do about
+it. Repeated infection is the mechanism most likely to produce the pattern [@aiemjoy2022repeat];
 it is absent from every likelihood form considered in chapter 3; and it is therefore the assumption
 the next study should relax.
 
@@ -2886,25 +2885,27 @@ the next study should relax.
 Four things are established here and can be carried forward without qualification.
 
 A two-phase model with participant-specific parameters describes antibody kinetics in both cohorts,
-and **what it returns depends on how participants are pooled for estimation** — pooling antigenically
+and what it returns depends on how participants are pooled for estimation — pooling antigenically
 distinct serotypes produced implausible decay where serotype-matched estimation did not
-(@sec-ch1). That finding is of the same kind as the one this dissertation ends on: **which
+(@sec-ch1). That finding is of the same kind as the one this dissertation ends on: which
 participants a within-host model is estimated from is not a detail of the fitting, it is part of
-what the model means.**
+what the model means.
 
-**All five kinetic parameters correlate across a participant's IgG and IgA**, with posterior medians
+All five kinetic parameters correlate across a participant's IgG and IgA, with posterior medians
 from 0.64 to 0.84 and every interval excluding zero. The same association is present in the
 measurements themselves, with no model involved (@sec-ch2-res-main), and a simulation study
 confirms that the estimator recovers a correlation that is present and does not produce one when none is there (@sec-ch2-res-sim).
 
-**Intervals built by summing isotype log-likelihoods are too narrow.** A nominal 95% interval
-covered the truth 89.7% of the time in simulation; the joint form restored calibration at a cost of about a quarter in width, constant across an eightfold range of seroincidence (@sec-ch3-res-cov). **Three quarters of the correction requires nothing from chapter 2.** Applied to the surveys, where intervals widened by 46% on average, sharing one infection time accounts for 76% of that widening and pairing the parameter draws for the remainder (@sec-ch3-res-split), so the main result of chapter 3 stands whatever a reader concludes about
+Intervals built by summing isotype log-likelihoods are too narrow. A nominal 95% interval
+covered the truth 89.7% of the time in simulation; the joint form restored calibration at a cost of about a quarter in width, constant across an eightfold range of seroincidence (@sec-ch3-res-cov).
+
+Three quarters of the correction requires nothing from chapter 2. Applied to the surveys, where intervals widened by 46% on average, sharing one infection time accounts for 76% of that widening and pairing the parameter draws for the remainder (@sec-ch3-res-split), so the main result of chapter 3 stands whatever a reader concludes about
 chapter 2.
 
 ## What it does not establish {#sec-closing-limits}
 
 The point estimates moved by 29% on the observed surveys and the simulation does not reproduce that
-shift, so **no claim about the level of incidence rests on it** (@sec-ch3-res-shift). The
+shift, so no claim about the level of incidence rests on it (@sec-ch3-res-shift). The
 correlations are estimated at one level of the hierarchy and in one cohort, in which age and country
 are nearly the same variable. And the comparison against the established software is conceptual
 rather than numerical, because the two implementations differ in four conventions at once.
@@ -3242,7 +3243,7 @@ This is why validation gates are run at product-form cost wherever the question 
 
 ## Constant offsets in the maximized log-likelihood {#sec-appB-offset}
 
-When we compare the paired and shuffled draws under the joint likelihood, the maximized log-likelihood can differ by a large constant while the point estimate and interval are identical to the reported precision. **A difference in height with no difference in shape over the $\lambda$ grid is a $\lambda$-independent offset**, and cannot affect the estimate or the interval.
+When we compare the paired and shuffled draws under the joint likelihood, the maximized log-likelihood can differ by a large constant while the point estimate and interval are identical to the reported precision. A difference in height with no difference in shape over the $\lambda$ grid is a $\lambda$-independent offset, and cannot affect the estimate or the interval.
 
 The diagnostic distinguishes two explanations.
 Because the sample is nested as it grows, the offset is recomputed at increasing sample sizes:

@@ -399,7 +399,7 @@ The tree-depth ceiling is not slack: a substantial share of transitions reaches 
 
 ## The two fitted models {#sec-ch2-fits}
 
-We fitted the model of @eq-sigma to the analysis set of @sec-ch2-data **twice**, using the block structure of @eq-blocks and the priors of @sec-ch2-priors.
+We fitted the model of @eq-sigma to the analysis set of @sec-ch2-data twice, using the block structure of @eq-blocks and the priors of @sec-ch2-priors.
 The two fits differ in one argument, which decides whether the five cross-covariances $\mathbf c$ are estimated or held at zero.
 
 The **correlated model** estimates them, as in @sec-ch2-gap; the **independent model** holds them at zero — the uncorrelated model that underlies current practice — not approximately but, by @eq-nest, exactly.
@@ -786,8 +786,8 @@ The estimates barely move.
 The baseline correlation is 0.840 under the wide prior and 0.816 under
 the tight one, against 0.831 in the primary fit, and across all five parameters the movement is 0.020 to 0.090 (@sec-appA-init).
 Every one of those is smaller than the seed-to-seed spread of a
-single fit in the simulation study, so **the correlations are determined by the data and not by the
-prior**, despite the parameter being unbounded.
+single fit in the simulation study, so the correlations are determined by the data and not by the
+prior, despite the parameter being unbounded.
 The prediction recorded before these fits were run
 was a movement of about 0.19 in the baseline; the observed 0.024 is eight times smaller, and the
 direction was right where the magnitude was not.
@@ -1009,7 +1009,7 @@ A figure drawn from a model cannot test that model.
 What it does show is the pairing the fitted model carries, which is what the seroincidence analysis draws from when it pairs parameter draws within a simulated participant.
 We include it for that reason.
 
-The association is established by the Spearman correlations computed without a model, which @sec-ch2-res-main reports alongside the main results because they are evidence rather than commentary. **Those four Spearman correlations use no model at all**, and they are what the figure cannot do: they carry the claim, while @fig-ch2-pairs carries the intuition.
+The association is established by the Spearman correlations computed without a model, which @sec-ch2-res-main reports alongside the main results because they are evidence rather than commentary. Those four Spearman correlations use no model at all, and they are what the figure cannot do: they carry the claim, while @fig-ch2-pairs carries the intuition.
 
 The pre-specified rule was not met in any of the six combinations.
 Every departure in those six was above nominal.
