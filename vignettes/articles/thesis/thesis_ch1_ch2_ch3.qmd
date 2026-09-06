@@ -167,7 +167,7 @@ returned a manuscript with a question mark beside a single word, I spent days wo
 out why that word was imprecise, and in the process I learned that writing is part of
 the research. Above all, she opened the road I will walk from here: seroepidemiology.
 
-I am grateful to Professor Jiming Jiang. What I learned in his STA 231B did much to
+I am grateful to Professor Jiming Jiang. What I learned in his STA 232B did much to
 build the statistical foundation of this work, and the questions he asked as a
 committee member made me look again at assumptions I had been taking for granted.
 
