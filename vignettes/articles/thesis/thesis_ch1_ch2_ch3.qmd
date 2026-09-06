@@ -104,12 +104,12 @@ measurements. These methods require longitudinal models that describe how antibo
 peak, and decay after infection, and such a model has five parameters: the baseline response, the
 peak magnitude, the time to peak, the decay rate, and the shape of the decay.
 
-Chapter 1 characterizes IgG and IgA responses to five *Shigella* antigens in 48 individuals with stool
-culture- or molecular-confirmed infection in Dhaka, Bangladesh, and shows that IgA responses rise
-and decay within two to three months while IgG persists beyond 200 days, that children under five
-have lower baseline responses and higher IgA peaks than older children, and that which participants
-a model is estimated from changes the parameters recovered: pooling antigenically distinct
-serotypes produced implausible decay for *S. sonnei*, where estimation restricted to
+Chapter 1 characterizes IgG and IgA responses to five *Shigella* antigens in 48 individuals with
+stool culture- or molecular-confirmed infection in Dhaka, Bangladesh. IgA responses rise and decay
+within two to three months while IgG remains elevated at 200 days, and children under five have
+lower baseline responses and higher IgA peaks to the conserved antigen IpaB than older children.
+Which participants a model is estimated from changes the parameters recovered: pooling antigenically
+distinct serotypes produced implausible decay for *S. sonnei*, where estimation restricted to
 serotype-matched infections did not.
 
 Chapter 2 estimates cross-isotype correlations in the kinetic parameters using 461 individuals with
@@ -270,9 +270,11 @@ of participants for estimation changes the parameters recovered. It uses the SOS
 — 48 participants, 218 samples — and reports kinetic parameters for five antigens and two isotypes.
 
 **Chapter 2** develops the smallest extension of the kinetic model that can express a cross-isotype
-association, estimates it on 461 blood-culture-confirmed SEES enteric fever cases, and supplies
-simulation evidence that the estimator recovers a correlation that is present and does not produce one when none is there. Setting the five new parameters to zero recovers the previous model
-exactly, so any difference in fit is attributable to them alone.
+association, estimates it on 461 blood-culture-confirmed cases from the Seroepidemiology and
+Environmental Surveillance for Enteric Fever (SEES) study, and supplies simulation evidence that the
+estimator recovers a correlation that is present and does not produce one when none is there.
+Setting the five new parameters to zero recovers the previous model exactly, so any difference in
+fit is attributable to them alone.
 
 **Chapter 3** derives a joint likelihood for seroincidence in which a participant's biomarkers share
 one infection time and their kinetic parameters are drawn as a pair, validates it against the
@@ -323,14 +325,13 @@ carry the argument and the appendices carry the proof.
 
 **Three conventions are used deliberately.**
 
-1. Predictions are recorded before results are seen. Where a check has an outcome that would
-   contradict the argument, that outcome is stated in advance. This applies to the null contrast of
-   @sec-ch3-design, the decision rule of @sec-ch2-sim, and the sensitivity analyses of
-   @sec-ch3-sens.
-2. Checks that failed are reported alongside those that passed. A pre-specified check that did
-   not behave as expected is more informative than one that was chosen after the fact.
-3. Every claim about an implementation was verified against source code or by execution, not
-   inferred from documentation.
+Predictions are recorded before results are seen; where a check has an outcome that would
+contradict the argument, that outcome is stated in advance, as with the null contrast of
+@sec-ch3-design, the decision rule of @sec-ch2-sim, and the sensitivity analyses of
+@sec-ch3-sens. Checks that failed are reported alongside those that passed, because a
+pre-specified check that did not behave as expected is more informative than one chosen after
+the fact. Every claim about an implementation was verified against source code or by
+execution, not inferred from documentation.
 
 ### Notation {#sec-notation}
 
@@ -1698,7 +1699,7 @@ participant's two measurements come from the same infection. However long ago th
 occurred, it is one interval of time, shared by both isotypes — and that is true whether or not the
 kinetic parameters happen to be correlated.
 
-Chapter 3 therefore separates two assumptions that the current estimator makes together, and
+Chapter 3 therefore separates two assumptions that the established estimator makes together, and
 attributes their consequences individually:
 
 $$
@@ -3260,10 +3261,13 @@ The first would be a negative result about the applicability of the kinetics ana
 
 # Appendix D — Reproducibility {#sec-appC}
 
-Analyses were carried out in R [@rcore2025]. Chapter 1's models were fitted in JAGS
-[@jags2003]; chapter 2's models were fitted in Stan [@stan2024]; chapter 3 fits no kinetic models and evaluates the fitted curve forward from chapter 2's parameter draws. Kinetic models use the
-`serodynamics` package; incidence estimation uses the product and joint likelihood implementations
-developed for chapter 3; `serocalculator` [@serocalculator2025] is used for the single-biomarker equivalence check and for the reference comparison of @tbl-ref.
+Analyses were carried out in R [@rcore2025]. Chapter 1's models were fitted in JAGS [@jags2003]
+through the `serodynamics` package [@serodynamics2025]; chapter 2's models were fitted in Stan
+[@stan2024] with code written for this analysis; chapter 3 fits no kinetic models and evaluates the
+fitted curve forward from chapter 2's parameter draws. Incidence estimation uses the product and
+joint likelihood implementations developed for chapter 3; `serocalculator` [@serocalculator2025]
+supplies the measurement-noise parameters used throughout and is the comparator for the
+single-biomarker equivalence check and the reference comparison of @tbl-ref.
 
 Every reported quantity is produced by a script held under version control. Two conventions
 govern the order in which those scripts are run: validation checks precede the production runs
