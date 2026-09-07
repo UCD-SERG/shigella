@@ -1,0 +1,135 @@
+---
+# Alt text for the dissertation's figures, keyed on Quarto figure id.
+#
+# WHY THIS FILE EXISTS
+# UC Davis requires alt text for accessibility. Quarto's `fig-alt` attribute is
+# HTML-only -- it is dropped entirely by the docx writer -- and the only source
+# route that reaches Word's alt-text slot is the `![...]` bracket text, which
+# renders as a second visible caption on the pkgdown site. So the alt text is
+# applied after the render instead, by set_figure_alt_text() in
+# fix_submission.py, which is a dissertation-only step and leaves the two
+# standalone manuscripts and the HTML output untouched.
+#
+# WHY IT IS KEYED ON THE FIGURE ID
+# Quarto writes each figure's id into the docx as a bookmark, so a description
+# can be matched to its picture by name rather than by counting. A wrong alt
+# text is invisible -- it changes nothing on the page and a screen reader reads
+# it out confidently -- so matching by position, which fails silently and by
+# one, is not good enough. Every id below must appear in the document and every
+# figure in the document must appear below; anything else and nothing is
+# written at all.
+#
+# GRAMMAR
+# Deliberately a strict subset of YAML, parsed by a few lines of standard
+# library in fix_submission.py rather than by PyYAML: the render workflow
+# installs no Python packages, and fix_submission.py has no third-party
+# imports. Each entry is
+#
+#     <figure-id>: >
+#       one or more lines indented by at least two spaces
+#
+# joined into a single line. Blank lines and `#` comments are ignored.
+# Anything else is an error, and an error here writes no alt text at all.
+
+fig-ch1-cross: >
+  Heat map with two panels, IgG on the left and IgA on the right. Rows are individual
+  participants labelled by age and grouped into serotype facets; columns are the
+  sampling time points nested within each of the five antigens. Tile shading carries
+  the antibody level and is the only encoding of it; white cells are missing
+  specimens. The two panels use independent colour scales.
+
+fig-ch1-traj: >
+  Grid of line plots, one line per participant, arranged with antigens down the rows
+  and isotype across the columns. Antibody level is on a log scale against days since
+  symptom onset. Line colour indicates infecting serotype and a legend gives the
+  mapping.
+
+fig-ch1-pop: >
+  Five labelled blocks stacked vertically, A through E, one per antigen: IpaB, then
+  S. sonnei, S. flexneri 2a, 3a and 6. Each block title names the estimation approach
+  used for that antigen, and each block holds an IgG panel and an IgA panel showing a
+  median curve with a shaded credible band over thin grey participant lines. Block A
+  additionally carries dashed age-stratified curves in orange and green, with its own
+  legend beneath the block.
+
+fig-ch1-pooling: >
+  Three rows by two columns. Each row is one named participant with their serotype and
+  each column an isotype. Fitted curves carry translucent uncertainty bands and are
+  distinguished by both colour and line type. The combined-flexneri curve appears only
+  in the S. flexneri 3a panels.
+
+fig-ch2-flow: >
+  Vertical flow diagram of participant selection. Boxes run downward from the full
+  cohort to the analysis set with counts beside each, and each step has a branch arrow
+  to the right giving the reason for exclusion. A dashed box at the foot describes what
+  the analysis set contains.
+
+fig-ch2-raw: >
+  Two line plots side by side, HlyE IgG and IgA. Each thin line is one participant's
+  concentrations on a log vertical scale against days since fever onset, with points at
+  specimen collections. A dashed vertical line marks the approximate population peak.
+
+fig-ch2-fit: >
+  Two panels, HlyE IgG and IgA. Each shows the fitted population median as a solid line
+  with a shaded interval band, drawn over grey lines for the observed participants.
+  Both axes are on a log scale.
+
+fig-ch2-pairs: >
+  Five scatter panels in a row, one per kinetic parameter: baseline, peak, peak-time,
+  decay-rate and decay-shape. Each point is a participant, with the IgG posterior mean
+  on the horizontal axis and IgA on the vertical, a straight line drawn through the
+  points, and the fitted correlation printed in the upper left of each panel.
+
+fig-ch2-cov: >
+  Two panels, null on the left and alternative on the right. Interval coverage for each
+  of the five correlations is shown as points with error bars for three chain-handling
+  schemes — unfiltered, log-density filter, and stacking — distinguished by both colour
+  and marker shape, with a dashed line at the nominal level.
+
+fig-ch2-filter: >
+  Plot of mean interval width against coverage. Two arrows run from an open circle for
+  the unfiltered result to a filled circle after the log-density filter, one for the
+  null condition and one for the alternative, with a dashed horizontal line at the
+  nominal 0.90.
+
+fig-ch3-assume: >
+  Two bordered panels with an arrow between them. The left, dashed and titled "Current
+  practice: the product form", shows two parallel box chains from participant A, each
+  through its own infection time to one isotype, so the participant box appears twice;
+  beneath it, "the likelihoods are then multiplied". The right, solid and titled "This
+  chapter: the joint form", shows one chain branching to both isotypes; beneath it,
+  "the likelihood is taken over that shared time".
+
+fig-ch3-flow: >
+  Vertical flow diagram of record selection. Boxes run from the full assay export to the
+  analysis set with counts inside each, and each step has a branch arrow to the right
+  giving the exclusion reason. A dashed box at the foot describes the six survey sites.
+
+fig-cov: >
+  Plot of interval coverage against true seroincidence with two connected series of
+  points and error bars: the product form in grey and the joint form in red. A dashed
+  horizontal line marks the nominal level, and the vertical gap between the two series
+  is the comparison the figure makes.
+
+fig-width: >
+  Connected points showing the ratio of joint to product interval width across the six
+  simulation conditions. Two horizontal reference lines are drawn: a labelled dotted
+  line at the mean ratio and a solid grey line at one, where the two forms would agree.
+
+fig-forest: >
+  Forest plot with six rows, one per survey site, the sites being a high-endemicity and
+  a low-endemicity site in each of three countries. Each row shows three point estimates
+  with horizontal interval bars, one for each likelihood form, distinguished by both
+  colour and marker shape.
+
+fig-ch3-disc: >
+  Two rows by three columns, endemicity by country, each panel plotting a participant's
+  IgG against their IgA on log axes. Filled points are participants above the assay
+  floor; open grey circles have at least one measurement at the floor and line up along
+  whichever axis is at its floor. Blue contours show the predicted distribution the
+  points are being compared against.
+
+fig-lod: >
+  Six nearly flat lines, one per survey site, labelled directly at the right-hand end
+  with no legend. The vertical axis is seroincidence on a log scale; the horizontal
+  axis has four positions, the native detection limit and common limits of 2, 2.5 and 3.

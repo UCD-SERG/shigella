@@ -67,6 +67,12 @@ WHAT IT DOES
 
 10.  EACH FRONT LIST STARTS A NEW PAGE.  See break_before_front_lists().
 
+11.  EVERY FIGURE CARRIES ALT TEXT.  See set_figure_alt_text(), and fig-alt.yml
+     beside this script for the descriptions and for why they live there.
+     Quarto leaves all seventeen alt-text slots empty in docx, so they are
+     filled here, matched to their pictures by figure id rather than by
+     position.  A mismatch writes nothing and exits non-zero.
+
 RUNNING IT TWICE IS A NO-OP.
 """
 import re
@@ -409,6 +415,148 @@ def patch_settings(xml):
     ), True
 
 
+# ── Figure alt text (11) ────────────────────────────────────────────────────
+
+ALT_PATH = Path(__file__).resolve().parent / "fig-alt.yml"
+
+# `<id>: >` opening a block.  See fig-alt.yml for the grammar this accepts.
+ALT_KEY = re.compile(r"^([A-Za-z0-9][A-Za-z0-9_.-]*):[ \t]*>[ \t]*$")
+
+FIG_BOOKMARK = re.compile(r'<w:bookmarkStart\b[^>]*w:name="(fig-[^"]*)"[^>]*>')
+DOCPR = re.compile(r"<wp:docPr\b[^>]*?/>")
+DESCR_ATTR = re.compile(r'\sdescr="[^"]*"')
+
+
+def _xml_attr(text):
+    """Escape `text` for use inside a double-quoted XML attribute.
+
+    Ampersand first, or the escapes introduced after it would be re-escaped.
+    Apostrophes need no escape inside double quotes and are left alone so the
+    stored text stays readable.
+    """
+    return (text.replace("&", "&amp;").replace("<", "&lt;")
+                .replace(">", "&gt;").replace('"', "&quot;"))
+
+
+def read_alt_text(path=ALT_PATH):
+    """Read fig-alt.yml into {figure id: description}.
+
+    Returns (mapping, problem).  A missing file is not a problem -- it means
+    the feature is not in use and returns (None, None).  Anything the grammar
+    does not cover is, and stops the run before the document is touched: this
+    file exists to put words in front of a reader who cannot see the figure,
+    and a half-read mapping is worse than none.
+
+    Deliberately hand-parsed rather than handed to PyYAML.  The render workflow
+    installs no Python packages and this script has no third-party imports;
+    depending on one here would trade a filing-day render against a
+    convenience.  The accepted subset is documented in fig-alt.yml.
+    """
+    if not path.exists():
+        return None, None
+    alt, key, buf = {}, None, []
+
+    def close():
+        if key is not None:
+            alt[key] = " ".join(buf).strip()
+
+    for n, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        line = raw.rstrip()
+        if not line.strip():
+            close()
+            key, buf = None, []
+            continue
+        if key is None:
+            if line.strip() == "---" or line.lstrip().startswith("#"):
+                continue
+            m = ALT_KEY.match(line)
+            if not m:
+                return None, f"{path.name}:{n}: expected `<figure-id>: >`, got {line!r}"
+            key = m.group(1)
+            if key in alt:
+                return None, f"{path.name}:{n}: duplicate entry for {key}"
+            buf = []
+        else:
+            if not line.startswith("  "):
+                return None, (f"{path.name}:{n}: continuation of {key} must be "
+                              f"indented by two spaces, got {line!r}")
+            buf.append(line.strip())
+    close()
+    if not alt:
+        return None, f"{path.name}: no entries"
+    return alt, None
+
+
+def set_figure_alt_text(xml, alt):
+    """11: give every picture the description its figure id maps to.
+
+    Quarto emits seventeen `wp:docPr` elements with `descr=""`; Word reads that
+    attribute as the alt text.  `fig-alt` does nothing here -- it reaches HTML
+    only -- and the one source route that does reach `descr`, text in the
+    `![...]` brackets, renders as a second visible caption on the pkgdown site.
+    Hence after the render, and hence only for the dissertation.
+
+    Matching is by name, never by position.  Quarto writes each figure's id
+    into the document as a bookmark just before the picture, so a description
+    can be tied to its own figure.  Counting would fail silently and by one,
+    and a wrong description is invisible: the page is unchanged and a screen
+    reader reads it out with confidence.  So the match has to be a bijection --
+    every picture claims its own bookmark, every id in the document has an
+    entry, every entry is used -- and anything short of that writes nothing.
+
+    Returns (xml, matched, pictures, problem).
+    """
+    pics = list(DOCPR.finditer(xml))
+    if alt is None:
+        return xml, 0, len(pics), None
+
+    marks = [(m.start(), m.group(1)) for m in FIG_BOOKMARK.finditer(xml)]
+    names = [n for _, n in marks]
+    dup = sorted({n for n in names if names.count(n) > 1})
+    if dup:
+        return xml, 0, len(pics), "duplicate figure bookmarks: " + ", ".join(dup)
+
+    pairs, claimed = [], set()
+    for m in pics:
+        before = [n for o, n in marks if o < m.start()]
+        if not before:
+            return xml, 0, len(pics), "a picture has no figure bookmark before it"
+        name = before[-1]
+        if name in claimed:
+            return xml, 0, len(pics), f"two pictures resolve to {name}"
+        claimed.add(name)
+        pairs.append((m, name))
+
+    in_doc = {n for _, n in pairs}
+    no_entry = sorted(in_doc - set(alt))
+    no_figure = sorted(set(alt) - in_doc)
+    if no_entry:
+        return xml, 0, len(pics), ("figures with no entry in "
+                                   f"{ALT_PATH.name}: " + ", ".join(no_entry))
+    if no_figure:
+        return xml, 0, len(pics), (f"entries in {ALT_PATH.name} matching no "
+                                   "figure: " + ", ".join(no_figure))
+    for name in sorted(in_doc):
+        text = alt[name]
+        if not text.strip():
+            return xml, 0, len(pics), f"empty alt text for {name}"
+        if any(ord(c) < 0x20 or ord(c) == 0x7F for c in text):
+            return xml, 0, len(pics), f"control character in the alt text for {name}"
+
+    # Back to front, so the offsets of the matches still ahead stay valid.
+    for m, name in reversed(pairs):
+        value = _xml_attr(alt[name])
+        tag = m.group(0)
+        if DESCR_ATTR.search(tag):
+            # A lambda, not a replacement string: a backslash in the alt text
+            # would otherwise be read as a regex escape.
+            tag = DESCR_ATTR.sub(lambda _: f' descr="{value}"', tag, count=1)
+        else:
+            tag = tag.replace("<wp:docPr", f'<wp:docPr descr="{value}"', 1)
+        xml = xml[:m.start()] + tag + xml[m.end():]
+    return xml, len(pairs), len(pics), None
+
+
 def main():
     if len(sys.argv) < 2:
         sys.exit(__doc__)
@@ -416,6 +564,11 @@ def main():
     dst = Path(sys.argv[2]) if len(sys.argv) > 2 else src
     if not src.exists():
         sys.exit(f"not found: {src}")
+
+    alt_map, alt_problem = read_alt_text()
+    if alt_problem:
+        sys.exit(f"fix_submission: {alt_problem}\n"
+                 f"  no alt text written; {dst} left unchanged.")
 
     tmp = src.with_suffix(".submission.docx")
     with zipfile.ZipFile(src) as zin, zipfile.ZipFile(
@@ -436,6 +589,8 @@ def main():
                 xml, broken = break_before_front_lists(xml)
                 xml, centred, found = centre_front_matter(xml)
                 xml, hoisted, thinned = no_blank_pages(xml)
+                xml, alt_ok, alt_n, alt_problem = set_figure_alt_text(
+                    xml, alt_map)
                 print(f"  caption pPr merged        : {merged}")
                 print(f"  table captions restyled   : {restyled}")
                 print(f"  list field codes repaired : {repaired}")
@@ -447,6 +602,7 @@ def main():
                 print(f"  section break inserted    : {sectioned}")
                 print(f"  breaks -> pageBreakBefore  : {hoisted}")
                 print(f"  breaks kept but thinned   : {thinned}")
+                print(f"  figure alt text           : {alt_ok} of {alt_n} matched by id")
                 data = xml.encode("utf-8")
             elif item.filename == "word/settings.xml":
                 xml = data.decode("utf-8")
@@ -454,6 +610,11 @@ def main():
                 print(f"  updateFields added        : {added}")
                 data = xml.encode("utf-8")
             zout.writestr(item, data)
+
+    if alt_problem:
+        tmp.unlink()
+        sys.exit(f"fix_submission: {alt_problem}\n"
+                 f"  no alt text written; {dst} left unchanged.")
 
     shutil.move(str(tmp), str(dst))
     print(f"  written: {dst}")
