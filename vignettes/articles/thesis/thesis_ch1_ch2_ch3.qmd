@@ -2863,7 +2863,7 @@ Chapter 2 found that the two are nonetheless linked at the level of the individu
 participant who mounts a strong or a slow response in one isotype tends to do the same in the
 other, and the association is large enough to change what the model says.
 
-Chapter 3, applying that model to population serosurveys, found the two markedly *less* linked
+Chapter 3, applying that model to population serosurveys, found the two *less* linked
 than chapter 2 predicts — an observed correlation between the two log concentrations of 0.17 to
 0.63, against the 0.78 to 0.81 that simulating from the chapter 2 fit produces, in six of six survey sites (@sec-ch3-discussion).
 
