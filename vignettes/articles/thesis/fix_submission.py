@@ -58,8 +58,8 @@ WHAT IT DOES
     the current build.  Filling the three front lists moves every page after
     them, and a spot fix would only move the problem.
 
-7.  THE ABSTRACT HEADING IS CENTRED, and only that one.  See
-    centre_abstract().
+7.  THE FRONT MATTER HEADINGS ARE CENTRED, and only those.  See
+    centre_front_matter().
 
 8.   THE QUARTO TITLE BLOCK IS DROPPED.  See strip_title_block().
 
@@ -202,29 +202,60 @@ def front_lists(xml):
     return xml, repaired, inserted
 
 
-ABSTRACT_HEADING = re.compile(
-    r'<w:p>\s*<w:pPr>((?:(?!</w:pPr>).)*?)</w:pPr>\s*<w:r>\s*'
-    r'<w:t[^>]*>Abstract</w:t>\s*</w:r>\s*</w:p>', re.S
+FRONT_HEADING = re.compile(
+    r'<w:p\b[^>]*>\s*<w:pPr>((?:(?!</w:pPr>).)*?)</w:pPr>.*?</w:p>', re.S
 )
+JC_AT = PPR_ORDER.index("jc")
 
 
-def centre_abstract(xml):
-    """7: centre the word Abstract, and nothing else.
+def centre_front_matter(xml):
+    """7: centre the front matter headings, and only those.
 
-    Abstract shares the Heading1 style with Chapter 1, Chapter 2, Chapter 3 and
-    the appendices, so centring the style would centre all of them.  Direct
-    formatting on the one paragraph overrides the style for that paragraph
-    alone, which is why this is a w:jc on the heading rather than a change to
-    reference.docx.  w:jc comes late in the order CT_PPrBase fixes, so it goes
-    at the end of the pPr.
+    The five are the Abstract, the Acknowledgments and the three list
+    headings.  Abstract and Acknowledgments share the Heading1 style with
+    Chapter 1, Chapter 2, Chapter 3 and the appendices, which are left-aligned
+    and stay that way, so centring the style is not available; direct
+    formatting on the paragraph overrides the style for that paragraph alone.
+
+    What separates the five is position, not their titles: they are the
+    headings of the lowercase-roman preliminary section, so they are the
+    heading paragraphs before the sectPr that section_break() inserts.  That
+    is why this runs after section_break() and front_matter_order() rather
+    than on a list of titles -- "Abstract" was the only one that could be
+    matched by its words, and a second document with a Dedication or a Vita
+    would need no change here.
+
+    w:jc comes late in the order CT_PPrBase fixes, so it goes after the last
+    child that precedes it and before the first that follows.
     """
-    m = ABSTRACT_HEADING.search(xml)
-    if m is None or "Heading1" not in m.group(1):
-        return xml, False
-    if "<w:jc " in m.group(1):
-        return xml, False                       # already centred
-    at = m.start(1) + len(m.group(1))
-    return xml[:at] + '<w:jc w:val="center"/>' + xml[at:], True
+    end = xml.find("<w:sectPr")
+    if end == -1:
+        return xml, 0, 0
+    out, pos, centred, found = [], 0, 0, 0
+    for m in FRONT_HEADING.finditer(xml, 0, end):
+        if m.start() < pos:
+            continue
+        inner = m.group(1)
+        style = re.search(r'<w:pStyle w:val="([^"]+)"', inner)
+        if not style or not (style.group(1).startswith("Heading")
+                             or style.group(1) == "TOCHeading"):
+            continue
+        found += 1
+        if "<w:jc " in inner:
+            continue                            # already centred
+        tags = [t for t, _ in _children(inner)]
+        after = [t for t in tags
+                 if t in PPR_ORDER and PPR_ORDER.index(t) > JC_AT]
+        if after:
+            at = m.start(1) + inner.find("<w:" + after[0])
+        else:
+            at = m.start(1) + len(inner)
+        out.append(xml[pos:at])
+        out.append('<w:jc w:val="center"/>')
+        pos = at
+        centred += 1
+    out.append(xml[pos:])
+    return "".join(out), centred, found
 
 
 
@@ -400,19 +431,19 @@ def main():
                 assert strip(xml) == before, "merge changed content outside w:pPr"
                 xml, repaired, inserted = front_lists(xml)
                 xml, dropped = strip_title_block(xml)
-                xml, centred = centre_abstract(xml)
                 xml, sectioned = section_break(xml)
                 xml, reordered = front_matter_order(xml)
                 xml, broken = break_before_front_lists(xml)
+                xml, centred, found = centre_front_matter(xml)
                 xml, hoisted, thinned = no_blank_pages(xml)
                 print(f"  caption pPr merged        : {merged}")
                 print(f"  table captions restyled   : {restyled}")
                 print(f"  list field codes repaired : {repaired}")
                 print(f"  front lists inserted      : {inserted}")
                 print(f"  title-block paras dropped : {dropped}")
-                print(f"  abstract heading centred  : {centred}")
                 print(f"  front matter reordered    : {reordered}")
                 print(f"  front lists on a new page : {broken}")
+                print(f"  front matter centred      : {centred} of {found}")
                 print(f"  section break inserted    : {sectioned}")
                 print(f"  breaks -> pageBreakBefore  : {hoisted}")
                 print(f"  breaks kept but thinned   : {thinned}")
