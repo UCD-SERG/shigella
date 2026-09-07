@@ -9,7 +9,7 @@ Both chapters go into one dissertation, so they share one list.
 Each entry names the chapter it belongs to.
 
 Last reviewed: 2026-09-07.
-Chapter 3 at 628f67d, chapter 2 at a925bdf, dissertation at 6d31d7c.
+Chapter 3 at `628f67d`, chapter 2 at `a925bdf`, dissertation at `6d31d7c`.
 
 ---
 
