@@ -103,7 +103,8 @@ We applied all three forms to the Seroepidemiology and Environmental Surveillanc
 An interval constructed to have 95% coverage contained the true seroincidence 89.7% of the time when built by adding log-likelihoods; the joint form restored coverage to 98.0%, at a cost in width of about a quarter that held across the range of seroincidence examined.
 The two forms recovered the true seroincidence with almost the same error: relative root mean squared error was 10.16% for the product form and 9.53% for the joint form.
 Sharing the infection time accounted for 76% of the correction and requires no result about correlation at all; pairing the parameter draws supplied the remainder.
-Applied to the serosurveys, every interval widened and no epidemiological conclusion changed: the ranking of countries and the high- versus low-endemicity contrasts held.
+Applied to the serosurveys, every interval widened.
+The ranking of countries and the high- versus low-endemicity contrasts did not change.
 
 Seroincidence remains a useful, lower-cost approach for ranking enteric fever burden and supporting vaccine-prioritization decisions, but when multiple biomarkers are combined, the current method likely reports uncertainty that is too narrow.
 The point estimates are not in question, and no published incidence estimate is shown to be wrong; what is too confident is the uncertainty around them.
@@ -139,20 +140,10 @@ Enteric fever caused an estimated nine million illnesses and over a hundred thou
 Safe and effective conjugate vaccines exist, and the World Health Organization recommends their introduction in settings of high burden [@who2019tcv].
 Deciding where to introduce them requires estimates of infection rates, which are unavailable in most high-burden settings: blood culture surveillance requires laboratory infrastructure and sustained financing, and even where it is in place it detects only the fraction of infections that produce symptoms, reach care, and yield a positive culture.
 Seroincidence estimation was developed to fill that gap: one blood draw per participant in a randomly selected population sample, analyzed against a model of how antibodies behave after infection, yields an infection rate for the population — including the asymptomatic and unrecognized infections that never reach a clinic [@simonsen2009; @teunis2020; @aiemjoy2022; @aiemjoy2023serodynamics].
-Sample sizes of a few hundred per age stratum are sufficient, which puts the method within reach of settings where sustaining blood culture surveillance is not realistic.
-
-Alternative serological approaches exist and make different trade-offs.
-Seroprevalence compares the proportion above a threshold between populations, which is simple but discards the quantitative signal and cannot separate recent from remote infection [@arnold2019].
-Methods built on paired sera require two visits per participant.
-Antibody-dynamic methods of the kind used here need only one visit and recover a rate rather than a prevalence, at the cost of depending on a model of the kinetics — which is what makes the fidelity of that model, and of the likelihood built on it, the subject of this chapter.
-
-An estimate that informs decisions of that consequence should be accompanied by a calibrated account of its uncertainty.
-This chapter is about a place where that account is currently too optimistic, and about how much too optimistic it is.
 
 ## Seroincidence estimation from cross-sectional serosurveys {#sec-ch3-gap}
 
-Most serosurveys measure more than one antibody isotype, and combining them should sharpen the estimate.
-The established implementation, `serocalculator` [@serocalculator2025], combines them by adding log-likelihoods.
+The established implementation, `serocalculator` [@serocalculator2025], combines isotypes by adding log-likelihoods.
 The implementation assumes that seroresponses from different isotypes are independent, which permits their log-likelihoods to be summed:
 
 $$
@@ -160,18 +151,11 @@ $$
 $$ {#eq-sumll}
 
 On that assumption the sum of @eq-sumll increases the precision of the seroincidence estimate, and it is that consequence this chapter examines.
-Adding log-likelihoods does increase apparent precision.
+Adding log-likelihoods increases precision.
 Whether that precision is real depends on whether the terms being added are independent, and a participant's two measurements are not: they come from one person, one infection, and one specimen.
-However long ago that infection occurred, it is a single interval of time, shared by both isotypes.
 
 Both isotypes in this chapter are directed against hemolysin E (HlyE), a pore-forming toxin that *Salmonella* Typhi and Paratyphi A express during human infection and the most immunoreactive antigen identified in confirmed enteric fever.
-What the pair carries that neither marker carries alone is easiest to see for one participant.
 A high IgA response together with a low IgG response points to a more recent exposure than elevated IgA and IgG together: the combination locates the infection in time in a way neither concentration does by itself.
-A likelihood that integrates each isotype over its own infection time discards precisely that information, and then reports a narrower interval for having done so.
-
-The established implementation's own simulator gives each participant one infection time and one set of kinetic parameters, and reads both isotypes from that single state.
-Its estimator then integrates each isotype over its own infection time and multiplies the results.
-The two components describe different data-generating processes, and only one of them matches how the data were collected.
 
 ## Consequences of the independence assumption {#sec-ch3-stakes}
 
