@@ -9,7 +9,7 @@ Both chapters go into one dissertation, so they share one list.
 Each entry names the chapter it belongs to.
 
 Last reviewed: 2026-09-09.
-Chapter 3 at `bc8fd64`, chapter 2 at `a925bdf`, dissertation at `6d31d7c`.
+Chapter 3 at `cde69d6`, chapter 2 at `a925bdf`, dissertation at `6d31d7c`.
 
 ---
 
@@ -135,6 +135,60 @@ Considered and declined:
       and make three such statements between L154 and Objectives at L290.
       **Rule: a placeholder is closed by the request being met, not by the slot being filled.**
 
+From Kristen's tracked changes — notes not closed:
+
+- [ ] **ch3 Introduction — note A, the base method** — she asked for three things to be
+      introduced in the Introduction: the implementation, the within-host decay model,
+      and how the model pairs with cross-sectional data.
+      The seam sentence at L143 names the kinetic model and the combination with the
+      survey data, and the implementation is named one line into the next section, at L147.
+      The third piece is done, and the first two belong to that section rather than to
+      the paragraph.
+      Closing them fully would mean writing the paragraph she deleted.
+
+- [ ] **ch3 L158–159 — note C, the contrast Kristen was drawing** — she asked for recency
+      to be presented as information in addition to correlation.
+      The chapter establishes the separation and quantifies it, at L105 and L1025–1027:
+      the shared infection time accounts for 76% of the correction
+      and requires no result about correlation.
+      But the Introduction never draws that contrast.
+      L159 contrasts the pair with a single marker, not with correlation,
+      and its colon clause states the general point itself rather than only illustrating it,
+      so a sentence adding the correlation contrast above it pre-empts its own conclusion.
+      Her run 29, a lowercasing, is the tail of this note and depends on it.
+      **The gap is that the Introduction contrasts the pair with one marker
+      where she wanted it contrasted with correlation.**
+
+- [ ] **ch3 Methods — note E, the longitudinal case data** — she asked for the case data
+      and the model to be described where the cross-sectional data are.
+      Between L304 and the posterior parameter draws at L427
+      the chapter never says what the longitudinal cohorts were: who, how many, what design.
+      In the dissertation this is covered by chapters 1 and 2;
+      in the standalone manuscript it is not.
+
+- [ ] **ch3 — note F, a Table 1** — she asked for a study-population table
+      with columns by site and rows for age, sex and collection dates,
+      modelled on the SEES paper.
+      The rows exist but are split three ways:
+      `tbl-cells` carries sample size, age, censoring and the observed correlation by site,
+      `tbl-collect` carries the collection dates,
+      and sex appears only as a clause at L324.
+      Building the single table needs participant-level data that is not in this repository.
+
+Process:
+
+- [ ] **ch3 — Kristen's tracked changes were not applied in the first pass** — her review
+      of 2026-08-26 left ten comments on the abstract and seven tracked edits to it.
+      The comments were all addressed; none of the edits were.
+      Across the chapter, fourteen of her eighteen prose deletions were still in the file
+      until `bc8fd64`.
+      Her comments were tracked as a numbered list and her edits were not,
+      and the pass that applied the comments went in inside a 750-line rewrite
+      whose message names neither her nor the abstract,
+      so the history shows when the text changed but not whether she was answered.
+      This is why the four entries above exist.
+      **Rule: a review is closed against the reviewer's own file, not against the commit log.**
+
 Not mine to decide:
 
 - [ ] **ch3 Abstract** — the first sentence names only "enteric fever",
@@ -142,3 +196,16 @@ Not mine to decide:
       Both rules trace to Kristen's comments 7 and 10 and the wording is hers.
       **Rules: an abstract should name both diseases and say how participants were selected.
       OWNER: Kristen — ask, do not decide.**
+
+- [ ] **ch3 Abstract — she wants the level reported** — she inserted
+      "and the seroincidence estimate was higher across all sites"
+      and deleted "The point estimates are not in question, and no published incidence
+      estimate is shown to be wrong;
+      what is too confident is the uncertainty around them."
+      Those are one move: report that the level went up,
+      and drop the sentence that contradicts it.
+      The chapter argues the opposite at L110, L935 and L1129,
+      while L1053 does report that the joint estimate exceeded the product estimate
+      in six of six sites — so her substantive point is in the body and not in the abstract.
+      This is a disagreement with a co-author, not an oversight.
+      **OWNER: Kristen — ask, do not decide.**
