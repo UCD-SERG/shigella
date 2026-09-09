@@ -140,6 +140,7 @@ Enteric fever caused an estimated nine million illnesses and over a hundred thou
 Safe and effective conjugate vaccines exist, and the World Health Organization recommends their introduction in settings of high burden [@who2019tcv].
 Deciding where to introduce them requires estimates of infection rates, which are unavailable in most high-burden settings: blood culture surveillance requires laboratory infrastructure and sustained financing, and even where it is in place it detects only the fraction of infections that produce symptoms, reach care, and yield a positive culture.
 Seroincidence estimation was developed to fill that gap: one blood draw per participant in a randomly selected population sample, analyzed against a model of how antibodies behave after infection, yields an infection rate for the population — including the asymptomatic and unrecognized infections that never reach a clinic [@simonsen2009; @teunis2020; @aiemjoy2022; @aiemjoy2023serodynamics].
+What that estimate is worth depends on the kinetic model fitted to confirmed cases and on how it is combined with the survey data.
 
 ## Seroincidence estimation from cross-sectional serosurveys {#sec-ch3-gap}
 
@@ -300,7 +301,8 @@ It is intended to establish how much the simplification costs, so that a practit
 
 ## Study population and sample {#sec-ch3-data}
 
-Cross-sectional data come from the population-based serosurveys conducted alongside the SEES case cohorts: high-endemicity and low-endemicity household surveys in each of Bangladesh, Nepal and Pakistan [@aiemjoy2022].
+Cross-sectional data come from the population-based serosurveys conducted for the SEES study, described in detail previously [@aiemjoy2022].
+In brief, households were sampled in high-endemicity and low-endemicity sites in each of Bangladesh, Nepal and Pakistan.
 HlyE IgG and IgA were measured by the same enzyme-linked immunosorbent assay (ELISA) as in the longitudinal cohorts, so the parameter draws and the specimens they are applied to are on one scale.
 
 We restricted the analysis to the two population-based survey arms, high- and low-endemicity, which sample the community rather than the case cohorts that provided the kinetic estimates.

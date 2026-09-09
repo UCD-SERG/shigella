@@ -8,8 +8,8 @@ each entry names the rule it falls under and says why it was left.
 Both chapters go into one dissertation, so they share one list.
 Each entry names the chapter it belongs to.
 
-Last reviewed: 2026-09-07.
-Chapter 3 at `628f67d`, chapter 2 at `a925bdf`, dissertation at `6d31d7c`.
+Last reviewed: 2026-09-09.
+Chapter 3 at `bc8fd64`, chapter 2 at `a925bdf`, dissertation at `6d31d7c`.
 
 ---
 
@@ -107,6 +107,33 @@ Chapter 3 at `628f67d`, chapter 2 at `a925bdf`, dissertation at `6d31d7c`.
       so the appendix cannot be treated as a copy with separable additions.
       Any line-by-line comparison against the submitted supplement should start at that clause.
       Chapter 1 is submitted, so nothing here is to be changed now.
+
+Considered and declined:
+
+- [ ] **ch3 L306 — Kristen's `the same` → `kinetic` (tracked changes, runs 38-39)** —
+      declined, and the request it carries is met elsewhere.
+      Her paired edit "in the companion analysis" → "described previously" (runs 40-41)
+      has no target: the sentence now reads "as in the longitudinal cohorts".
+      Applying 38-39 alone breaks the clause they lead into —
+      "so the parameter draws and the specimens they are applied to are on one scale"
+      follows from the assay being *the same* as the one behind the draws,
+      and "kinetic ELISA as described previously" drops both the sameness and the referent.
+      It would also orphan the (ELISA) definition, which L318 uses and nothing else supplies.
+      Her "as described previously" is the same request as her Methods note,
+      and that is now carried by L304, "described in detail previously".
+      **Rule: an edit is applied only where its target survives and its logic still closes.**
+
+- [ ] **ch3 L156 — Kristen's goal-statement placeholder (tracked changes, run 25)** —
+      declined; the slot is empty but its job is done.
+      She deleted the signpost at the head of that paragraph
+      ("The last clause is the one this chapter examines", run 20)
+      and left her placeholder for a goal statement at the tail.
+      Those are one move: relocate the signpost.
+      `f3938c7` independently rewrote the head into today's L154,
+      "and it is that consequence this chapter examines" — a sentence she never saw.
+      Filling the tail as well would give one paragraph a signpost at both ends,
+      and make three such statements between L154 and Objectives at L290.
+      **Rule: a placeholder is closed by the request being met, not by the slot being filled.**
 
 Not mine to decide:
 
