@@ -677,17 +677,18 @@ That is a more useful thing to know than a fitted number the data did not suppor
 
 ## Introduction {#sec-ch2-intro}
 
-Enteric fever, caused by *Salmonella enterica* serovars Typhi and Paratyphi, remains a substantial cause of illness and death in South Asia and sub-Saharan Africa, and conjugate vaccines are now recommended for introduction where the burden is high [@gbd2021typhoid; @who2019tcv].
+Enteric fever, caused by *Salmonella enterica* serovars Typhi and Paratyphi, remains a substantial cause of illness and death in South Asia and sub-Saharan Africa.
+Typhoid conjugate vaccines are now recommended for introduction where the burden is high, but there is a scarcity of population-level incidence data [@gbd2021typhoid; @who2019tcv].
 The antibody response to infection is directed at several *S.* Typhi antigens, and immunoaffinity screening of plasma from bacteremic patients identified hemolysin E — a pore-forming toxin expressed during human infection — as the most immunoreactive of them [@charles2010hlye].
-Responses to hemolysin E, particularly IgA, distinguish culture-confirmed enteric fever from other febrile illness with an area under the curve above 0.9, which is why it and its two isotypes are the biomarkers this chapter models [@andrews2019hlye].
+Responses to hemolysin E, particularly IgA, distinguish culture-confirmed enteric fever from other febrile illness with an area under the curve above 0.9 [@andrews2019hlye].
 
 Serological surveys can estimate how often infection occurs in a population without observing the infections themselves, by reading the antibody concentrations that past infections leave behind [@simonsen2009; @teunis2012biomarker].
 What makes this possible is that antibody concentrations after infection are not static: they rise, peak, and decay along a trajectory that can be characterized in cohorts of confirmed cases, so that a single measurement taken later carries information about how long ago that person was infected [@deGraaf2014; @teunis2016].
-Applied across a cross-sectional sample the method has produced incidence estimates for enteric fever, scrub typhus and other pathogens in settings where culture-based surveillance is not available [@aiemjoy2022; @aiemjoy2024scrub].
+This approach has produced incidence estimates for enteric fever, scrub typhus and other pathogens in settings where culture-based surveillance is not available [@aiemjoy2022; @aiemjoy2024scrub].
 
 The information such methods extract depends on how much of the antibody signal they retain.
 Most serological analysis dichotomizes a quantitative measurement into positive or negative against a threshold, which discards the dynamic range that carries the timing information [@arnold2019].
-Methods that model the trajectory instead of thresholding it recover part of what dichotomization throws away, and the accuracy of what they recover depends on how faithfully the trajectory model describes the data it is fitted to.
+Methods that model the trajectory instead of thresholding it recover part of what dichotomization discards, but the accuracy of what they recover depends on how faithfully the trajectory model describes the data it is fitted to.
 
 ### Independence of antibody isotypes in current models {#sec-ch2-gap}
 
@@ -695,64 +696,60 @@ Antibody responses to a single infection differ substantially between people: in
 That heterogeneity has to be carried through the model rather than averaged away, because it determines how much a single measurement can say about timing [@teunis2016; @deGraaf2014].
 Hierarchical within-host models do this, fitting a two-phase rise-and-decay curve with participant-specific parameters for each antigen–isotype combination [@teunis2002; @teunis2016dynamics].
 
-What they do not do is connect the isotypes.
-A participant who mounts a strong IgG response has generally mounted a strong IgA response as well, and one whose titers are still climbing in one isotype is unlikely to have finished decaying in the other.
-Studies that report both isotypes describe them as moving together within individuals, though without estimating the association [@ndungo2025; @chisenga2021].
-The independence assumption asserts otherwise, and this chapter measures what that costs.
-Two models are contrasted throughout this chapter and the next.
-The independent-antibodies model is the one that underlies current practice: episode-specific responses are taken to be uncorrelated between antigen–isotype combinations [@teunis2016].
-The correlated-antibodies model is the extension developed here, which adds covariance terms linking the responses across isotypes and is otherwise identical.
+However, current methods ignore correlation between antigen-isotypes within individuals.
+A participant who mounts a strong IgG response has generally mounted a strong IgA response as well, and one whose titers are still climbing in one isotype is unlikely to have finished decaying in the other [@ndungo2025; @chisenga2021].
+Treating these paired responses as independent discards this dependence and can overstate the amount of information contributed by multiple antibody measurements from the same person.
+This chapter quantifies that dependence and evaluates its consequences for antibody kinetic modeling.
 
-The estimator treats two measurements that share an origin as two independent pieces of evidence.
-Summing log-likelihoods over terms that are not independent is a composite likelihood, and its consequence is known: the estimator remains consistent while the curvature of the summed function overstates the information the data carry [@lindsay1988; @varin2011].
-Parameters are therefore estimated less precisely than the data allow — and, as the seroincidence analysis of Chapter 3 shows, the incidence estimates that follow are more confident than the data justify.
+We compare two nested models throughout this chapter and the next.
+The independent-antibodies model represents current practice: it fits the IgG and IgA responses with the same kinetic structure but assumes that the corresponding episode-level parameters are uncorrelated between isotypes [@teunis2016].
+The correlated-antibodies model is the extension developed here.
+It keeps the same mean structure, observation model, priors, and within-isotype covariance structure, but adds five cross-isotype covariance terms linking the same kinetic parameter across IgG and IgA.
 
-There is also a substantive question underneath the statistical one.
-IgA and IgG are usually read as markers of different things: IgA as an indicator of recent infection, IgG as accumulating with exposure over a lifetime [@aiemjoy2023; @aiemjoy2022repeat].
-A high IgA response together with a low IgG response suggests a more recent exposure than the two elevated together.
-That reading treats the two as separable signals.
-If they are strongly linked at the level of the individual response, it needs qualifying — and the strength of the link is a quantity that can be estimated rather than assumed.
+The distinction independence and dependence is important because the fitted kinetic model is later used as an input to seroincidence estimation.
+In this chapter, however, we focus first on the within-host model itself: whether IgG and IgA kinetic parameters are correlated, whether those correlations can be recovered from the available data, and whether allowing them improves the fit to the longitudinal antibody observations.
 
-### What the model requires of the data {#sec-ch2-why}
+The correlation also affects how IgG and IgA are interpreted as markers of infection recency.
+IgA is often interpreted as a marker of recent infection, whereas IgG is interpreted as a marker of cumulative exposure [@aiemjoy2023; @aiemjoy2022repeat].
+Under that interpretation, high IgA with low IgG suggests a more recent infection than high IgA with high IgG.
+This logic assumes that the two isotypes provide partly separable information about timing.
+Strong cross-isotype correlation would qualify that assumption: IgA and IgG may still carry different temporal information, but their paired responses cannot be treated as independent signals.
+The strength of that dependence is therefore an estimable feature of the antibody response, not a nuisance to assume away.
 
-The model asks each participant's data to identify their own peak height and time to peak, and specimens collected before the peak identify both.
+### Data requirements {#sec-ch2-why}
+
+Estimating the peak height and time to peak requires data from the rising phase of the antibody trajectory.
+Specimens collected before the peak provide direct information about both quantities; without them, the model must infer the rise phase by extrapolating backward from post-peak observations.
 
 The Seroepidemiology and Environmental Surveillance for Enteric Fever (SEES) cohorts meet this condition.
-The first specimen comes at a median of six days against a population peak near 22 days, so roughly three quarters of participants contribute at least one observation before the peak, and the timing varies between individuals rather than being fixed by protocol [@aiemjoy2022].
-The rise phase is observed rather than inferred, and we estimate the model on data that can support it.
+The first specimen comes at a median of six days after symptom onset against a population peak near 22 days, so roughly three quarters of participants contribute at least one observation before the peak, and the timing varies between individuals rather than being fixed by protocol [@aiemjoy2022].
+The rise phase is therefore observed rather than inferred, and the model is fitted to data that can support estimation of the peak parameters.
 
 ### Objectives {#sec-ch2-aims}
 
-A model that allowed every kinetic parameter to correlate with every other across isotypes would add twenty-five parameters, most of which 461 participants cannot inform.
-The extension developed here is deliberately the smallest one that expresses the question: each kinetic feature is allowed to correlate with its own counterpart in the other isotype — peak with peak, decay with decay — and nothing else.
-Setting those five correlations to zero returns the independent-antibodies model exactly, so any difference in fit is attributable to them and to nothing else.
-
-We estimated the association for each kinetic parameter with credible intervals and assessed its sensitivity to the priors.
-We compared the correlated model with the independent model out of sample, holding out the participant rather than the observation.
-We then asked, in a simulation study, whether the estimator recovers correlations of the size observed and — equally important — whether it produces them when the truth is zero.
-
-The simulation carries the weight.
-A correlation that cannot be recovered from data simulated at that value is not a result, and one that appears when nothing is there is worse than none.
-We report both.
-The two models differ in one term of the covariance matrix and in nothing else.
-The independent model is nested inside the correlated one at $\mathbf c=\mathbf 0$, so the question is not which description is right but whether the data contain evidence for a parameter the simpler model sets to zero — a framing that determines both the comparison (@sec-ch2-loo) and the simulation design (@sec-ch2-sim).
+The objective of this study is to test whether IgG and IgA antibody kinetics are correlated within individuals after enteric fever infection.
+We estimate five same-parameter correlations across isotypes: pre-infection concentration, peak concentration, time to peak, decay rate, and decay shape.
 
 
 ## Methods {#sec-ch2-methods}
 
-### Study population and sample {#sec-ch2-data}
+### Study population and longitudinal sample {#sec-ch2-data}
 
-Participants were drawn from the SEES serological study nested within the Surveillance for Enteric Fever in Asia Project (SEAP), restricted to prospectively enrolled, blood-culture-confirmed cases in Bangladesh, Nepal and Pakistan [@aiemjoy2022].
-Antibody responses to hemolysin E (HlyE) were measured for two isotypes, IgG and IgA, by enzyme-linked immunosorbent assay (ELISA) at each visit.
+We used data from the Seroepidemiology and Environmental Surveillance for Enteric Fever (SEES) study, which was nested within the Surveillance for Enteric Fever in Asia Project (SEAP).
+We restricted the analysis to prospectively enrolled, blood-culture-confirmed *Salmonella enterica* serovar Typhi and Paratyphi A cases from Bangladesh, Nepal, and Pakistan [@aiemjoy2022].
+At each follow-up visit, hemolysin E (HlyE) IgG and IgA antibody concentrations were measured by kinetic enzyme-linked immunosorbent assay.
+Details on the enrollment and laboratory methods are described in detail previously.
 
-We applied three exclusions, each for a reason internal to the model rather than to data quality.
-We excluded retrospectively enrolled participants, whose first specimen is drawn at a median of 131 days with only about 20% sampled before the population peak, so that the rise phase is unobserved and the model reaches the peak parameters only by extrapolating backward.
-We excluded surgically enrolled cases on the same grounds, enrollment in that arm having been retrospective.
-And we excluded participants contributing a single visit, because five subject-specific parameters cannot be identified from one observation and such participants contribute only through the population distribution.
+We applied three exclusions based on the requirements of the kinetic model.
+First, we excluded retrospectively enrolled participants because their first specimen was collected late after illness onset, at a median of 131 days, and only about 20% were sampled before the population peak.
+These participants provided little direct information about the rising phase of the antibody response.
+Second, we excluded surgically enrolled cases because enrollment in that arm was retrospective.
+Third, we excluded participants with only one visit because five individual-level kinetic parameters cannot be informed by a single observation.
 
-Two further requirements are mechanical rather than substantive.
-A specimen enters only if it carries a time since fever onset and a positive concentration, since the curve is a function of that time; and a visit enters only if both isotypes were measured at it, since a cross-isotype covariance is defined within a visit and not across them.
-The number remaining after each step is given in @fig-ch2-flow.
+We also required each retained specimen to have a known time since fever onset and a positive antibody concentration.
+The kinetic curve is defined as a function of time since infection, which we approximate using time since fever onset.
+We retained a visit only when both IgG and IgA were measured, because the cross-isotype covariance is defined for paired isotype measurements within the same participant.
+@fig-ch2-flow shows the number of participants and observations remaining after each selection step.
 
 ::: {#fig-ch2-flow}
 ![](fig/ch2_fig_flow.png){width=100%}
@@ -766,20 +763,18 @@ The largest reduction is the last and follows from the study design rather than
 from attrition.
 :::
 
-The surgical arm accounts for every enrollment in this cohort that was not blood-culture-confirmed *S.* Typhi or *S.* Paratyphi A, so the second step settles the case definition as well: of the 461 participants who remain, 388 had *S.* Typhi and 73 *S.* Paratyphi A.
-The last step is the largest, removing 198 participants seen once within the follow-up window.
-It falls unevenly across the three sites — it removes 15% of the Nepali participants, 29% of the Bangladeshi ones, and 66% of the Pakistani ones — so it is a property of how each site's follow-up ran rather than of the antibody data, and it is the main reason Pakistan contributes 31 participants to a study its surveillance supplied 92 to.
-Those removed are otherwise unremarkable: a median age of 7.0 against 8.0, 50% male against 55%, and the same median first specimen at six days.
-@sec-ch2-res-pop describes what remains.
+After these exclusion criteria, 461 participants remain, 388 *S.* Typhi and 73 *S.* Paratyphi A, with 3318 longitudinal observations.
 
-We retained observations from a suspected reinfection onward rather than excluding them.
-The model describes the response to one infection, so removing them would be defensible; they are 46 of the 3,318 measurements, from 15 of the 461 participants, and we carry the reinfection flag with the analysis set so that a fit without them can be run.
+We retained observations collected after suspected reinfection.
+The original analysis excluded these observations [@aiemjoy2022], and exclusion would also be defensible here because the model describes the response to a single infection.
+However, these observations made up a small part of the analysis set: 46 of 3,318 measurements from 15 of 461 participants.
+We retained them in the primary analysis and carried a reinfection indicator in the dataset so that we could repeat the fit without them as a sensitivity analysis.
 Measurements below the assay's detection limit were retained at the limit value, not dropped; discarding them would remove the participants whose responses were smallest and bias the population distribution upward.
 
 ### Antibody kinetic model {#sec-ch2-curve}
 
-The kinetic model is not new to this chapter: we used the two-phase curve of @teunis2016 and @deGraaf2014, as fitted to these biomarkers in earlier work [@lee2026shigella].
-Antibody concentration for participant $i$ and antigen–isotype combination $k$ at time $t$ days after infection rises exponentially to a peak at $t_{1}$ and then decays as a power law.
+We modeled antibody kinetics with the previously described two-phase within-host curve used for these biomarkers in earlier work [@deGraaf2014; @teunis2016; @lee2026shigella].
+For participant $i$ and antigen–isotype combination $k$, the expected antibody concentration at time $t$ days after infection rises exponentially to a peak at $t_{1}$ and then decays according to a power law.
 
 $$
 y_{ik}(t)=
@@ -800,8 +795,7 @@ $$
 
 the pre-infection concentration, the peak concentration, the time to peak, the decay rate, and the decay shape.
 
-The exponent in the decay branch of @eq-curve is $-1/(r-1)$, not $-r/(r-1)$.
-This was verified against the model file, not taken from documentation; the two forms differ materially at $r$ near 1, and the distinction matters again in the seroincidence setting, where the same curve is evaluated forward from posterior draws [@lee2026seroincidence].
+We used the decay exponent $-1/(r-1)$, as implemented in the model code, rather than the alternative form $-r/(r-1)$ sometimes reported in documentation.
 
 Measurements enter on the log scale with a biomarker-specific precision.
 For participant $i$, antigen–isotype $k$ and specimen time $t_{io}$,
@@ -840,8 +834,9 @@ where $\boldsymbol\eta_i \in \mathbb R^{10}$ collects participant $i$'s ten tran
 parameters, $\boldsymbol\mu$ is the population mean of those ten, and $\boldsymbol\Sigma$ is their
 between-participant covariance.
 
-The two models differ in $\boldsymbol\Sigma$ and in nothing else.
-The independent-antibodies model is block diagonal; the correlated-antibodies model adds a diagonal cross-block:
+The independent-antibodies and correlated-antibodies models differ only in $\boldsymbol\Sigma$, the between-participant covariance matrix.
+The independent-antibodies model sets the cross-isotype covariance block to zero.
+The correlated-antibodies model estimates a diagonal cross-isotype block:
 
 $$
 \boldsymbol\Sigma_{\text{ch1}}= \begin{pmatrix}\boldsymbol\Sigma_G & \mathbf 0\\ \mathbf 0 & \boldsymbol\Sigma_A\end{pmatrix}, \qquad \boldsymbol\Sigma_{\text{ch2}}= \begin{pmatrix}\boldsymbol\Sigma_G & \mathbf C\\ \mathbf C^{\top} & \boldsymbol\Sigma_A\end{pmatrix}, \qquad \mathbf C=\operatorname{diag}(\mathbf c),
@@ -849,12 +844,12 @@ $$ {#eq-blocks}
 
 with $\mathbf c=(c_{y_0},c_{y_1},c_{t_1},c_{k},c_{r})$, one for each component of @eq-eta; the fourth is on $\log k_{\mathrm{dec}}$ rather than $\log\alpha$, for the reason given in @sec-ch2-rho.
 The two $5\times5$ within-isotype blocks are unchanged.
-We added five parameters, not twenty-five.
 
-A cohort of 461 participants cannot inform a full cross-block, so we restricted it to its diagonal.
-A full cross-block would ask those participants to inform 25 additional covariances, most of which correspond to questions nobody has posed — whether one isotype's peak height relates to the other's time to peak.
-The diagonal restriction asks only the question that motivates the chapter, which is whether a kinetic feature in one isotype travels with the same feature in the other.
-It is a modeling choice.
+The correlated-antibodies model adds five parameters.
+It does not estimate the full 25-parameter cross-isotype covariance block.
+A full block would require the data to identify every covariance between the five IgG kinetic parameters and the five IgA kinetic parameters.
+With 461 participants and sparse longitudinal sampling, many cross-parameter covariances would be weakly identified.
+We therefore use a diagonal cross-isotype block, which estimates only same-parameter correlations across isotypes.
 
 The five correlations need no admissibility constraint, and the sampler explores them unconstrained.
 We never assemble and factor $\boldsymbol\Sigma_{\text{ch2}}$; instead we build it from a Cholesky factor that is positive definite for every $\mathbf c$; the construction, and the distinction between the conditional and marginal IgA blocks that it introduces, are in @sec-appA-chol.
@@ -921,6 +916,7 @@ $$
 \mathbf c=\mathbf 0 \;\Longrightarrow\; \boldsymbol\Sigma_{\text{ch2}}=\boldsymbol\Sigma_{\text{ch1}} \quad\text{exactly.}
 $$ {#eq-nest}
 
+The independent model is nested inside the correlated one at $\mathbf c=\mathbf 0$, so the question is not which description is right but whether the data contain evidence for a parameter the simpler model sets to zero — a framing that determines both the comparison (@sec-ch2-loo) and the simulation design (@sec-ch2-sim).
 The nesting is exact, not approximate, which is what licenses attributing any difference in fit to $\mathbf c$.
 
 ### Prior specification {#sec-ch2-priors}
