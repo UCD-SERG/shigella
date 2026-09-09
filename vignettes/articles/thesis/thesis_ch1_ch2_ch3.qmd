@@ -115,12 +115,13 @@ distinct serotypes produced implausible decay for *S. sonnei*, where estimation 
 serotype-matched infections did not.
 
 Chapter 2 estimates cross-isotype correlations in the kinetic parameters using 461 individuals with
-blood-culture-confirmed enteric fever from Bangladesh, Nepal, and Pakistan, and shows that a
-participant's IgG and IgA responses are strongly correlated across all five parameters, with
-posterior medians between 0.64 and 0.84. Setting those correlations to zero recovers the model
-currently in use, so the difference in fit is attributable to them alone. The same association is
-present in the measurements themselves, and the estimator neither invents a correlation where none
-exists nor fails to recover one that does.
+blood-culture-confirmed enteric fever from Bangladesh, Nepal, and Pakistan, measured for hemolysin E
+IgG and IgA. Existing applications of the kinetic model treat the two isotypes as independent;
+relaxing that assumption adds five correlations to the between-participant covariance, so setting
+them to zero recovers the model currently in use and any difference in fit is attributable to them
+alone. All five are positive and exclude zero, with posterior medians between 0.64 and 0.84. The
+same association is present in the measurements themselves, and the estimator neither invents a
+correlation where none exists nor fails to recover one that does.
 
 Chapter 3 develops a joint likelihood in which two biomarkers measured on one participant share an
 infection time and their kinetic parameters are drawn in pairs, evaluates it in simulation across an
