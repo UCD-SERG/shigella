@@ -189,6 +189,17 @@ Process:
       This is why the four entries above exist.
       **Rule: a review is closed against the reviewer's own file, not against the commit log.**
 
+Settled — do not undo:
+
+- [ ] **reference.docx — the dissertation's copy has diverged deliberately** — the custom
+      `Table` style carries `tblCellMar` left and right at 0
+      in `vignettes/articles/thesis/reference.docx`,
+      and at 80 in the two chapter copies.
+      The zero pulls the caption rule inside the one-inch margin,
+      which UC Davis requires of figures and tables;
+      the journals have no such rule and their copies are correct as they are.
+      **Anyone synchronising the three files should not copy 80 back over the zero.**
+
 Not mine to decide:
 
 - [ ] **ch3 Abstract** — the first sentence names only "enteric fever",
