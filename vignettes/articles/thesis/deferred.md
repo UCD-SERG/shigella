@@ -337,6 +337,49 @@ Settled — do not undo:
       and with it "The same function evaluates all three." and "Two contrasts follow,",
       both of which her own writing guide quotes as examples of what to avoid.**
 
+- [ ] **ch3 — the point-estimates reservation was dropped, and most of it stayed** —
+      settled in her favour and no longer open.
+      She deleted "The point estimates are not in question, and no published incidence
+      estimate is shown to be wrong; what is too confident is the uncertainty around them."
+      from the abstract in August and again in September, on a file that still carried it.
+      **The reason it went is not that she asked twice.**
+      §3.4.3 reports that the joint estimate exceeded the product estimate in six of six
+      sites, by 14.2% to 42.4%, "not predicted and the simulation does not account for it",
+      and the Discussion adds that until that is settled no claim about the level of
+      incidence should rest on it.
+      So the sentence was true of the simulation and not of the surveys,
+      and it was already in tension with the chapter's own results.
+      Deleting it removed a tension rather than creating one.
+
+      **What was removed is the stance, not the findings. Do not read the deletion as the
+      whole reservation going:**
+
+      - The abstract keeps "Applied to the serosurveys, every interval widened" and
+        "The ranking of countries and the high- versus low-endemicity contrasts did not
+        change" — two of the three supports the Discussion gives — and her own replacement
+        sentence before them already hedges with "suggests" and "likely".
+      - The Discussion keeps its findings and its conclusion, at `chapter3.qmd:1098-1099`
+        as of `1da7e81`: "The estimates are close to unbiased under simulation, the ranking
+        of countries is unchanged, and the high- versus low-endemicity contrasts survive.
+        What is too confident is the uncertainty around them."
+        Only the framing sentence and the explicit "It does not claim that published
+        incidence estimates are wrong" were cut.
+      - **`chapter3.qmd:905` stays and is not a matter of tone**: "Whatever is wrong with
+        the product interval, it is not that it is centered in the wrong place."
+        §2.8 at `:633-634` binds the chapter to it — "If the failure is bias-dominated, the
+        sentence 'the published intervals are too narrow' is not supported and must be
+        replaced by a statement about the point estimate."
+        That line is the discharge of that constraint. Removing it would leave the
+        chapter's central claim unlicensed.
+
+      The abstract sentence carried two claims across a semicolon and the two body passages
+      take one each: `:905` has the first, the Discussion the second.
+      They were never two statements of one thing.
+
+      Line numbers in this entry are valid at `1da7e81`; the pair this entry replaced
+      carried numbers that had gone stale by about thirty lines, which is the fifth such
+      case this week. Find these by their text, not by their line.
+
 For the journal revision:
 
 - [ ] **chapter 1 — "Section B5 in S1 Text" was a broken reference in the submitted
@@ -393,19 +436,3 @@ Not mine to decide:
       **Rules: an abstract should name both diseases and say how participants were selected.
       OWNER: Kristen — ask, do not decide.**
 
-- [ ] **ch3 Abstract — she wants the level reported** — she inserted
-      "and the seroincidence estimate was higher across all sites"
-      and deleted "The point estimates are not in question, and no published incidence
-      estimate is shown to be wrong;
-      what is too confident is the uncertainty around them."
-      Those are one move: report that the level went up,
-      and drop the sentence that contradicts it.
-      The chapter argues the opposite at L110, L935 and L1129,
-      while L1053 does report that the joint estimate exceeded the product estimate
-      in six of six sites — so her substantive point is in the body and not in the abstract.
-      This is a disagreement with a co-author, not an oversight.
-      Her second round deletes the same sentence again, on a file that still carried it,
-      so she has now asked for it twice in two independent passes.
-      That is evidence about what she wants, not a change of position —
-      but it means the question to put to her is which of the two she meant, not whether she meant it.
-      **OWNER: Kristen — ask, do not decide.**
