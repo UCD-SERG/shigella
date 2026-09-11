@@ -8,8 +8,9 @@ each entry names the rule it falls under and says why it was left.
 Both chapters go into one dissertation, so they share one list.
 Each entry names the chapter it belongs to.
 
-Last reviewed: 2026-09-09.
-Chapter 3 at `cde69d6`, chapter 2 at `a925bdf`, dissertation at `6d31d7c`.
+Last reviewed: 2026-09-11.
+Chapter 3 at `747c633`, chapter 2 at `0a56921`, dissertation at `3a97c6e` —
+in each case the commit that last changed that file.
 
 ---
 
@@ -376,7 +377,8 @@ Settled — do not undo:
       take one each: `:905` has the first, the Discussion the second.
       They were never two statements of one thing.
 
-      Line numbers in this entry are valid at `1da7e81`; the pair this entry replaced
+      Line numbers in this entry are valid at `747c633`, the commit that last changed
+      `chapter3.qmd`; the pair this entry replaced
       carried numbers that had gone stale by about thirty lines, which is the fifth such
       case this week. Find these by their text, not by their line.
 
@@ -444,7 +446,7 @@ For the journal revision:
       and `## Objectives` (1.7).
       The middle two are now mismatched with their renamed Methods twins.
       **Their absence from rule 10 is the seam, not approval:
-      her marks stop at L753, inside 3.1, and the next heading down is 3.2 at L761.**
+      her marks stop at L752, inside 3.1, and the next heading down is 3.2 at L760.**
       Renaming what she named was her act; extending it is the author's,
       and it was deliberately not extended.
 
