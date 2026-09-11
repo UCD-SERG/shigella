@@ -380,6 +380,32 @@ Settled — do not undo:
       carried numbers that had gone stale by about thirty lines, which is the fifth such
       case this week. Find these by their text, not by their line.
 
+- [ ] **dissertation abstract — the unexplained-observation paragraph was removed, and the
+      finding was not** — the abstract's second chapter 3 paragraph, beginning
+      "One observation remains unexplained", is gone.
+      **Read this as a decision about what an abstract is for, not as the discordance being
+      dropped.**
+      The reason is the opening sentence: an abstract says what was done and what was found,
+      and a paragraph that begins by announcing a failure to explain reads as an apology in
+      a place that has no room for one.
+      Kristen's revised chapter 3 abstract does not make a reservation either — she removed
+      the one it had.
+
+      **The finding is still in the dissertation, in two places, and neither was touched:**
+
+      - §3.4.3, "Unexplained shift in the point estimate", reports the 29% separation, that
+        it was not predicted and the simulation does not account for it, and the observed
+        correlations of 0.17 to 0.63 against the 0.78 to 0.81 the chapter 2 fit predicts.
+        The Discussion takes up both candidate explanations and says neither can be
+        separated from the other here.
+      - The Conclusion states it directly: "The point estimates moved by 29% on the observed
+        surveys and the simulation does not reproduce that."
+
+      Two arguments were made for keeping the paragraph and both were overridden knowingly:
+      it was the only limitation stated in either abstract, and folding it into the results
+      paragraph would have buried it. **Neither is a reason to restore it; the abstract is
+      not where that work is done.**
+
 For the journal revision:
 
 - [ ] **chapter 1 — "Section B5 in S1 Text" was a broken reference in the submitted
