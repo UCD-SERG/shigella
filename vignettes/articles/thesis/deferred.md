@@ -200,6 +200,17 @@ Settled — do not undo:
       the journals have no such rule and their copies are correct as they are.
       **Anyone synchronising the three files should not copy 80 back over the zero.**
 
+For the journal revision:
+
+- [ ] **chapter 1 — "Section B5 in S1 Text" was a broken reference in the submitted
+      version** — the supplement has A1 and B1 through B4; there is no B5.
+      The text it pointed at, in a sentence about Gamma and Wishart priors,
+      is what Appendix A's Section 8.6 now holds —
+      a section the supplement does not have.
+      The dissertation resolves it to the appendix.
+      **The PLOS version still carries the dangling pointer
+      and should be corrected at revision.**
+
 Not mine to decide:
 
 - [ ] **ch3 Abstract** — the first sentence names only "enteric fever",
