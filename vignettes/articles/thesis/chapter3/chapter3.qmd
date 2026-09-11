@@ -639,7 +639,7 @@ We ran the decomposition before writing the discussion.
 
 We applied the three likelihood formulations to the SEES cross-sectional serosurveys to determine whether accounting for shared infection history changes epidemiological inference.
 For each site, we estimated seroincidence and its confidence interval under each likelihood formulation.
-We then evaluated whether the joint likelihood altered two key conclusions: the ranking of countries by seroincidence and the contrast between high- and low-endemicity sites within each country.
+We then evaluated whether the joint likelihood altered two pre-specified conclusions: the ranking of countries by seroincidence and the contrast between high- and low-endemicity sites within each country.
 
 We did not compare our estimates directly with previously published seroincidence estimates from these cohorts because the analyses differ in several ways beyond the likelihood formulation.
 The analyses use different parameter draws, participant inclusion criteria, and preprocessing decisions.
