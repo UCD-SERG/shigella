@@ -107,7 +107,6 @@ The ranking of countries and the high- versus low-endemicity contrasts did not c
 
 Seroincidence remains a useful, lower-cost approach for ranking enteric fever burden and supporting vaccine-prioritization decisions.
 However, when multiple biomarkers are combined, accounting for their shared infection history widens confidence intervals and suggests that the current method likely reports uncertainty that is too narrow.
-The point estimates are not in question, and no published incidence estimate is shown to be wrong; what is too confident is the uncertainty around them.
 
 {{< pagebreak >}}
 
@@ -1096,8 +1095,6 @@ A product of valid marginal likelihoods remains a consistent estimating function
 The result reported here is not a discovery about the theory.
 It is a measurement of how much the shortfall amounts to in a setting where the answer matters, and the answer is that it roughly doubles the error rate.
 
-Framing it this way also makes clear what the chapter does *not* claim.
-It does not claim that published incidence estimates are wrong.
 The estimates are close to unbiased under simulation, the ranking of countries is unchanged, and the high- versus low-endemicity contrasts survive.
 What is too confident is the uncertainty around them.
 
