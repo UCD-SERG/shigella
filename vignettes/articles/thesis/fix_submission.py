@@ -73,6 +73,19 @@ WHAT IT DOES
      filled here, matched to their pictures by figure id rather than by
      position.  A mismatch writes nothing and exits non-zero.
 
+12.  NO FIGURE IS WIDER THAN THE MARGINS ALLOW.  See cap_figure_width().
+     UC Davis requires a one-inch margin on every side and says so for figures
+     explicitly.  The text column is 6.5 in; a figure written {width=100%}
+     resolves to exactly that, which leaves it nothing to spare.  Quarto wraps
+     every captioned figure in a one-cell table, and Word lays the cell's
+     content box inside the column rather than around it, so a 6.5 in image
+     overflows to the right of the text boundary.  Eight of the seventeen are
+     affected.  They are scaled to 6.35 in here rather than in the .qmd because
+     those eight lines are byte-identical to chapter2.qmd and chapter3.qmd
+     under the empty-diff invariant, and the journals have no margin rule to
+     satisfy.  See deferred.md, which records the same reasoning for
+     reference.docx.
+
 RUNNING IT TWICE IS A NO-OP.
 """
 import re
@@ -84,6 +97,20 @@ from pathlib import Path
 # The UC Davis title page is page i and is merged in separately, so this
 # document's first page is ii.  One more per extra title page.
 START_ROMAN_AT = 2
+
+# The widest an image may be drawn.  The text column is 6.5 in and the wrapper
+# table's cell content box sits inside it, so 6.5 in does not fit; 6.35 in
+# leaves room either side and centres like the nine narrower figures.  EMU,
+# which is what wp:extent and a:ext are written in: 914400 to the inch.
+MAX_FIG_EMU = round(6.35 * 914400)
+
+# Both members of a drawing's size pair -- wp:extent on the inline, a:ext
+# inside pic:spPr/a:xfrm -- carry the same cx and cy and must move together.
+# Neither wp:effectExtent nor a:off matches this, since they carry l/t/r/b and
+# x/y rather than cx/cy.
+EXTENT = re.compile(
+    r'<(?P<tag>wp:extent|a:ext)\s+cx="(?P<cx>\d+)"\s+cy="(?P<cy>\d+)"\s*/>'
+)
 
 PAGEBREAK_PARA = re.compile(
     r'<w:p>\s*<w:r>\s*<w:br w:type="page"\s*/>\s*</w:r>\s*</w:p>'
@@ -557,6 +584,37 @@ def set_figure_alt_text(xml, alt):
     return xml, len(pairs), len(pics), None
 
 
+def cap_figure_width(xml):
+    """Scale every image wider than MAX_FIG_EMU down to it, keeping its ratio.
+
+    Returns the xml, how many size elements were changed, and the widths in
+    inches before and after, so the caller can show what moved.  Idempotent:
+    a second pass finds nothing above the cap.
+    """
+    changed = []
+
+    def shrink(m):
+        cx, cy = int(m.group("cx")), int(m.group("cy"))
+        if cx <= MAX_FIG_EMU:
+            return m.group(0)
+        new_cy = round(cy * MAX_FIG_EMU / cx)
+        changed.append((m.group("tag"), cx, cy, new_cy))
+        return (f'<{m.group("tag")} cx="{MAX_FIG_EMU}" cy="{new_cy}" />')
+
+    out = EXTENT.sub(shrink, xml)
+
+    # Every drawing has exactly one wp:extent and one a:ext, so the two counts
+    # must match; if they do not, the pair has been split and the picture would
+    # disagree with its frame.
+    wp = sum(1 for t, *_ in changed if t == "wp:extent")
+    ax = sum(1 for t, *_ in changed if t == "a:ext")
+    if wp != ax:
+        return xml, 0, [], f"extent pair mismatch: {wp} wp:extent, {ax} a:ext"
+    sizes = [(cx / 914400, cy / 914400, MAX_FIG_EMU / 914400, ncy / 914400)
+             for t, cx, cy, ncy in changed if t == "wp:extent"]
+    return out, len(changed), sizes, None
+
+
 def main():
     if len(sys.argv) < 2:
         sys.exit(__doc__)
@@ -591,6 +649,9 @@ def main():
                 xml, hoisted, thinned = no_blank_pages(xml)
                 xml, alt_ok, alt_n, alt_problem = set_figure_alt_text(
                     xml, alt_map)
+                xml, capped, cap_sizes, cap_problem = cap_figure_width(xml)
+                if cap_problem:
+                    sys.exit(f"fix_submission: {cap_problem}")
                 print(f"  caption pPr merged        : {merged}")
                 print(f"  table captions restyled   : {restyled}")
                 print(f"  list field codes repaired : {repaired}")
@@ -603,6 +664,10 @@ def main():
                 print(f"  breaks -> pageBreakBefore  : {hoisted}")
                 print(f"  breaks kept but thinned   : {thinned}")
                 print(f"  figure alt text           : {alt_ok} of {alt_n} matched by id")
+                print(f"  figures capped to 6.35 in : {len(cap_sizes)}"
+                      f" ({capped} size elements)")
+                for w, h, nw, nh in cap_sizes:
+                    print(f"      {w:.3f} x {h:.3f} -> {nw:.3f} x {nh:.3f} in")
                 data = xml.encode("utf-8")
             elif item.filename == "word/settings.xml":
                 xml = data.decode("utf-8")
