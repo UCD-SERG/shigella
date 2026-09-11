@@ -205,6 +205,68 @@ From Kristen's tracked changes — notes not closed:
       and sex appears only as a clause at L324.
       Building the single table needs participant-level data that is not in this repository.
 
+From Kristen's second round — content she asked for and we do not have:
+
+Grouped by what each one needs, because the groups close in different ways.
+
+NEEDS THE PARTICIPANT-FLOW FIGURE REGENERATED (Mercury)
+
+- [ ] **ch3 @fig-ch3-flow — three changes to the figure, one of which changes a claim** —
+      she asked for "rows" to be replaced by "observations";
+      for the flow to start at "population-based serosurveys" rather than at the
+      top-level exclusion, which she says only existed because all the data arrived in
+      one spreadsheet; and for "community participants" to become
+      "single index participant per household".
+      **The third is not a relabelling. It changes what the figure asserts about who was
+      sampled — from a community sample to one index participant per household —
+      and the surrounding text and @tbl-cells describe the first.
+      Anyone regenerating this figure should settle which is true before drawing it,
+      because the label and the text cannot both be right.**
+      TO CLOSE: the plotting script for `ch3_fig_flow.png` has to be re-run on Mercury,
+      where the participant-level data lives. The first two changes are label edits in
+      that script. The third needs the sampling question below answered first.
+
+NEEDS FACTS FROM KRISTEN OR FROM THE SEES PAPER
+
+- [ ] **ch3 §2.1 — the sampling design is not described** — she asked for
+      "two phase geographically random sample, census first and then households randomly
+      selected". The chapter says only that households were sampled in high- and
+      low-endemicity sites.
+      TO CLOSE: one or two sentences, from the SEES design paper [@aiemjoy2022] or from her.
+      Nothing here can be inferred from the repository.
+
+- [ ] **ch3 §1.1 — background on HlyE** — she asked for how the antigen was identified and
+      where it has been evaluated, and separately for "+references to charles work"
+      to follow the sentence describing it.
+      Her tracked edit to that sentence was applied; the note attached to it was not,
+      because it names a person rather than a citation.
+      TO CLOSE: the references themselves. Which of Charles's papers, and whether the
+      background is a clause or a sentence, are hers to say.
+
+NEEDS NUMBERS WE CAN COMPUTE BUT DID NOT REPORT
+
+- [ ] **ch3 §2.1 — counts behind the sex percentages** — she marked `48%` with "(n/N)" and
+      `35%` and `53%` with "(n/n)(n/n)", asking for the counts as well as the proportions.
+      TO CLOSE: a calculation, not a fact — the numerator and denominator overall and for
+      the two extreme sites. The participant-level data is on Mercury; the percentages in
+      the chapter were computed there and only the percentages were carried back.
+
+- [ ] **ch3 §2.1 — median age and IQR** — she asked for them overall and by site.
+      @tbl-cells already carries an age distribution by site, so the by-site half may be a
+      restatement rather than a gap; the overall figures are not in the chapter at all.
+      TO CLOSE: the same calculation on Mercury, and a decision about whether the overall
+      pair goes in the text or a row goes in the table.
+
+NEEDS A DECISION RATHER THAN A FACT
+
+- [ ] **ch3 Abstract — "the true seroincidence"** — two comments on the same words,
+      "simulated true?" and "simulated?". In the coverage study the truth is the simulated
+      λ, so "true" is correct as written; she is asking whether the abstract should say so.
+      Nothing is missing and nothing needs computing.
+      TO CLOSE: a wording decision — leave "true", or write "the simulated seroincidence"
+      and accept that the abstract then reads as though the chapter only simulated.
+      **Neither of the two comments proposes wording, so this is not a tracked edit to apply.**
+
 Process:
 
 - [ ] **ch3 — Kristen's tracked changes were not applied in the first pass** — her review
