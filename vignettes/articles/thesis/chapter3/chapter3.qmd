@@ -467,7 +467,7 @@ The same function evaluates all three forms of @tbl-design.
 They share the noise density, the quadrature grid, the two-branch mixture of @eq-brt, the censoring rule, and the time units; the code branches in one place, on the order of the sum, the integral, and the product.
 The derivation is in @sec-appB-deriv.
 
-Two contrasts follow, and they partition the difference between current practice and the joint form:
+We defined two contrasts to isolate the effects of shared infection time and parameter pairing:
 
 $$
 \underbrace{\;\ell_{\mathrm{shared}}-\ell_{\mathrm{prod}}\;}_{\text{sharing one infection time}}
@@ -750,7 +750,7 @@ out <- data.frame(
   check.names = FALSE)
 thesis_ft(out, widths = c(1.15, 0.85, 0.55, 1.02, 1.02, 0.86, 0.95))
 ```
-The six sites differed substantially in both censoring and age structure.
+The six sites differed substantially in censoring rates and age structure, which motivated two sensitivity analyses.
 Censoring differs between countries — from 0.2% of IgG measurements in high-endemicity Bangladesh to 59.7% in low-endemicity Pakistan — which is what the detection-limit sensitivity analysis addresses.
 And one site has an age structure unlike the rest: the low-endemicity Pakistan arm is 22.0% aged 26 or over against 0.8% or less elsewhere, and it sits on the low side of the Pakistan endemicity contrast, which is why we re-analyzed that site alone under an age restriction.
 
