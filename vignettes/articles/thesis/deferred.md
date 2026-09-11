@@ -281,6 +281,35 @@ Process:
       This is why the four entries above exist.
       **Rule: a review is closed against the reviewer's own file, not against the commit log.**
 
+- [ ] **The tracked-change extractor reads insert-then-delete as insertion** — Word records
+      text typed and immediately removed as `<w:del>` nested inside `<w:ins>`,
+      which means nothing happened.
+      Of the three read paths used for her second round,
+      `runs_of` takes `ins` when both are present
+      and would report such text as something she wrote;
+      the other two discard it, but only because of the order their conditions are written.
+      `chapter3_v3.docx` contains no nested runs, so no count was affected.
+      A future review file may contain them.
+      **Check for nesting before counting.**
+
+      What "no nesting" was verified against, so the next run can be trusted the same way:
+      a single tag-by-tag pass over `word/document.xml` maintaining a stack of open
+      `w:ins`, `w:del`, `w:moveFrom` and `w:moveTo` elements, with the parse itself checked
+      before its output was used — **0 elements unclosed at end of file, 0 mismatched
+      closing tags, maximum nesting depth 1**. On that basis every one of the 1,831 text
+      runs sits at depth 0 (1,627), inside a plain `w:ins` (88), or inside a plain `w:del`
+      (116); no run is two deep, and `w:moveFrom`/`w:moveTo` are absent.
+      A regex that matches across run boundaries will report nesting that is not there.
+
+      One number in the history is an artifact of the same code.
+      `6bec844` says her changes "merge into 124 runs"; merging over the whole document
+      rather than paragraph by paragraph gives **122** — 59 insertions and 63 deletions.
+      The two-span difference is two whole-paragraph deletions that are adjacent across a
+      paragraph boundary, ¶73/¶74 and ¶86/¶87, which merge on a continuous scan and not on
+      a per-paragraph one. The 70-edit classification was built from per-paragraph coherent
+      edits and is unaffected, but **122 is the correct figure and 124 should not be
+      re-used.**
+
 Settled — do not undo:
 
 - [ ] **reference.docx — the dissertation's copy has diverged deliberately** — the custom
