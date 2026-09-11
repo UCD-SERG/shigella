@@ -319,6 +319,43 @@ For the journal revision:
       **The PLOS version still carries the dangling pointer
       and should be corrected at revision.**
 
+- [ ] **ch3 — Kristen's rule 11 caption structure, seventeen captions** — her guide gives
+      a four-sentence structure for captions: the message, then the population or
+      likelihoods shown, then the symbols and panels, then the limited conclusion.
+      The chapter has 19 captions, 7 figures and 12 tables.
+      She applied it to one, and not by restructuring the caption:
+      she replaced Figure 1's title with a claim,
+      "Product and joint likelihoods imply different infection histories for the same
+      participant". That is an assertion about what the figure shows, and she wrote one.
+      Of the 17 she did not touch, 7 have a title that describes the contents,
+      3 are part message, and **8 have no title sentence at all**.
+      **This is not mechanical and was not applied.**
+      Writing a message title means deciding what each display is for, and for
+      `fig-ch3-disc` that decision is one the chapter declines to make:
+      it sits in "Unexplained shift in the point estimate", where repeat infection and
+      case-derived kinetics are both consistent with the data and cannot be separated.
+      Bolding the 8 untitled first sentences would make the captions consistent
+      without making any of them state a message — house style satisfied, her rule not,
+      and it would look done. Do not do that as a substitute.
+
+- [ ] **ch3 — five headings fail her rule 10 test and she never saw them** — her guide
+      renames five headings as broad, procedural, or misleading in an epidemiologic
+      context; those five are done. These fail the same test and are not on her list:
+      `## Sensitivity analyses` (2.10), `## Results of the implementation checks` (3.2),
+      `## Results of the sensitivity analyses` (3.5), `## Posterior parameter draws` (2.4),
+      and `## Objectives` (1.7).
+      The middle two are now mismatched with their renamed Methods twins.
+      **Their absence from rule 10 is the seam, not approval:
+      her marks stop at L753, inside 3.1, and the next heading down is 3.2 at L761.**
+      Renaming what she named was her act; extending it is the author's,
+      and it was deliberately not extended.
+
+- [ ] **ch3 — her renaming created a near-collision between Methods and Results** —
+      2.9 is now `Effect of likelihood formulation on epidemiological inference`
+      and 3.4.2 is still `Effect on epidemiological inference`.
+      Two sections about a page apart with almost the same name.
+      3.4.2 was not renamed for the reason above.
+
 Not mine to decide:
 
 - [ ] **ch3 Abstract** — the first sentence names only "enteric fever",
