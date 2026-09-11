@@ -135,13 +135,6 @@ average without changing the ranking of countries or the high- versus low-endemi
 three quarters of that widening follows from the shared infection time rather than from the
 correlations.
 
-One observation remains unexplained. The correlation the chapter 2 model predicts for these survey
-populations, between 0.78 and 0.81, is higher than the correlation observed at every one of the six
-sites, where it ranges from 0.17 to 0.63. Repeated infection and kinetics estimated from
-culture-confirmed patients but applied to milder community infection are both consistent with the
-data and cannot be separated here: the age stratification that would have distinguished them is
-defeated by censoring, which removes the youngest participants from the comparison.
-
 Together, these chapters show that seroincidence estimates for enteric infections depend on kinetic
 models that reflect pathogen-specific antibody dynamics and within-person dependence among
 biomarkers.
