@@ -289,7 +289,7 @@ It is intended to establish how much the simplification costs, so that a practit
 
 Cross-sectional data come from the population-based serosurveys conducted for the SEES study, described in detail previously [@aiemjoy2022].
 In brief, households were sampled in high-endemicity and low-endemicity sites in each of Bangladesh, Nepal and Pakistan.
-HlyE IgG and IgA were measured by the same enzyme-linked immunosorbent assay (ELISA) as in the longitudinal cohorts, so the parameter draws and the specimens they are applied to are on one scale.
+HlyE IgG and IgA were measured using a kinetic enzyme-linked immunosorbent assay (ELISA) as in the longitudinal cohorts, so the parameter draws and the specimens they are applied to are on one scale.
 
 We excluded household members enrolled alongside an index participant.
 Although multiple longitudinal samples were selected from participants, we used the baseline visit only, to emulate a cross-sectional sample.
@@ -307,7 +307,7 @@ isotype.
 
 The final analysis sample comprised 2,613 participants, each contributing one HlyE IgG and one HlyE IgA.
 48% are male, ranging from 35% to 53% across the six sites.
-The six country-by-endemicity sites are described in @tbl-cells.
+Demographic characteristics of participants in the six sites are described in detail in @tbl-cells.
 
 Specimens were collected between February 2019 and June 2021, but not on a common schedule.
 Five of the six sites sampled across 13 to 16 calendar months, with a gap through the middle of 2020 when field work was suspended due to the SARS-CoV-2 pandemic; the low-endemicity Pakistan site drew its dated specimens within eleven days in January 2021 (@tbl-collect).
