@@ -108,6 +108,36 @@ Chapter 3 at `cde69d6`, chapter 2 at `a925bdf`, dissertation at `6d31d7c`.
       Any line-by-line comparison against the submitted supplement should start at that clause.
       Chapter 1 is submitted, so nothing here is to be changed now.
 
+- [ ] **ch3 — the cluster-robust result is no longer promised in advance** —
+      Kristen's second round removed the sentence in the Introduction
+      ("We report it whether or not it does...") and rewrote the Methods sentence
+      that carried the same commitment ("we report it either way").
+      Both are her rule 8 working as designed: commentary about the reporting process,
+      stated once in Methods or not at all.
+      The chapter still does the thing — Results says
+      "The cluster-robust check did not support the argument, and we report it as such" —
+      but it no longer says in advance that it will.
+      **Rule: a prespecification is only a prespecification if it is recorded before the result.
+      This one is now a description of what happened.**
+
+- [ ] **ch3 — Results claims a prespecification that Methods no longer records** —
+      Results says "Two conclusions were pre-specified in @sec-ch3-app",
+      but the paragraph in that section which named them and called them pre-specified
+      was removed when her new opening named them instead.
+      Her sentence names the two conclusions; it does not say they were fixed in advance.
+      **The claim in Results is still true of what was done and is no longer supported by what §2.9 says.**
+
+- [ ] **ch3 — two anchors lost their only in-text reference** —
+      `@eq-contrasts` and `@sec-ch3-banks`.
+      Both fell out of her replacement sentences:
+      the contrasts equation was cited in the sentence her §2.9 opening replaced
+      and in the "established internally" paragraph she deleted,
+      and the parameter-draw section was cited only from the old Objectives.
+      Neither is an unresolved reference — both are still defined, and the render is clean.
+      `@tbl-design` was orphaned the same way and was given a reference,
+      because a table that appears in the List of Tables with no path to it is a reader's problem;
+      an equation and a section are not.
+
 Considered and declined:
 
 - [ ] **ch3 L306 — Kristen's `the same` → `kinetic` (tracked changes, runs 38-39)** —
@@ -200,6 +230,22 @@ Settled — do not undo:
       the journals have no such rule and their copies are correct as they are.
       **Anyone synchronising the three files should not copy 80 back over the zero.**
 
+- [ ] **ch3 §2.5 — her second rewrite was taken and her first was not** — two of
+      her comments supply a replacement for the same idea:
+      `401576599` rewrites "The same function evaluates all three...",
+      and `1880105609` rewrites "Placing all three forms in one function...",
+      twenty-five lines later.
+      Both open on the single-implementation point and both contain the sentence
+      "any differences between the likelihoods can be attributed directly to...".
+      `1880105609` is introduced as a "potential re-write",
+      which means she wrote it knowing the first existed, so it was taken and the first was not.
+      A reader meeting the same conclusion twice in twenty-five lines
+      is worse served than one meeting it once.
+      **This was the author's decision, not hers.
+      Reverting it means `401576599` goes in as well, not instead —
+      and with it "The same function evaluates all three." and "Two contrasts follow,",
+      both of which her own writing guide quotes as examples of what to avoid.**
+
 For the journal revision:
 
 - [ ] **chapter 1 — "Section B5 in S1 Text" was a broken reference in the submitted
@@ -230,4 +276,8 @@ Not mine to decide:
       while L1053 does report that the joint estimate exceeded the product estimate
       in six of six sites — so her substantive point is in the body and not in the abstract.
       This is a disagreement with a co-author, not an oversight.
+      Her second round deletes the same sentence again, on a file that still carried it,
+      so she has now asked for it twice in two independent passes.
+      That is evidence about what she wants, not a change of position —
+      but it means the question to put to her is which of the two she meant, not whether she meant it.
       **OWNER: Kristen — ask, do not decide.**
