@@ -126,12 +126,14 @@ correlation where none exists nor fails to recover one that does.
 Chapter 3 develops a joint likelihood in which two biomarkers measured on one participant share an
 infection time and their kinetic parameters are drawn in pairs, evaluates it in simulation across an
 eightfold range of seroincidence, and applies it to serosurveys of 2,613 participants at six sites
-in three countries. The estimator it is measured against, the product form, adds the two
-log-likelihoods and so treats a participant's two measurements as though they came from two
-independently infected people. An interval reported as 95% contains the true incidence 89.7% of the
-time under the product form and 98.0% under the joint likelihood. Applied to the surveys, intervals
-widened by 46% on average without changing the ordering between sites, and three quarters of that
-widening follows from the shared infection time rather than from the correlations.
+in three countries. The estimator it is measured against, the product form, combines biomarkers by
+adding their log-likelihoods, which treats a participant's two measurements as though they came from
+two independently infected people. An interval reported as 95% contains the true incidence 89.7% of
+the time under the product form and 98.0% under the joint likelihood, and the two recover the true
+seroincidence with almost the same error. Applied to the surveys, intervals widened by 46% on
+average without changing the ranking of countries or the high- versus low-endemicity contrasts, and
+three quarters of that widening follows from the shared infection time rather than from the
+correlations.
 
 One observation remains unexplained. The correlation the chapter 2 model predicts for these survey
 populations, between 0.78 and 0.81, is higher than the correlation observed at every one of the six
