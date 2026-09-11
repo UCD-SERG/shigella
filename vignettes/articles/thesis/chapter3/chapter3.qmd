@@ -91,22 +91,22 @@ And a number in the text that disagrees with the corresponding CSV is a discrepa
 
 # Abstract {.unnumbered}
 
-Cross-sectional serosurveys can estimate the seroincidence rate of enteric fever by leveraging antibody decay dynamics estimated from confirmed cases.
+Cross-sectional serosurveys can estimate the seroincidence rate of enteric fever by leveraging antibody kinetics estimated from confirmed cases.
 These methods recover the same rank-order burden as blood-culture-based clinical incidence estimates, while requiring a fraction of the time, cost, and infrastructure.
 The established estimator combines biomarkers by adding their log-likelihoods, which treats a participant's two measurements as though they came from two independently infected people.
 
-The established estimator makes two assumptions that we relax: that a participant's biomarkers arise from separate infections, and that their kinetic parameters are drawn independently of one another.
 We derived a joint likelihood in which the biomarkers share one infection time and their kinetic parameters are drawn together, and we verified that it reproduces the established estimator when only one biomarker is measured.
 We evaluated the coverage of both in a simulation study spanning an eightfold range of seroincidence, and separated the two assumptions so that each contribution could be measured.
 We applied all three forms to the Seroepidemiology and Environmental Surveillance for Enteric Fever (SEES) cross-sectional serosurveys, covering 2,613 participants in randomly selected population samples in Bangladesh, Nepal, and Pakistan.
 
-An interval constructed to have 95% coverage contained the true seroincidence 89.7% of the time when built by adding log-likelihoods; the joint form restored coverage to 98.0%, at a cost in width of about a quarter that held across the range of seroincidence examined.
+An interval constructed to have 95% coverage contained the true seroincidence 89.7% of the time when built by adding log-likelihoods; the joint form improved coverage to 98.0%, at a cost in width of about a quarter that held across the range of seroincidence examined.
 The two forms recovered the true seroincidence with almost the same error: relative root mean squared error was 10.16% for the product form and 9.53% for the joint form.
-Sharing the infection time accounted for 76% of the correction and requires no result about correlation at all; pairing the parameter draws supplied the remainder.
+Sharing the infection time accounted for 76% of the correction; pairing the parameter draws accounted for the remaining 24%.
 Applied to the serosurveys, every interval widened.
 The ranking of countries and the high- versus low-endemicity contrasts did not change.
 
-Seroincidence remains a useful, lower-cost approach for ranking enteric fever burden and supporting vaccine-prioritization decisions, but when multiple biomarkers are combined, the current method likely reports uncertainty that is too narrow.
+Seroincidence remains a useful, lower-cost approach for ranking enteric fever burden and supporting vaccine-prioritization decisions.
+However, when multiple biomarkers are combined, accounting for their shared infection history widens confidence intervals and suggests that the current method likely reports uncertainty that is too narrow.
 The point estimates are not in question, and no published incidence estimate is shown to be wrong; what is too confident is the uncertainty around them.
 
 {{< pagebreak >}}
@@ -139,7 +139,7 @@ $$ {#eq-two-assumptions}
 Enteric fever caused an estimated nine million illnesses and over a hundred thousand deaths in 2021, concentrated in South Asia and sub-Saharan Africa [@gbd2021typhoid].
 Safe and effective conjugate vaccines exist, and the World Health Organization recommends their introduction in settings of high burden [@who2019tcv].
 Deciding where to introduce them requires estimates of infection rates, which are unavailable in most high-burden settings: blood culture surveillance requires laboratory infrastructure and sustained financing, and even where it is in place it detects only the fraction of infections that produce symptoms, reach care, and yield a positive culture.
-Seroincidence estimation was developed to fill that gap: one blood draw per participant in a randomly selected population sample, analyzed against a model of how antibodies behave after infection, yields an infection rate for the population — including the asymptomatic and unrecognized infections that never reach a clinic [@simonsen2009; @teunis2020; @aiemjoy2022; @aiemjoy2023serodynamics].
+Cross-sectional seroincidence estimation was developed to fill that gap: one blood draw per participant in a randomly selected population sample, analyzed against a model of how antibodies behave after infection, yields an infection rate for the population — including the asymptomatic and unrecognized infections that never reach a clinic [@simonsen2009; @teunis2020; @aiemjoy2022; @aiemjoy2023serodynamics].
 What that estimate is worth depends on the kinetic model fitted to confirmed cases and on how it is combined with the survey data.
 
 ## Seroincidence estimation from cross-sectional serosurveys {#sec-ch3-gap}
@@ -151,51 +151,39 @@ $$
 \ell(\lambda)=\sum_{i}\sum_{j=1}^{J}\log L_{ij}(\lambda)
 $$ {#eq-sumll}
 
-On that assumption the sum of @eq-sumll increases the precision of the seroincidence estimate, and it is that consequence this chapter examines.
-Adding log-likelihoods increases precision.
-Whether that precision is real depends on whether the terms being added are independent, and a participant's two measurements are not: they come from one person, one infection, and one specimen.
+Based on that assumption, the sum of @eq-sumll increases the apparent precision of the seroincidence estimate.
+Whether that precision is real depends on whether the terms being added are independent.
+However, a participant's two measurements are not independent because they come from the same person and specimen.
+If an individual has been infected, the observed responses across biomarkers are generated by a shared latent infection time.
+In addition to shared infection time, the paired response may give additional information that a single response cannot.
+For example, a high IgA response together with a low IgG response points to a more recent exposure than elevated IgA and IgG together.
 
-Both isotypes in this chapter are directed against hemolysin E (HlyE), a pore-forming toxin that *Salmonella* Typhi and Paratyphi A express during human infection and the most immunoreactive antigen identified in confirmed enteric fever.
-A high IgA response together with a low IgG response points to a more recent exposure than elevated IgA and IgG together: the combination locates the infection in time in a way neither concentration does by itself.
+This chapter examines the consequences of assuming independence between biomarkers using HlyE IgG and IgA responses as an example.
+
+Hemolysin E (HlyE) is a pore-forming toxin that *Salmonella* Typhi and Paratyphi A express during human infection and is a highly immunoreactive antigen identified in confirmed enteric fever.
 
 ## Consequences of the independence assumption {#sec-ch3-stakes}
 
 Counting one specimen as two independent observations is a form of composite likelihood — a product of valid marginal likelihoods that is not itself the likelihood of the data [@lindsay1988; @varin2011].
 The consequence is known in general terms: the estimator remains consistent, but the curvature of the composite log-likelihood overstates the information in the sample, so intervals built from it in the usual way are narrower than they should be [@godambe1960; @chandler2007].
 
-Intervals that are too narrow lead to overconfident comparisons between settings, which matters because these estimates inform burden rankings and vaccine introduction decisions.
+Intervals that are too narrow lead to overconfident comparisons between settings, which is important because these estimates inform burden rankings and vaccine introduction decisions.
 The error is also not self-evident in the output: an interval that is too narrow looks like a better result, not a worse one, and nothing in the output distinguishes it from a genuinely precise one.
-
-The precedent is instructive.
-When antibody decay was ignored altogether in an earlier generation of serosurveillance methods, the burden was underestimated by more than half [@aiemjoy2024scrub].
-Assumptions made for tractability in seroepidemiology have not historically been harmless, so we checked this one before carrying it into further applications.
 
 ## Coverage as the evaluation criterion {#sec-ch3-coverage}
 
-An interval can be widened by anyone.
-Multiplying it by two makes it wider without making it right.
-
-The quantity that decides whether a wider interval is a better interval is coverage — the proportion of intervals that contain the true value when the true value is known — which is the standard target for evaluating an interval procedure by simulation [@morris2019].
+Coverage, the proportion of intervals that contain the true value when the true value is known, determines whether a wider interval reflects better calibration or simply less precision [@morris2019].
 A nominal 95% interval should contain the truth 95% of the time.
-If the established estimator's intervals contain it less often than that, they are not merely narrower than an alternative; they are wrong, and by a measurable amount.
+If the established estimator's intervals contain the true value less often than expected, the issue is not simply that they are narrower than an alternative, but that they fail to achieve their stated coverage.
 
-Coverage is therefore the primary endpoint of this chapter, and it is the reason the chapter can make a claim about the published literature rather than only about a comparison between two estimators written here.
-A statement that one interval is twice as wide as another is a statement about that code.
-A statement that an interval reported as 95% covers far less often than that is a statement about every published estimate computed the same way.
+## Predictions and evaluation criteria {#sec-ch3-honest}
 
-## Pre-specified analyses {#sec-ch3-honest}
-
-The argument of @sec-ch3-stakes is a prediction, not a result, and it has failure modes that were specified before anything was run.
-
-The conventional diagnostic could disagree.
+The composite-likelihood argument outlined in @sec-ch3-stakes makes several testable predictions.
+Before fitting any models, we specified the outcomes that would support or contradict that argument.
 The standard way to show that a composite likelihood overstates precision is a cluster-robust (sandwich) standard error with the participant as the cluster [@chandler2007; @ribatet2012].
-If within-participant dependence is real, that correction should inflate the standard error.
-We report it whether or not it does, and if it does not, the disagreement between it and the coverage study is itself a finding that has to be explained rather than omitted.
+If within-participant dependence is real, that sandwich correction should inflate the standard error.
 
-The effect could be small.
-Two considerations suggested it might be.
-The inversion uses the decay phase only, so the pre-infection level and the time to peak — among the most strongly correlated parameters in that analysis — do not enter.
-And where incidence is low, most specimens sit far along the decay curve, where neither isotype carries much information about timing.
+The size of the effect is uncertain, however, because the estimator uses only the decay phase of the antibody response and because, at low incidence, most observations occur where neither isotype provides much information about infection timing.
 A correction whose effect is small is still worth making if it is the correct one, and knowing that it is small tells the next study that precision has to come from somewhere else.
 
 The apparent effect could be an artifact of the data, not of the likelihood.
@@ -218,9 +206,9 @@ $$ {#eq-brt}
 
 In a cross-sectional serosurvey we do not know when, or whether, a participant was infected.
 We therefore treat the time since infection as an unobserved quantity and average the likelihood over its possible values, rather than using it as a covariate.
-We write this unobserved time as $\tau$ to distinguish it from the observed time $t$ in the longitudinal cohorts, where blood culture confirmed the date of infection.
+We write this unobserved time as $\tau$ to distinguish it from the observed time $t$ in the longitudinal case cohorts, where blood culture confirmed the date of infection.
 The curve of @eq-curve is unchanged; what differs is that its origin is now unknown.
-Two symbols in @eq-brt depart from the vignette's own: it writes
+Two symbols in @eq-brt depart from the `serocalculator` vignette: it writes
 this elapsed time $T$, for which $\tau$ is substituted here for the reason just given, and it writes
 every density $p$, whereas the density of $\tau$ is written $f$ throughout so that it stays visually distinct from the observation densities it is integrated against.
 
@@ -256,7 +244,7 @@ infection thirty days ago while the IgA term places its weight on one three hund
 ::: {#fig-ch3-assume}
 ![](fig/ch3_fig0_onevstwo_v2.png){width=100%}
 
-**What summing the log-likelihoods assumes.** Both panels describe the same participant, whose IgG
+**Product and joint likelihoods imply different infection histories for the same participant.** Both panels describe the same participant, whose IgG
 and IgA are measured on one specimen.
 Under current practice (left) the two measurements are allowed
 to carry different infection times, because each biomarker is integrated over its own; the joint
@@ -289,10 +277,8 @@ follows takes the stated model as the starting point and asks what else follows 
 
 ## Objectives {#sec-ch3-aims}
 
-We derived a joint likelihood in which the infection time is shared between isotypes and the kinetic parameters are paired, separating the two assumptions so that their contributions can be attributed individually (@eq-two-assumptions).
-Because no joint likelihood exists in the established implementation, we implemented it and verified that it reproduces the established estimator in the single-biomarker case, where the two forms are the same integral and must agree exactly.
-We then evaluated coverage on simulated cross-sectional data with known $\lambda$, across a range of seroincidence chosen to span the observed settings, reporting coverage, interval width, and bias for both likelihoods.
-Finally we applied the forms to the cross-sectional serosurveys of the Seroepidemiology and Environmental Surveillance for Enteric Fever (SEES) study in three countries, crossing the likelihood form with the parameter draws so that the paired and independent draws of @sec-ch3-banks enter without any additional model fitting, and asked whether the epidemiological conclusions — the ranking of countries and the contrast between high- and low-endemicity arms — survive.
+The objective of this chapter is to determine whether accounting for shared infection history across biomarkers changes the validity and precision of seroincidence estimates.
+Specifically, we evaluate whether a joint likelihood that shares infection time and preserves cross-isotype parameter correlations produces different estimates and uncertainty intervals than the current product likelihood.
 
 The correction is not intended to displace the established estimator.
 It is intended to establish how much the simplification costs, so that a practitioner combining isotypes knows whether the resulting interval can be taken at face value — and, if the cost is small, can continue to use the faster calculation knowing what has been checked.
@@ -305,32 +291,31 @@ Cross-sectional data come from the population-based serosurveys conducted for th
 In brief, households were sampled in high-endemicity and low-endemicity sites in each of Bangladesh, Nepal and Pakistan.
 HlyE IgG and IgA were measured by the same enzyme-linked immunosorbent assay (ELISA) as in the longitudinal cohorts, so the parameter draws and the specimens they are applied to are on one scale.
 
-We restricted the analysis to the two population-based survey arms, high- and low-endemicity, which sample the community rather than the case cohorts that provided the kinetic estimates.
-We excluded household members enrolled alongside an index case, whose exposure is that of a household containing a known case rather than that of the community; including them would attach a case's household to a population rate.
-From the remaining participants we used the baseline visit only, because the estimator takes one specimen per participant and a later visit from the same person is not a second draw from the population.
-A participant entered the analysis if both HlyE IgG and IgA, the two biomarkers the kinetic model treats jointly, were measured at that visit; one isotype alone carries no information about the pairing that separates the three likelihood forms.
-The number remaining after each step is given in @fig-ch3-flow.
+We excluded household members enrolled alongside an index participant.
+Although multiple longitudinal samples were selected from participants, we used the baseline visit only, to emulate a cross-sectional sample.
+A participant entered the analysis if both HlyE IgG and IgA were measured at the baseline visit.
+@fig-ch3-flow summarizes participant inclusion and exclusion at each stage of sample selection.
 
 ::: {#fig-ch3-flow}
 ![](fig/ch3_fig_flow.png){width=100%}
 
-**Participant flow.** Records and participants remaining after each selection rule, from the full
+**Participant flow diagram.** Records and participants remaining after each selection rule, from the full
 ELISA export to the analysis set.
 The final set has exactly two rows per participant, one per
 isotype.
 :::
 
-The final analysis sample comprised 2,613 participants, each contributing one HlyE IgG and one HlyE IgA measurement with no missing age or concentration.
-The household identifier is one-to-one with the participant identifier in these two arms, so no household clustering survives the second rule; 48% are male, ranging from 35% to 53% across the six sites.
+The final analysis sample comprised 2,613 participants, each contributing one HlyE IgG and one HlyE IgA.
+48% are male, ranging from 35% to 53% across the six sites.
 The six country-by-endemicity sites are described in @tbl-cells.
 
 Specimens were collected between February 2019 and June 2021, but not on a common schedule.
-Five of the six sites sampled across 13 to 16 calendar months, with a gap through the middle of 2020 when field work was suspended; the low-endemicity Pakistan site drew its dated specimens within eleven days in January 2021 (@tbl-collect).
+Five of the six sites sampled across 13 to 16 calendar months, with a gap through the middle of 2020 when field work was suspended due to the SARS-CoV-2 pandemic; the low-endemicity Pakistan site drew its dated specimens within eleven days in January 2021 (@tbl-collect).
 A site sampled in a single window sits at one point in the transmission year rather than across it, which bears on @sec-ch3-res-shift.
 
 ## Alternative likelihood formulations {#sec-ch3-joint}
 
-The derivation starts from the generative model rather than from @eq-prodform. A participant has
+We derive the joint likelihood from the generative model rather than from @eq-prodform. A participant has
 one infection time and one vector of kinetic parameters; given both, the two measurements are
 conditionally independent because their assay noise is independent.
 For a participant infected before
@@ -385,8 +370,8 @@ The shared-time form is what makes the two assumptions separable rather than a s
 
 ## Decomposition of independence assumptions {#sec-ch3-decomp}
 
-@eq-joint changes two things at once.
-They are separable, and separating them is what allows their contributions to be attributed.
+@eq-joint changes two assumptions simultaneously: it requires biomarkers to share an infection time and preserves correlations between their kinetic parameters.
+We separate these assumptions to quantify their individual contributions.
 
 $$
 p(y_1,y_2\mid \tau)=\iint p(y_1\mid\tau,\boldsymbol\theta_1)\,p(y_2\mid\tau,\boldsymbol\theta_2)\,
@@ -401,7 +386,7 @@ which only $\tau$ is shared.
 It does not factorize — that is the result of the kinetics analysis — so both terms are
 active.
 
-The difference the second assumption makes is exactly a covariance across draws.
+The difference the second assumption makes is a covariance across draws.
 Writing $\bar q_j(\tau)$ for the average of biomarker $j$ over the draws and $q_j^{(k)}(\tau)$ for its value under
 draw $k$, the definition of a sample covariance gives
 
@@ -417,16 +402,16 @@ Three distinct correlations are now in play, and they are easy to conflate even 
 The cross-isotype correlation $\rho_c$ is a correlation between kinetic parameters — between the peak a participant would reach in IgG and the peak they would reach in IgA — and the kinetics analysis estimates it [@lee2026correlated]. $\widehat{\operatorname{Cov}}_k$ in @eq-covdraws is a covariance between two **density values** at a fixed $\tau$, taken across the parameter draws; it asks whether the draws that explain a participant's IgG well are the same rows that explain their IgA well, and we compute it rather than estimate it.
 The correlation between the two observed log concentrations is a third thing again, and it is neither of the first two: it is the quantity @sec-ch3-res-shift compares against what the parameter draws predict. **A set of draws can carry a large $\rho_c$ and still fail to reproduce the observed correlation**, and whether it does is a property of the draws rather than of $\rho_c$.
 
-The two assumptions can be stated separately.
-The first is that a participant's biomarkers arise from one infection rather than from separate ones; relaxing the established estimator on this axis requires no result from the kinetics analysis at all.
-The second is that the kinetic parameters of the two isotypes are drawn as a pair, preserving the cross-isotype correlation.
-This is where the kinetics analysis enters, and only here.
-The shared infection time does not depend on it.
-The design of @sec-ch3-design is built so that the contribution of the shared infection time can be read off separately, and if that contribution is the larger of the two, the main result of this chapter is independent of the previous one.
+The joint likelihood incorporates two assumptions.
+First, biomarkers from the same participant share a common infection time.
+Second, the kinetic parameters of the two isotypes are drawn as correlated pairs, preserving the cross-isotype correlation estimated in the kinetics analysis.
+Only the second assumption depends on results from the kinetics analysis.
+We therefore evaluate the two assumptions separately to determine how much each contributes to the differences between the product and joint likelihoods.
 
 ## Posterior parameter draws {#sec-ch3-banks}
 
-We drew parameter values from the posterior distribution of the kinetics analysis and converted them to the form the estimator expects, keeping the draw index — that index is the only thing linking a participant's IgG parameters to their IgA parameters, and the pairing in @eq-joint depends on it.
+We drew parameter values from the posterior distribution of the kinetics analysis and converted them to the parameterization required by the estimator.
+We retained the original draw index because it preserves the pairing between each participant's IgG and IgA parameter draws, which the joint likelihood uses in @eq-joint.
 
 ```{r}
 #| label: tbl-banks
@@ -454,9 +439,10 @@ Conversion from the parameterization used to fit the kinetics [@lee2026correlate
 
 We report the correlation carried by each set of draws as a check before using any of them, since paired draws that do not carry the correlation, or shuffled draws that still do, would make every downstream contrast meaningless.
 
-## Study design {#sec-ch3-design}
+## Analytical comparison framework {#sec-ch3-design}
 
-The likelihood form and the parameter draws are two crossed factors, not one: the product likelihood can be run with the paired draws just as the joint likelihood can be run with the independent ones.
+We varied the likelihood formulation and the parameter draws independently.
+This design allowed us to isolate the effects of sharing infection time from the effects of preserving cross-isotype parameter correlations.
 
 ```{r}
 #| label: tbl-design
@@ -477,7 +463,7 @@ names(d) <- c("form", "Order of operations", "Isolates")
 thesis_ft(d, widths = c(0.97, 1.62, 3.81))
 ```
 
-The same function evaluates all three.
+The same function evaluates all three forms of @tbl-design.
 They share the noise density, the quadrature grid, the two-branch mixture of @eq-brt, the censoring rule, and the time units; the code branches in one place, on the order of the sum, the integral, and the product.
 The derivation is in @sec-appB-deriv.
 
@@ -502,11 +488,9 @@ A contrast against the
 established implementation would therefore mix the independence assumption with four other differences, and could not
 be attributed to any of them.
 
-Placing all three forms in one function removes that entire class of ambiguity by construction.
-What
-is lost is the direct claim "the established implementation under-covers"; what is gained is that the
-contrast measures the independence assumption and nothing else.
-We report the established implementation once, as a reference, so that the size of the discrepancy is on the record.
+We implemented all three likelihood formulations within a single framework so that they differed only in the assumptions under evaluation.
+As a result, any differences between the likelihoods can be attributed directly to the independence assumptions rather than to differences in software implementation.
+We report estimates from the established implementation only as a reference, because differences between codebases cannot be attributed uniquely to the likelihood formulation.
 
 A separate set of contrasts varies the parameter draws rather than the likelihood forms, and
 serves as an implementation check, not a result.
@@ -526,7 +510,7 @@ This is not an approximation that should hold to within simulation error; it is 
 Any departure from zero indicates that the implementation is using the pairing somewhere it should not, and would invalidate every other contrast.
 Recording the prediction in advance makes it a test of the implementation, not a description of its output.
 
-## Implementation verification {#sec-ch3-valid}
+## Validation of likelihood implementation {#sec-ch3-valid}
 
 The three forms are algebraically identical when only one biomarker is measured, because the product over biomarkers has nothing to reorder.
 We used this as the first check on our implementation.
@@ -569,7 +553,7 @@ The same class of error recurred later in the simulator (@sec-ch3-sim) and was c
 
 A second check compares the joint form against the product form under draws in which the isotypes are independent and the noise is made small: as the noise shrinks both concentrate on the same $\tau$, and the two should converge.
 
-## Numerical evaluation {#sec-ch3-numeric}
+## Likelihood evaluation and interval estimation {#sec-ch3-numeric}
 
 Neither likelihood has a closed form in $\lambda$, so both are evaluated on a grid — a fixed ladder of candidate incidence values, spaced logarithmically, over which we compute the log-likelihood point by point.
 Everything below concerns making that evaluation fast enough and fine enough.
@@ -584,15 +568,15 @@ We report the grid spacing alongside every interval, because it sets the finest 
 
 ## Simulation study of interval coverage {#sec-ch3-sim}
 
-This is the primary evaluation.
-Everything before it establishes that the joint likelihood is correctly implemented; this establishes whether the intervals it produces are the right width.
+We used a simulation study to evaluate interval calibration.
+By generating datasets with known seroincidence, we could determine whether nominal 95% confidence intervals contained the true value 95% of the time.
 
 The design follows the standard for simulation studies [@morris2019]: we report a Monte Carlo standard error (MCSE) for every performance measure, and we fixed what counts as acceptable before running any grid.
 
 The simulated sample size is $n=300$, at the lower end of the range the observed sites span — 242 to 596, with a median near 450 (@tbl-cells).
 Evaluating calibration at a sample size no larger than the smaller surveys keeps the assessment from being more favorable than the data the method is applied to.
 
-**Simulation design.** For each replicate: draw ages by resampling from the observed serosurvey; draw infection status and $\tau$ from @eq-brt at a known $\lambda$; draw one parameter index per participant, which is what preserves the pairing; evaluate @eq-curve for both isotypes at that $\tau$; apply the two-stage noise of @sec-appB-noise; and censor at the detection limit.
+**Simulation design.** For each replicate draw ages by resampling from the observed serosurvey; draw infection status and $\tau$ from @eq-brt at a known $\lambda$; draw one parameter index per participant, which is what preserves the pairing; evaluate @eq-curve for both isotypes at that $\tau$; apply the two-stage noise of @sec-appB-noise; and censor at the detection limit.
 We then fit both likelihoods to the same simulated dataset and score both intervals.
 
 We wrote the simulator out rather than taking it from the established implementation.
@@ -651,31 +635,18 @@ We state this here because it constrains what the chapter may claim.
 If the failure is bias-dominated, the sentence "the published intervals are too narrow" is not supported and must be replaced by a statement about the point estimate.
 We ran the decomposition before writing the discussion.
 
-## Application to serosurvey data {#sec-ch3-app}
+## Effect of likelihood formulation on epidemiological inference {#sec-ch3-app}
 
-We applied the three forms of @tbl-design and the three sets of draws of @tbl-banks to the SEES cross-sectional serosurveys.
-We report four of the nine combinations, which is what the two contrasts require: the independent draws under the product form, which is current practice from end to end, and the paired draws under each of the three forms.
-Reported for each country and endemicity arm: the point estimate, the profile interval, and the three contrasts of @eq-contrasts.
+We applied the three likelihood formulations to the SEES cross-sectional serosurveys to determine whether accounting for shared infection history changes epidemiological inference.
+For each site, we estimated seroincidence and its confidence interval under each likelihood formulation.
+We then evaluated whether the joint likelihood altered two key conclusions: the ranking of countries by seroincidence and the contrast between high- and low-endemicity sites within each country.
 
-The epidemiological question is whether the conclusions survive.
-Two are pre-specified, and both are *internal* comparisons — between the two likelihood forms applied to the same participants:
+We did not compare our estimates directly with previously published seroincidence estimates from these cohorts because the analyses differ in several ways beyond the likelihood formulation.
+The analyses use different parameter draws, participant inclusion criteria, and preprocessing decisions.
+As a result, any agreement or disagreement between the estimates could reflect multiple methodological differences and cannot be attributed specifically to the likelihood formulation.
 
-The first is the ranking of countries by incidence under the product form, and whether the joint form preserves it.
-The second is the contrast between the high- and low-endemicity arms within each country, and whether the intervals separate under both forms.
-
-We used no external benchmark.
-It would be natural to compare these estimates against previously published seroincidence figures from the same surveillance program.
-We did not make that comparison.
-
-The analysis sets differ in ways that make any agreement or disagreement uninterpretable.
-The parameter draws here come from prospectively enrolled participants only, with single-visit participants excluded [@lee2026correlated]; kinetics are fitted with one pooled set rather than by age stratum; and the cross-sectional restriction, the censoring convention, and the noise handling are all specified independently.
-Two analyses that differ in the estimation sample, the parameter draws, and the preprocessing cannot validate one another, and an apparent agreement between them would be as likely to reflect offsetting differences as correctness.
-
-Every claim in this chapter is therefore established internally: the equivalence gate of @eq-valid, the null contrast of @eq-contrasts, the simulator check of @sec-ch3-sim, and the coverage study itself.
-Prior work is cited for the design of the cohorts and for methodological provenance, never as a target or a standard of comparison.
-
-We computed the cluster-robust standard error with the participant as the cluster alongside, as the pre-specified conventional check described in @sec-ch3-honest.
-A ratio above one supports the argument; a ratio at or below one does not, and we report it either way.
+We computed the cluster-robust standard error with the participant as the cluster as a conventional check of the independence assumption.
+Ratios greater than one indicate that within-participant dependence inflates precision under the product likelihood.
 
 ## Sensitivity analyses {#sec-ch3-sens}
 
@@ -779,7 +750,7 @@ out <- data.frame(
   check.names = FALSE)
 thesis_ft(out, widths = c(1.15, 0.85, 0.55, 1.02, 1.02, 0.86, 0.95))
 ```
-Two features of @tbl-cells bear on the analyses that follow.
+The six sites differed substantially in both censoring and age structure.
 Censoring differs between countries — from 0.2% of IgG measurements in high-endemicity Bangladesh to 59.7% in low-endemicity Pakistan — which is what the detection-limit sensitivity analysis addresses.
 And one site has an age structure unlike the rest: the low-endemicity Pakistan arm is 22.0% aged 26 or over against 0.8% or less elsewhere, and it sits on the low side of the Pakistan endemicity contrast, which is why we re-analyzed that site alone under an age restriction.
 
