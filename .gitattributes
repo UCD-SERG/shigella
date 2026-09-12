@@ -1,0 +1,41 @@
+# Line-ending normalisation.
+#
+# Without this file git stores whatever the working tree contains, so an editor
+# configured for Windows line endings can commit CRLF into a repository that is
+# otherwise LF throughout. That happened to chapter2.qmd, where the conversion
+# rewrote all 1,285 lines and buried seven real edits in a whole-file diff.
+#
+# `text=auto` makes git normalise to LF in the repository for anything it
+# detects as text. The `eol=lf` entries go further and keep LF in the working
+# tree as well, on every platform, so an editor never sees CRLF to preserve.
+
+* text=auto
+
+# Prose and analysis sources
+*.qmd  text eol=lf
+*.Rmd  text eol=lf
+*.md   text eol=lf
+
+# Code
+*.R    text eol=lf
+*.r    text eol=lf
+*.stan text eol=lf
+*.py   text eol=lf
+
+# Data and bibliography. The CSVs are written by the analysis scripts and read
+# back by read.csv, which accepts either ending; pinning LF keeps regenerated
+# tables diffable line by line. None contains an embedded newline in a quoted
+# field, so forcing the ending is safe.
+*.csv  text eol=lf
+*.bib  text eol=lf
+*.csl  text eol=lf
+
+# Configuration
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.json text eol=lf
+
+# Binary: excluded from normalisation so text=auto can never mis-detect them.
+*.png  binary
+*.docx binary

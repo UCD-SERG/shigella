@@ -1,0 +1,6 @@
+step,rule,reason,participants,rows
+1,Population-based survey arms,"the community samples, not the case cohorts",3508,32927
+2,Household arms excluded,those members were enrolled alongside an index case,2705,26980
+3,Baseline visit only,the survey was longitudinal; the estimator takes one specimen,2705,13704
+4,HlyE IgG and IgA only,the two biomarkers chapter 2 models jointly,2696,5309
+5,Both isotypes present,the joint likelihood pairs the two within a participant,2613,5226

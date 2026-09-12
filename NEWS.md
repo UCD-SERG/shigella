@@ -24,6 +24,7 @@
 * Recorded the roxygen2 version in `Config/roxygen2/version`, which roxygen2
   8.1.0 uses in place of `RoxygenNote` (#32)
 
+* Added dissertation and standalone chapter manuscript source files with automated DOCX rendering (#31)
 * Pinned `use-ai-config: true` explicitly on the Claude and Claude-review
   `Morrison-Lab/gha@v2` callers (#36).
   The reusable workflows already default that input to true,

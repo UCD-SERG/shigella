@@ -1,0 +1,25 @@
+# Configuration for crate-ci/typos, consumed by
+# .github/workflows/check-typos.yml.
+#
+# Every entry below is a term this repository uses deliberately, not an
+# accepted misspelling. Keep it that way: a real typo belongs fixed in the
+# source, not listed here.
+
+[files]
+extend-exclude = [
+  # Bibliographies are exported from reference managers and carry author
+  # surnames and non-English titles. "Leroux-Roels" alone accounts for three
+  # findings, and none of it is prose anyone wrote here.
+  "*.bib",
+  # {spelling}'s own accept-list. A file whose entire purpose is to hold
+  # unusual words cannot be spellchecked.
+  "inst/WORDLIST",
+]
+
+[default.extend-words]
+# Abbreviations used in Stan model code, analysis scripts, and figure labels.
+lik = "lik"   # likelihood: log_lik, .lik(), the LIK_FORM environment variable
+lod = "lod"   # limit of detection: fig-lod, the LOD covariate in ch3
+mis = "mis"   # the prefix, as in mis-centered / mis-extracted
+nd = "nd"     # per-chain draw count, inst/scripts/ch2/run_ch2_461.R
+pn = "pn"     # par_new summary, inst/scripts/ch2 and ch3

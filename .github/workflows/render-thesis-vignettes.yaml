@@ -1,0 +1,81 @@
+# Renders the dissertation and the two manuscripts to docx, on every push to the
+# branch and every pull request that touches them, and uploads the results as
+# artifacts.
+#
+# THE POINT. A reviewer — bot or human — can read the rendered documents without
+# installing anything, and a render failure shows up as a red check before
+# anyone spends time on the prose.
+#
+# WHY THIS IS CHEAP. The chunks in all three documents only read CSVs and build
+# flextables: no Stan, no JAGS, no model fitting. flextable and officer are the
+# whole dependency set, so the job finishes in a couple of minutes.
+
+name: Render thesis
+
+on:
+  push:
+    branches: [thesis-draft]
+    paths:
+      - 'vignettes/articles/thesis/**'
+      - '.github/workflows/render-thesis-vignettes.yaml'
+  pull_request:
+    paths:
+      - 'vignettes/articles/thesis/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: vignettes/articles/thesis
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          working-directory: vignettes/articles/thesis
+          packages: |
+            any::flextable
+            any::officer
+
+      # Renders the three documents named in thesis/_quarto.yml. Each lands
+      # beside its own .qmd.
+      - name: Render
+        run: quarto render
+
+      # Quarto wraps each captioned table in an outer single-row table, and
+      # flextable's own options reach only the inner one, so tables were
+      # breaking across pages. Setting cantSplit on every row moves a whole
+      # table to the next page instead of splitting it.
+      - name: Keep tables whole
+        run: |
+          python3 fix_table_breaks.py thesis_ch1_ch2_ch3.docx
+          python3 fix_table_breaks.py chapter2/chapter2.docx
+          python3 fix_table_breaks.py chapter3/chapter3.docx
+
+      - name: Upload dissertation
+        uses: actions/upload-artifact@v4
+        with:
+          name: dissertation
+          path: vignettes/articles/thesis/thesis_ch1_ch2_ch3.docx
+          retention-days: 30
+
+      - name: Upload manuscripts
+        uses: actions/upload-artifact@v4
+        with:
+          name: manuscripts
+          path: |
+            vignettes/articles/thesis/chapter2/chapter2.docx
+            vignettes/articles/thesis/chapter3/chapter3.docx
+          retention-days: 30
